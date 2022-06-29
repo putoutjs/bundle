@@ -8,7 +8,7 @@
 Usage
 
 ```js
-import putout from 'https://esm.sh/@putout/bundle@1.0.0';
+import putout from 'https://esm.sh/@putout/bundle';
 import removeDebugger from 'https://esm.sh/@putout/plugin-remove-debugger?alias=putout:@putout/bundle';
 import declare from 'https://esm.sh/@putout/plugin-declare-undefined-variables?alias=putout:@putout/bundle';
 
