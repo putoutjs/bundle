@@ -3,7 +3,7 @@
 [NPMIMGURL]: https://img.shields.io/npm/v/@putout/plugin-remove-debugger.svg?style=flat&longCache=true
 [NPMURL]: https://npmjs.org/package/@putout/plugin-remove-debugger "npm"
 
-🐊[**Putout**](https://github.com/coderaiser/putout) bundle to get things working in [**Deno**](https://deno.land) and **Browsers**
+🐊[**Putout**](https://github.com/coderaiser/putout) bundle to get things working in [**Deno**](https://deno.land) and **Browsers** using amazing [esm.sh](https://esm.sh).
 
 Usage
 
