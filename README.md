@@ -10,7 +10,7 @@ Usage
 ```js
 import putout from 'https://esm.sh/@putout/bundle';
 import removeDebugger from 'https://esm.sh/plugin-remove-debugger';
-import removeUnusedVariables from '@putout/plugin-remove-unused-variables?alias=putout:@putout/bundle';
+import removeUnusedVariables from 'https://esm.sh/@putout/plugin-remove-unused-variables?alias=putout:@putout/bundle';
 
 putout('const a = 5;debugger', {
     plugins: [

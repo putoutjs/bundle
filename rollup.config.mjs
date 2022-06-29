@@ -3,20 +3,28 @@ import { nodeResolve } from '@rollup/plugin-node-resolve';
 import json from '@rollup/plugin-json';
 import nodePolyfills from 'rollup-plugin-polyfill-node';
 import replace from '@rollup/plugin-replace';
+import alias from '@rollup/plugin-alias';
 
 export default {
-  input: 'lib/putout.cjs',
+  input: 'lib/putout.js',
   output: {
     file: 'bundle/putout.js',
     format: 'es'
   },
   plugins: [
+      alias({
+      entries: [
+        { find: './loader.mjs', replacement: './lib/loader.js' },
+      ]
+      }),
       nodeResolve({
           preferBuiltins: false,
           browser: true,
       }),
       commonjs({
           exclude: [
+            '**/lib/loader.*',
+            '**/parse-options/**',
             'acorn',
             'tenko*',
             'hermes-parser/*',
@@ -44,7 +52,7 @@ export default {
               'process.platform': '"unix"',
               'process.env.BABEL_TYPES_8_BREAKING = true': '',
               'process.env': '{}',
-              'import parseOptions from "./parse-options/index.js"': '',
+              'export {load} from "./loader.mjs"': '',
           },
       }),
   ]
