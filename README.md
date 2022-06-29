@@ -8,19 +8,22 @@
 Usage
 
 ```js
-import putout from 'https://esm.sh/@putout/bundle';
-import removeDebugger from 'https://esm.sh/plugin-remove-debugger';
-import removeUnusedVariables from 'https://esm.sh/@putout/plugin-remove-unused-variables?alias=putout:@putout/bundle';
+import putout from 'https://esm.sh/@putout/bundle@1.0.0';
+import removeDebugger from 'https://esm.sh/@putout/plugin-remove-debugger?alias=putout:@putout/bundle';
+import declare from 'https://esm.sh/@putout/plugin-declare-undefined-variables?alias=putout:@putout/bundle';
 
-putout('const a = 5;debugger', {
+console.log(putout('isFn(fn, "hello"); debugger', {
     plugins: [
         ['remove-debugger', removeDebugger],
-        ['remove-unused-variables', remove-unused-variables],
+        ['declare-undefined-variables', declare],
     ]
-});
+}));
 
 // returns
-['', []]
+({
+  code: `const isFn = a => typeof a === 'function';\nisFn(fn, "hello");`,
+  places: []
+});
 ```
 
 ## License

@@ -33,10 +33,9 @@
   "dependencies": {},
   "keywords": [
     "putout",
-    "putout-plugin",
-    "putout-plugin-remove",
-    "plugin",
-    "debugger"
+    "bundle",
+    "deno",
+    "esm"
   ],
   "devDependencies": {
     "@rollup/plugin-alias": "^3.1.9",
