@@ -7,9 +7,6 @@
   "description": "🐊Putout bundle suitable for Deno or Browsers",
   "homepage": "https://github.com/putoutjs/bundle",
   "main": "bundle/putout.js",
-  "release": false,
-  "tag": false,
-  "changelog": false,
   "repository": {
     "type": "git",
     "url": "git://github.com/putoutjs/bundle.git"
