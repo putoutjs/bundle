@@ -2,6 +2,12 @@
     "match": {
         "*.md": {
             "remove-debugger": "off"
+        },
+        "example.js": {
+            "remove-console": "off"
         }
-    }
+    },
+    "ignore": [
+        "bundle"
+    ]
 }

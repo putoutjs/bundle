@@ -6,5 +6,5 @@ console.log(putout('isFn(fn, "hello"); debugger', {
     plugins: [
         ['remove-debugger', removeDebugger],
         ['declare-undefined-variables', declare],
-    ]
+    ],
 }));
