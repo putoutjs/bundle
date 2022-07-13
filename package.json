@@ -16,7 +16,7 @@
     "url": "git://github.com/putoutjs/bundle.git"
   },
   "files": [
-    "bundle/putout.js",
+    "bundle",
     "README.md",
     "LICENSE"
   ],
