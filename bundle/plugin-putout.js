@@ -194,6 +194,8 @@ function requireApplyRemove () {
 	return applyRemove;
 }
 
+var checkReplaceCode = {};
+
 var tryCatch;
 var hasRequiredTryCatch;
 
@@ -315,8 +317,6 @@ function requireGenerateCode () {
 	}
 	return generateCode;
 }
-
-var checkReplaceCode = {};
 
 var hasRequiredCheckReplaceCode;
 
@@ -933,96 +933,6 @@ function requireConvertReplaceToFunction () {
 	return convertReplaceToFunction;
 }
 
-var convertReplaceWithMultiple = {};
-
-var hasRequiredConvertReplaceWithMultiple;
-
-function requireConvertReplaceWithMultiple () {
-	if (hasRequiredConvertReplaceWithMultiple) return convertReplaceWithMultiple;
-	hasRequiredConvertReplaceWithMultiple = 1;
-
-	const {
-	    operator,
-	    template,
-	    types,
-	} = require$$0$1;
-
-	const {
-	    insertAfter,
-	    replaceWith,
-	} = operator;
-
-	const {
-	    Identifier,
-	    ObjectProperty,
-	} = types;
-
-	convertReplaceWithMultiple.report = () => {
-	    return `"operate.replaceWithMultiple" should be called instead of "path.replaceWithMultiple"`;
-	};
-
-	const replaceWithAST = template.ast(`
-	    const {replaceWithMultiple} = require('putout').operate;
-	`);
-
-	convertReplaceWithMultiple.fix = ({path, calleePath, property, object, program}) => {
-	    const strictModePath = program.get('body.0');
-	    const {bindings} = strictModePath.scope;
-	    
-	    replaceWith(calleePath, property);
-	    path.node.arguments.unshift(object);
-	    
-	    if (bindings.replaceWithMultiple)
-	        return;
-	    
-	    if (!bindings.replaceWith && !bindings.insertAfter)
-	        return insertAfter(strictModePath, replaceWithAST);
-	    
-	    const id = Identifier('replaceWithMultiple');
-	    
-	    const varPath = getVarPath(bindings);
-	    varPath.node.id.properties
-	        .push(ObjectProperty(id, id, false, true));
-	};
-
-	function getVarPath(bindings) {
-	    const {
-	        replaceWith,
-	        insertAfter,
-	    } = bindings;
-	    
-	    if (replaceWith)
-	        return replaceWith.path;
-	    
-	    return insertAfter.path;
-	}
-
-	convertReplaceWithMultiple.traverse = ({push}) => ({
-	    CallExpression(path) {
-	        const calleePath = path.get('callee');
-	        
-	        if (!calleePath.isMemberExpression())
-	            return;
-	        
-	        const {object, property} = calleePath.node;
-	        
-	        if (property.name !== 'replaceWithMultiple')
-	            return;
-	        
-	        const program = path.findParent((path) => path.isProgram());
-	        
-	        push({
-	            path,
-	            object,
-	            program,
-	            calleePath,
-	            property,
-	        });
-	    },
-	});
-	return convertReplaceWithMultiple;
-}
-
 var convertReplaceWith = {};
 
 var fullstore;
@@ -1152,6 +1062,96 @@ function requireConvertReplaceWith () {
 	    };
 	};
 	return convertReplaceWith;
+}
+
+var convertReplaceWithMultiple = {};
+
+var hasRequiredConvertReplaceWithMultiple;
+
+function requireConvertReplaceWithMultiple () {
+	if (hasRequiredConvertReplaceWithMultiple) return convertReplaceWithMultiple;
+	hasRequiredConvertReplaceWithMultiple = 1;
+
+	const {
+	    operator,
+	    template,
+	    types,
+	} = require$$0$1;
+
+	const {
+	    insertAfter,
+	    replaceWith,
+	} = operator;
+
+	const {
+	    Identifier,
+	    ObjectProperty,
+	} = types;
+
+	convertReplaceWithMultiple.report = () => {
+	    return `"operate.replaceWithMultiple" should be called instead of "path.replaceWithMultiple"`;
+	};
+
+	const replaceWithAST = template.ast(`
+	    const {replaceWithMultiple} = require('putout').operate;
+	`);
+
+	convertReplaceWithMultiple.fix = ({path, calleePath, property, object, program}) => {
+	    const strictModePath = program.get('body.0');
+	    const {bindings} = strictModePath.scope;
+	    
+	    replaceWith(calleePath, property);
+	    path.node.arguments.unshift(object);
+	    
+	    if (bindings.replaceWithMultiple)
+	        return;
+	    
+	    if (!bindings.replaceWith && !bindings.insertAfter)
+	        return insertAfter(strictModePath, replaceWithAST);
+	    
+	    const id = Identifier('replaceWithMultiple');
+	    
+	    const varPath = getVarPath(bindings);
+	    varPath.node.id.properties
+	        .push(ObjectProperty(id, id, false, true));
+	};
+
+	function getVarPath(bindings) {
+	    const {
+	        replaceWith,
+	        insertAfter,
+	    } = bindings;
+	    
+	    if (replaceWith)
+	        return replaceWith.path;
+	    
+	    return insertAfter.path;
+	}
+
+	convertReplaceWithMultiple.traverse = ({push}) => ({
+	    CallExpression(path) {
+	        const calleePath = path.get('callee');
+	        
+	        if (!calleePath.isMemberExpression())
+	            return;
+	        
+	        const {object, property} = calleePath.node;
+	        
+	        if (property.name !== 'replaceWithMultiple')
+	            return;
+	        
+	        const program = path.findParent((path) => path.isProgram());
+	        
+	        push({
+	            path,
+	            object,
+	            program,
+	            calleePath,
+	            property,
+	        });
+	    },
+	});
+	return convertReplaceWithMultiple;
 }
 
 var convertReportToFunction = {};
@@ -3037,41 +3037,72 @@ var dynamicModules;
 
 function getDynamicModules() {
 	return dynamicModules || (dynamicModules = {
+		"/node_modules/@putout/plugin-putout/lib/add-args": requireAddArgs,
 		"/node_modules/@putout/plugin-putout/lib/add-args/index.js": requireAddArgs,
+		"/node_modules/@putout/plugin-putout/lib/add-push": requireAddPush,
 		"/node_modules/@putout/plugin-putout/lib/add-push/index.js": requireAddPush,
+		"/node_modules/@putout/plugin-putout/lib/apply-async-formatter": requireApplyAsyncFormatter,
 		"/node_modules/@putout/plugin-putout/lib/apply-async-formatter/index.js": requireApplyAsyncFormatter,
+		"/node_modules/@putout/plugin-putout/lib/apply-create-test": requireApplyCreateTest,
 		"/node_modules/@putout/plugin-putout/lib/apply-create-test/index.js": requireApplyCreateTest,
+		"/node_modules/@putout/plugin-putout/lib/apply-processors-destructuring": requireApplyProcessorsDestructuring,
 		"/node_modules/@putout/plugin-putout/lib/apply-processors-destructuring/index.js": requireApplyProcessorsDestructuring,
+		"/node_modules/@putout/plugin-putout/lib/apply-remove": requireApplyRemove,
 		"/node_modules/@putout/plugin-putout/lib/apply-remove/index.js": requireApplyRemove,
-		"/node_modules/@putout/plugin-putout/lib/check-replace-code/generate-code.js": requireGenerateCode,
+		"/node_modules/@putout/plugin-putout/lib/check-replace-code": requireCheckReplaceCode,
 		"/node_modules/@putout/plugin-putout/lib/check-replace-code/index.js": requireCheckReplaceCode,
+		"/node_modules/@putout/plugin-putout/lib/convert-add-argument-to-add-args": requireConvertAddArgumentToAddArgs,
 		"/node_modules/@putout/plugin-putout/lib/convert-add-argument-to-add-args/index.js": requireConvertAddArgumentToAddArgs,
+		"/node_modules/@putout/plugin-putout/lib/convert-babel-types": requireConvertBabelTypes,
 		"/node_modules/@putout/plugin-putout/lib/convert-babel-types/index.js": requireConvertBabelTypes,
+		"/node_modules/@putout/plugin-putout/lib/convert-destructuring-to-identifier": requireConvertDestructuringToIdentifier,
 		"/node_modules/@putout/plugin-putout/lib/convert-destructuring-to-identifier/index.js": requireConvertDestructuringToIdentifier,
+		"/node_modules/@putout/plugin-putout/lib/convert-dirname-to-url": requireConvertDirnameToUrl,
 		"/node_modules/@putout/plugin-putout/lib/convert-dirname-to-url/index.js": requireConvertDirnameToUrl,
+		"/node_modules/@putout/plugin-putout/lib/convert-find-to-traverse": requireConvertFindToTraverse,
 		"/node_modules/@putout/plugin-putout/lib/convert-find-to-traverse/index.js": requireConvertFindToTraverse,
+		"/node_modules/@putout/plugin-putout/lib/convert-match-to-function": requireConvertMatchToFunction,
 		"/node_modules/@putout/plugin-putout/lib/convert-match-to-function/index.js": requireConvertMatchToFunction,
+		"/node_modules/@putout/plugin-putout/lib/convert-method-to-property": requireConvertMethodToProperty,
 		"/node_modules/@putout/plugin-putout/lib/convert-method-to-property/index.js": requireConvertMethodToProperty,
+		"/node_modules/@putout/plugin-putout/lib/convert-node-to-path-in-get-template-values": requireConvertNodeToPathInGetTemplateValues,
 		"/node_modules/@putout/plugin-putout/lib/convert-node-to-path-in-get-template-values/index.js": requireConvertNodeToPathInGetTemplateValues,
+		"/node_modules/@putout/plugin-putout/lib/convert-number-to-numeric": requireConvertNumberToNumeric,
 		"/node_modules/@putout/plugin-putout/lib/convert-number-to-numeric/index.js": requireConvertNumberToNumeric,
+		"/node_modules/@putout/plugin-putout/lib/convert-process-to-find": requireConvertProcessToFind,
 		"/node_modules/@putout/plugin-putout/lib/convert-process-to-find/index.js": requireConvertProcessToFind,
+		"/node_modules/@putout/plugin-putout/lib/convert-putout-test-to-create-test": requireConvertPutoutTestToCreateTest,
 		"/node_modules/@putout/plugin-putout/lib/convert-putout-test-to-create-test/index.js": requireConvertPutoutTestToCreateTest,
+		"/node_modules/@putout/plugin-putout/lib/convert-replace-to-function": requireConvertReplaceToFunction,
 		"/node_modules/@putout/plugin-putout/lib/convert-replace-to-function/index.js": requireConvertReplaceToFunction,
-		"/node_modules/@putout/plugin-putout/lib/convert-replace-with-multiple/index.js": requireConvertReplaceWithMultiple,
+		"/node_modules/@putout/plugin-putout/lib/convert-replace-with": requireConvertReplaceWith,
 		"/node_modules/@putout/plugin-putout/lib/convert-replace-with/index.js": requireConvertReplaceWith,
+		"/node_modules/@putout/plugin-putout/lib/convert-replace-with-multiple": requireConvertReplaceWithMultiple,
+		"/node_modules/@putout/plugin-putout/lib/convert-replace-with-multiple/index.js": requireConvertReplaceWithMultiple,
+		"/node_modules/@putout/plugin-putout/lib/convert-report-to-function": requireConvertReportToFunction,
 		"/node_modules/@putout/plugin-putout/lib/convert-report-to-function/index.js": requireConvertReportToFunction,
+		"/node_modules/@putout/plugin-putout/lib/convert-to-no-transform-code": requireConvertToNoTransformCode,
 		"/node_modules/@putout/plugin-putout/lib/convert-to-no-transform-code/index.js": requireConvertToNoTransformCode,
+		"/node_modules/@putout/plugin-putout/lib/convert-traverse-to-include": requireConvertTraverseToInclude,
 		"/node_modules/@putout/plugin-putout/lib/convert-traverse-to-include/index.js": requireConvertTraverseToInclude,
+		"/node_modules/@putout/plugin-putout/lib/convert-traverse-to-replace": requireConvertTraverseToReplace,
 		"/node_modules/@putout/plugin-putout/lib/convert-traverse-to-replace/index.js": requireConvertTraverseToReplace,
+		"/node_modules/@putout/plugin-putout/lib/convert-url-to-dirname": requireConvertUrlToDirname,
 		"/node_modules/@putout/plugin-putout/lib/convert-url-to-dirname/index.js": requireConvertUrlToDirname,
-		"/node_modules/@putout/plugin-putout/lib/declare/declarations.js": requireDeclarations,
+		"/node_modules/@putout/plugin-putout/lib/declare": requireDeclare,
 		"/node_modules/@putout/plugin-putout/lib/declare/index.js": requireDeclare,
-		"/node_modules/@putout/plugin-putout/lib/declare/operator.js": requireOperator,
+		"/node_modules/@putout/plugin-putout/lib/includer": requireIncluder,
 		"/node_modules/@putout/plugin-putout/lib/includer/index.js": requireIncluder,
+		"/node_modules/@putout/plugin-putout/lib/index.js": requireLib,
+		"/node_modules/@putout/plugin-putout/lib/move-require-on-top-level": requireMoveRequireOnTopLevel,
 		"/node_modules/@putout/plugin-putout/lib/move-require-on-top-level/index.js": requireMoveRequireOnTopLevel,
+		"/node_modules/@putout/plugin-putout/lib/rename-operate-to-operator": requireRenameOperateToOperator,
 		"/node_modules/@putout/plugin-putout/lib/rename-operate-to-operator/index.js": requireRenameOperateToOperator,
+		"/node_modules/@putout/plugin-putout/lib/replace-operate-with-operator": requireReplaceOperateWithOperator,
 		"/node_modules/@putout/plugin-putout/lib/replace-operate-with-operator/index.js": requireReplaceOperateWithOperator,
+		"/node_modules/@putout/plugin-putout/lib/replace-test-message": requireReplaceTestMessage,
 		"/node_modules/@putout/plugin-putout/lib/replace-test-message/index.js": requireReplaceTestMessage,
+		"/node_modules/@putout/plugin-putout/lib/shorten-imports": requireShortenImports,
 		"/node_modules/@putout/plugin-putout/lib/shorten-imports/index.js": requireShortenImports
 	});
 }
@@ -3160,44 +3191,54 @@ function normalize (path) {
 	return path;
 }
 
-const getRule = (a) => ({
-    [a]: createCommonjsRequire("/node_modules/@putout/plugin-putout/lib")(`./${a}`),
-});
+var lib = {};
 
-var rules = {
-    ...getRule('apply-processors-destructuring'),
-    ...getRule('apply-async-formatter'),
-    ...getRule('apply-create-test'),
-    ...getRule('apply-remove'),
-    ...getRule('convert-putout-test-to-create-test'),
-    ...getRule('convert-to-no-transform-code'),
-    ...getRule('convert-find-to-traverse'),
-    ...getRule('convert-destructuring-to-identifier'),
-    ...getRule('convert-number-to-numeric'),
-    ...getRule('convert-replace-with'),
-    ...getRule('convert-replace-with-multiple'),
-    ...getRule('convert-replace-to-function'),
-    ...getRule('convert-match-to-function'),
-    ...getRule('convert-babel-types'),
-    ...getRule('convert-node-to-path-in-get-template-values'),
-    ...getRule('convert-traverse-to-include'),
-    ...getRule('convert-traverse-to-replace'),
-    ...getRule('convert-process-to-find'),
-    ...getRule('convert-method-to-property'),
-    ...getRule('convert-add-argument-to-add-args'),
-    ...getRule('convert-dirname-to-url'),
-    ...getRule('convert-url-to-dirname'),
-    ...getRule('convert-report-to-function'),
-    ...getRule('replace-test-message'),
-    ...getRule('rename-operate-to-operator'),
-    ...getRule('replace-operate-with-operator'),
-    ...getRule('shorten-imports'),
-    ...getRule('check-replace-code'),
-    ...getRule('declare'),
-    ...getRule('add-args'),
-    ...getRule('add-push'),
-    ...getRule('move-require-on-top-level'),
-    ...getRule('includer'),
-};
+var hasRequiredLib;
 
-export { rules };
+function requireLib () {
+	if (hasRequiredLib) return lib;
+	hasRequiredLib = 1;
+
+	const getRule = (a) => ({
+	    [a]: createCommonjsRequire("/node_modules/@putout/plugin-putout/lib")(`./${a}`),
+	});
+
+	lib.rules = {
+	    ...getRule('apply-processors-destructuring'),
+	    ...getRule('apply-async-formatter'),
+	    ...getRule('apply-create-test'),
+	    ...getRule('apply-remove'),
+	    ...getRule('convert-putout-test-to-create-test'),
+	    ...getRule('convert-to-no-transform-code'),
+	    ...getRule('convert-find-to-traverse'),
+	    ...getRule('convert-destructuring-to-identifier'),
+	    ...getRule('convert-number-to-numeric'),
+	    ...getRule('convert-replace-with'),
+	    ...getRule('convert-replace-with-multiple'),
+	    ...getRule('convert-replace-to-function'),
+	    ...getRule('convert-match-to-function'),
+	    ...getRule('convert-babel-types'),
+	    ...getRule('convert-node-to-path-in-get-template-values'),
+	    ...getRule('convert-traverse-to-include'),
+	    ...getRule('convert-traverse-to-replace'),
+	    ...getRule('convert-process-to-find'),
+	    ...getRule('convert-method-to-property'),
+	    ...getRule('convert-add-argument-to-add-args'),
+	    ...getRule('convert-dirname-to-url'),
+	    ...getRule('convert-url-to-dirname'),
+	    ...getRule('convert-report-to-function'),
+	    ...getRule('replace-test-message'),
+	    ...getRule('rename-operate-to-operator'),
+	    ...getRule('replace-operate-with-operator'),
+	    ...getRule('shorten-imports'),
+	    ...getRule('check-replace-code'),
+	    ...getRule('declare'),
+	    ...getRule('add-args'),
+	    ...getRule('add-push'),
+	    ...getRule('move-require-on-top-level'),
+	    ...getRule('includer'),
+	};
+	return lib;
+}
+
+requireLib();

@@ -29,8 +29,9 @@
     "fix:lint": "madrun fix:lint",
     "coverage": "madrun coverage",
     "report": "madrun report",
+    "build": "madrun build",
     "build:putout": "madrun build:putout",
-    "build:plugin:putout": "madrun build:plugin:putout",
+    "build:plugins:putout": "madrun build:plugins:putout",
     "wisdom": "madrun wisdom"
   },
   "dependencies": {},

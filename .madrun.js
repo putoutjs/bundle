@@ -11,7 +11,7 @@ export default {
     'report': () => 'c8 report --reporter=lcov',
     'build': () => run('build:*'),
     'build:putout': () => 'rollup -c',
-    'build:plugin:putout': () => 'rollup -c rollup.plugin-putout.js',
+    'build:plugins:putout': () => 'rollup -c rollup.plugin-putout.js',
     'wisdom': () => run('build:*'),
 };
 
