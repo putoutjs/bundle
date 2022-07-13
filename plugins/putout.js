@@ -1,1 +1,2 @@
-export * from '@putout/plugin-putout';
+import * as pluginPutout from '@putout/plugin-putout';
+export default pluginPutout;
