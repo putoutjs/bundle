@@ -1,3 +1,9 @@
+2022.07.13, v1.1.6
+
+fix:
+- @putout/plugin-putout: exports
+
+
 2022.07.13, v1.1.5
 
 fix:

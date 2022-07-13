@@ -1,5 +1,20 @@
 import require$$0$1 from '@putout/bundle';
 
+function _mergeNamespaces(n, m) {
+    m.forEach(function (e) {
+        e && typeof e !== 'string' && !Array.isArray(e) && Object.keys(e).forEach(function (k) {
+            if (k !== 'default' && !(k in n)) {
+                var d = Object.getOwnPropertyDescriptor(e, k);
+                Object.defineProperty(n, k, d.get ? d : {
+                    enumerable: true,
+                    get: function () { return e[k]; }
+                });
+            }
+        });
+    });
+    return Object.freeze(n);
+}
+
 var addArgs_1;
 var hasRequiredAddArgs;
 
@@ -3190,11 +3205,13 @@ function normalize (path) {
 	return path;
 }
 
+var lib = {};
+
 const getRule = (a) => ({
     [a]: createCommonjsRequire("/node_modules/@putout/plugin-putout/lib")(`./${a}`),
 });
 
-var rules = {
+var rules = lib.rules = {
     ...getRule('apply-processors-destructuring'),
     ...getRule('apply-async-formatter'),
     ...getRule('apply-create-test'),
@@ -3230,4 +3247,10 @@ var rules = {
     ...getRule('includer'),
 };
 
-export { rules };
+var pluginPutout = /*#__PURE__*/_mergeNamespaces({
+    __proto__: null,
+    rules: rules,
+    'default': lib
+}, [lib]);
+
+export { pluginPutout as default };
