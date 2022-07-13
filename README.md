@@ -26,6 +26,25 @@ console.log(putout('isFn(fn, "hello"); debugger', {
 });
 ```
 
+When you need to use `@putout/plugin-putout` use:
+
+```js
+import putout from 'https://esm.sh/@putout/bundle';
+import pluginPutout from 'https://esm.sh/@putout/bundle/plugin-putout';
+
+console.log(putout('compare(a, b)', {
+    plugins: [
+        ['putout', pluginPutout], r,
+    ],
+}));
+
+// returns
+({
+    code: `const {operator} = require('putout');\nconst {compare} = operator;\ncompare(a, b)`,
+    places: [],
+});
+```
+
 ## License
 
 MIT

@@ -7,6 +7,10 @@
   "description": "🐊Putout bundle suitable for Deno or Browsers",
   "homepage": "https://github.com/putoutjs/bundle",
   "main": "bundle/putout.js",
+  "exports": {
+    ".": "./bundle/putout.js",
+    "./plugin-putout": "./bundle/plugin-putout.js"
+  },
   "repository": {
     "type": "git",
     "url": "git://github.com/putoutjs/bundle.git"
@@ -25,7 +29,9 @@
     "fix:lint": "madrun fix:lint",
     "coverage": "madrun coverage",
     "report": "madrun report",
-    "build": "madrun build"
+    "build:putout": "madrun build:putout",
+    "build:plugin:putout": "madrun build:plugin:putout",
+    "wisdom": "madrun wisdom"
   },
   "dependencies": {},
   "keywords": [
@@ -35,6 +41,7 @@
     "esm"
   ],
   "devDependencies": {
+    "@putout/plugin-putout": "^11.11.0",
     "@rollup/plugin-alias": "^3.1.9",
     "@rollup/plugin-commonjs": "^22.0.1",
     "@rollup/plugin-json": "^4.1.0",
@@ -51,6 +58,7 @@
     "nodemon": "^2.0.1",
     "putout": "*",
     "rollup": "^2.75.7",
+    "rollup-plugin-node-externals": "^4.1.1",
     "rollup-plugin-polyfill-node": "^0.9.0",
     "tenko": "^2.0.1"
   },

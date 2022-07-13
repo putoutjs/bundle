@@ -9,6 +9,8 @@ export default {
     'fix:lint': () => run('lint', '--fix'),
     'coverage': async () => `c8 ${await run('test')}`,
     'report': () => 'c8 report --reporter=lcov',
-    'build': () => 'rollup -c',
+    'build:putout': () => 'rollup -c',
+    'build:plugin:putout': () => 'rollup -c rollup.plugin-putout.js',
+    'wisdom': () => run('build:*'),
 };
 
