@@ -3,6 +3,7 @@ import {nodeResolve} from '@rollup/plugin-node-resolve';
 import json from '@rollup/plugin-json';
 import alias from '@rollup/plugin-alias';
 import externals from 'rollup-plugin-node-externals';
+import replace from '@rollup/plugin-replace';
 
 export default {
     input: 'plugins/putout.js',
@@ -31,5 +32,11 @@ export default {
             ],
         }),
         json(),
+        replace({
+            preventAssignment: true,
+            values: {
+                '[a]: require(`./${a}`)': '[a]: require(`./${a}/index.js`)'
+            },
+        }),
     ],
 };
