@@ -34,7 +34,7 @@ import pluginPutout from 'https://esm.sh/@putout/bundle/plugin-putout';
 
 console.log(putout('compare(a, b)', {
     plugins: [
-        ['putout', pluginPutout], r,
+        ['putout', pluginPutout],
     ],
 }));
 
