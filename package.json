@@ -52,7 +52,7 @@
     "c8": "^7.5.0",
     "eslint": "^8.0.1",
     "eslint-plugin-node": "^11.0.0",
-    "eslint-plugin-putout": "^15.0.0",
+    "eslint-plugin-putout": "^16.2.1",
     "hermes-parser": "^0.9.0",
     "lerna": "^5.0.0",
     "madrun": "^9.0.0",
