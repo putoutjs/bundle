@@ -507,8 +507,8 @@ function requireConvertBabelTypes () {
 	const {replaceWith} = operator;
 
 	const astRequire = template.ast(`
-	    require('putout').types
-	`);
+    require('putout').types
+`);
 
 	convertBabelTypes.report = () => {
 	    return `"putout.types" should be used instead of "@babel/types"`;
@@ -846,8 +846,16 @@ function requireConvertNumberToNumeric () {
 	convertNumberToNumeric.report = () => `Use 'isNumericLiteral()' instead of 'isNumberLiteral()'`;
 
 	convertNumberToNumeric.fix = (path) => {
-	    path.scope.rename('isNumberLiteral', 'isNumericLiteral');
-	    path.scope.rename('NumberLiteral', 'NumericLiteral');
+	    const bindings = path.scope.getAllBindings();
+	    const {name} = path.node.callee;
+	    
+	    if (!bindings.isNumericLiteral)
+	        path.scope.rename('isNumberLiteral', 'isNumericLiteral');
+	    
+	    if (!bindings.NumericLiteral)
+	        path.scope.rename('NumberLiteral', 'NumericLiteral');
+	    
+	    path.node.callee.name = name.replace('Number', 'Numeric');
 	};
 
 	convertNumberToNumeric.traverse = ({push}) => ({
@@ -1017,8 +1025,8 @@ function requireConvertReplaceWith () {
 	    
 	    if (!bindings.replaceWithMultiple && !bindings.insertAfter && !isInserted()) {
 	        const replaceWithAST = template.ast.fresh(`
-	            const {replaceWith} = require('putout').operator;
-	        `);
+            const {replaceWith} = require('putout').operator;
+        `);
 	        
 	        const {types} = bindings;
 	        const pathToInsertAfter = types ? types.path.parentPath : strictModePath;
@@ -1108,8 +1116,8 @@ function requireConvertReplaceWithMultiple () {
 	};
 
 	const replaceWithAST = template.ast(`
-	    const {replaceWithMultiple} = require('putout').operate;
-	`);
+    const {replaceWithMultiple} = require('putout').operate;
+`);
 
 	convertReplaceWithMultiple.fix = ({path, calleePath, property, object, program}) => {
 	    const strictModePath = program.get('body.0');
@@ -2836,16 +2844,16 @@ function requireMoveRequireOnTopLevel () {
 	} = require$$0$1;
 
 	const TEST = `
-	    const test = require('@putout/test')(__dirname, {
-	        __a: __b
-	    });
-	`;
+    const test = require('@putout/test')(__dirname, {
+        __a: __b
+    });
+`;
 
 	const TRANSFORM = `
-	    t.transform(__c, {
-	        __a: __b
-	    });
-	`;
+    t.transform(__c, {
+        __a: __b
+    });
+`;
 
 	const {
 	    Identifier,
@@ -2867,10 +2875,10 @@ function requireMoveRequireOnTopLevel () {
 	        const value = __a.value || __a.name;
 	        
 	        return `
-	            const test = require('@putout/test')(__dirname, {
-	                '${value}': ${name},
-	            });
-	        `;
+            const test = require('@putout/test')(__dirname, {
+                '${value}': ${name},
+            });
+        `;
 	    },
 	    [TRANSFORM]: (vars, path) => {
 	        const name = declareRequire(vars, path);
@@ -2878,10 +2886,10 @@ function requireMoveRequireOnTopLevel () {
 	        const value = __a.value || __a.name;
 	        
 	        return `
-	            t.transform(__c, {
-	                '${value}': ${name},
-	            });
-	    `;
+            t.transform(__c, {
+                '${value}': ${name},
+            });
+    `;
 	    },
 	});
 

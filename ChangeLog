@@ -1,3 +1,11 @@
+2022.09.06, v1.2.0
+
+feature:
+- package: eslint-plugin-putout v16.2.1
+- package: rollup-plugin-polyfill-node v0.10.2
+- package: rollup-plugin-node-externals v5.0.0
+- package: hermes-parser v0.9.0
+
 2022.07.13, v1.1.6
 
 fix:
