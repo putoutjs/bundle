@@ -1360,7 +1360,7 @@ function requireConvertTraverseToReplace () {
 	        if (withFix)
 	            return false;
 	        
-	        if (hasPushCall(path))
+	        if (check(path))
 	            return false;
 	        
 	        if (!__args.length)
@@ -1381,17 +1381,30 @@ function requireConvertTraverseToReplace () {
 	    'module.exports.traverse = (__args) => __a': 'module.exports.replace = (__args) => __a',
 	});
 
-	function hasPushCall(path) {
-	    let is = false;
+	function check(path) {
+	    let hasPushCall = false;
+	    let hasTraverseMethod = false;
 	    
 	    traverse(path, {
+	        'ObjectMethod|ObjectProperty': (path) => {
+	            const keyPath = path.get('key');
+	            
+	            if (!path.parentPath.isObjectExpression())
+	                return;
+	            
+	            if (!keyPath.isIdentifier())
+	                return;
+	            
+	            hasTraverseMethod = true;
+	            path.stop();
+	        },
 	        'push(__a)': (path) => {
-	            is = true;
+	            hasPushCall = true;
 	            path.stop();
 	        },
 	    });
 	    
-	    return is;
+	    return hasPushCall || hasTraverseMethod;
 	}
 	return convertTraverseToReplace;
 }
