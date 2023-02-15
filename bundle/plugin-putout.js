@@ -268,7 +268,12 @@ function requireGenerateCode () {
 	                    } = node;
 	                    
 	                    if (path.isStringLiteral() && /^__[a-z]$/.test(value)) {
-	                        path.node.value = getVar(value);
+	                        path.node.value = getVar(name);
+	                        return;
+	                    }
+	                    
+	                    if (/^__identifier__[a-z]$/.test(name)) {
+	                        path.node.name = getVar(name);
 	                        return;
 	                    }
 	                    
@@ -3270,8 +3275,8 @@ var rules = lib.rules = {
 
 var pluginPutout = /*#__PURE__*/_mergeNamespaces({
     __proto__: null,
-    rules: rules,
-    'default': lib
+    default: lib,
+    rules: rules
 }, [lib]);
 
 export { pluginPutout as default };

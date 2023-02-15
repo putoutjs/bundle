@@ -1,3 +1,13 @@
+2023.02.15, v1.4.0
+
+feature:
+- package: rollup-plugin-polyfill-node v0.12.0
+- package: @rollup/plugin-node-resolve v15.0.1
+- package: @rollup/plugin-json v6.0.0
+- package: putout v28.16.0
+- package: rollup v3.15.0
+- package: @rollup/plugin-alias v4.0.3
+
 2022.09.20, v1.3.0
 
 feature:
