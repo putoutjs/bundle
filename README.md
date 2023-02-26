@@ -45,6 +45,14 @@ console.log(putout('compare(a, b)', {
 });
 ```
 
+## IIFE
+
+When you want to access `putout` from global scope using `script` tag, use:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/@putout/bundle@1/bundle/putout-iife.js"></script>
+```
+
 ## License
 
 MIT
