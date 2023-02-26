@@ -1,3 +1,10 @@
+2023.02.26, v1.5.2
+
+feature:
+- @putout/bundle: add putout.cjs
+- package: @rollup/plugin-replace v5.0.2
+- package: @rollup/plugin-commonjs v24.0.1
+
 2023.02.26, v1.5.1
 
 fix:
