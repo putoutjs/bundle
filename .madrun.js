@@ -16,10 +16,11 @@ export default {
     'build:putout:iife': () => run('build:putout', build({
         name: 'putout',
         format: 'iife',
+        input: 'lib/putout.cjs',
         output: 'bundle/putout-iife.js',
     })),
 };
 
-function build({name, format, output}) {
-    return `--name ${name} --format ${format} --o ${output}`;
+function build({name, format, input, output}) {
+    return `--name ${name} --format ${format} --input ${input} --o ${output}`;
 }
