@@ -1,3 +1,8 @@
+2023.02.26, v1.6.0
+
+feature:
+- @putout/bundle: add index.html to npmignore
+
 2023.02.26, v1.5.3
 
 feature:
