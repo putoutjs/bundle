@@ -15,11 +15,14 @@ export default {
     'build:plugins:putout': () => 'rollup -c rollup.plugin-putout.js',
     'build:putout:iife': () => run('build:putout', build({
         name: 'putout',
-        format: 'iife',
+        format: 'umd',
+        input: 'lib/putout-iife.js',
         output: 'bundle/putout-iife.js',
+        exports: 'default',
     })),
 };
 
-function build({name, format, output}) {
-    return `--name ${name} --format ${format} --o ${output}`;
+function build({name, format, input, output, exports}) {
+    return `--name ${name} --format ${format} --input ${input} --o ${output} --exports ${exports}`;
 }
+
