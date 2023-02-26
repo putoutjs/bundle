@@ -17,10 +17,9 @@ export default {
         name: 'putout',
         format: 'iife',
         output: 'bundle/putout-iife.js',
-        exports: 'named',
     })),
 };
 
-function build({name, format, output, exports}) {
-    return `--name ${name} --format ${format} --o ${output} --exports ${exports}`
+function build({name, format, output}) {
+    return `--name ${name} --format ${format} --o ${output}`;
 }
