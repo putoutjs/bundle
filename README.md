@@ -50,7 +50,7 @@ console.log(putout('compare(a, b)', {
 When you want to access `putout` from global scope using `script` tag, use:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@putout/bundle@1.6/bundle/putout-iife.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@putout/bundle@1.7/bundle/putout-iife.js"></script>
 ```
 
 ## License
