@@ -1,3 +1,8 @@
+2023.02.26, v1.5.1
+
+fix:
+- @putout/bundle: drop named
+
 2023.02.26, v1.5.0
 
 feature:
