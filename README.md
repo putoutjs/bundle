@@ -1,7 +1,7 @@
 # @putout/bundle [![NPM version][NPMIMGURL]][NPMURL]
 
-[NPMIMGURL]: https://img.shields.io/npm/v/@putout/plugin-remove-debugger.svg?style=flat&longCache=true
-[NPMURL]: https://npmjs.org/package/@putout/plugin-remove-debugger "npm"
+[NPMIMGURL]: https://img.shields.io/npm/v/@putout/bundle.svg?style=flat&longCache=true
+[NPMURL]: https://npmjs.org/package/@putout/bundle "npm"
 
 🐊[**Putout**](https://github.com/coderaiser/putout) bundle to get things working in [**Deno**](https://deno.land) and **Browsers** using amazing [esm.sh](https://esm.sh).
 
