@@ -4,6 +4,9 @@ import json from '@rollup/plugin-json';
 import nodePolyfills from 'rollup-plugin-polyfill-node';
 import replace from '@rollup/plugin-replace';
 import alias from '@rollup/plugin-alias';
+import terser from '@rollup/plugin-terser';
+
+const {MINIFY} = process.env;
 
 export default {
     input: 'lib/putout.js',
@@ -12,6 +15,7 @@ export default {
         format: 'es',
     },
     plugins: [
+        MINIFY && terser(),
         alias({
             entries: [{find: './loader.mjs', replacement: './lib/loader.js'}],
         }),

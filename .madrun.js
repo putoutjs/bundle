@@ -1,5 +1,9 @@
 import {run} from 'madrun';
 
+const env = {
+    MINIFY: 1,
+};
+
 export default {
     'test': () => `tape 'test/*.js'`,
     'watch:test': async () => `nodemon -w lib -w test -x ${await run('test')}`,
@@ -13,13 +17,13 @@ export default {
     'build': () => run('build:*'),
     'build:putout': () => 'rollup -c',
     'build:plugins:putout': () => 'rollup -c rollup.plugin-putout.js',
-    'build:putout:iife': () => run('build:putout', build({
+    'build:putout:iife': async () => [env, await run('build:putout', build({
         name: 'putout',
         format: 'umd',
         input: 'lib/putout-iife.js',
         output: 'bundle/putout-iife.js',
         exports: 'default',
-    })),
+    }))],
 };
 
 function build({name, format, input, output, exports}) {
