@@ -1,3 +1,8 @@
+2023.02.27, v1.7.1
+
+feature:
+- package: @rollup/plugin-commonjs v24.0.1
+
 2023.02.26, v1.7.0
 
 feature:
