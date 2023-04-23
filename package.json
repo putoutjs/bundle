@@ -56,7 +56,7 @@
     "eslint": "^8.0.1",
     "eslint-plugin-node": "^11.0.0",
     "eslint-plugin-putout": "^16.2.1",
-    "hermes-parser": "^0.9.0",
+    "hermes-parser": "^0.10.1",
     "madrun": "^9.0.0",
     "nodemon": "^2.0.1",
     "putout": "^29.2.5",
