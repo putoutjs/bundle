@@ -1,4 +1,5 @@
 {
+    "printer": "putout",
     "match": {
         "*.md": {
             "remove-debugger": "off"
@@ -8,6 +9,6 @@
         }
     },
     "ignore": [
-        "bundle"
+        "**/bundle"
     ]
 }

@@ -17,10 +17,13 @@ export default {
     plugins: [
         MINIFY && terser(),
         alias({
-            entries: [
-                {find: './loader.mjs', replacement: './lib/loader.js'},
-                {find: 'chalk', replacement: './lib/chalk.js'},
-            ]
+            entries: [{
+                find: './loader.mjs',
+                replacement: './lib/loader.js',
+            }, {
+                find: 'chalk',
+                replacement: './lib/chalk.js',
+            }],
         }),
         commonjs({
             defaultIsModuleExports: false,
@@ -63,4 +66,3 @@ export default {
         }),
     ],
 };
-
