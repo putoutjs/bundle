@@ -1,3 +1,12 @@
+2023.04.23, v1.8.0
+
+feature:
+- 66d967a package: eslint-plugin-putout v17.5.0
+- f21e314 package: @rollup/plugin-alias v5.0.0
+- fe86dba package: @putout/plugin-putout v12.2.0
+- ab98d8f package: hermes-parser v0.10.1
+- 2c72e35 package: putout v29.2.5
+
 2023.02.27, v1.7.1
 
 feature:

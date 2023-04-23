@@ -30,22 +30,17 @@ function requireAddArgs () {
 	        'test("__a", async (__args) => __body)',
 	        'test.skip("__a", async (__args) => __body)',
 	        'test.only("__a", async (__args) => __body)',
-	    ],
-	    ],
-	    
+	    ]],
 	    process: ['{process}', [
 	        'test("__a", async (__args) => __body)',
 	        'test.skip("__a", async (__args) => __body)',
 	        'test.only("__a", async (__args) => __body)',
-	    ],
-	    ],
-	    
+	    ]],
 	    noProcess: ['{noProcess}', [
 	        'test("__a", async (__args) => __body)',
 	        'test.skip("__a", async (__args) => __body)',
 	        'test.only("__a", async (__args) => __body)',
-	    ],
-	    ],
+	    ]],
 	});
 	return addArgs_1;
 }
@@ -171,6 +166,22 @@ function requireApplyCreateTest () {
 	return applyCreateTest;
 }
 
+var applyDeclare = {};
+
+var hasRequiredApplyDeclare;
+
+function requireApplyDeclare () {
+	if (hasRequiredApplyDeclare) return applyDeclare;
+	hasRequiredApplyDeclare = 1;
+
+	applyDeclare.report = () => `Use 'Declarator' instead of 'operator.declare()'`;
+
+	applyDeclare.replace = () => ({
+	    'module.exports = declare(__a)': 'module.exports.declare = () => __a',
+	});
+	return applyDeclare;
+}
+
 var applyProcessorsDestructuring = {};
 
 var hasRequiredApplyProcessorsDestructuring;
@@ -185,7 +196,6 @@ function requireApplyProcessorsDestructuring () {
 	    'async (t) => {await t.process(__args)}': 'async ({process}) => {await process(__args)}',
 	    'async (t) => {await t.noProcess(__args)}': 'async ({noProcess}) => {await noProcess(__args)}',
 	    'async (t) => {await t.comparePlaces(__args)}': 'async ({comparePlaces}) => {await comparePlaces(__args)}',
-	    
 	    'async (t) => {await t.process(__args); t.end();}': 'async ({process}) => {await process(__args)}',
 	    'async (t) => {await t.noProcess(__args); t.end();}': 'async ({noProcess}) => {await noProcess(__args)}',
 	    'async (t) => {await t.comparePlaces(__args); t.end();}': 'async ({comparePlaces}) => {await comparePlaces(__args)}',
@@ -237,9 +247,15 @@ function requireGenerateCode () {
 
 	const putout = require$$0$1;
 	const tryCatch = requireTryCatch();
+	const noop = () => {};
 
-	const {types, operator} = putout;
+	const {
+	    types,
+	    operator,
+	} = putout;
+
 	const {replaceWith} = operator;
+
 	const {
 	    ArrayPattern,
 	    ObjectPattern,
@@ -249,12 +265,13 @@ function requireGenerateCode () {
 
 	generateCode = (rootPath, key) => {
 	    const getVar = createVarStore(rootPath);
+	    
 	    const [transformError, result] = tryCatch(putout, key, {
 	        fix: true,
 	        isTS: true,
 	        plugins: [
 	            ['generate', {
-	                report: () => {},
+	                report: noop,
 	                include: () => [
 	                    'Identifier',
 	                    'StringLiteral',
@@ -308,7 +325,10 @@ function requireGenerateCode () {
 	        ],
 	    });
 	    
-	    return [transformError, result?.code];
+	    return [
+	        transformError,
+	        result?.code,
+	    ];
 	};
 
 	function createVarStore(path) {
@@ -346,11 +366,9 @@ function requireCheckReplaceCode () {
 
 	const putout = require$$0$1;
 	const tryCatch = requireTryCatch();
-
 	const generateCode = requireGenerateCode();
-
+	const noop = () => {};
 	const {operator} = putout;
-
 	const {
 	    compare,
 	    extract,
@@ -358,7 +376,6 @@ function requireCheckReplaceCode () {
 	} = operator;
 
 	const name = '__putout_plugin_check_replace_code';
-
 	const get = (path) => path[name];
 	const set = (path) => path[name] = true;
 
@@ -404,6 +421,7 @@ function requireCheckReplaceCode () {
 	                    mainPath: path,
 	                    path: propertyPath,
 	                });
+	                
 	                return;
 	            }
 	            
@@ -416,6 +434,7 @@ function requireCheckReplaceCode () {
 	                    mainPath: path,
 	                    path: propertyPath,
 	                });
+	                
 	                return;
 	            }
 	            
@@ -424,7 +443,7 @@ function requireCheckReplaceCode () {
 	                isTS: true,
 	                plugins: [
 	                    ['evaluate', {
-	                        report: () => {},
+	                        report: noop,
 	                        replace: () => ({
 	                            [key]: template,
 	                        }),
@@ -438,6 +457,7 @@ function requireCheckReplaceCode () {
 	                    mainPath: path,
 	                    path: propertyPath,
 	                });
+	                
 	                return;
 	            }
 	            
@@ -459,13 +479,19 @@ function requireCheckReplaceCode () {
 	    const [isComputed, key] = compute(keyPath);
 	    
 	    if (!isComputed)
-	        return [Error(`Replace key cannot be computed: '${keyPath.toString()}'`)];
+	        return [
+	            Error(`Replace key cannot be computed: '${keyPath.toString()}'`),
+	        ];
 	    
-	    return [null, key];
+	    return [
+	        null,
+	        key,
+	    ];
 	}
 
 	function hasMatch(path) {
-	    const {body} = path.scope.getProgramParent().path.node;
+	    const {body} = path.scope
+	        .getProgramParent().path.node;
 	    
 	    for (const current of body) {
 	        if (compare(current, 'module.exports.match = __a'))
@@ -521,16 +547,17 @@ function requireConvertBabelTypes () {
 
 	function isRequire(path) {
 	    return path
-	        .get('callee')
-	        .isIdentifier({name: 'require'});
+	        .get('callee').isIdentifier({
+	            name: 'require',
+	        });
 	}
 
 	function isBabelTypes(path) {
 	    return path
-	        .get('arguments.0')
-	        .isStringLiteral({value: '@babel/types'});
+	        .get('arguments.0').isStringLiteral({
+	            value: '@babel/types',
+	        });
 	}
-
 	convertBabelTypes.traverse = ({push}) => ({
 	    CallExpression(path) {
 	        if (!isRequire(path))
@@ -616,7 +643,11 @@ function requireConvertFindToTraverse () {
 	if (hasRequiredConvertFindToTraverse) return convertFindToTraverse;
 	hasRequiredConvertFindToTraverse = 1;
 
-	const {types, operator} = require$$0$1;
+	const {
+	    types,
+	    operator,
+	} = require$$0$1;
+
 	const {replaceWith} = operator;
 
 	const {
@@ -640,11 +671,9 @@ function requireConvertFindToTraverse () {
 	    isMemberExpression: (path) => {
 	        path.get('property').node.name = 'traverse';
 	    },
-	    
 	    isFunction: (path) => {
 	        path.node.params = [path.node.params[1]];
 	    },
-	    
 	    isCallExpression: (path) => {
 	        replaceWith(path, ReturnStatement(path.node.arguments[1]));
 	    },
@@ -662,7 +691,6 @@ function requireConvertFindToTraverse () {
 	            return;
 	        
 	        const traverseCallPath = getTraverseCall(rightPath);
-	        
 	        push(traverseCallPath);
 	        push(leftPath);
 	        push(rightPath);
@@ -688,10 +716,13 @@ function requireConvertFindToTraverse () {
 	    
 	    path.traverse({
 	        CallExpression(path) {
-	            if (!path.get('callee').isIdentifier({name: 'traverse'}))
+	            if (!path.get('callee').isIdentifier({
+	                name: 'traverse',
+	            }))
 	                return;
 	            
 	            result = path;
+	            
 	            path.stop();
 	        },
 	    });
@@ -735,7 +766,9 @@ function requireConvertMethodToProperty () {
 
 	convertMethodToProperty.report = () => 'Object Property should be used instead of Method';
 
-	convertMethodToProperty.include = () => ['ObjectMethod'];
+	convertMethodToProperty.include = () => [
+	    'ObjectMethod',
+	];
 
 	convertMethodToProperty.filter = (path) => {
 	    if (!path.node.params.length)
@@ -751,6 +784,7 @@ function requireConvertMethodToProperty () {
 
 	convertMethodToProperty.fix = (path) => {
 	    const keyPath = path.get('key');
+	    
 	    path.node.type = 'ArrowFunctionExpression';
 	    path.node.id = null;
 	    
@@ -802,7 +836,6 @@ function requireConvertNodeToPathInGetTemplateValues () {
 	    'getTemplateValues(__a, __b)': (path) => {
 	        const {scope} = path;
 	        const {bindings} = scope;
-	        
 	        const __aPath = path.get('arguments.0');
 	        
 	        if (__aPath.isMemberExpression()) {
@@ -924,7 +957,6 @@ function requireConvertPutoutTestToCreateTest () {
 	const {assign} = Object;
 
 	convertPutoutTestToCreateTest.report = () => `Use 'createTest' instead of 'putoutTest'`;
-
 	convertPutoutTestToCreateTest.filter = ({scope}) => !scope.bindings.createTest;
 
 	convertPutoutTestToCreateTest.include = () => [
@@ -1045,8 +1077,7 @@ function requireConvertReplaceWith () {
 	    const id = Identifier('replaceWith');
 	    const varPath = getVarPath(bindings);
 	    
-	    varPath.node.id.properties
-	        .unshift(ObjectProperty(id, id, false, true));
+	    varPath.node.id.properties.unshift(ObjectProperty(id, id, false, true));
 	};
 
 	function getVarPath(bindings) {
@@ -1060,7 +1091,6 @@ function requireConvertReplaceWith () {
 	    
 	    return insertAfter.path;
 	}
-
 	convertReplaceWith.traverse = ({push}) => {
 	    const isInserted = fullstore();
 	    
@@ -1071,7 +1101,10 @@ function requireConvertReplaceWith () {
 	            if (!calleePath.isMemberExpression())
 	                return;
 	            
-	            const {object, property} = calleePath.node;
+	            const {
+	                object,
+	                property,
+	            } = calleePath.node;
 	            
 	            if (property.name !== 'replaceWith')
 	                return;
@@ -1138,10 +1171,9 @@ function requireConvertReplaceWithMultiple () {
 	        return insertAfter(strictModePath, replaceWithAST);
 	    
 	    const id = Identifier('replaceWithMultiple');
-	    
 	    const varPath = getVarPath(bindings);
-	    varPath.node.id.properties
-	        .push(ObjectProperty(id, id, false, true));
+	    
+	    varPath.node.id.properties.push(ObjectProperty(id, id, false, true));
 	};
 
 	function getVarPath(bindings) {
@@ -1155,7 +1187,6 @@ function requireConvertReplaceWithMultiple () {
 	    
 	    return insertAfter.path;
 	}
-
 	convertReplaceWithMultiple.traverse = ({push}) => ({
 	    CallExpression(path) {
 	        const calleePath = path.get('callee');
@@ -1163,7 +1194,10 @@ function requireConvertReplaceWithMultiple () {
 	        if (!calleePath.isMemberExpression())
 	            return;
 	        
-	        const {object, property} = calleePath.node;
+	        const {
+	            object,
+	            property,
+	        } = calleePath.node;
 	        
 	        if (property.name !== 'replaceWithMultiple')
 	            return;
@@ -1232,7 +1266,10 @@ function requireConvertToNoTransformCode () {
 	        if (!calleePath.isMemberExpression())
 	            return;
 	        
-	        const {object, property} = calleePath.node;
+	        const {
+	            object,
+	            property,
+	        } = calleePath.node;
 	        
 	        if (object.name !== 't' || property.name !== 'transformCode')
 	            return;
@@ -1272,12 +1309,14 @@ function requireConvertTraverseToInclude () {
 	    template,
 	    operator,
 	} = require$$0$1;
+
 	const {StringLiteral} = types;
 	const {compare} = operator;
 
-	const isPush = (path) => path.get('value').isIdentifier({
-	    name: 'push',
-	});
+	const isPush = (path) => path
+	    .get('value').isIdentifier({
+	        name: 'push',
+	    });
 
 	convertTraverseToInclude.report = () => 'Includer should be used instead of Traverser';
 
@@ -1358,6 +1397,7 @@ function requireConvertTraverseToReplace () {
 	convertTraverseToReplace.match = () => ({
 	    'module.exports.traverse = (__args) => __a': ({__args}, path) => {
 	        const program = path.scope.getProgramParent().path;
+	        
 	        const withFix = contains(program, [
 	            'module.exports.fix = __a',
 	        ]);
@@ -1401,6 +1441,7 @@ function requireConvertTraverseToReplace () {
 	                return;
 	            
 	            hasTraverseMethod = true;
+	            
 	            path.stop();
 	        },
 	        'push(__a)': (path) => {
@@ -1436,6 +1477,97 @@ function requireConvertUrlToDirname () {
 	});
 	return convertUrlToDirname;
 }
+
+var createTest = {};
+
+var hasRequiredCreateTest;
+
+function requireCreateTest () {
+	if (hasRequiredCreateTest) return createTest;
+	hasRequiredCreateTest = 1;
+
+	const {
+	    operator,
+	    types,
+	} = require$$0$1;
+
+	const {
+	    StringLiteral,
+	    ArrayExpression,
+	    Identifier,
+	    ObjectProperty,
+	    ObjectExpression,
+	    isIdentifier,
+	} = types;
+
+	const {
+	    replaceWith,
+	    getProperty,
+	} = operator;
+
+	const selector = 'createTest(__dirname, __object)';
+
+	createTest.report = () => `Apply modifications to 'createTest()' options`;
+
+	createTest.include = () => [
+	    selector,
+	];
+
+	createTest.fix = (path, {options}) => {
+	    const objectPath = path.get('arguments.1');
+	    
+	    if (!getProperty(objectPath, 'plugins'))
+	        convert(objectPath);
+	    
+	    for (const [name, value] of options.add) {
+	        if (getProperty(objectPath, name))
+	            continue;
+	        
+	        const property = ObjectProperty(Identifier(name), StringLiteral(value));
+	        objectPath.node.properties.unshift(property);
+	    }
+	};
+
+	createTest.filter = (path, {options}) => {
+	    if (!options.add)
+	        return false;
+	    
+	    const objectPath = path.get('arguments.1');
+	    
+	    for (const [name] of options.add) {
+	        if (!getProperty(objectPath, name))
+	            return true;
+	    }
+	    
+	    return false;
+	};
+
+	const maybeLiteral = (a) => {
+	    if (isIdentifier(a))
+	        return StringLiteral(a.name);
+	    
+	    return a;
+	};
+
+	function convert(objectPath) {
+	    const {
+	        key,
+	        value,
+	    } = objectPath.node.properties[0];
+	    
+	    replaceWith(objectPath, ObjectExpression([
+	        ObjectProperty(Identifier('plugins'), ArrayExpression([
+	            ArrayExpression([
+	                maybeLiteral(key),
+	                value,
+	            ]),
+	        ])),
+	    ]));
+	}
+	return createTest;
+}
+
+var declare = {};
 
 var types = "import {types} from 'putout'";
 var is = "const {is} = types";
@@ -2743,38 +2875,22 @@ function requireOperator () {
 	return operator;
 }
 
-var declarations;
-var hasRequiredDeclarations;
+var hasRequiredDeclare;
 
-function requireDeclarations () {
-	if (hasRequiredDeclarations) return declarations;
-	hasRequiredDeclarations = 1;
+function requireDeclare () {
+	if (hasRequiredDeclare) return declare;
+	hasRequiredDeclare = 1;
 
 	const types = require$$0;
 	const operator = requireOperator();
 
-	declarations = {
+	declare.declare = () => ({
 	    template: `import {template} from 'putout'`,
 	    createTest: `import {createTest} from '@putout/test'`,
 	    ...operator,
 	    ...types,
-	};
-	return declarations;
-}
-
-var declare_1;
-var hasRequiredDeclare;
-
-function requireDeclare () {
-	if (hasRequiredDeclare) return declare_1;
-	hasRequiredDeclare = 1;
-
-	const {operator} = require$$0$1;
-	const declarations = requireDeclarations();
-	const {declare} = operator;
-
-	declare_1 = declare(declarations);
-	return declare_1;
+	});
+	return declare;
 }
 
 var includer = {};
@@ -2790,10 +2906,8 @@ function requireIncluder () {
 	includer.replace = () => ({
 	    'module.exports.include = () => "__a"': 'module.exports.include = ["__a"]',
 	    'module.exports.exclude = () => "__a"': 'module.exports.exclude = ["__a"]',
-	    
 	    'module.exports.include = ["__a"]': 'module.exports.include = () => ["__a"]',
 	    'module.exports.exclude = ["__a"]': 'module.exports.exclude = () => ["__a"]',
-	    
 	    'module.exports.include = "__a"': 'module.exports.include = ["__a"]',
 	    'module.exports.exclude = "__a"': 'module.exports.exclude= ["__a"]',
 	});
@@ -2856,6 +2970,7 @@ function requireMoveRequireOnTopLevel () {
 	hasRequiredMoveRequireOnTopLevel = 1;
 
 	const justCamelCase = requireJustCamelCase();
+
 	const {
 	    types,
 	    template,
@@ -2877,13 +2992,14 @@ function requireMoveRequireOnTopLevel () {
 	    Identifier,
 	    isIdentifier,
 	    isObjectExpression,
+	    isMemberExpression,
 	} = types;
 
 	moveRequireOnTopLevel.report = () => 'Move require on top level';
 
 	moveRequireOnTopLevel.match = () => ({
 	    [TEST]: ({__b}) => !isIdentifier(__b),
-	    [TRANSFORM]: ({__b}) => !isIdentifier(__b) && !isObjectExpression(__b),
+	    [TRANSFORM]: ({__b}) => !isIdentifier(__b) && !isObjectExpression(__b) && !isMemberExpression(__b),
 	});
 
 	moveRequireOnTopLevel.replace = () => ({
@@ -2914,8 +3030,11 @@ function requireMoveRequireOnTopLevel () {
 	const buildRequire = template(`const NAME = REQUIRE`);
 
 	function declareRequire({__a, __b}, path) {
-	    const shortName = (__a.value || __a.name).split('/').pop();
+	    const shortName = __a.value || __a.name
+	        .split('/').pop();
+	    
 	    const name = justCamelCase(shortName);
+	    
 	    const requireNode = buildRequire({
 	        NAME: Identifier(name),
 	        REQUIRE: __b,
@@ -2924,7 +3043,9 @@ function requireMoveRequireOnTopLevel () {
 	    if (path.scope.hasBinding(name))
 	        return name;
 	    
-	    const programPath = path.scope.getProgramParent().path;
+	    const programPath = path.scope
+	        .getProgramParent().path;
+	    
 	    programPath.node.body.unshift(requireNode);
 	    
 	    return name;
@@ -2984,7 +3105,6 @@ function requireReplaceTestMessage () {
 	hasRequiredReplaceTestMessage = 1;
 
 	const {types} = require$$0$1;
-
 	const {isCallExpression} = types;
 
 	replaceTestMessage.report = ({correct, operatorPath}) => {
@@ -3042,17 +3162,24 @@ function requireReplaceTestMessage () {
 	    const calleePath = path.findParent(isCallExpression);
 	    
 	    if (!calleePath)
-	        return [CORRECT];
+	        return [
+	            CORRECT,
+	        ];
 	    
 	    const messagePath = calleePath.get('arguments.0');
 	    
 	    if (!messagePath.isStringLiteral())
-	        return [CORRECT];
+	        return [
+	            CORRECT,
+	        ];
 	    
 	    const {value} = messagePath.node;
 	    const is = !incorrect.test(value);
 	    
-	    return [is, messagePath];
+	    return [
+	        is,
+	        messagePath,
+	    ];
 	}
 	return replaceTestMessage;
 }
@@ -3086,6 +3213,8 @@ function getDynamicModules() {
 		"/node_modules/@putout/plugin-putout/lib/apply-async-formatter/index.js": requireApplyAsyncFormatter,
 		"/node_modules/@putout/plugin-putout/lib/apply-create-test": requireApplyCreateTest,
 		"/node_modules/@putout/plugin-putout/lib/apply-create-test/index.js": requireApplyCreateTest,
+		"/node_modules/@putout/plugin-putout/lib/apply-declare": requireApplyDeclare,
+		"/node_modules/@putout/plugin-putout/lib/apply-declare/index.js": requireApplyDeclare,
 		"/node_modules/@putout/plugin-putout/lib/apply-processors-destructuring": requireApplyProcessorsDestructuring,
 		"/node_modules/@putout/plugin-putout/lib/apply-processors-destructuring/index.js": requireApplyProcessorsDestructuring,
 		"/node_modules/@putout/plugin-putout/lib/apply-remove": requireApplyRemove,
@@ -3130,6 +3259,8 @@ function getDynamicModules() {
 		"/node_modules/@putout/plugin-putout/lib/convert-traverse-to-replace/index.js": requireConvertTraverseToReplace,
 		"/node_modules/@putout/plugin-putout/lib/convert-url-to-dirname": requireConvertUrlToDirname,
 		"/node_modules/@putout/plugin-putout/lib/convert-url-to-dirname/index.js": requireConvertUrlToDirname,
+		"/node_modules/@putout/plugin-putout/lib/create-test": requireCreateTest,
+		"/node_modules/@putout/plugin-putout/lib/create-test/index.js": requireCreateTest,
 		"/node_modules/@putout/plugin-putout/lib/declare": requireDeclare,
 		"/node_modules/@putout/plugin-putout/lib/declare/index.js": requireDeclare,
 		"/node_modules/@putout/plugin-putout/lib/includer": requireIncluder,
@@ -3242,6 +3373,7 @@ var rules = lib.rules = {
     ...getRule('apply-async-formatter'),
     ...getRule('apply-create-test'),
     ...getRule('apply-remove'),
+    ...getRule('apply-declare'),
     ...getRule('convert-putout-test-to-create-test'),
     ...getRule('convert-to-no-transform-code'),
     ...getRule('convert-find-to-traverse'),
@@ -3271,6 +3403,7 @@ var rules = lib.rules = {
     ...getRule('add-push'),
     ...getRule('move-require-on-top-level'),
     ...getRule('includer'),
+    ...getRule('create-test'),
 };
 
 var pluginPutout = /*#__PURE__*/_mergeNamespaces({
