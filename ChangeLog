@@ -1,3 +1,8 @@
+2023.04.24, v1.8.2
+
+fix:
+- 5904657 @putout/engine-runner: throw when statement in place of expression
+
 2023.04.23, v1.8.1
 
 fix:
