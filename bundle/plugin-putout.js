@@ -490,8 +490,7 @@ function requireCheckReplaceCode () {
 	}
 
 	function hasMatch(path) {
-	    const {body} = path.scope
-	        .getProgramParent().path.node;
+	    const {body} = path.scope.getProgramParent().path.node;
 	    
 	    for (const current of body) {
 	        if (compare(current, 'module.exports.match = __a'))
@@ -547,17 +546,20 @@ function requireConvertBabelTypes () {
 
 	function isRequire(path) {
 	    return path
-	        .get('callee').isIdentifier({
+	        .get('callee')
+	        .isIdentifier({
 	            name: 'require',
 	        });
 	}
 
 	function isBabelTypes(path) {
 	    return path
-	        .get('arguments.0').isStringLiteral({
+	        .get('arguments.0')
+	        .isStringLiteral({
 	            value: '@babel/types',
 	        });
 	}
+
 	convertBabelTypes.traverse = ({push}) => ({
 	    CallExpression(path) {
 	        if (!isRequire(path))
@@ -716,9 +718,7 @@ function requireConvertFindToTraverse () {
 	    
 	    path.traverse({
 	        CallExpression(path) {
-	            if (!path.get('callee').isIdentifier({
-	                name: 'traverse',
-	            }))
+	            if (!path.get('callee').isIdentifier({name: 'traverse'}))
 	                return;
 	            
 	            result = path;
@@ -1091,6 +1091,7 @@ function requireConvertReplaceWith () {
 	    
 	    return insertAfter.path;
 	}
+
 	convertReplaceWith.traverse = ({push}) => {
 	    const isInserted = fullstore();
 	    
@@ -1187,6 +1188,7 @@ function requireConvertReplaceWithMultiple () {
 	    
 	    return insertAfter.path;
 	}
+
 	convertReplaceWithMultiple.traverse = ({push}) => ({
 	    CallExpression(path) {
 	        const calleePath = path.get('callee');
@@ -1313,10 +1315,9 @@ function requireConvertTraverseToInclude () {
 	const {StringLiteral} = types;
 	const {compare} = operator;
 
-	const isPush = (path) => path
-	    .get('value').isIdentifier({
-	        name: 'push',
-	    });
+	const isPush = (path) => path.get('value').isIdentifier({
+	    name: 'push',
+	});
 
 	convertTraverseToInclude.report = () => 'Includer should be used instead of Traverser';
 
@@ -1398,9 +1399,7 @@ function requireConvertTraverseToReplace () {
 	    'module.exports.traverse = (__args) => __a': ({__args}, path) => {
 	        const program = path.scope.getProgramParent().path;
 	        
-	        const withFix = contains(program, [
-	            'module.exports.fix = __a',
-	        ]);
+	        const withFix = contains(program, ['module.exports.fix = __a']);
 	        
 	        if (withFix)
 	            return false;
@@ -1411,9 +1410,7 @@ function requireConvertTraverseToReplace () {
 	        if (!__args.length)
 	            return true;
 	        
-	        const withPush = contains(__args[0], [
-	            'push',
-	        ]);
+	        const withPush = contains(__args[0], ['push']);
 	        
 	        if (withPush)
 	            return false;
@@ -1505,12 +1502,11 @@ function requireCreateTest () {
 	    getProperty,
 	} = operator;
 
-	const selector = 'createTest(__dirname, __object)';
-
 	createTest.report = () => `Apply modifications to 'createTest()' options`;
 
 	createTest.include = () => [
-	    selector,
+	    'createTest(__dirname, __object)',
+	    'createTest(import.meta.url, __object)',
 	];
 
 	createTest.fix = (path, {options}) => {
@@ -3030,8 +3026,7 @@ function requireMoveRequireOnTopLevel () {
 	const buildRequire = template(`const NAME = REQUIRE`);
 
 	function declareRequire({__a, __b}, path) {
-	    const shortName = __a.value || __a.name
-	        .split('/').pop();
+	    const shortName = __a.value || __a.name.split('/').pop();
 	    
 	    const name = justCamelCase(shortName);
 	    
@@ -3043,8 +3038,7 @@ function requireMoveRequireOnTopLevel () {
 	    if (path.scope.hasBinding(name))
 	        return name;
 	    
-	    const programPath = path.scope
-	        .getProgramParent().path;
+	    const programPath = path.scope.getProgramParent().path;
 	    
 	    programPath.node.body.unshift(requireNode);
 	    
@@ -3114,6 +3108,7 @@ function requireReplaceTestMessage () {
 
 	replaceTestMessage.fix = ({path, incorrect, correct}) => {
 	    path.node.value = path.node.value.replace(incorrect, correct);
+	    path.node.raw = path.node.raw.replace(incorrect, correct);
 	};
 
 	replaceTestMessage.traverse = ({push}) => ({
@@ -3176,10 +3171,7 @@ function requireReplaceTestMessage () {
 	    const {value} = messagePath.node;
 	    const is = !incorrect.test(value);
 	    
-	    return [
-	        is,
-	        messagePath,
-	    ];
+	    return [is, messagePath];
 	}
 	return replaceTestMessage;
 }
