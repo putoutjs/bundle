@@ -2867,6 +2867,7 @@ function requireOperator () {
 	    isESM: `const {isESM} = operator`,
 	    getProperty: `const {getProperty} = operator`,
 	    getProperties: `const {getProperties} = operator`,
+	    isSimple: `const {isSimple} = operator`,
 	};
 	return operator;
 }
