@@ -53,10 +53,7 @@ function requireAddPush () {
 	if (hasRequiredAddPush) return addPush;
 	hasRequiredAddPush = 1;
 
-	const {
-	    types,
-	    operator,
-	} = require$$0$1;
+	const {types, operator} = require$$0$1;
 
 	const {traverse} = operator;
 
@@ -103,10 +100,7 @@ function requireApplyAsyncFormatter () {
 	if (hasRequiredApplyAsyncFormatter) return applyAsyncFormatter;
 	hasRequiredApplyAsyncFormatter = 1;
 
-	const {
-	    operator,
-	    types,
-	} = require$$0$1;
+	const {operator, types} = require$$0$1;
 
 	const computed = true;
 	const shorthand = true;
@@ -219,6 +213,70 @@ function requireApplyRemove () {
 	return applyRemove;
 }
 
+var checkMatch = {};
+
+var hasRequiredCheckMatch;
+
+function requireCheckMatch () {
+	if (hasRequiredCheckMatch) return checkMatch;
+	hasRequiredCheckMatch = 1;
+
+	const {operator, types} = require$$0$1;
+
+	const {
+	    getTemplateValues,
+	    traverse,
+	} = operator;
+
+	const {isStringLiteral} = types;
+
+	const PATTERN_MATCH = 'module.exports.match = () => __object';
+	const PATTERN_REPLACE = 'module.exports.replace = () => __object';
+
+	checkMatch.report = () => `☝️ Looks like 'match()' template absent in 'replace()'`;
+
+	checkMatch.replace = () => ({
+	    [PATTERN_MATCH]: PATTERN_MATCH,
+	});
+
+	checkMatch.match = () => ({
+	    [PATTERN_MATCH]: ({__object}, path) => {
+	        const namesMatch = [];
+	        
+	        for (const prop of __object.properties) {
+	            if (!isStringLiteral(prop.key))
+	                continue;
+	            
+	            namesMatch.push(prop.key.value);
+	        }
+	        
+	        const namesReplace = [];
+	        
+	        traverse(path.parentPath.parentPath, {
+	            [PATTERN_REPLACE]: (path) => {
+	                const {__object} = getTemplateValues(path, PATTERN_REPLACE);
+	                
+	                for (const prop of __object.properties) {
+	                    if (!isStringLiteral(prop.key))
+	                        continue;
+	                    
+	                    namesReplace.push(prop.key.value);
+	                }
+	            },
+	        });
+	        
+	        for (const name of namesMatch) {
+	            if (!namesReplace.includes(name)) {
+	                return true;
+	            }
+	        }
+	        
+	        return false;
+	    },
+	});
+	return checkMatch;
+}
+
 var checkReplaceCode = {};
 
 var tryCatch;
@@ -249,11 +307,7 @@ function requireGenerateCode () {
 	const tryCatch = requireTryCatch();
 	const noop = () => {};
 
-	const {
-	    types,
-	    operator,
-	} = putout;
-
+	const {types, operator} = putout;
 	const {replaceWith} = operator;
 
 	const {
@@ -267,6 +321,7 @@ function requireGenerateCode () {
 	    const getVar = createVarStore(rootPath);
 	    
 	    const [transformError, result] = tryCatch(putout, key, {
+	        printer: 'putout',
 	        fix: true,
 	        isTS: true,
 	        plugins: [
@@ -279,10 +334,7 @@ function requireGenerateCode () {
 	                fix: (path) => {
 	                    const {node} = path;
 	                    
-	                    const {
-	                        value,
-	                        name,
-	                    } = node;
+	                    const {value, name} = node;
 	                    
 	                    if (path.isStringLiteral() && /^__[a-z]$/.test(value)) {
 	                        path.node.value = getVar(name);
@@ -295,6 +347,11 @@ function requireGenerateCode () {
 	                    }
 	                    
 	                    if (/^__[a-z]$/.test(name)) {
+	                        path.node.name = getVar(name);
+	                        return;
+	                    }
+	                    
+	                    if (/__args/.test(name)) {
 	                        path.node.name = getVar(name);
 	                        return;
 	                    }
@@ -439,6 +496,7 @@ function requireCheckReplaceCode () {
 	            }
 	            
 	            const [transformError, result] = tryCatch(putout, keyCode, {
+	                printer: 'putout',
 	                fix: true,
 	                isTS: true,
 	                plugins: [
@@ -461,7 +519,7 @@ function requireCheckReplaceCode () {
 	                return;
 	            }
 	            
-	            const {code} = result;
+	            const code = result.code.slice(0, -1);
 	            const [error, is] = tryCatch(compare, rmSemi(code), template);
 	            
 	            if (error || !is)
@@ -483,10 +541,7 @@ function requireCheckReplaceCode () {
 	            Error(`Replace key cannot be computed: '${keyPath.toString()}'`),
 	        ];
 	    
-	    return [
-	        null,
-	        key,
-	    ];
+	    return [null, key];
 	}
 
 	function hasMatch(path) {
@@ -510,11 +565,16 @@ function requireConvertAddArgumentToAddArgs () {
 	if (hasRequiredConvertAddArgumentToAddArgs) return convertAddArgumentToAddArgs;
 	hasRequiredConvertAddArgumentToAddArgs = 1;
 
+	const {operator} = require$$0$1;
+	const {rename} = operator;
+
 	convertAddArgumentToAddArgs.report = () => 'Use addArgs instead of addArgument';
 
 	convertAddArgumentToAddArgs.replace = () => ({
 	    'addArgument(__args)': (vars, path) => {
-	        path.scope.rename('addArgument', 'addArgs');
+	        const program = path.scope.getProgramParent().path;
+	        rename(program, 'addArgument', 'addArgs');
+	        
 	        return path;
 	    },
 	});
@@ -529,10 +589,7 @@ function requireConvertBabelTypes () {
 	if (hasRequiredConvertBabelTypes) return convertBabelTypes;
 	hasRequiredConvertBabelTypes = 1;
 
-	const {
-	    operator,
-	    template,
-	} = require$$0$1;
+	const {operator, template} = require$$0$1;
 
 	const {replaceWith} = operator;
 
@@ -645,10 +702,7 @@ function requireConvertFindToTraverse () {
 	if (hasRequiredConvertFindToTraverse) return convertFindToTraverse;
 	hasRequiredConvertFindToTraverse = 1;
 
-	const {
-	    types,
-	    operator,
-	} = require$$0$1;
+	const {types, operator} = require$$0$1;
 
 	const {replaceWith} = operator;
 
@@ -756,10 +810,7 @@ function requireConvertMethodToProperty () {
 	if (hasRequiredConvertMethodToProperty) return convertMethodToProperty;
 	hasRequiredConvertMethodToProperty = 1;
 
-	const {
-	    types,
-	    operator,
-	} = require$$0$1;
+	const {types, operator} = require$$0$1;
 
 	const {replaceWith} = operator;
 	const {ObjectProperty} = types;
@@ -801,10 +852,7 @@ function requireConvertNodeToPathInGetTemplateValues () {
 	if (hasRequiredConvertNodeToPathInGetTemplateValues) return convertNodeToPathInGetTemplateValues;
 	hasRequiredConvertNodeToPathInGetTemplateValues = 1;
 
-	const {
-	    types,
-	    operator,
-	} = require$$0$1;
+	const {types, operator} = require$$0$1;
 
 	const {
 	    compare,
@@ -881,29 +929,29 @@ function requireConvertNumberToNumeric () {
 	if (hasRequiredConvertNumberToNumeric) return convertNumberToNumeric;
 	hasRequiredConvertNumberToNumeric = 1;
 
+	const {operator} = require$$0$1;
+	const {rename} = operator;
+
 	convertNumberToNumeric.report = () => `Use 'isNumericLiteral()' instead of 'isNumberLiteral()'`;
 
 	convertNumberToNumeric.fix = (path) => {
 	    const bindings = path.scope.getAllBindings();
 	    const {name} = path.node.callee;
+	    const program = path.scope.getProgramParent().path;
 	    
 	    if (!bindings.isNumericLiteral)
-	        path.scope.rename('isNumberLiteral', 'isNumericLiteral');
+	        rename(program, 'isNumberLiteral', 'isNumericLiteral');
 	    
 	    if (!bindings.NumericLiteral)
-	        path.scope.rename('NumberLiteral', 'NumericLiteral');
+	        rename(program, 'NumberLiteral', 'NumericLiteral');
 	    
 	    path.node.callee.name = name.replace('Number', 'Numeric');
 	};
 
-	convertNumberToNumeric.traverse = ({push}) => ({
-	    'isNumberLiteral(__a)': (path) => {
-	        push(path);
-	    },
-	    'NumberLiteral(__a)': (path) => {
-	        push(path);
-	    },
-	});
+	convertNumberToNumeric.include = () => [
+	    'isNumberLiteral(__a)',
+	    'NumberLiteral(__a)',
+	];
 	return convertNumberToNumeric;
 }
 
@@ -1035,15 +1083,12 @@ function requireConvertReplaceWith () {
 
 	const fullstore = requireFullstore();
 
-	const {
-	    Identifier,
-	    ObjectProperty,
-	} = types;
+	const {Identifier, ObjectProperty} = types;
+	const {replaceWith, insertAfter} = operator;
 
-	const {
-	    replaceWith,
-	    insertAfter,
-	} = operator;
+	const isRecast = (program) => program.get('body.0.expression').isStringLiteral({
+	    value: 'use strict',
+	});
 
 	convertReplaceWith.report = () => {
 	    return `"operator.replaceWith" should be called instead of "path.replaceWith"`;
@@ -1051,9 +1096,7 @@ function requireConvertReplaceWith () {
 
 	convertReplaceWith.fix = ({path, calleePath, property, object, program, isInserted}) => {
 	    replaceWith(calleePath, property);
-	    
-	    const strictModePath = program.get('body.0');
-	    const {bindings} = strictModePath.scope;
+	    const {bindings} = program.scope;
 	    
 	    path.node.arguments.unshift(object);
 	    
@@ -1066,10 +1109,17 @@ function requireConvertReplaceWith () {
         `);
 	        
 	        const {types} = bindings;
-	        const pathToInsertAfter = types ? types.path.parentPath : strictModePath;
+	        const first = program.get('body.0');
+	        const pathToInsert = types ? types.path.parentPath : first;
+	        
+	        if (isRecast(program))
+	            insertAfter(pathToInsert, replaceWithAST);
+	        else if (types)
+	            insertAfter(pathToInsert, replaceWithAST);
+	        else
+	            pathToInsert.insertBefore(replaceWithAST);
 	        
 	        isInserted(true);
-	        insertAfter(pathToInsertAfter, replaceWithAST);
 	        
 	        return;
 	    }
@@ -1102,15 +1152,12 @@ function requireConvertReplaceWith () {
 	            if (!calleePath.isMemberExpression())
 	                return;
 	            
-	            const {
-	                object,
-	                property,
-	            } = calleePath.node;
+	            const {object, property} = calleePath.node;
 	            
 	            if (property.name !== 'replaceWith')
 	                return;
 	            
-	            const program = path.findParent((path) => path.isProgram());
+	            const program = path.scope.getProgramParent().path;
 	            
 	            push({
 	                isInserted,
@@ -1140,15 +1187,13 @@ function requireConvertReplaceWithMultiple () {
 	    types,
 	} = require$$0$1;
 
-	const {
-	    insertAfter,
-	    replaceWith,
-	} = operator;
+	const {insertAfter, replaceWith} = operator;
+	const {Identifier, ObjectProperty} = types;
 
-	const {
-	    Identifier,
-	    ObjectProperty,
-	} = types;
+	const isRecast = (program) => program.get('body.0').get('expression')
+	    .isStringLiteral({
+	        value: 'use strict',
+	    });
 
 	convertReplaceWithMultiple.report = () => {
 	    return `"operate.replaceWithMultiple" should be called instead of "path.replaceWithMultiple"`;
@@ -1159,8 +1204,8 @@ function requireConvertReplaceWithMultiple () {
 `);
 
 	convertReplaceWithMultiple.fix = ({path, calleePath, property, object, program}) => {
-	    const strictModePath = program.get('body.0');
-	    const {bindings} = strictModePath.scope;
+	    const first = program.get('body.0');
+	    const {bindings} = program.scope;
 	    
 	    replaceWith(calleePath, property);
 	    path.node.arguments.unshift(object);
@@ -1168,8 +1213,12 @@ function requireConvertReplaceWithMultiple () {
 	    if (bindings.replaceWithMultiple)
 	        return;
 	    
-	    if (!bindings.replaceWith && !bindings.insertAfter)
-	        return insertAfter(strictModePath, replaceWithAST);
+	    if (!bindings.replaceWith && !bindings.insertAfter) {
+	        if (isRecast(program))
+	            return insertAfter(first, replaceWithAST);
+	        
+	        return first.insertBefore(replaceWithAST);
+	    }
 	    
 	    const id = Identifier('replaceWithMultiple');
 	    const varPath = getVarPath(bindings);
@@ -1178,10 +1227,7 @@ function requireConvertReplaceWithMultiple () {
 	};
 
 	function getVarPath(bindings) {
-	    const {
-	        replaceWith,
-	        insertAfter,
-	    } = bindings;
+	    const {replaceWith, insertAfter} = bindings;
 	    
 	    if (replaceWith)
 	        return replaceWith.path;
@@ -1196,15 +1242,12 @@ function requireConvertReplaceWithMultiple () {
 	        if (!calleePath.isMemberExpression())
 	            return;
 	        
-	        const {
-	            object,
-	            property,
-	        } = calleePath.node;
+	        const {object, property} = calleePath.node;
 	        
 	        if (property.name !== 'replaceWithMultiple')
 	            return;
 	        
-	        const program = path.findParent((path) => path.isProgram());
+	        const program = path.scope.getProgramParent().path;
 	        
 	        push({
 	            path,
@@ -1252,10 +1295,7 @@ function requireConvertToNoTransformCode () {
 	if (hasRequiredConvertToNoTransformCode) return convertToNoTransformCode;
 	hasRequiredConvertToNoTransformCode = 1;
 
-	const {
-	    isIdentifier,
-	    Identifier,
-	} = require$$0$1.types;
+	const {isIdentifier, Identifier} = require$$0$1.types;
 
 	convertToNoTransformCode.report = () => {
 	    return `"noTransformCode" should be called instead of using same arguments twice in "transformCode"`;
@@ -1268,10 +1308,7 @@ function requireConvertToNoTransformCode () {
 	        if (!calleePath.isMemberExpression())
 	            return;
 	        
-	        const {
-	            object,
-	            property,
-	        } = calleePath.node;
+	        const {object, property} = calleePath.node;
 	        
 	        if (object.name !== 't' || property.name !== 'transformCode')
 	            return;
@@ -1388,10 +1425,7 @@ function requireConvertTraverseToReplace () {
 	hasRequiredConvertTraverseToReplace = 1;
 
 	const {operator} = require$$0$1;
-	const {
-	    contains,
-	    traverse,
-	} = operator;
+	const {contains, traverse} = operator;
 
 	convertTraverseToReplace.report = () => 'Replacer should be used instead of Traverser (https://git.io/JqcMn)';
 
@@ -1483,10 +1517,7 @@ function requireCreateTest () {
 	if (hasRequiredCreateTest) return createTest;
 	hasRequiredCreateTest = 1;
 
-	const {
-	    operator,
-	    types,
-	} = require$$0$1;
+	const {operator, types} = require$$0$1;
 
 	const {
 	    StringLiteral,
@@ -1497,10 +1528,7 @@ function requireCreateTest () {
 	    isIdentifier,
 	} = types;
 
-	const {
-	    replaceWith,
-	    getProperty,
-	} = operator;
+	const {replaceWith, getProperty} = operator;
 
 	createTest.report = () => `Apply modifications to 'createTest()' options`;
 
@@ -1546,10 +1574,7 @@ function requireCreateTest () {
 	};
 
 	function convert(objectPath) {
-	    const {
-	        key,
-	        value,
-	    } = objectPath.node.properties[0];
+	    const {key, value} = objectPath.node.properties[0];
 	    
 	    replaceWith(objectPath, ObjectExpression([
 	        ObjectProperty(Identifier('plugins'), ArrayExpression([
@@ -2855,6 +2880,8 @@ function requireOperator () {
 	    compute: `const {compute} = operator`,
 	    contains: `const {contains} = operator`,
 	    declare: `const {declare} = operator`,
+	    rename: `const {rename} = operator`,
+	    renameProperty: `const {renameProperty} = operator`,
 	    extract: `const {extract} = operator`,
 	    getPathAfterImports: `const {getPathAfterImports} = operator`,
 	    traverse: `const {traverse} = operator`,
@@ -2968,10 +2995,7 @@ function requireMoveRequireOnTopLevel () {
 
 	const justCamelCase = requireJustCamelCase();
 
-	const {
-	    types,
-	    template,
-	} = require$$0$1;
+	const {types, template} = require$$0$1;
 
 	const TEST = `
     const test = require('@putout/test')(__dirname, {
@@ -3056,11 +3080,12 @@ function requireRenameOperateToOperator () {
 	if (hasRequiredRenameOperateToOperator) return renameOperateToOperator;
 	hasRequiredRenameOperateToOperator = 1;
 
+	const {operator} = require$$0$1;
+	const {rename} = operator;
+
 	renameOperateToOperator.report = () => '"operator" should be used instead of "operate"';
 
-	renameOperateToOperator.include = () => [
-	    'Program',
-	];
+	renameOperateToOperator.include = () => ['Program'];
 
 	renameOperateToOperator.filter = (path) => {
 	    const noOperator = !path.scope.bindings.operator;
@@ -3070,7 +3095,7 @@ function requireRenameOperateToOperator () {
 	};
 
 	renameOperateToOperator.fix = (path) => {
-	    path.scope.rename('operate', 'operator');
+	    rename(path, 'operate', 'operator');
 	};
 	return renameOperateToOperator;
 }
@@ -3158,16 +3183,12 @@ function requireReplaceTestMessage () {
 	    const calleePath = path.findParent(isCallExpression);
 	    
 	    if (!calleePath)
-	        return [
-	            CORRECT,
-	        ];
+	        return [CORRECT];
 	    
 	    const messagePath = calleePath.get('arguments.0');
 	    
 	    if (!messagePath.isStringLiteral())
-	        return [
-	            CORRECT,
-	        ];
+	        return [CORRECT];
 	    
 	    const {value} = messagePath.node;
 	    const is = !incorrect.test(value);
@@ -3212,6 +3233,8 @@ function getDynamicModules() {
 		"/node_modules/@putout/plugin-putout/lib/apply-processors-destructuring/index.js": requireApplyProcessorsDestructuring,
 		"/node_modules/@putout/plugin-putout/lib/apply-remove": requireApplyRemove,
 		"/node_modules/@putout/plugin-putout/lib/apply-remove/index.js": requireApplyRemove,
+		"/node_modules/@putout/plugin-putout/lib/check-match": requireCheckMatch,
+		"/node_modules/@putout/plugin-putout/lib/check-match/index.js": requireCheckMatch,
 		"/node_modules/@putout/plugin-putout/lib/check-replace-code": requireCheckReplaceCode,
 		"/node_modules/@putout/plugin-putout/lib/check-replace-code/index.js": requireCheckReplaceCode,
 		"/node_modules/@putout/plugin-putout/lib/convert-add-argument-to-add-args": requireConvertAddArgumentToAddArgs,
@@ -3367,6 +3390,8 @@ var rules = lib.rules = {
     ...getRule('apply-create-test'),
     ...getRule('apply-remove'),
     ...getRule('apply-declare'),
+    ...getRule('check-replace-code'),
+    ...getRule('check-match'),
     ...getRule('convert-putout-test-to-create-test'),
     ...getRule('convert-to-no-transform-code'),
     ...getRule('convert-find-to-traverse'),
@@ -3390,7 +3415,6 @@ var rules = lib.rules = {
     ...getRule('rename-operate-to-operator'),
     ...getRule('replace-operate-with-operator'),
     ...getRule('shorten-imports'),
-    ...getRule('check-replace-code'),
     ...getRule('declare'),
     ...getRule('add-args'),
     ...getRule('add-push'),

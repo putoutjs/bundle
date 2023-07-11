@@ -1,3 +1,15 @@
+2023.07.11, v1.10.0
+
+feature:
+- 51c1ed1 package: nodemon v3.0.1
+- 1856e2b package: @putout/plugin-putout v13.0.0
+- 20edbff package: eslint-plugin-n v16.0.1
+- 06c1c56 package: hermes-parser v0.14.0
+- 2d90123 package: putout v30.3.1
+- 99466cb package: eslint-plugin-putout v18.1.0
+- 6a2d804 package: @rollup/plugin-commonjs v25.0.2
+- d4daa01 package: c8 v8.0.0
+
 2023.05.29, v1.9.0
 
 feature:
