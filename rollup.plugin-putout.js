@@ -12,7 +12,10 @@ export default {
     },
     plugins: [
         alias({
-            entries: [{find: 'putout', replacement: '@putout/bundle'}],
+            entries: [{
+                find: 'putout',
+                replacement: '@putout/bundle',
+            }],
         }),
         nodeResolve({
             preferBuiltins: false,
