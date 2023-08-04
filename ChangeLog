@@ -1,3 +1,10 @@
+2023.08.04, v1.11.0
+
+feature:
+- 56a6c11 package: putout v31.0.2
+- 23582af package: hermes-parser v0.15.0
+- e68f4dd package: eslint-plugin-putout v19.0.2
+
 2023.07.14, v1.10.2
 
 feature:

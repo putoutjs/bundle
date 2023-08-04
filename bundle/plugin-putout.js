@@ -65,30 +65,47 @@ function requireAddPush () {
 
 	addPush.report = () => `Add 'push' argument to 'traverse'`;
 
-	addPush.fix = (path) => {
+	addPush.fix = ({fn}) => {
 	    const computed = false;
 	    const shorthand = true;
 	    const name = Identifier('push');
 	    
-	    path.node.right.params.push(ObjectPattern([
+	    fn.params.push(ObjectPattern([
 	        ObjectProperty(name, name, computed, shorthand),
 	    ]));
 	};
 
-	addPush.traverse = ({push}) => ({
-	    'module.exports.traverse = (__args) => __': (traversePath) => {
-	        const paramsPaths = traversePath.get('right.params');
-	        
-	        if (paramsPaths.length)
-	            return;
-	        
-	        traverse(traversePath, {
-	            'push(__)': () => {
-	                push(traversePath);
-	            },
-	        });
-	    },
-	});
+	addPush.traverse = ({push}) => {
+	    const check = checkArgs(push);
+	    
+	    return {
+	        'export const traverse = (__args) => __': check,
+	        'module.exports.traverse = (__args) => __': check,
+	    };
+	};
+
+	const checkArgs = (push) => (path) => {
+	    const fn = parseFn(path);
+	    
+	    if (fn.params.length)
+	        return;
+	    
+	    traverse(path, {
+	        'push(__)': () => {
+	            push({
+	                path,
+	                fn,
+	            });
+	        },
+	    });
+	};
+
+	function parseFn(path) {
+	    if (path.isAssignmentExpression())
+	        return path.get('right').node;
+	    
+	    return path.get('declaration.declarations.0.init').node;
+	}
 	return addPush;
 }
 
@@ -176,6 +193,38 @@ function requireApplyDeclare () {
 	return applyDeclare;
 }
 
+var applyInsertAfter = {};
+
+var hasRequiredApplyInsertAfter;
+
+function requireApplyInsertAfter () {
+	if (hasRequiredApplyInsertAfter) return applyInsertAfter;
+	hasRequiredApplyInsertAfter = 1;
+
+	applyInsertAfter.report = () => `Use 'insertAfter(a, b)' instead of 'a.insertAfter(b)'`;
+
+	applyInsertAfter.replace = () => ({
+	    '__a.insertAfter(__b)': 'insertAfter(__a, __b)',
+	});
+	return applyInsertAfter;
+}
+
+var applyInsertBefore = {};
+
+var hasRequiredApplyInsertBefore;
+
+function requireApplyInsertBefore () {
+	if (hasRequiredApplyInsertBefore) return applyInsertBefore;
+	hasRequiredApplyInsertBefore = 1;
+
+	applyInsertBefore.report = () => `Use 'insertBefore(a, b)' instead of 'a.insertBefore(b)'`;
+
+	applyInsertBefore.replace = () => ({
+	    '__a.insertBefore(__b)': 'insertBefore(__a, __b)',
+	});
+	return applyInsertBefore;
+}
+
 var applyProcessorsDestructuring = {};
 
 var hasRequiredApplyProcessorsDestructuring;
@@ -208,7 +257,7 @@ function requireApplyRemove () {
 	applyRemove.report = () => `Use 'remove(path)' instead of 'path.remove()'`;
 
 	applyRemove.replace = () => ({
-	    'path.remove()': 'remove(path)',
+	    '__a.remove()': 'remove(__a)',
 	});
 	return applyRemove;
 }
@@ -1084,7 +1133,11 @@ function requireConvertReplaceWith () {
 	const fullstore = requireFullstore();
 
 	const {Identifier, ObjectProperty} = types;
-	const {replaceWith, insertAfter} = operator;
+	const {
+	    replaceWith,
+	    insertAfter,
+	    insertBefore,
+	} = operator;
 
 	const isRecast = (program) => program.get('body.0.expression').isStringLiteral({
 	    value: 'use strict',
@@ -1117,7 +1170,7 @@ function requireConvertReplaceWith () {
 	        else if (types)
 	            insertAfter(pathToInsert, replaceWithAST);
 	        else
-	            pathToInsert.insertBefore(replaceWithAST);
+	            insertBefore(pathToInsert, replaceWithAST);
 	        
 	        isInserted(true);
 	        
@@ -1187,7 +1240,12 @@ function requireConvertReplaceWithMultiple () {
 	    types,
 	} = require$$0$1;
 
-	const {insertAfter, replaceWith} = operator;
+	const {
+	    insertAfter,
+	    replaceWith,
+	    insertBefore,
+	} = operator;
+
 	const {Identifier, ObjectProperty} = types;
 
 	const isRecast = (program) => program.get('body.0').get('expression')
@@ -1217,7 +1275,7 @@ function requireConvertReplaceWithMultiple () {
 	        if (isRecast(program))
 	            return insertAfter(first, replaceWithAST);
 	        
-	        return first.insertBefore(replaceWithAST);
+	        return insertBefore(first, replaceWithAST);
 	    }
 	    
 	    const id = Identifier('replaceWithMultiple');
@@ -1350,7 +1408,7 @@ function requireConvertTraverseToInclude () {
 	} = require$$0$1;
 
 	const {StringLiteral} = types;
-	const {compare} = operator;
+	const {compare, remove} = operator;
 
 	const isPush = (path) => path.get('value').isIdentifier({
 	    name: 'push',
@@ -1385,7 +1443,7 @@ function requireConvertTraverseToInclude () {
 	            
 	            if (isPush(propertyPath) || isBlock(propertyPath)) {
 	                node.right.body.elements.push(StringLiteral(name));
-	                propertyPath.remove();
+	                remove(propertyPath);
 	            }
 	        }
 	        
@@ -1588,7 +1646,7 @@ function requireCreateTest () {
 	return createTest;
 }
 
-var declare = {};
+var declare$1 = {};
 
 var types = "import {types} from 'putout'";
 var is = "const {is} = types";
@@ -2865,56 +2923,75 @@ var require$$0 = {
 	isSpreadProperty: isSpreadProperty
 };
 
-var operator;
-var hasRequiredOperator;
-
-function requireOperator () {
-	if (hasRequiredOperator) return operator;
-	hasRequiredOperator = 1;
-
-	operator = {
-	    operator: `import {operator} from 'putout'`,
-	    compare: `const {compare} = operator`,
-	    compareAll: `const {compareAll} = operator`,
-	    compareAny: `const {compareAny} = operator`,
-	    compute: `const {compute} = operator`,
-	    contains: `const {contains} = operator`,
-	    declare: `const {declare} = operator`,
-	    rename: `const {rename} = operator`,
-	    renameProperty: `const {renameProperty} = operator`,
-	    extract: `const {extract} = operator`,
-	    getPathAfterImports: `const {getPathAfterImports} = operator`,
-	    traverse: `const {traverse} = operator`,
-	    isSimpleRegExp: `const {isSimpleRegExp} = operator`,
-	    getTemplateValues: `const {getTemplateValues} = operator`,
-	    addArgs: `const {addArgs} = operator`,
-	    replaceWith: `const {replaceWith} = operator`,
-	    replaceWithMultiple: `const {replaceWithMultiple} = operator`,
-	    remove: 'const {remove} = operator',
-	    isESM: `const {isESM} = operator`,
-	    getProperty: `const {getProperty} = operator`,
-	    getProperties: `const {getProperties} = operator`,
-	    isSimple: `const {isSimple} = operator`,
-	};
-	return operator;
-}
+var operator = "import {operator} from 'putout'";
+var compare = "const {compare} = operator";
+var compareAll = "const {compareAll} = operator";
+var compareAny = "const {compareAny} = operator";
+var compute = "const {compute} = operator";
+var contains = "const {contains} = operator";
+var declare = "const {declare} = operator";
+var rename = "const {rename} = operator";
+var renameProperty = "const {renameProperty} = operator";
+var extract = "const {extract} = operator";
+var getPathAfterImports = "const {getPathAfterImports} = operator";
+var traverse = "const {traverse} = operator";
+var isSimpleRegExp = "const {isSimpleRegExp} = operator";
+var getTemplateValues = "const {getTemplateValues} = operator";
+var addArgs = "const {addArgs} = operator";
+var insertBefore = "const {insertBefore} = operator";
+var insertAfter = "const {insertAfter} = operator";
+var replaceWith = "const {replaceWith} = operator";
+var replaceWithMultiple = "const {replaceWithMultiple} = operator";
+var remove = "const {remove} = operator";
+var isESM = "const {isESM} = operator";
+var getProperty = "const {getProperty} = operator";
+var getProperties = "const {getProperties} = operator";
+var isSimple = "const {isSimple} = operator";
+var setLiteralValue = "const {setLiteralValue} = operator";
+var require$$1 = {
+	operator: operator,
+	compare: compare,
+	compareAll: compareAll,
+	compareAny: compareAny,
+	compute: compute,
+	contains: contains,
+	declare: declare,
+	rename: rename,
+	renameProperty: renameProperty,
+	extract: extract,
+	getPathAfterImports: getPathAfterImports,
+	traverse: traverse,
+	isSimpleRegExp: isSimpleRegExp,
+	getTemplateValues: getTemplateValues,
+	addArgs: addArgs,
+	insertBefore: insertBefore,
+	insertAfter: insertAfter,
+	replaceWith: replaceWith,
+	replaceWithMultiple: replaceWithMultiple,
+	remove: remove,
+	isESM: isESM,
+	getProperty: getProperty,
+	getProperties: getProperties,
+	isSimple: isSimple,
+	setLiteralValue: setLiteralValue
+};
 
 var hasRequiredDeclare;
 
 function requireDeclare () {
-	if (hasRequiredDeclare) return declare;
+	if (hasRequiredDeclare) return declare$1;
 	hasRequiredDeclare = 1;
 
 	const types = require$$0;
-	const operator = requireOperator();
+	const operator = require$$1;
 
-	declare.declare = () => ({
+	declare$1.declare = () => ({
 	    template: `import {template} from 'putout'`,
 	    createTest: `import {createTest} from '@putout/test'`,
 	    ...operator,
 	    ...types,
 	});
-	return declare;
+	return declare$1;
 }
 
 var includer = {};
@@ -3229,6 +3306,10 @@ function getDynamicModules() {
 		"/node_modules/@putout/plugin-putout/lib/apply-create-test/index.js": requireApplyCreateTest,
 		"/node_modules/@putout/plugin-putout/lib/apply-declare": requireApplyDeclare,
 		"/node_modules/@putout/plugin-putout/lib/apply-declare/index.js": requireApplyDeclare,
+		"/node_modules/@putout/plugin-putout/lib/apply-insert-after": requireApplyInsertAfter,
+		"/node_modules/@putout/plugin-putout/lib/apply-insert-after/index.js": requireApplyInsertAfter,
+		"/node_modules/@putout/plugin-putout/lib/apply-insert-before": requireApplyInsertBefore,
+		"/node_modules/@putout/plugin-putout/lib/apply-insert-before/index.js": requireApplyInsertBefore,
 		"/node_modules/@putout/plugin-putout/lib/apply-processors-destructuring": requireApplyProcessorsDestructuring,
 		"/node_modules/@putout/plugin-putout/lib/apply-processors-destructuring/index.js": requireApplyProcessorsDestructuring,
 		"/node_modules/@putout/plugin-putout/lib/apply-remove": requireApplyRemove,
@@ -3389,6 +3470,8 @@ var rules = lib.rules = {
     ...getRule('apply-async-formatter'),
     ...getRule('apply-create-test'),
     ...getRule('apply-remove'),
+    ...getRule('apply-insert-before'),
+    ...getRule('apply-insert-after'),
     ...getRule('apply-declare'),
     ...getRule('check-replace-code'),
     ...getRule('check-match'),
