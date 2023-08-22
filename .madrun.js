@@ -16,7 +16,6 @@ export default {
     'wisdom': () => run('build:*'),
     'build': () => run('build:*'),
     'build:putout': () => 'rollup -c',
-    'build:plugins:putout': () => 'rollup -c rollup.plugin-putout.js',
     'build:putout:iife': async () => [env, await run('build:putout', build({
         name: 'putout',
         format: 'umd',

@@ -44,7 +44,6 @@
     "esm"
   ],
   "devDependencies": {
-    "@putout/plugin-putout": "^13.0.0",
     "@rollup/plugin-alias": "^5.0.0",
     "@rollup/plugin-commonjs": "^25.0.2",
     "@rollup/plugin-json": "^6.0.0",
