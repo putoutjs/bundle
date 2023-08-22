@@ -5,10 +5,12 @@
   "author": "coderaiser <mnemonic.enemy@gmail.com> (https://github.com/coderaiser)",
   "description": "🐊Putout bundle suitable for Deno or Browsers",
   "homepage": "https://github.com/putoutjs/bundle",
-  "main": "bundle/putout.js",
+  "main": "bundle/putout.min.js",
   "exports": {
-    ".": "./bundle/putout.js",
-    "./plugin-putout": "./bundle/plugin-putout.js"
+    "import": {
+      ".": "./bundle/putout.min.js",
+      "./dev": "./bundle/putout.js"
+    }
   },
   "repository": {
     "type": "git",
@@ -28,15 +30,13 @@
     "fix:lint": "madrun fix:lint",
     "coverage": "madrun coverage",
     "report": "madrun report",
+    "wisdom": "madrun wisdom",
     "build": "madrun build",
     "build:putout": "madrun build:putout",
     "build:putout:iife": "madrun build:putout:iife",
-    "build:plugins:putout": "madrun build:plugins:putout",
-    "wisdom": "madrun wisdom"
+    "build:putout:cjs": "madrun build:putout:cjs"
   },
-  "dependencies": {
-    "@rollup/plugin-terser": "^0.4.0"
-  },
+  "dependencies": {},
   "keywords": [
     "putout",
     "bundle",
@@ -44,6 +44,7 @@
     "esm"
   ],
   "devDependencies": {
+    "@rollup/plugin-terser": "^0.4.0",
     "@rollup/plugin-alias": "^5.0.0",
     "@rollup/plugin-commonjs": "^25.0.2",
     "@rollup/plugin-json": "^6.0.0",

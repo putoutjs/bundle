@@ -1,2 +1,2 @@
-export * from './bundle/putout.js';
+export * from './bundle/putout.min.js';
 

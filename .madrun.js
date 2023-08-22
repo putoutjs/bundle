@@ -16,6 +16,12 @@ export default {
     'wisdom': () => run('build:*'),
     'build': () => run('build:*'),
     'build:putout': () => 'rollup -c',
+    'build:putout:esm': async () => [env, await run('build:putout', build({
+        name: 'putout',
+        format: 'es',
+        input: 'lib/putout.js',
+        output: 'bundle/putout.min.js',
+    }))],
     'build:putout:iife': async () => [env, await run('build:putout', build({
         name: 'putout',
         format: 'umd',
@@ -25,6 +31,6 @@ export default {
     }))],
 };
 
-function build({name, format, input, output, exports}) {
+function build({name, format, input, output, exports = 'auto'}) {
     return `--name ${name} --format ${format} --input ${input} --o ${output} --exports ${exports}`;
 }
