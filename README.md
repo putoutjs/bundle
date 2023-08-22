@@ -8,7 +8,7 @@
 Usage
 
 ```js
-import putout from 'https://esm.sh/@putout/bundle';
+import putout from 'https://esm.sh/@putout/bundle@2';
 import removeDebugger from 'https://esm.sh/@putout/plugin-remove-debugger?alias=putout:@putout/bundle';
 import declare from 'https://esm.sh/@putout/plugin-declare-undefined-variables?alias=putout:@putout/bundle';
 
@@ -30,7 +30,7 @@ When you need to use `@putout/plugin-putout` use:
 
 ```js
 import putout from 'https://esm.sh/@putout/bundle';
-import pluginPutout from 'https://esm.sh/@putout/bundle/plugin-putout';
+import pluginPutout from 'https://esm.sh/@putout/plugin-putout?alias=putout@putout/bundle';
 
 console.log(putout('compare(a, b)', {
     plugins: [
@@ -50,7 +50,7 @@ console.log(putout('compare(a, b)', {
 When you want to access `putout` from global scope using `script` tag, use:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@putout/bundle@1.7/bundle/putout-iife.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@putout/bundle@2/bundle/putout-iife.js"></script>
 ```
 
 ## License
