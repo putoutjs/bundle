@@ -44,12 +44,12 @@
     "esm"
   ],
   "devDependencies": {
-    "@rollup/plugin-terser": "^0.4.0",
     "@rollup/plugin-alias": "^5.0.0",
     "@rollup/plugin-commonjs": "^25.0.2",
     "@rollup/plugin-json": "^6.0.0",
     "@rollup/plugin-node-resolve": "^15.0.1",
     "@rollup/plugin-replace": "^5.0.2",
+    "@rollup/plugin-terser": "^0.4.0",
     "acorn-stage3": "^4.0.0",
     "c8": "^8.0.0",
     "eslint": "^8.0.1",
@@ -58,7 +58,7 @@
     "hermes-parser": "^0.15.0",
     "madrun": "^9.0.0",
     "nodemon": "^3.0.1",
-    "putout": "^31.0.2",
+    "putout": "^31.5.0",
     "rollup": "^3.15.0",
     "rollup-plugin-node-externals": "^6.1.1",
     "rollup-plugin-polyfill-node": "^0.12.0",
