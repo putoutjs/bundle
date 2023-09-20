@@ -54,7 +54,7 @@
     "c8": "^8.0.0",
     "eslint": "^8.48.0",
     "eslint-plugin-n": "^16.0.1",
-    "eslint-plugin-putout": "^19.0.2",
+    "eslint-plugin-putout": "^20.0.0",
     "hermes-parser": "^0.15.0",
     "madrun": "^9.0.0",
     "nodemon": "^3.0.1",
