@@ -1,3 +1,8 @@
+2023.09.22, v3.1.1
+
+feature:
+- b375526 @putout/bundle: update @putout/printer to 5.6.0
+
 2023.09.20, v3.1.0
 
 feature:
