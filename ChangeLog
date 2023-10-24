@@ -1,3 +1,9 @@
+2023.10.24, v3.4.0
+
+feature:
+- 04ad162 package: putout v32.5.0
+- 9e0c568 package: rollup v4.1.4
+
 2023.10.18, v3.3.0
 
 feature:
