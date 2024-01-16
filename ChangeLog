@@ -1,3 +1,14 @@
+2024.01.16, v3.6.0
+
+feature:
+- 5dd37f9 @putout/bundle: putout v34.10.0
+- 951869f @putout/bundle: eslint-plugin-putout v22.3.0
+- ca7cbd5 @putout/bundle: hermes-parser v0.18.2
+- 37c450b @putout/bundle: rollup-plugin-polyfill-node v0.13.0
+- ff20c32 @putout/bundle: rollup v4.9.5
+- b5cb978 @putout/bundle: c8 v9.1.0
+- 05df282 @putout/bundle: madrun v10.0.0
+
 2023.11.12, v3.5.1
 
 feature:
