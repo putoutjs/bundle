@@ -19,10 +19,13 @@ export default {
         alias({
             entries: [{
                 find: './loader.mjs',
-                replacement: './lib/loader.js',
+                replacement: new URL('./lib/loader.js', import.meta.url).pathname,
             }, {
                 find: 'chalk',
                 replacement: './lib/chalk.js',
+            }, {
+                find: 'node:path',
+                replacement: 'path',
             }],
         }),
         commonjs({
