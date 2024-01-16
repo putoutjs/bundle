@@ -59,7 +59,7 @@
     "hermes-parser": "^0.18.2",
     "madrun": "^10.0.0",
     "nodemon": "^3.0.1",
-    "putout": "^33.0.0",
+    "putout": "^34.10.0",
     "rollup": "^4.9.5",
     "rollup-plugin-node-externals": "^6.1.1",
     "rollup-plugin-polyfill-node": "^0.13.0",
