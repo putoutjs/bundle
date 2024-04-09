@@ -1,3 +1,9 @@
+2024.04.09, v3.10.0
+
+feature:
+- 8f4a6ea @putout/bundle: eslint-plugin-n: drop
+- 1488549 @putout/bundle: eslint v9.0.0
+
 2024.04.04, v3.9.0
 
 feature:
