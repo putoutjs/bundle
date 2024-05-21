@@ -74,6 +74,7 @@ export default {
                 'process.env.BABEL_TYPES_8_BREAKING = true': '',
                 'process.env': '{}',
                 'export {load} from "./loader.mjs"': '',
+                [`const {isBuiltin} = require('node:module')`]: `import builtinModules from 'builtin-modules';const isBuiltin = (a) => bultins.includes(a)`,
             },
         }),
     ],
