@@ -56,6 +56,7 @@ export default {
                 'fs',
                 'module',
                 'buffer',
+                'process',
             ],
         }),
         nodeResolve({
