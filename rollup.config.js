@@ -9,6 +9,11 @@ import process from 'node:process';
 
 const {MINIFY} = process.env;
 
+const createReplacement = (a) => ({
+    find: `node:${a}`,
+    replacement: a,
+});
+
 export default {
     input: 'lib/putout.js',
     output: {
@@ -24,10 +29,12 @@ export default {
             }, {
                 find: 'chalk',
                 replacement: './lib/chalk.js',
-            }, {
-                find: 'node:path',
-                replacement: 'path',
-            }],
+            },
+            ...[
+                'path',
+                'module',
+                'process',
+            ].map(createReplacement)],
         }),
         commonjs({
             defaultIsModuleExports: false,
