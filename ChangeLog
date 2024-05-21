@@ -1,3 +1,8 @@
+2024.05.21, v3.11.3
+
+fix:
+- a26df21 rollup: handle builtins
+
 2024.05.21, v3.11.2
 
 feature:
