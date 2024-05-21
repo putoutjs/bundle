@@ -1,3 +1,8 @@
+2024.05.21, v3.11.1
+
+feature:
+- b3670d5 rollup: add aliases for built-ins
+
 2024.05.21, v3.11.0
 
 feature:
