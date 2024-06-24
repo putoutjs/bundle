@@ -1,3 +1,8 @@
+2024.06.24, v3.12.2
+
+fix:
+- ddec59d @putout/bundle: iife: rename
+
 2024.06.24, v3.12.1
 
 fix:
