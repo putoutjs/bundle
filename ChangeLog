@@ -1,3 +1,8 @@
+2024.06.24, v3.12.1
+
+fix:
+- ecbc2d8 @putout/bundle: cjs -> js
+
 2024.06.24, v3.12.0
 
 feature:
