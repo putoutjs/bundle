@@ -10,7 +10,7 @@
     "import": {
       ".": "./bundle/putout.min.js",
       "./dev": "./bundle/putout.js",
-      "./iife": "./bundle/putout-iife.js"
+      "./iife": "./bundle/putout.iife.js"
     }
   },
   "repository": {

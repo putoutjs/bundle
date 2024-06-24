@@ -26,7 +26,7 @@ export default {
         name: 'putout',
         format: 'umd',
         input: 'lib/putout-iife.js',
-        output: 'bundle/putout-iife.cjs',
+        output: 'bundle/putout.iife.js',
         exports: 'default',
     }))],
 };
