@@ -1,6 +1,6 @@
 {
   "name": "@putout/bundle",
-  "version": "3.12.2",
+  "version": "3.13.0",
   "type": "module",
   "author": "coderaiser <mnemonic.enemy@gmail.com> (https://github.com/coderaiser)",
   "description": "🐊Putout bundle suitable for Deno or Browsers",
@@ -15,7 +15,7 @@
       ".": "./bundle/putout.min.cjs",
       "./dev": "./bundle/putout.cjs",
       "./iife": "./bundle/putout.iife.cjs"
-      }
+    }
   },
   "repository": {
     "type": "git",
