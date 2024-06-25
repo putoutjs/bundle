@@ -22,12 +22,6 @@ export default {
         input: 'lib/putout.js',
         output: 'bundle/putout.min.js',
     }))],
-    'build:putout:esm:dev': async () => await run('build:putout', build({
-        name: 'putout',
-        format: 'es',
-        input: 'lib/putout.js',
-        output: 'bundle/putout.js',
-    })),
 };
 
 function build({name, format, input, output, exports = 'auto'}) {
