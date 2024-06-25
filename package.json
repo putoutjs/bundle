@@ -7,11 +7,9 @@
   "homepage": "https://github.com/putoutjs/bundle",
   "main": "bundle/putout.min.js",
   "exports": {
-    "import": {
-      ".": "./bundle/putout.min.js",
-      "./dev": "./bundle/putout.js",
-      "./iife": "./bundle/putout.iife.js"
-    }
+    ".": "./bundle/putout.min.js",
+    "./dev": "./bundle/putout.js",
+    "./iife": "./bundle/putout.iife.js"
   },
   "repository": {
     "type": "git",
