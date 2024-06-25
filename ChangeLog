@@ -1,3 +1,9 @@
+2024.06.25, v3.13.0
+
+feature:
+- 32b185f @putout/bundle: require
+- 671addd @putout/bundle: export: require (#1)
+
 2024.06.24, v3.12.2
 
 fix:
