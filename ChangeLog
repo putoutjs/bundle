@@ -1,3 +1,11 @@
+2024.06.25, v3.14.0
+
+fix:
+- 23c4da1 exports (#1)
+
+feature:
+- 7eb89d5 @putout/bundle: exports
+
 2024.06.25, v3.13.0
 
 feature:
