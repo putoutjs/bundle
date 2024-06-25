@@ -25,8 +25,15 @@ export default {
     'build:putout:iife': async () => [env, await run('build:putout', build({
         name: 'putout',
         format: 'umd',
-        input: 'lib/putout-iife.js',
+        input: 'lib/putout.js',
         output: 'bundle/putout.iife.js',
+        exports: 'default',
+    }))],
+    'build:putout:cjs': async () => [env, await run('build:putout', build({
+        name: 'putout',
+        format: 'cjs',
+        input: 'lib/putout.js',
+        output: 'bundle/putout.cjs',
         exports: 'default',
     }))],
 };

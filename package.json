@@ -9,9 +9,12 @@
   "exports": {
     "import": {
       ".": "./bundle/putout.min.js",
-      "./dev": "./bundle/putout.js",
+      "./dev": "./bundle/putout.js"
+    },
+    "require": {
+      ".": "./bundle/putout.cjs",
       "./iife": "./bundle/putout.iife.js"
-    }
+      }
   },
   "repository": {
     "type": "git",
