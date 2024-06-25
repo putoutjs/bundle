@@ -12,8 +12,9 @@
       "./dev": "./bundle/putout.js"
     },
     "require": {
-      ".": "./bundle/putout.cjs",
-      "./iife": "./bundle/putout.iife.js"
+      ".": "./bundle/putout.min.cjs",
+      "./dev": "./bundle/putout.cjs",
+      "./iife": "./bundle/putout.iife.cjs"
       }
   },
   "repository": {

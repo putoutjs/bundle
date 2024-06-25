@@ -31,8 +31,9 @@ export default {
                 replacement: './lib/chalk.js',
             },
             ...[
-                'path',
+                'events',
                 'module',
+                'path',
                 'process',
             ].map(createReplacement)],
         }),

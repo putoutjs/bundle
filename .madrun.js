@@ -22,20 +22,33 @@ export default {
         input: 'lib/putout.js',
         output: 'bundle/putout.min.js',
     }))],
+    'build:putout:esm:dev': async () => await run('build:putout', build({
+        name: 'putout',
+        format: 'es',
+        input: 'lib/putout.js',
+        output: 'bundle/putout.min.js',
+    })),
     'build:putout:iife': async () => [env, await run('build:putout', build({
         name: 'putout',
         format: 'umd',
-        input: 'lib/putout.js',
+        input: 'lib/putout-iife.js',
         output: 'bundle/putout.iife.js',
         exports: 'default',
     }))],
     'build:putout:cjs': async () => [env, await run('build:putout', build({
         name: 'putout',
         format: 'cjs',
-        input: 'lib/putout.js',
-        output: 'bundle/putout.cjs',
+        input: 'lib/putout-iife.js',
+        output: 'bundle/putout.min.cjs',
         exports: 'default',
     }))],
+    'build:putout:cjs:dev': async () => await run('build:putout', build({
+        name: 'putout',
+        format: 'cjs',
+        input: 'lib/putout-iife.js',
+        output: 'bundle/putout.cjs',
+        exports: 'default',
+    })),
 };
 
 function build({name, format, input, output, exports = 'auto'}) {
