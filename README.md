@@ -8,7 +8,7 @@
 Usage
 
 ```js
-import putout from 'https://esm.sh/@putout/bundle@2';
+import {putout} from 'https://esm.sh/@putout/bundle@2';
 import removeDebugger from 'https://esm.sh/@putout/plugin-remove-debugger?alias=putout:@putout/bundle';
 import declare from 'https://esm.sh/@putout/plugin-declare-undefined-variables?alias=putout:@putout/bundle';
 
@@ -29,7 +29,7 @@ console.log(putout('isFn(fn, "hello"); debugger', {
 When you need to use `@putout/plugin-putout` use:
 
 ```js
-import putout from 'https://esm.sh/@putout/bundle';
+import {putout} from 'https://esm.sh/@putout/bundle';
 import pluginPutout from 'https://esm.sh/@putout/plugin-putout?alias=putout@putout/bundle';
 
 console.log(putout('compare(a, b)', {
