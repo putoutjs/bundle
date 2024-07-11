@@ -1,3 +1,10 @@
+2024.07.11, v3.14.1
+
+feature:
+- c5c9335 @putout/bundle: c8 v10.1.2
+- 81fdd51 @putout/bundle: @rollup/plugin-commonjs v26.0.1
+- fcd996f @putout/bundle: hermes-parser v0.22.0
+
 2024.06.25, v3.14.0
 
 fix:
