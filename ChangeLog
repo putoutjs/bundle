@@ -1,3 +1,8 @@
+2024.08.24, v3.16.1
+
+feature:
+- a0ac104 @putout/bundle: eslint-plugin-putout v23.0.0
+
 2024.08.24, v3.16.0
 
 feature:
