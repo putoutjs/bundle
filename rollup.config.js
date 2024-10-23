@@ -39,6 +39,7 @@ export default {
         }),
         commonjs({
             defaultIsModuleExports: false,
+            strictRequires: 'auto',
             exclude: [
                 '**/lib/loader.*',
                 '**/parse-options/**',
