@@ -1,3 +1,10 @@
+2024.10.23, v3.17.0
+
+feature:
+- f6d60ed @putout/bundle: hermes-parser v0.25.0
+- 0c2fe4d @putout/bundle: @rollup/plugin-replace v6.0.1
+- 909b454 @putout/bundle: @rollup/plugin-commonjs v28.0.1
+
 2024.08.24, v3.16.1
 
 feature:
