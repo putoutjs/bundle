@@ -1,3 +1,8 @@
+2024.10.23, v3.17.1
+
+fix:
+- 28c057d @putout/bundle: commonjs: strictRequires
+
 2024.10.23, v3.17.0
 
 feature:
