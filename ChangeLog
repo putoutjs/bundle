@@ -1,3 +1,8 @@
+2024.10.26, v3.18.0
+
+feature:
+- d790978 @putout/bundle: putout v36.11.0
+
 2024.10.23, v3.17.1
 
 fix:
