@@ -38,6 +38,7 @@
   "dependencies": {},
   "keywords": [
     "putout",
+    "putout-editor",
     "bundle",
     "deno",
     "esm"
