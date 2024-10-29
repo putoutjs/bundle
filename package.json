@@ -41,7 +41,8 @@
     "putout-editor",
     "bundle",
     "deno",
-    "esm"
+    "esm",
+    "linter"
   ],
   "devDependencies": {
     "@rollup/plugin-alias": "^5.0.0",
