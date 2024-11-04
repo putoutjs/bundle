@@ -42,7 +42,8 @@
     "bundle",
     "deno",
     "esm",
-    "linter"
+    "linter",
+    "bun"
   ],
   "devDependencies": {
     "@rollup/plugin-alias": "^5.0.0",
