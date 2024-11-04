@@ -53,7 +53,7 @@
     "@rollup/plugin-terser": "^0.4.0",
     "acorn-stage3": "^4.0.0",
     "c8": "^10.1.2",
-    "eslint": "^9.0.0",
+    "eslint": "^9.14.0",
     "eslint-plugin-putout": "^23.0.0",
     "hermes-parser": "^0.25.0",
     "madrun": "^10.0.0",
