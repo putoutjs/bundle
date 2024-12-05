@@ -30,7 +30,7 @@ When you need to use `@putout/plugin-putout` use:
 
 ```js
 import {putout} from 'https://esm.sh/@putout/bundle';
-import pluginPutout from 'https://esm.sh/@putout/plugin-putout?alias=putout@putout/bundle';
+import pluginPutout from 'https://esm.sh/@putout/plugin-putout?alias=putout:@putout/bundle';
 
 console.log(putout('compare(a, b)', {
     plugins: [
