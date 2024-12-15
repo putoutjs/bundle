@@ -1,3 +1,8 @@
+2024.12.15, v3.20.1
+
+feature:
+- 439dae2 @putout/bundle: rollup-plugin-node-externals v8.0.0
+
 2024.12.13, v3.20.0
 
 feature:
