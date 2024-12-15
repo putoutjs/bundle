@@ -63,7 +63,7 @@
     "nodemon": "^3.0.1",
     "putout": "^37.1.0",
     "rollup": "^4.24.2",
-    "rollup-plugin-node-externals": "^7.0.1",
+    "rollup-plugin-node-externals": "^8.0.0",
     "rollup-plugin-polyfill-node": "^0.13.0",
     "tenko": "^2.0.1"
   },
