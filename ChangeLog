@@ -1,3 +1,9 @@
+2024.12.17, v3.20.2
+
+feature:
+- 95c7b08 @putout/bundle: @rollup/plugin-node-resolve v16.0.0
+- 2768c94 @putout/bundle: putout v37.2.0
+
 2024.12.15, v3.20.1
 
 feature:
