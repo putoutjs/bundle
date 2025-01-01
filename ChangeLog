@@ -1,3 +1,9 @@
+2025.01.01, v3.21.0
+
+feature:
+- 6a32a72 @putout/bundle: putout v37.8.2
+- f8a9bc5 @putout/bundle: hermes-parser v0.26.0
+
 2024.12.17, v3.20.2
 
 feature:
