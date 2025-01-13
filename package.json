@@ -45,7 +45,8 @@
     "codemod",
     "linter",
     "fix",
-    "bun"
+    "bun",
+    "printer"
   ],
   "devDependencies": {
     "@rollup/plugin-alias": "^5.0.0",
