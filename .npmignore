@@ -6,3 +6,4 @@ coverage
 lib
 example.js
 index.html
+*.config.*

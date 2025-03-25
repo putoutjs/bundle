@@ -6,7 +6,7 @@ const env = {
 
 export default {
     'test': () => `tape 'test/*.js'`,
-    'watch:test': async () => `nodemon -w lib -w test -x ${await run('test')}`,
+    'watch:test': async () => `nodemon -w lib -w test -x "${await run('test')}"`,
     'lint': () => `putout .`,
     'fresh:lint': () => run('lint', '--fresh'),
     'lint:fresh': () => run('lint', '--fresh'),

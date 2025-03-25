@@ -1,3 +1,4 @@
+import process from 'node:process';
 import commonjs from '@rollup/plugin-commonjs';
 import {nodeResolve} from '@rollup/plugin-node-resolve';
 import json from '@rollup/plugin-json';
@@ -5,7 +6,6 @@ import nodePolyfills from 'rollup-plugin-polyfill-node';
 import replace from '@rollup/plugin-replace';
 import alias from '@rollup/plugin-alias';
 import terser from '@rollup/plugin-terser';
-import process from 'node:process';
 
 const {MINIFY} = process.env;
 
