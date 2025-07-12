@@ -1,3 +1,9 @@
+2025.07.12, v4.3.0
+
+feature:
+- 5127a6d @putout/bundle: eslint-plugin-putout v28.0.1
+- 5e2fa27 @putout/bundle: hermes-parser v0.29.1
+
 2025.04.15, v4.2.0
 
 feature:
