@@ -58,7 +58,7 @@
     "acorn-stage3": "^4.0.0",
     "c8": "^10.1.2",
     "eslint": "^9.14.0",
-    "eslint-plugin-putout": "^26.1.0",
+    "eslint-plugin-putout": "^28.0.1",
     "hermes-parser": "^0.29.1",
     "madrun": "^11.0.0",
     "nodemon": "^3.0.1",
