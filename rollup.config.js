@@ -27,8 +27,8 @@ export default {
                 find: './loader.mjs',
                 replacement: new URL('./lib/loader.js', import.meta.url).pathname,
             }, {
-                find: 'chalk',
-                replacement: './lib/chalk.js',
+                find: 'esprima',
+                replacement: new URL('./lib/esprima.js', import.meta.url).pathname,
             },
             ...[
                 'events',
