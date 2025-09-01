@@ -1,3 +1,8 @@
+2025.09.01, v4.5.3
+
+fix:
+- 5ebd37b rollup: rm chalk, add esprima
+
 2025.09.01, v4.5.2
 
 feature:
