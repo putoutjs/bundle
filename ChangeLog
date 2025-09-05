@@ -1,3 +1,8 @@
+2025.09.05, v4.5.4
+
+feature:
+- 06c1ce5 @putout/bundle: eslint v9.35.0
+
 2025.09.01, v4.5.3
 
 fix:
