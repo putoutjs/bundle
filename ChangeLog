@@ -1,3 +1,9 @@
+2025.09.09, v4.6.5
+
+feature:
+- d92ccd5 @putout/bundle: decrease-bundle-size: acorn-stage-3
+- 703fe13 @putout/bundle: remove tenko
+
 2025.09.09, v4.6.4
 
 feature:
