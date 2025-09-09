@@ -1,3 +1,8 @@
+2025.09.09, v4.6.6
+
+feature:
+- bb69a01 @putout/bundle: get rid of acorn-typescript
+
 2025.09.09, v4.6.5
 
 feature:
