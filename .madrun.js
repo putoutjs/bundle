@@ -26,5 +26,11 @@ export default {
 };
 
 function build({name, format, input, output, exports = 'auto'}) {
-    return `--name ${name} --format ${format} --input ${input} --o ${output} --exports ${exports}`;
+    return [
+        `--name ${name}`,
+        `--format ${format}`,
+        `--input ${input}`,
+        `--o ${output}`,
+        `--exports ${exports}`,
+    ].join(' ');
 }
