@@ -6,6 +6,8 @@ import nodePolyfills from 'rollup-plugin-polyfill-node';
 import replace from '@rollup/plugin-replace';
 import alias from '@rollup/plugin-alias';
 import terser from '@rollup/plugin-terser';
+import { visualizer } from 'rollup-plugin-visualizer';
+
 
 const {MINIFY} = process.env;
 
@@ -40,6 +42,9 @@ export default {
                 replacement: new URL('./lib/esprima.js', import.meta.url).pathname,
             }, {
                 find: 'tenko',
+                replacement: new URL('./lib/esprima.js', import.meta.url).pathname,
+            }, {
+                find: 'acorn-typescript',
                 replacement: new URL('./lib/esprima.js', import.meta.url).pathname,
             }, {
                 find: 'acorn-stage-3',
@@ -82,6 +87,9 @@ export default {
         }),
         nodePolyfills(),
         json(),
+            visualizer({
+              filename: './stats.html', // куда сохранить визуализацию
+            }),
         replace({
             preventAssignment: true,
             values: {
