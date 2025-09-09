@@ -14,7 +14,6 @@ export default {
     'coverage': async () => `c8 ${await run('test')}`,
     'report': () => 'c8 report --reporter=lcov',
     'wisdom': () => run('build:*'),
-    'wisdom:done': () => 'npm publish --tag latest',
     'build': () => run('build:*'),
     'build:putout': () => 'rollup -c',
     'build:putout:esm': async () => [env, await run('build:putout', build({
