@@ -6,8 +6,7 @@ import nodePolyfills from 'rollup-plugin-polyfill-node';
 import replace from '@rollup/plugin-replace';
 import alias from '@rollup/plugin-alias';
 import terser from '@rollup/plugin-terser';
-import { visualizer } from 'rollup-plugin-visualizer';
-
+import {visualizer} from 'rollup-plugin-visualizer';
 
 const {MINIFY} = process.env;
 
@@ -87,9 +86,9 @@ export default {
         }),
         nodePolyfills(),
         json(),
-            visualizer({
-              filename: './stats.html', // куда сохранить визуализацию
-            }),
+        visualizer({
+            filename: './stats.html', // куда сохранить визуализацию
+        }),
         replace({
             preventAssignment: true,
             values: {
