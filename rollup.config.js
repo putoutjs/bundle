@@ -38,6 +38,9 @@ export default {
             }, {
                 find: 'hermes-parser',
                 replacement: new URL('./lib/esprima.js', import.meta.url).pathname,
+            }, {
+                find: 'tenko',
+                replacement: new URL('./lib/esprima.js', import.meta.url).pathname,
             },
             ...[
                 'events',
