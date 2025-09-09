@@ -1,3 +1,8 @@
+2025.09.09, v4.6.1
+
+fix:
+- 4e14289 putout: readme: iife
+
 2025.09.07, v4.6.0
 
 feature:
