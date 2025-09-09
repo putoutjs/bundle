@@ -41,6 +41,9 @@ export default {
             }, {
                 find: 'tenko',
                 replacement: new URL('./lib/esprima.js', import.meta.url).pathname,
+            }, {
+                find: 'acorn-stage-3',
+                replacement: new URL('./lib/esprima.js', import.meta.url).pathname,
             },
             ...[
                 'events',
