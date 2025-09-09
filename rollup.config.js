@@ -29,6 +29,15 @@ export default {
             }, {
                 find: 'esprima',
                 replacement: new URL('./lib/esprima.js', import.meta.url).pathname,
+            }, {
+                find: 'espree',
+                replacement: new URL('./lib/esprima.js', import.meta.url).pathname,
+            }, {
+                find: 'acorn',
+                replacement: new URL('./lib/esprima.js', import.meta.url).pathname,
+            }, {
+                find: 'hermes-parser',
+                replacement: new URL('./lib/esprima.js', import.meta.url).pathname,
             },
             ...[
                 'events',
