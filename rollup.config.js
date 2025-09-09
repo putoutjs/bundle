@@ -43,6 +43,18 @@ export default {
                 find: 'tenko',
                 replacement: new URL('./lib/esprima.js', import.meta.url).pathname,
             }, {
+                find: 'ignore',
+                replacement: new URL('./lib/esprima.js', import.meta.url).pathname,
+            }, {
+                find: 'acorn-private-class-elements',
+                replacement: new URL('./lib/esprima.js', import.meta.url).pathname,
+            }, {
+                find: 'acorn-class-fields',
+                replacement: new URL('./lib/esprima.js', import.meta.url).pathname,
+            }, {
+                find: 'acorn-static-class-features',
+                replacement: new URL('./lib/esprima.js', import.meta.url).pathname,
+            }, {
                 find: 'acorn-typescript',
                 replacement: new URL('./lib/esprima.js', import.meta.url).pathname,
             }, {
