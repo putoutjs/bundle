@@ -70005,6 +70005,19 @@ jsx.addAttributeValue = (path, name, value) => {
     setLiteralValue(attributeNode.value, `${attributeNode.value.value} ${value}`);
 };
 
+jsx.removeAttributeValue = (path, name, attributeValue) => {
+    if (!path)
+        return;
+    
+    const node = path.node || path;
+    const classAttribute = getAttributeNode(node, name);
+    
+    const {value} = classAttribute.value;
+    
+    if (value.includes(attributeValue))
+        setLiteralValue(classAttribute.value, value.replace(RegExp(`\\s?${attributeValue}`), ''));
+};
+
 /**
  * The MIT License (MIT)
  * Copyright (c) 2017-present Dmitry Soshnikov <dmitry.soshnikov@gmail.com>
