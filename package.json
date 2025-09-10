@@ -3,7 +3,7 @@
   "version": "4.6.7",
   "type": "module",
   "author": "coderaiser <mnemonic.enemy@gmail.com> (https://github.com/coderaiser)",
-  "description": "🐊Putout bundle suitable for Deno or Browsers",
+  "description": "🐊Putout bundle suitable for Deno and Browsers",
   "homepage": "https://github.com/putoutjs/bundle",
   "main": "bundle/putout.min.js",
   "exports": {
