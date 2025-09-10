@@ -29,37 +29,37 @@ export default {
                 replacement: new URL('./lib/loader.js', import.meta.url).pathname,
             }, {
                 find: 'esprima',
-                replacement: new URL('./lib/esprima.js', import.meta.url).pathname,
+                replacement: new URL('./lib/empty.js', import.meta.url).pathname,
             }, {
                 find: 'espree',
-                replacement: new URL('./lib/esprima.js', import.meta.url).pathname,
+                replacement: new URL('./lib/empty.js', import.meta.url).pathname,
             }, {
                 find: 'acorn',
-                replacement: new URL('./lib/esprima.js', import.meta.url).pathname,
+                replacement: new URL('./lib/empty.js', import.meta.url).pathname,
             }, {
                 find: 'hermes-parser',
-                replacement: new URL('./lib/esprima.js', import.meta.url).pathname,
+                replacement: new URL('./lib/empty.js', import.meta.url).pathname,
             }, {
                 find: 'tenko',
-                replacement: new URL('./lib/esprima.js', import.meta.url).pathname,
+                replacement: new URL('./lib/empty.js', import.meta.url).pathname,
             }, {
                 find: 'ignore',
-                replacement: new URL('./lib/esprima.js', import.meta.url).pathname,
+                replacement: new URL('./lib/empty.js', import.meta.url).pathname,
             }, {
                 find: 'acorn-private-class-elements',
-                replacement: new URL('./lib/esprima.js', import.meta.url).pathname,
+                replacement: new URL('./lib/empty.js', import.meta.url).pathname,
             }, {
                 find: 'acorn-class-fields',
-                replacement: new URL('./lib/esprima.js', import.meta.url).pathname,
+                replacement: new URL('./lib/empty.js', import.meta.url).pathname,
             }, {
                 find: 'acorn-static-class-features',
-                replacement: new URL('./lib/esprima.js', import.meta.url).pathname,
+                replacement: new URL('./lib/empty.js', import.meta.url).pathname,
             }, {
                 find: 'acorn-typescript',
-                replacement: new URL('./lib/esprima.js', import.meta.url).pathname,
+                replacement: new URL('./lib/empty.js', import.meta.url).pathname,
             }, {
                 find: 'acorn-stage-3',
-                replacement: new URL('./lib/esprima.js', import.meta.url).pathname,
+                replacement: new URL('./lib/empty.js', import.meta.url).pathname,
             },
             ...[
                 'events',
