@@ -62984,12 +62984,12 @@ var onceExports = once$9.exports;
 
 const noop$3 = () => {};
 
-var esprima$2 = /*#__PURE__*/Object.freeze({
+var empty = /*#__PURE__*/Object.freeze({
 	__proto__: null,
 	default: noop$3
 });
 
-var require$$1$1 = /*@__PURE__*/getAugmentedNamespace(esprima$2);
+var require$$1$1 = /*@__PURE__*/getAugmentedNamespace(empty);
 
 // eslint-disable-next-line node/no-unsupported-features/es-syntax
 
@@ -70016,6 +70016,13 @@ jsx.removeAttributeValue = (path, name, attributeValue) => {
     
     if (value.includes(attributeValue))
         setLiteralValue(classAttribute.value, value.replace(RegExp(`\\s?${attributeValue}`), ''));
+};
+
+jsx.setAttributeValue = (node, name, value) => {
+    const attributeNode = getAttributeNode(node, name);
+    
+    if (attributeNode)
+        setLiteralValue(attributeNode.value, value);
 };
 
 /**

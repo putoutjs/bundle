@@ -1,3 +1,8 @@
+2025.09.10, v4.6.9
+
+fix:
+- 1f28c86 @putout/bundle: esprima -> empty
+
 2025.09.10, v4.6.8
 
 feature:
