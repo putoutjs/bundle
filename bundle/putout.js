@@ -69974,6 +69974,9 @@ jsx.getAttributeNode = getAttributeNode;
 function getAttributeNode(path, name) {
     let result = null;
     
+    if (!path)
+        return result;
+    
     const node = path.node || path;
     const {attributes} = node.openingElement;
     
@@ -69987,25 +69990,26 @@ function getAttributeNode(path, name) {
     return result;
 }
 
-jsx.getAttributeValue = (path, attributeName) => {
+jsx.getAttributeValue = getAttributeValue;
+function getAttributeValue(path, attributeName) {
     const attribute = getAttributeNode(path, attributeName);
     
     if (!attribute)
         return '';
     
     return attribute.value.value;
-};
-
-jsx.addAttributeValue = (path, name, value) => {
+}
+jsx.addAttributeValue = addAttributeValue;
+function addAttributeValue(path, name, value) {
     const attributeNode = getAttributeNode(path, name);
     
     if (attributeNode.value.value.includes(value))
         return;
     
     setLiteralValue(attributeNode.value, `${attributeNode.value.value} ${value}`);
-};
-
-jsx.removeAttributeValue = (path, name, attributeValue) => {
+}
+jsx.removeAttributeValue = removeAttributeValue;
+function removeAttributeValue(path, name, attributeValue) {
     if (!path)
         return;
     
@@ -70016,13 +70020,35 @@ jsx.removeAttributeValue = (path, name, attributeValue) => {
     
     if (value.includes(attributeValue))
         setLiteralValue(classAttribute.value, value.replace(RegExp(`\\s?${attributeValue}`), ''));
-};
-
+}
 jsx.setAttributeValue = (node, name, value) => {
     const attributeNode = getAttributeNode(node, name);
     
     if (attributeNode)
         setLiteralValue(attributeNode.value, value);
+};
+
+jsx.addClassName = (path, name) => {
+    addAttributeValue(path, 'className', name);
+};
+
+jsx.getClassName = getClassName;
+function getClassName(path) {
+    return getAttributeValue(path, 'className');
+}
+
+jsx.removeClassName = (path, name) => {
+    removeAttributeValue(path, 'className', name);
+};
+
+jsx.containsClassName = (path, className) => {
+    const classNameValue = getClassName(path);
+    return classNameValue.includes(className);
+};
+
+jsx.hasDataName = (path, value = '') => {
+    const attribute = getAttributeValue(path, 'data-name');
+    return attribute === value;
 };
 
 /**
