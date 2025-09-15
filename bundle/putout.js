@@ -3265,10 +3265,14 @@ var require_jsesc = __commonJS({
 });
 
 // node_modules/debug/src/browser.js
-var require_browser = () => () => {};
+var require_browser = () => () => ({
+    enabled: false,
+});
 
 // node_modules/debug/src/node.js
-var require_node = () => () => {};
+var require_node = () => () => ({
+    enabled: false,
+});
 
 // node_modules/debug/src/index.js
 var require_src = __commonJS({
