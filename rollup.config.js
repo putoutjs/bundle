@@ -32,9 +32,11 @@ export default {
             entries: [{
                 find: './loader.mjs',
                 replacement: new URL('./lib/loader.js', import.meta.url).pathname,
+            }, {
+                find: 'debug',
+                replacement: new URL('./lib/debug.js', import.meta.url).pathname,
             },
             ...[
-                'debug',
                 'esprima',
                 'espree',
                 'acorn',
