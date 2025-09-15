@@ -170,7 +170,7 @@ Item.prototype.run = function () {
 };
 var title = 'browser';
 var platform = 'browser';
-var browser$1 = true;
+var browser = true;
 var env = {};
 var argv = [];
 var version = ''; // empty string to avoid regexp issues
@@ -231,10 +231,10 @@ function uptime() {
   return dif / 1000;
 }
 
-var browser$1$1 = {
+var browser$1 = {
   nextTick: nextTick,
   title: title,
-  browser: browser$1,
+  browser: browser,
   env: env,
   argv: argv,
   version: version,
@@ -262,11 +262,11 @@ var _polyfillNode_process = /*#__PURE__*/Object.freeze({
 	addListener: addListener,
 	argv: argv,
 	binding: binding,
-	browser: browser$1,
+	browser: browser,
 	chdir: chdir,
 	config: config,
 	cwd: cwd,
-	default: browser$1$1,
+	default: browser$1,
 	emit: emit,
 	env: env,
 	hrtime: hrtime,
@@ -482,7 +482,7 @@ function write (buffer, value, offset, isLE, mLen, nBytes) {
 
 var toString = {}.toString;
 
-var isArray$g = Array.isArray || function (arr) {
+var isArray$f = Array.isArray || function (arr) {
   return toString.call(arr) == '[object Array]';
 };
 
@@ -766,7 +766,7 @@ function fromObject (that, obj) {
       return fromArrayLike(that, obj)
     }
 
-    if (obj.type === 'Buffer' && isArray$g(obj.data)) {
+    if (obj.type === 'Buffer' && isArray$f(obj.data)) {
       return fromArrayLike(that, obj.data)
     }
   }
@@ -783,7 +783,7 @@ function checked (length) {
   }
   return length | 0
 }
-Buffer.isBuffer = isBuffer$1;
+Buffer.isBuffer = isBuffer;
 function internalIsBuffer (b) {
   return !!(b != null && b._isBuffer)
 }
@@ -831,7 +831,7 @@ Buffer.isEncoding = function isEncoding (encoding) {
 };
 
 Buffer.concat = function concat (list, length) {
-  if (!isArray$g(list)) {
+  if (!isArray$f(list)) {
     throw new TypeError('"list" argument must be an Array of Buffers')
   }
 
@@ -2249,7 +2249,7 @@ function isnan (val) {
 // the following is from is-buffer, also by Feross Aboukhadijeh and with same lisence
 // The _isBuffer check is for Safari 5-7 support, because it's missing
 // Object.prototype.constructor. Remove this eventually
-function isBuffer$1(obj) {
+function isBuffer(obj) {
   return obj != null && (!!obj._isBuffer || isFastBuffer(obj) || isSlowBuffer(obj))
 }
 
@@ -2261,764 +2261,6 @@ function isFastBuffer (obj) {
 function isSlowBuffer (obj) {
   return typeof obj.readFloatLE === 'function' && typeof obj.slice === 'function' && isFastBuffer(obj.slice(0, 0))
 }
-
-// MIT lisence
-// from https://github.com/substack/tty-browserify/blob/1ba769a6429d242f36226538835b4034bf6b7886/index.js
-
-function isatty() {
-  return false;
-}
-
-function ReadStream() {
-  throw new Error('tty.ReadStream is not implemented');
-}
-
-function WriteStream() {
-  throw new Error('tty.ReadStream is not implemented');
-}
-
-var _polyfillNode_tty = {
-  isatty: isatty,
-  ReadStream: ReadStream,
-  WriteStream: WriteStream
-};
-
-var _polyfillNode_tty$1 = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	ReadStream: ReadStream,
-	WriteStream: WriteStream,
-	default: _polyfillNode_tty,
-	isatty: isatty
-});
-
-var require$$1$2 = /*@__PURE__*/getAugmentedNamespace(_polyfillNode_tty$1);
-
-var inherits$1;
-if (typeof Object.create === 'function'){
-  inherits$1 = function inherits(ctor, superCtor) {
-    // implementation from standard node.js 'util' module
-    ctor.super_ = superCtor;
-    ctor.prototype = Object.create(superCtor.prototype, {
-      constructor: {
-        value: ctor,
-        enumerable: false,
-        writable: true,
-        configurable: true
-      }
-    });
-  };
-} else {
-  inherits$1 = function inherits(ctor, superCtor) {
-    ctor.super_ = superCtor;
-    var TempCtor = function () {};
-    TempCtor.prototype = superCtor.prototype;
-    ctor.prototype = new TempCtor();
-    ctor.prototype.constructor = ctor;
-  };
-}
-
-var getOwnPropertyDescriptors = Object.getOwnPropertyDescriptors ||
-  function getOwnPropertyDescriptors(obj) {
-    var keys = Object.keys(obj);
-    var descriptors = {};
-    for (var i = 0; i < keys.length; i++) {
-      descriptors[keys[i]] = Object.getOwnPropertyDescriptor(obj, keys[i]);
-    }
-    return descriptors;
-  };
-
-var formatRegExp = /%[sdj%]/g;
-function format(f) {
-  if (!isString$f(f)) {
-    var objects = [];
-    for (var i = 0; i < arguments.length; i++) {
-      objects.push(inspect(arguments[i]));
-    }
-    return objects.join(' ');
-  }
-
-  var i = 1;
-  var args = arguments;
-  var len = args.length;
-  var str = String(f).replace(formatRegExp, function(x) {
-    if (x === '%%') return '%';
-    if (i >= len) return x;
-    switch (x) {
-      case '%s': return String(args[i++]);
-      case '%d': return Number(args[i++]);
-      case '%j':
-        try {
-          return JSON.stringify(args[i++]);
-        } catch (_) {
-          return '[Circular]';
-        }
-      default:
-        return x;
-    }
-  });
-  for (var x = args[i]; i < len; x = args[++i]) {
-    if (isNull$1(x) || !isObject$8(x)) {
-      str += ' ' + x;
-    } else {
-      str += ' ' + inspect(x);
-    }
-  }
-  return str;
-}
-
-// Mark that a method should not be used.
-// Returns a modified function which warns once by default.
-// If --no-deprecation is set, then it is a no-op.
-function deprecate(fn, msg) {
-  // Allow for deprecating things in the process of starting up.
-  if (isUndefined$1(global$1.process)) {
-    return function() {
-      return deprecate(fn, msg).apply(this, arguments);
-    };
-  }
-
-  if (browser$1$1.noDeprecation === true) {
-    return fn;
-  }
-
-  var warned = false;
-  function deprecated() {
-    if (!warned) {
-      if (browser$1$1.throwDeprecation) {
-        throw new Error(msg);
-      } else if (browser$1$1.traceDeprecation) {
-        console.trace(msg);
-      } else {
-        console.error(msg);
-      }
-      warned = true;
-    }
-    return fn.apply(this, arguments);
-  }
-
-  return deprecated;
-}
-
-var debugs = {};
-var debugEnviron;
-function debuglog(set) {
-  if (isUndefined$1(debugEnviron))
-    debugEnviron = browser$1$1.env.NODE_DEBUG || '';
-  set = set.toUpperCase();
-  if (!debugs[set]) {
-    if (new RegExp('\\b' + set + '\\b', 'i').test(debugEnviron)) {
-      var pid = 0;
-      debugs[set] = function() {
-        var msg = format.apply(null, arguments);
-        console.error('%s %d: %s', set, pid, msg);
-      };
-    } else {
-      debugs[set] = function() {};
-    }
-  }
-  return debugs[set];
-}
-
-/**
- * Echos the value of a value. Trys to print the value out
- * in the best way possible given the different types.
- *
- * @param {Object} obj The object to print out.
- * @param {Object} opts Optional options object that alters the output.
- */
-/* legacy: obj, showHidden, depth, colors*/
-function inspect(obj, opts) {
-  // default options
-  var ctx = {
-    seen: [],
-    stylize: stylizeNoColor
-  };
-  // legacy...
-  if (arguments.length >= 3) ctx.depth = arguments[2];
-  if (arguments.length >= 4) ctx.colors = arguments[3];
-  if (isBoolean(opts)) {
-    // legacy...
-    ctx.showHidden = opts;
-  } else if (opts) {
-    // got an "options" object
-    _extend(ctx, opts);
-  }
-  // set default options
-  if (isUndefined$1(ctx.showHidden)) ctx.showHidden = false;
-  if (isUndefined$1(ctx.depth)) ctx.depth = 2;
-  if (isUndefined$1(ctx.colors)) ctx.colors = false;
-  if (isUndefined$1(ctx.customInspect)) ctx.customInspect = true;
-  if (ctx.colors) ctx.stylize = stylizeWithColor;
-  return formatValue(ctx, obj, ctx.depth);
-}
-
-// http://en.wikipedia.org/wiki/ANSI_escape_code#graphics
-inspect.colors = {
-  'bold' : [1, 22],
-  'italic' : [3, 23],
-  'underline' : [4, 24],
-  'inverse' : [7, 27],
-  'white' : [37, 39],
-  'grey' : [90, 39],
-  'black' : [30, 39],
-  'blue' : [34, 39],
-  'cyan' : [36, 39],
-  'green' : [32, 39],
-  'magenta' : [35, 39],
-  'red' : [31, 39],
-  'yellow' : [33, 39]
-};
-
-// Don't use 'blue' not visible on cmd.exe
-inspect.styles = {
-  'special': 'cyan',
-  'number': 'yellow',
-  'boolean': 'yellow',
-  'undefined': 'grey',
-  'null': 'bold',
-  'string': 'green',
-  'date': 'magenta',
-  // "name": intentionally not styling
-  'regexp': 'red'
-};
-
-
-function stylizeWithColor(str, styleType) {
-  var style = inspect.styles[styleType];
-
-  if (style) {
-    return '\u001b[' + inspect.colors[style][0] + 'm' + str +
-           '\u001b[' + inspect.colors[style][1] + 'm';
-  } else {
-    return str;
-  }
-}
-
-
-function stylizeNoColor(str, styleType) {
-  return str;
-}
-
-
-function arrayToHash(array) {
-  var hash = {};
-
-  array.forEach(function(val, idx) {
-    hash[val] = true;
-  });
-
-  return hash;
-}
-
-
-function formatValue(ctx, value, recurseTimes) {
-  // Provide a hook for user-specified inspect functions.
-  // Check that value is an object with an inspect function on it
-  if (ctx.customInspect &&
-      value &&
-      isFunction$8(value.inspect) &&
-      // Filter out the util module, it's inspect function is special
-      value.inspect !== inspect &&
-      // Also filter out any prototype objects using the circular check.
-      !(value.constructor && value.constructor.prototype === value)) {
-    var ret = value.inspect(recurseTimes, ctx);
-    if (!isString$f(ret)) {
-      ret = formatValue(ctx, ret, recurseTimes);
-    }
-    return ret;
-  }
-
-  // Primitive types cannot have properties
-  var primitive = formatPrimitive(ctx, value);
-  if (primitive) {
-    return primitive;
-  }
-
-  // Look up the keys of the object.
-  var keys = Object.keys(value);
-  var visibleKeys = arrayToHash(keys);
-
-  if (ctx.showHidden) {
-    keys = Object.getOwnPropertyNames(value);
-  }
-
-  // IE doesn't make error fields non-enumerable
-  // http://msdn.microsoft.com/en-us/library/ie/dww52sbt(v=vs.94).aspx
-  if (isError(value)
-      && (keys.indexOf('message') >= 0 || keys.indexOf('description') >= 0)) {
-    return formatError(value);
-  }
-
-  // Some type of object without properties can be shortcutted.
-  if (keys.length === 0) {
-    if (isFunction$8(value)) {
-      var name = value.name ? ': ' + value.name : '';
-      return ctx.stylize('[Function' + name + ']', 'special');
-    }
-    if (isRegExp$1(value)) {
-      return ctx.stylize(RegExp.prototype.toString.call(value), 'regexp');
-    }
-    if (isDate(value)) {
-      return ctx.stylize(Date.prototype.toString.call(value), 'date');
-    }
-    if (isError(value)) {
-      return formatError(value);
-    }
-  }
-
-  var base = '', array = false, braces = ['{', '}'];
-
-  // Make Array say that they are Array
-  if (isArray$f(value)) {
-    array = true;
-    braces = ['[', ']'];
-  }
-
-  // Make functions say that they are functions
-  if (isFunction$8(value)) {
-    var n = value.name ? ': ' + value.name : '';
-    base = ' [Function' + n + ']';
-  }
-
-  // Make RegExps say that they are RegExps
-  if (isRegExp$1(value)) {
-    base = ' ' + RegExp.prototype.toString.call(value);
-  }
-
-  // Make dates with properties first say the date
-  if (isDate(value)) {
-    base = ' ' + Date.prototype.toUTCString.call(value);
-  }
-
-  // Make error with message first say the error
-  if (isError(value)) {
-    base = ' ' + formatError(value);
-  }
-
-  if (keys.length === 0 && (!array || value.length == 0)) {
-    return braces[0] + base + braces[1];
-  }
-
-  if (recurseTimes < 0) {
-    if (isRegExp$1(value)) {
-      return ctx.stylize(RegExp.prototype.toString.call(value), 'regexp');
-    } else {
-      return ctx.stylize('[Object]', 'special');
-    }
-  }
-
-  ctx.seen.push(value);
-
-  var output;
-  if (array) {
-    output = formatArray(ctx, value, recurseTimes, visibleKeys, keys);
-  } else {
-    output = keys.map(function(key) {
-      return formatProperty(ctx, value, recurseTimes, visibleKeys, key, array);
-    });
-  }
-
-  ctx.seen.pop();
-
-  return reduceToSingleString(output, base, braces);
-}
-
-
-function formatPrimitive(ctx, value) {
-  if (isUndefined$1(value))
-    return ctx.stylize('undefined', 'undefined');
-  if (isString$f(value)) {
-    var simple = '\'' + JSON.stringify(value).replace(/^"|"$/g, '')
-                                             .replace(/'/g, "\\'")
-                                             .replace(/\\"/g, '"') + '\'';
-    return ctx.stylize(simple, 'string');
-  }
-  if (isNumber$4(value))
-    return ctx.stylize('' + value, 'number');
-  if (isBoolean(value))
-    return ctx.stylize('' + value, 'boolean');
-  // For some reason typeof null is "object", so special case here.
-  if (isNull$1(value))
-    return ctx.stylize('null', 'null');
-}
-
-
-function formatError(value) {
-  return '[' + Error.prototype.toString.call(value) + ']';
-}
-
-
-function formatArray(ctx, value, recurseTimes, visibleKeys, keys) {
-  var output = [];
-  for (var i = 0, l = value.length; i < l; ++i) {
-    if (hasOwnProperty(value, String(i))) {
-      output.push(formatProperty(ctx, value, recurseTimes, visibleKeys,
-          String(i), true));
-    } else {
-      output.push('');
-    }
-  }
-  keys.forEach(function(key) {
-    if (!key.match(/^\d+$/)) {
-      output.push(formatProperty(ctx, value, recurseTimes, visibleKeys,
-          key, true));
-    }
-  });
-  return output;
-}
-
-
-function formatProperty(ctx, value, recurseTimes, visibleKeys, key, array) {
-  var name, str, desc;
-  desc = Object.getOwnPropertyDescriptor(value, key) || { value: value[key] };
-  if (desc.get) {
-    if (desc.set) {
-      str = ctx.stylize('[Getter/Setter]', 'special');
-    } else {
-      str = ctx.stylize('[Getter]', 'special');
-    }
-  } else {
-    if (desc.set) {
-      str = ctx.stylize('[Setter]', 'special');
-    }
-  }
-  if (!hasOwnProperty(visibleKeys, key)) {
-    name = '[' + key + ']';
-  }
-  if (!str) {
-    if (ctx.seen.indexOf(desc.value) < 0) {
-      if (isNull$1(recurseTimes)) {
-        str = formatValue(ctx, desc.value, null);
-      } else {
-        str = formatValue(ctx, desc.value, recurseTimes - 1);
-      }
-      if (str.indexOf('\n') > -1) {
-        if (array) {
-          str = str.split('\n').map(function(line) {
-            return '  ' + line;
-          }).join('\n').substr(2);
-        } else {
-          str = '\n' + str.split('\n').map(function(line) {
-            return '   ' + line;
-          }).join('\n');
-        }
-      }
-    } else {
-      str = ctx.stylize('[Circular]', 'special');
-    }
-  }
-  if (isUndefined$1(name)) {
-    if (array && key.match(/^\d+$/)) {
-      return str;
-    }
-    name = JSON.stringify('' + key);
-    if (name.match(/^"([a-zA-Z_][a-zA-Z_0-9]*)"$/)) {
-      name = name.substr(1, name.length - 2);
-      name = ctx.stylize(name, 'name');
-    } else {
-      name = name.replace(/'/g, "\\'")
-                 .replace(/\\"/g, '"')
-                 .replace(/(^"|"$)/g, "'");
-      name = ctx.stylize(name, 'string');
-    }
-  }
-
-  return name + ': ' + str;
-}
-
-
-function reduceToSingleString(output, base, braces) {
-  var length = output.reduce(function(prev, cur) {
-    if (cur.indexOf('\n') >= 0) ;
-    return prev + cur.replace(/\u001b\[\d\d?m/g, '').length + 1;
-  }, 0);
-
-  if (length > 60) {
-    return braces[0] +
-           (base === '' ? '' : base + '\n ') +
-           ' ' +
-           output.join(',\n  ') +
-           ' ' +
-           braces[1];
-  }
-
-  return braces[0] + base + ' ' + output.join(', ') + ' ' + braces[1];
-}
-
-
-// NOTE: These type checking functions intentionally don't use `instanceof`
-// because it is fragile and can be easily faked with `Object.create()`.
-function isArray$f(ar) {
-  return Array.isArray(ar);
-}
-
-function isBoolean(arg) {
-  return typeof arg === 'boolean';
-}
-
-function isNull$1(arg) {
-  return arg === null;
-}
-
-function isNullOrUndefined(arg) {
-  return arg == null;
-}
-
-function isNumber$4(arg) {
-  return typeof arg === 'number';
-}
-
-function isString$f(arg) {
-  return typeof arg === 'string';
-}
-
-function isSymbol(arg) {
-  return typeof arg === 'symbol';
-}
-
-function isUndefined$1(arg) {
-  return arg === void 0;
-}
-
-function isRegExp$1(re) {
-  return isObject$8(re) && objectToString$1(re) === '[object RegExp]';
-}
-
-function isObject$8(arg) {
-  return typeof arg === 'object' && arg !== null;
-}
-
-function isDate(d) {
-  return isObject$8(d) && objectToString$1(d) === '[object Date]';
-}
-
-function isError(e) {
-  return isObject$8(e) &&
-      (objectToString$1(e) === '[object Error]' || e instanceof Error);
-}
-
-function isFunction$8(arg) {
-  return typeof arg === 'function';
-}
-
-function isPrimitive$1(arg) {
-  return arg === null ||
-         typeof arg === 'boolean' ||
-         typeof arg === 'number' ||
-         typeof arg === 'string' ||
-         typeof arg === 'symbol' ||  // ES6 symbol
-         typeof arg === 'undefined';
-}
-
-function isBuffer(maybeBuf) {
-  return Array.isArray(maybeBuf);
-}
-
-function objectToString$1(o) {
-  return Object.prototype.toString.call(o);
-}
-
-
-function pad(n) {
-  return n < 10 ? '0' + n.toString(10) : n.toString(10);
-}
-
-
-var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
-              'Oct', 'Nov', 'Dec'];
-
-// 26 Feb 16:19:34
-function timestamp() {
-  var d = new Date();
-  var time = [pad(d.getHours()),
-              pad(d.getMinutes()),
-              pad(d.getSeconds())].join(':');
-  return [d.getDate(), months[d.getMonth()], time].join(' ');
-}
-
-
-// log is just a thin wrapper to console.log that prepends a timestamp
-function log$6() {
-  console.log('%s - %s', timestamp(), format.apply(null, arguments));
-}
-
-function _extend(origin, add) {
-  // Don't do anything if add isn't an object
-  if (!add || !isObject$8(add)) return origin;
-
-  var keys = Object.keys(add);
-  var i = keys.length;
-  while (i--) {
-    origin[keys[i]] = add[keys[i]];
-  }
-  return origin;
-}
-function hasOwnProperty(obj, prop) {
-  return Object.prototype.hasOwnProperty.call(obj, prop);
-}
-
-var kCustomPromisifiedSymbol = typeof Symbol !== 'undefined' ? Symbol('util.promisify.custom') : undefined;
-
-function promisify(original) {
-  if (typeof original !== 'function')
-    throw new TypeError('The "original" argument must be of type Function');
-
-  if (kCustomPromisifiedSymbol && original[kCustomPromisifiedSymbol]) {
-    var fn = original[kCustomPromisifiedSymbol];
-    if (typeof fn !== 'function') {
-      throw new TypeError('The "util.promisify.custom" argument must be of type Function');
-    }
-    Object.defineProperty(fn, kCustomPromisifiedSymbol, {
-      value: fn, enumerable: false, writable: false, configurable: true
-    });
-    return fn;
-  }
-
-  function fn() {
-    var promiseResolve, promiseReject;
-    var promise = new Promise(function (resolve, reject) {
-      promiseResolve = resolve;
-      promiseReject = reject;
-    });
-
-    var args = [];
-    for (var i = 0; i < arguments.length; i++) {
-      args.push(arguments[i]);
-    }
-    args.push(function (err, value) {
-      if (err) {
-        promiseReject(err);
-      } else {
-        promiseResolve(value);
-      }
-    });
-
-    try {
-      original.apply(this, args);
-    } catch (err) {
-      promiseReject(err);
-    }
-
-    return promise;
-  }
-
-  Object.setPrototypeOf(fn, Object.getPrototypeOf(original));
-
-  if (kCustomPromisifiedSymbol) Object.defineProperty(fn, kCustomPromisifiedSymbol, {
-    value: fn, enumerable: false, writable: false, configurable: true
-  });
-  return Object.defineProperties(
-    fn,
-    getOwnPropertyDescriptors(original)
-  );
-}
-
-promisify.custom = kCustomPromisifiedSymbol;
-
-function callbackifyOnRejected(reason, cb) {
-  // `!reason` guard inspired by bluebird (Ref: https://goo.gl/t5IS6M).
-  // Because `null` is a special error value in callbacks which means "no error
-  // occurred", we error-wrap so the callback consumer can distinguish between
-  // "the promise rejected with null" or "the promise fulfilled with undefined".
-  if (!reason) {
-    var newReason = new Error('Promise was rejected with a falsy value');
-    newReason.reason = reason;
-    reason = newReason;
-  }
-  return cb(reason);
-}
-
-function callbackify(original) {
-  if (typeof original !== 'function') {
-    throw new TypeError('The "original" argument must be of type Function');
-  }
-
-  // We DO NOT return the promise as it gives the user a false sense that
-  // the promise is actually somehow related to the callback's execution
-  // and that the callback throwing will reject the promise.
-  function callbackified() {
-    var args = [];
-    for (var i = 0; i < arguments.length; i++) {
-      args.push(arguments[i]);
-    }
-
-    var maybeCb = args.pop();
-    if (typeof maybeCb !== 'function') {
-      throw new TypeError('The last argument must be of type Function');
-    }
-    var self = this;
-    var cb = function() {
-      return maybeCb.apply(self, arguments);
-    };
-    // In true node style we process the callback on `nextTick` with all the
-    // implications (stack, `uncaughtException`, `async_hooks`)
-    original.apply(this, args)
-      .then(function(ret) { browser$1$1.nextTick(cb.bind(null, null, ret)); },
-        function(rej) { browser$1$1.nextTick(callbackifyOnRejected.bind(null, rej, cb)); });
-  }
-
-  Object.setPrototypeOf(callbackified, Object.getPrototypeOf(original));
-  Object.defineProperties(callbackified, getOwnPropertyDescriptors(original));
-  return callbackified;
-}
-
-var _polyfillNode_util = {
-  inherits: inherits$1,
-  _extend: _extend,
-  log: log$6,
-  isBuffer: isBuffer,
-  isPrimitive: isPrimitive$1,
-  isFunction: isFunction$8,
-  isError: isError,
-  isDate: isDate,
-  isObject: isObject$8,
-  isRegExp: isRegExp$1,
-  isUndefined: isUndefined$1,
-  isSymbol: isSymbol,
-  isString: isString$f,
-  isNumber: isNumber$4,
-  isNullOrUndefined: isNullOrUndefined,
-  isNull: isNull$1,
-  isBoolean: isBoolean,
-  isArray: isArray$f,
-  inspect: inspect,
-  deprecate: deprecate,
-  format: format,
-  debuglog: debuglog,
-  promisify: promisify,
-  callbackify: callbackify,
-};
-
-var _polyfillNode_util$1 = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	_extend: _extend,
-	callbackify: callbackify,
-	debuglog: debuglog,
-	default: _polyfillNode_util,
-	deprecate: deprecate,
-	format: format,
-	inherits: inherits$1,
-	inspect: inspect,
-	isArray: isArray$f,
-	isBoolean: isBoolean,
-	isBuffer: isBuffer,
-	isDate: isDate,
-	isError: isError,
-	isFunction: isFunction$8,
-	isNull: isNull$1,
-	isNullOrUndefined: isNullOrUndefined,
-	isNumber: isNumber$4,
-	isObject: isObject$8,
-	isPrimitive: isPrimitive$1,
-	isRegExp: isRegExp$1,
-	isString: isString$f,
-	isSymbol: isSymbol,
-	isUndefined: isUndefined$1,
-	log: log$6,
-	promisify: promisify
-});
-
-var require$$2$1 = /*@__PURE__*/getAugmentedNamespace(_polyfillNode_util$1);
 
 var __create = Object.create;
 var __defProp = Object.defineProperty;
@@ -3076,7 +2318,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== 'sy
 // node_modules/picocolors/picocolors.js
 var require_picocolors = __commonJS({
     'node_modules/picocolors/picocolors.js'(exports2, module2) {
-        var p = browser$1$1 || {};
+        var p = browser$1 || {};
         var argv = p.argv || [];
         var env = p.env || {};
         var isColorSupported2 = !(!!env.NO_COLOR || argv.includes('--no-color'))
@@ -4022,912 +3264,16 @@ var require_jsesc = __commonJS({
     },
 });
 
-// node_modules/ms/index.js
-var require_ms = __commonJS({
-    'node_modules/ms/index.js'(exports2, module2) {
-        var s = 1e3;
-        var m = s * 60;
-        var h = m * 60;
-        var d = h * 24;
-        var w = d * 7;
-        var y = d * 365.25;
-        
-        module2.exports = function(val, options) {
-            options = options || {};
-            var type = typeof val;
-            
-            if (type === 'string' && val.length > 0) {
-                return parse3(val);
-            } else if (type === 'number' && isFinite(val)) {
-                return options.long ? fmtLong(val) : fmtShort(val);
-            }
-            
-            throw new Error('val is not a non-empty string or a valid number. val=' + JSON.stringify(val));
-        };
-        function parse3(str) {
-            str = String(str);
-            
-            if (str.length > 100) {
-                return;
-            }
-            
-            var match = /^(-?(?:\d+)?\.?\d+) *(milliseconds?|msecs?|ms|seconds?|secs?|s|minutes?|mins?|m|hours?|hrs?|h|days?|d|weeks?|w|years?|yrs?|y)?$/i.exec(str);
-            
-            if (!match) {
-                return;
-            }
-            
-            var n2 = parseFloat(match[1]);
-            var type = (match[2] || 'ms').toLowerCase();
-            
-            switch(type) {
-            case 'years':            
-            case 'year':            
-            case 'yrs':            
-            case 'yr':            
-            case 'y':
-                return n2 * y;
-            
-            case 'weeks':            
-            case 'week':            
-            case 'w':
-                return n2 * w;
-            
-            case 'days':            
-            case 'day':            
-            case 'd':
-                return n2 * d;
-            
-            case 'hours':            
-            case 'hour':            
-            case 'hrs':            
-            case 'hr':            
-            case 'h':
-                return n2 * h;
-            
-            case 'minutes':            
-            case 'minute':            
-            case 'mins':            
-            case 'min':            
-            case 'm':
-                return n2 * m;
-            
-            case 'seconds':            
-            case 'second':            
-            case 'secs':            
-            case 'sec':            
-            case 's':
-                return n2 * s;
-            
-            case 'milliseconds':            
-            case 'millisecond':            
-            case 'msecs':            
-            case 'msec':            
-            case 'ms':
-                return n2;
-            
-            default:
-                return void 0;
-            }
-        }
-        
-        function fmtShort(ms) {
-            var msAbs = Math.abs(ms);
-            
-            if (msAbs >= d) {
-                return Math.round(ms / d) + 'd';
-            }
-            
-            if (msAbs >= h) {
-                return Math.round(ms / h) + 'h';
-            }
-            
-            if (msAbs >= m) {
-                return Math.round(ms / m) + 'm';
-            }
-            
-            if (msAbs >= s) {
-                return Math.round(ms / s) + 's';
-            }
-            
-            return ms + 'ms';
-        }
-        
-        function fmtLong(ms) {
-            var msAbs = Math.abs(ms);
-            
-            if (msAbs >= d) {
-                return plural(ms, msAbs, d, 'day');
-            }
-            
-            if (msAbs >= h) {
-                return plural(ms, msAbs, h, 'hour');
-            }
-            
-            if (msAbs >= m) {
-                return plural(ms, msAbs, m, 'minute');
-            }
-            
-            if (msAbs >= s) {
-                return plural(ms, msAbs, s, 'second');
-            }
-            
-            return ms + ' ms';
-        }
-        
-        function plural(ms, msAbs, n2, name) {
-            var isPlural = msAbs >= n2 * 1.5;
-            return Math.round(ms / n2) + ' ' + name + (isPlural ? 's' : '');
-        }
-    },
-});
-
-// node_modules/debug/src/common.js
-var require_common = __commonJS({
-    'node_modules/debug/src/common.js'(exports2, module2) {
-        function setup2(env) {
-            createDebug.debug = createDebug;
-            createDebug.default = createDebug;
-            createDebug.coerce = coerce;
-            createDebug.disable = disable;
-            createDebug.enable = enable;
-            createDebug.enabled = enabled;
-            createDebug.humanize = require_ms();
-            createDebug.destroy = destroy;
-            Object
-                .keys(env)
-                .forEach((key) => {
-                    createDebug[key] = env[key];
-                });
-            createDebug.names = [];
-            createDebug.skips = [];
-            createDebug.formatters = {};
-            function selectColor(namespace) {
-                let hash = 0;
-                
-                for (let i = 0; i < namespace.length; i++) {
-                    hash = (hash << 5) - hash + namespace.charCodeAt(i);
-                    hash |= 0;
-                }
-                
-                return createDebug.colors[Math.abs(hash) % createDebug.colors.length];
-            }
-            
-            createDebug.selectColor = selectColor;
-            function createDebug(namespace) {
-                let prevTime;
-                let enableOverride = null;
-                let namespacesCache;
-                let enabledCache;
-                
-                function debug2(...args) {
-                    if (!debug2.enabled) {
-                        return;
-                    }
-                    
-                    const self = debug2;
-                    const curr = Number(                    /* @__PURE__ */new Date());
-                    const ms = curr - (prevTime || curr);
-                    
-                    self.diff = ms;
-                    self.prev = prevTime;
-                    self.curr = curr;
-                    prevTime = curr;
-                    args[0] = createDebug.coerce(args[0]);
-                    
-                    if (typeof args[0] !== 'string') {
-                        args.unshift('%O');
-                    }
-                    
-                    let index2 = 0;
-                    
-                    args[0] = args[0].replace(/%([a-zA-Z%])/g, (match, format) => {
-                        if (match === '%%') {
-                            return '%';
-                        }
-                        
-                        index2++;
-                        const formatter = createDebug.formatters[format];
-                        
-                        if (typeof formatter === 'function') {
-                            const val = args[index2];
-                            
-                            match = formatter.call(self, val);
-                            args.splice(index2, 1);
-                            index2--;
-                        }
-                        
-                        return match;
-                    });
-                    createDebug.formatArgs.call(self, args);
-                    const logFn = self.log || createDebug.log;
-                    logFn.apply(self, args);
-                }
-                
-                debug2.namespace = namespace;
-                debug2.useColors = createDebug.useColors();
-                debug2.color = createDebug.selectColor(namespace);
-                debug2.extend = extend;
-                debug2.destroy = createDebug.destroy;
-                Object.defineProperty(debug2, 'enabled', {
-                    enumerable: true,
-                    configurable: false,
-                    get: () => {
-                        if (enableOverride !== null) {
-                            return enableOverride;
-                        }
-                        
-                        if (namespacesCache !== createDebug.namespaces) {
-                            namespacesCache = createDebug.namespaces;
-                            enabledCache = createDebug.enabled(namespace);
-                        }
-                        
-                        return enabledCache;
-                    },
-                    set: (v) => {
-                        enableOverride = v;
-                    },
-                });
-                
-                if (typeof createDebug.init === 'function') {
-                    createDebug.init(debug2);
-                }
-                
-                return debug2;
-            }
-            
-            function extend(namespace, delimiter) {
-                const newDebug = createDebug(this.namespace + (typeof delimiter === 'undefined' ? ':' : delimiter) + namespace);
-                
-                newDebug.log = this.log;
-                return newDebug;
-            }
-            
-            function enable(namespaces) {
-                createDebug.save(namespaces);
-                createDebug.namespaces = namespaces;
-                createDebug.names = [];
-                createDebug.skips = [];
-                const split = (typeof namespaces === 'string' ? namespaces : '')
-                    .trim()
-                    .replace(/\s+/g, ',')
-                    .split(',')
-                    .filter(Boolean);
-                
-                for (const ns of split) {
-                    if (ns[0] === '-') {
-                        createDebug.skips.push(ns.slice(1));
-                    } else {
-                        createDebug.names.push(ns);
-                    }
-                }
-            }
-            
-            function matchesTemplate(search, template) {
-                let searchIndex = 0;
-                let templateIndex = 0;
-                let starIndex = -1;
-                let matchIndex = 0;
-                
-                while (searchIndex < search.length) {
-                    if (templateIndex < template.length && (template[templateIndex] === search[searchIndex] || template[templateIndex] === '*')) {
-                        if (template[templateIndex] === '*') {
-                            starIndex = templateIndex;
-                            matchIndex = searchIndex;
-                            templateIndex++;
-                        } else {
-                            searchIndex++;
-                            templateIndex++;
-                        }
-                    } else if (starIndex !== -1) {
-                        templateIndex = starIndex + 1;
-                        matchIndex++;
-                        searchIndex = matchIndex;
-                    } else {
-                        return false;
-                    }
-                }
-                
-                while (templateIndex < template.length && template[templateIndex] === '*') {
-                    templateIndex++;
-                }
-                
-                return templateIndex === template.length;
-            }
-            
-            function disable() {
-                const namespaces = [
-                    ...createDebug.names,
-                    ...createDebug.skips.map((namespace) => '-' + namespace),
-                ].join(',');
-                
-                createDebug.enable('');
-                return namespaces;
-            }
-            
-            function enabled(name) {
-                for (const skip2 of createDebug.skips) {
-                    if (matchesTemplate(name, skip2)) {
-                        return false;
-                    }
-                }
-                
-                for (const ns of createDebug.names) {
-                    if (matchesTemplate(name, ns)) {
-                        return true;
-                    }
-                }
-                
-                return false;
-            }
-            
-            function coerce(val) {
-                if (val instanceof Error) {
-                    return val.stack || val.message;
-                }
-                
-                return val;
-            }
-            
-            function destroy() {
-                console.warn('Instance method `debug.destroy()` is deprecated and no longer does anything. It will be removed in the next major version of `debug`.');
-            }
-            
-            createDebug.enable(createDebug.load());
-            
-            return createDebug;
-        }
-        
-        module2.exports = setup2;
-    },
-});
-
 // node_modules/debug/src/browser.js
-var require_browser = __commonJS({
-    'node_modules/debug/src/browser.js'(exports2, module2) {
-        exports2.formatArgs = formatArgs;
-        exports2.save = save;
-        exports2.load = load;
-        exports2.useColors = useColors;
-        exports2.storage = localstorage();
-        exports2.destroy =         /* @__PURE__ */(() => {
-            let warned = false;
-            
-            return () => {
-                if (!warned) {
-                    warned = true;
-                    console.warn('Instance method `debug.destroy()` is deprecated and no longer does anything. It will be removed in the next major version of `debug`.');
-                }
-            };
-        })();
-        exports2.colors = [
-            '#0000CC',
-            '#0000FF',
-            '#0033CC',
-            '#0033FF',
-            '#0066CC',
-            '#0066FF',
-            '#0099CC',
-            '#0099FF',
-            '#00CC00',
-            '#00CC33',
-            '#00CC66',
-            '#00CC99',
-            '#00CCCC',
-            '#00CCFF',
-            '#3300CC',
-            '#3300FF',
-            '#3333CC',
-            '#3333FF',
-            '#3366CC',
-            '#3366FF',
-            '#3399CC',
-            '#3399FF',
-            '#33CC00',
-            '#33CC33',
-            '#33CC66',
-            '#33CC99',
-            '#33CCCC',
-            '#33CCFF',
-            '#6600CC',
-            '#6600FF',
-            '#6633CC',
-            '#6633FF',
-            '#66CC00',
-            '#66CC33',
-            '#9900CC',
-            '#9900FF',
-            '#9933CC',
-            '#9933FF',
-            '#99CC00',
-            '#99CC33',
-            '#CC0000',
-            '#CC0033',
-            '#CC0066',
-            '#CC0099',
-            '#CC00CC',
-            '#CC00FF',
-            '#CC3300',
-            '#CC3333',
-            '#CC3366',
-            '#CC3399',
-            '#CC33CC',
-            '#CC33FF',
-            '#CC6600',
-            '#CC6633',
-            '#CC9900',
-            '#CC9933',
-            '#CCCC00',
-            '#CCCC33',
-            '#FF0000',
-            '#FF0033',
-            '#FF0066',
-            '#FF0099',
-            '#FF00CC',
-            '#FF00FF',
-            '#FF3300',
-            '#FF3333',
-            '#FF3366',
-            '#FF3399',
-            '#FF33CC',
-            '#FF33FF',
-            '#FF6600',
-            '#FF6633',
-            '#FF9900',
-            '#FF9933',
-            '#FFCC00',
-            '#FFCC33',
-        ];
-        function useColors() {
-            if (typeof window !== 'undefined' && window.process && (window.process.type === 'renderer' || window.process.__nwjs)) {
-                return true;
-            }
-            
-            if (typeof navigator !== 'undefined' && navigator.userAgent && navigator.userAgent.toLowerCase().match(/(edge|trident)\/(\d+)/)) {
-                return false;
-            }
-            
-            let m;
-            
-            return typeof document !== 'undefined'
-                && document.documentElement
-                && document.documentElement.style
-                && document.documentElement.style.WebkitAppearance
-                ||             // Is firebug? http://stackoverflow.com/a/398120/376773
-typeof window !== 'undefined'
-                && window.console
-                && (window.console.firebug
-                || window.console.exception
-                && window.console.table)
-                ||             // Is firefox >= v31?
-            // https://developer.mozilla.org/en-US/docs/Tools/Web_Console#Styling_messages
-typeof navigator !== 'undefined'
-                && navigator.userAgent
-                && (m = navigator.userAgent
-                .toLowerCase()
-                .match(/firefox\/(\d+)/))
-                && parseInt(m[1], 10) >= 31
-                ||             // Double check webkit in userAgent just in case we are in a worker
-typeof navigator !== 'undefined'
-                && navigator.userAgent
-                && navigator.userAgent
-                .toLowerCase()
-                .match(/applewebkit\/(\d+)/);
-        }
-        
-        function formatArgs(args) {
-            args[0] = (this.useColors ? '%c' : '') + this.namespace + (this.useColors ? ' %c' : ' ') + args[0] + (this.useColors ? '%c ' : ' ') + '+' + module2.exports.humanize(this.diff);
-            
-            if (!this.useColors) {
-                return;
-            }
-            
-            const c = 'color: ' + this.color;
-            args.splice(1, 0, c, 'color: inherit');
-            let index2 = 0;
-            let lastC = 0;
-            
-            args[0].replace(/%[a-zA-Z%]/g, (match) => {
-                if (match === '%%') {
-                    return;
-                }
-                
-                index2++;
-                
-                if (match === '%c') {
-                    lastC = index2;
-                }
-            });
-            args.splice(lastC, 0, c);
-        }
-        
-        exports2.log = console.debug || console.log || (() => {});
-        function save(namespaces) {
-            try {
-                if (namespaces) {
-                    exports2.storage.setItem('debug', namespaces);
-                } else {
-                    exports2.storage.removeItem('debug');
-                }
-            } catch(error) {}
-        }
-        
-        function load() {
-            let r;
-            
-            try {
-                r = exports2.storage.getItem('debug') || exports2.storage.getItem('DEBUG');
-            } catch(error) {}
-
-
-                        if (!r && typeof browser$1$1 !== 'undefined' && 'env' in browser$1$1) {
-                r = browser$1$1.env.DEBUG;
-            }
-            
-            return r;
-        }
-        
-        function localstorage() {
-            try {
-                return localStorage;
-            } catch(error) {}
-        }
-        
-        module2.exports = require_common()(exports2);
-        var {formatters} = module2.exports;
-        
-        formatters.j = function(v) {
-            try {
-                return JSON.stringify(v);
-            } catch(error) {
-                return '[UnexpectedJSONParseError]: ' + error.message;
-            }
-        };
-    },
-});
-
-// node_modules/has-flag/index.js
-var require_has_flag = __commonJS({
-    'node_modules/has-flag/index.js'(exports2, module2) {
-        
-        module2.exports = (flag, argv) => {
-            argv = argv || browser$1$1.argv;
-            const prefix2 = flag.startsWith('-') ? '' : flag.length === 1 ? '-' : '--';
-            const pos = argv.indexOf(prefix2 + flag);
-            const terminatorPos = argv.indexOf('--');
-            
-            return pos !== -1 && (terminatorPos === -1 ? true : pos < terminatorPos);
-        };
-    },
-});
-
-// node_modules/supports-color/index.js
-var require_supports_color = __commonJS({
-    'node_modules/supports-color/index.js'(exports2, module2) {
-        var hasFlag = require_has_flag();
-        var env = {};
-        var forceColor;
-        
-        if (hasFlag('no-color') || hasFlag('no-colors') || hasFlag('color=false')) {
-            forceColor = false;
-        } else if (hasFlag('color') || hasFlag('colors') || hasFlag('color=true') || hasFlag('color=always')) {
-            forceColor = true;
-        }
-        
-        if ('FORCE_COLOR' in env) {
-            forceColor = env.FORCE_COLOR.length === 0 || parseInt(env.FORCE_COLOR, 10) !== 0;
-        }
-        
-        function translateLevel(level) {
-            if (level === 0) {
-                return false;
-            }
-            
-            return {
-                level,
-                hasBasic: true,
-                has256: level >= 2,
-                has16m: level >= 3,
-            };
-        }
-        
-        function supportsColor(stream) {
-            if (forceColor === false) {
-                return 0;
-            }
-            
-            if (hasFlag('color=16m') || hasFlag('color=full') || hasFlag('color=truecolor')) {
-                return 3;
-            }
-            
-            if (hasFlag('color=256')) {
-                return 2;
-            }
-            
-            if (stream && !stream.isTTY && forceColor !== true) {
-                return 0;
-            }
-            
-            const min = forceColor ? 1 : 0;
-            
-            if ('CI' in env) {
-                if ([
-                    'TRAVIS',
-                    'CIRCLECI',
-                    'APPVEYOR',
-                    'GITLAB_CI',
-                ].some((sign) => sign in env) || env.CI_NAME === 'codeship') {
-                    return 1;
-                }
-                
-                return min;
-            }
-            
-            if ('TEAMCITY_VERSION' in env) {
-                return /^(9\.(0*[1-9]\d*)\.|\d{2,}\.)/.test(env.TEAMCITY_VERSION) ? 1 : 0;
-            }
-            
-            if (env.COLORTERM === 'truecolor') {
-                return 3;
-            }
-            
-            if ('TERM_PROGRAM' in env) {
-                const version = parseInt((env.TERM_PROGRAM_VERSION || '')
-                    .split('.')[0], 10);
-                
-                switch(env.TERM_PROGRAM) {
-                case 'iTerm.app':
-                    return version >= 3 ? 3 : 2;
-                
-                case 'Apple_Terminal':
-                    return 2;
-                }
-            }
-            
-            if (/-256(color)?$/i.test(env.TERM)) {
-                return 2;
-            }
-            
-            if (/^screen|^xterm|^vt100|^vt220|^rxvt|color|ansi|cygwin|linux/i.test(env.TERM)) {
-                return 1;
-            }
-            
-            if ('COLORTERM' in env) {
-                return 1;
-            }
-            
-            if (env.TERM === 'dumb') {
-                return min;
-            }
-            
-            return min;
-        }
-        
-        function getSupportLevel(stream) {
-            const level = supportsColor(stream);
-            return translateLevel(level);
-        }
-        
-        module2.exports = {
-            supportsColor: getSupportLevel,
-            stdout: getSupportLevel(browser$1$1.stdout),
-            stderr: getSupportLevel(browser$1$1.stderr),
-        };
-    },
-});
+var require_browser = () => () => {};
 
 // node_modules/debug/src/node.js
-var require_node = __commonJS({
-    'node_modules/debug/src/node.js'(exports2, module2) {
-        var tty = require$$1$2;
-        var util = require$$2$1;
-        
-        exports2.init = init;
-        exports2.log = log;
-        exports2.formatArgs = formatArgs;
-        exports2.save = save;
-        exports2.load = load;
-        exports2.useColors = useColors;
-        exports2.destroy = util.deprecate(() => {}, 'Instance method `debug.destroy()` is deprecated and no longer does anything. It will be removed in the next major version of `debug`.');
-        exports2.colors = [
-            6,
-            2,
-            3,
-            4,
-            5,
-            1,
-        ];
-        try {
-            const supportsColor = require_supports_color();
-            
-            if (supportsColor && (supportsColor.stderr || supportsColor).level >= 2) {
-                exports2.colors = [
-                    20,
-                    21,
-                    26,
-                    27,
-                    32,
-                    33,
-                    38,
-                    39,
-                    40,
-                    41,
-                    42,
-                    43,
-                    44,
-                    45,
-                    56,
-                    57,
-                    62,
-                    63,
-                    68,
-                    69,
-                    74,
-                    75,
-                    76,
-                    77,
-                    78,
-                    79,
-                    80,
-                    81,
-                    92,
-                    93,
-                    98,
-                    99,
-                    112,
-                    113,
-                    128,
-                    129,
-                    134,
-                    135,
-                    148,
-                    149,
-                    160,
-                    161,
-                    162,
-                    163,
-                    164,
-                    165,
-                    166,
-                    167,
-                    168,
-                    169,
-                    170,
-                    171,
-                    172,
-                    173,
-                    178,
-                    179,
-                    184,
-                    185,
-                    196,
-                    197,
-                    198,
-                    199,
-                    200,
-                    201,
-                    202,
-                    203,
-                    204,
-                    205,
-                    206,
-                    207,
-                    208,
-                    209,
-                    214,
-                    215,
-                    220,
-                    221,
-                ];
-            }
-        } catch(error) {}
-
-
-                exports2.inspectOpts = Object
-            .keys({})
-            .filter((key) => {
-            return /^debug_/i.test(key);
-        })
-            .reduce((obj, key) => {
-            const prop = key
-                .substring(6)
-                .toLowerCase()
-                .replace(/_([a-z])/g, (_, k) => {
-                return k.toUpperCase();
-            });
-            
-            let val = {}[key];
-            
-            if (/^(yes|on|true|enabled)$/i.test(val)) {
-                val = true;
-            } else if (/^(no|off|false|disabled)$/i.test(val)) {
-                val = false;
-            } else if (val === 'null') {
-                val = null;
-            } else {
-                val = Number(val);
-            }
-            
-            obj[prop] = val;
-            return obj;
-        }, {});
-        function useColors() {
-            return 'colors' in exports2.inspectOpts ? Boolean(exports2.inspectOpts.colors) : tty.isatty(browser$1$1.stderr.fd);
-        }
-        
-        function formatArgs(args) {
-            const {namespace: name, useColors: useColors2} = this;
-            
-            if (useColors2) {
-                const c = this.color;
-                const colorCode = '\x1B[3' + (c < 8 ? c : '8;5;' + c);
-                const prefix2 = `  ${colorCode};1m${name} \x1B[0m`;
-                
-                args[0] = prefix2 + args[0]
-                    .split('\n')
-                    .join('\n' + prefix2);
-                args.push(colorCode + 'm+' + module2.exports.humanize(this.diff) + '\x1B[0m');
-            } else {
-                args[0] = getDate() + name + ' ' + args[0];
-            }
-        }
-        
-        function getDate() {
-            if (exports2.inspectOpts.hideDate) {
-                return '';
-            }
-            
-            return             /* @__PURE__ */new Date().toISOString() + ' ';
-        }
-        
-        function log(...args) {
-            return browser$1$1.stderr.write(util.formatWithOptions(exports2.inspectOpts, ...args) + '\n');
-        }
-        
-        function save(namespaces) {
-            if (namespaces) {
-                browser$1$1.env.DEBUG = namespaces;
-            } else {
-                delete browser$1$1.env.DEBUG;
-            }
-        }
-        
-        function load() {
-            return browser$1$1.env.DEBUG;
-        }
-        
-        function init(debug2) {
-            debug2.inspectOpts = {};
-            const keys2 = Object.keys(exports2.inspectOpts);
-            
-            for (let i = 0; i < keys2.length; i++) {
-                debug2.inspectOpts[keys2[i]] = exports2.inspectOpts[keys2[i]];
-            }
-        }
-        
-        module2.exports = require_common()(exports2);
-        var {formatters} = module2.exports;
-        
-        formatters.o = function(v) {
-            this.inspectOpts.colors = this.useColors;
-            return util
-                .inspect(v, this
-                .inspectOpts)
-                .split('\n')
-                .map((str) => str.trim())
-                .join(' ');
-        };
-        formatters.O = function(v) {
-            this.inspectOpts.colors = this.useColors;
-            return util.inspect(v, this.inspectOpts);
-        };
-    },
-});
+var require_node = () => () => {};
 
 // node_modules/debug/src/index.js
 var require_src = __commonJS({
     'node_modules/debug/src/index.js'(exports2, module2) {
-        if (typeof browser$1$1 === 'undefined' || browser$1$1.type === 'renderer' || browser$1$1.browser === true || browser$1$1.__nwjs) {
+        if (typeof browser$1 === 'undefined' || browser$1.type === 'renderer' || browser$1.browser === true || browser$1.__nwjs) {
             module2.exports = require_browser();
         } else {
             module2.exports = require_node();
@@ -5714,12 +4060,12 @@ __export(lib_exports, {
     isAccessor: () => isAccessor,
     isAnyTypeAnnotation: () => isAnyTypeAnnotation,
     isArgumentPlaceholder: () => isArgumentPlaceholder,
-    isArrayExpression: () => isArrayExpression$9,
+    isArrayExpression: () => isArrayExpression$a,
     isArrayPattern: () => isArrayPattern,
     isArrayTypeAnnotation: () => isArrayTypeAnnotation,
     isArrowFunctionExpression: () => isArrowFunctionExpression$2,
     isAssignmentExpression: () => isAssignmentExpression$3,
-    isAssignmentPattern: () => isAssignmentPattern$2,
+    isAssignmentPattern: () => isAssignmentPattern$3,
     isAwaitExpression: () => isAwaitExpression$1,
     isBigIntLiteral: () => isBigIntLiteral,
     isBinary: () => isBinary,
@@ -5869,7 +4215,7 @@ __export(lib_exports, {
     isNumberLiteralTypeAnnotation: () => isNumberLiteralTypeAnnotation,
     isNumberTypeAnnotation: () => isNumberTypeAnnotation,
     isNumericLiteral: () => isNumericLiteral,
-    isObjectExpression: () => isObjectExpression$8,
+    isObjectExpression: () => isObjectExpression$9,
     isObjectMember: () => isObjectMember,
     isObjectMethod: () => isObjectMethod$1,
     isObjectPattern: () => isObjectPattern$3,
@@ -7669,7 +6015,7 @@ function captureShortStackTrace(skip2, length) {
     };
 }
 
-function isArrayExpression$9(node, opts) {
+function isArrayExpression$a(node, opts) {
     if (!node)
         return false;
     
@@ -7999,7 +6345,7 @@ function isProgram$5(node, opts) {
     return opts == null || shallowEqual(node, opts);
 }
 
-function isObjectExpression$8(node, opts) {
+function isObjectExpression$9(node, opts) {
     if (!node)
         return false;
     
@@ -8179,7 +6525,7 @@ function isWithStatement(node, opts) {
     return opts == null || shallowEqual(node, opts);
 }
 
-function isAssignmentPattern$2(node, opts) {
+function isAssignmentPattern$3(node, opts) {
     if (!node)
         return false;
     
@@ -23251,7 +21597,7 @@ var TokContext = class {
     }
 };
 
-var types$17 = {
+var types$18 = {
     brace: new TokContext('{'),
     j_oTag: new TokContext('<tag'),
     j_cTag: new TokContext('</tag'),
@@ -25685,9 +24031,9 @@ var jsx$3 = (superClass) => class JSXParserMixin extends superClass {
         switch(this.state.type) {
         case 5:
             node = this.startNode();
-            this.setContext(types$17.brace);
+            this.setContext(types$18.brace);
             this.next();
-            node = this.jsxParseExpressionContainer(node, types$17.j_oTag);
+            node = this.jsxParseExpressionContainer(node, types$18.j_oTag);
             
             if (node.expression.type === 'JSXEmptyExpression') {
                 this.raise(JsxErrors.AttributeIsEmpty, node);
@@ -25712,7 +24058,7 @@ var jsx$3 = (superClass) => class JSXParserMixin extends superClass {
     jsxParseSpreadChild(node) {
         this.next();
         node.expression = this.parseExpression();
-        this.setContext(types$17.j_expr);
+        this.setContext(types$18.j_expr);
         this.state.canStartJSXElement = true;
         this.expect(8);
         return this.finishNode(node, 'JSXSpreadChild');
@@ -25742,11 +24088,11 @@ var jsx$3 = (superClass) => class JSXParserMixin extends superClass {
         const node = this.startNode();
         
         if (this.match(5)) {
-            this.setContext(types$17.brace);
+            this.setContext(types$18.brace);
             this.next();
             this.expect(21);
             node.argument = this.parseMaybeAssignAllowIn();
-            this.setContext(types$17.j_oTag);
+            this.setContext(types$18.j_oTag);
             this.state.canStartJSXElement = true;
             this.expect(8);
             return this.finishNode(node, 'JSXSpreadAttribute');
@@ -25820,13 +24166,13 @@ var jsx$3 = (superClass) => class JSXParserMixin extends superClass {
                 
                 case 5: {
                     const node2 = this.startNode();
-                    this.setContext(types$17.brace);
+                    this.setContext(types$18.brace);
                     this.next();
                     
                     if (this.match(21)) {
                         children.push(this.jsxParseSpreadChild(node2));
                     } else {
-                        children.push(this.jsxParseExpressionContainer(node2, types$17.j_expr));
+                        children.push(this.jsxParseExpressionContainer(node2, types$18.j_expr));
                     }
                     
                     break;
@@ -25902,12 +24248,12 @@ var jsx$3 = (superClass) => class JSXParserMixin extends superClass {
     getTokenFromCode(code2) {
         const context = this.curContext();
         
-        if (context === types$17.j_expr) {
+        if (context === types$18.j_expr) {
             this.jsxReadToken();
             return;
         }
         
-        if (context === types$17.j_oTag || context === types$17.j_cTag) {
+        if (context === types$18.j_oTag || context === types$18.j_cTag) {
             if (isIdentifierStart2(code2)) {
                 this.jsxReadWord();
                 return;
@@ -25919,7 +24265,7 @@ var jsx$3 = (superClass) => class JSXParserMixin extends superClass {
                 return;
             }
             
-            if ((code2 === 34 || code2 === 39) && context === types$17.j_oTag) {
+            if ((code2 === 34 || code2 === 39) && context === types$18.j_oTag) {
                 this.jsxReadString(code2);
                 return;
             }
@@ -25938,18 +24284,18 @@ var jsx$3 = (superClass) => class JSXParserMixin extends superClass {
         const {context, type} = this.state;
         
         if (type === 56 && prevType === 143) {
-            context.splice(-2, 2, types$17.j_cTag);
+            context.splice(-2, 2, types$18.j_cTag);
             this.state.canStartJSXElement = false;
         } else if (type === 143) {
-            context.push(types$17.j_oTag);
+            context.push(types$18.j_oTag);
         } else if (type === 144) {
             const out = context[context.length - 1];
             
-            if (out === types$17.j_oTag && prevType === 56 || out === types$17.j_cTag) {
+            if (out === types$18.j_oTag && prevType === 56 || out === types$18.j_cTag) {
                 context.pop();
-                this.state.canStartJSXElement = context[context.length - 1] === types$17.j_expr;
+                this.state.canStartJSXElement = context[context.length - 1] === types$18.j_expr;
             } else {
-                this.setContext(types$17.j_expr);
+                this.setContext(types$18.j_expr);
                 this.state.canStartJSXElement = true;
             }
         } else {
@@ -26428,7 +24774,7 @@ var State$2 = class _State {
         __publicField(this, 'end', 0);
         __publicField(this, 'lastTokEndLoc', null);
         __publicField(this, 'lastTokStartLoc', null);
-        __publicField(this, 'context', [types$17.brace]);
+        __publicField(this, 'context', [types$18.brace]);
         __publicField(this, 'firstInvalidTemplateEscapePos', null);
         __publicField(this, 'strictErrors',         /* @__PURE__ */new Map());
         __publicField(this, 'tokensLength', 0);
@@ -30951,7 +29297,7 @@ var typescript$3 = (superClass) => class TypeScriptParserMixin extends superClas
     }
     
     tsInTopLevelContext(cb) {
-        if (this.curContext() !== types$17.brace) {
+        if (this.curContext() !== types$18.brace) {
             const oldContext = this.state.context;
             
             this.state.context = [oldContext[0]];
@@ -31383,7 +29729,7 @@ var typescript$3 = (superClass) => class TypeScriptParserMixin extends superClas
         
         if (node.params.length === 0) {
             this.raise(TSErrors.EmptyTypeArguments, node);
-        } else if (!this.state.inType && this.curContext() === types$17.brace) {
+        } else if (!this.state.inType && this.curContext() === types$18.brace) {
             this.reScan_lt_gt();
         }
         
@@ -32237,7 +30583,7 @@ var typescript$3 = (superClass) => class TypeScriptParserMixin extends superClas
             
             const currentContext = context[context.length - 1];
             
-            if (currentContext === types$17.j_oTag || currentContext === types$17.j_expr) {
+            if (currentContext === types$18.j_oTag || currentContext === types$18.j_expr) {
                 context.pop();
             }
         }
@@ -38138,7 +36484,7 @@ var import_picocolors = __toESM(require_picocolors());
 var import_js_tokens = __toESM(require_js_tokens());
 
 function isColorSupported() {
-    return typeof browser$1$1 === 'object' && (browser$1$1.env.FORCE_COLOR === '0' || browser$1$1.env.FORCE_COLOR === 'false') ? false : import_picocolors.default.isColorSupported;
+    return typeof browser$1 === 'object' && (browser$1.env.FORCE_COLOR === '0' || browser$1.env.FORCE_COLOR === 'false') ? false : import_picocolors.default.isColorSupported;
 }
 
 var compose = (f, g) => (v) => f(g(v));
@@ -50514,7 +48860,7 @@ function ensureBlock2() {
     
     this.node.body = blockStatement3(statements2);
     const parentPath = this.get(stringPath);
-    setup$1.call(body, parentPath, listKey ? parentPath.node[listKey] : parentPath.node, listKey, key);
+    setup.call(body, parentPath, listKey ? parentPath.node[listKey] : parentPath.node, listKey, key);
     return this.node;
 }
 
@@ -52187,7 +50533,7 @@ var NodePath_Final = class NodePath {
                 paths.set(targetNode, path);
         }
         
-        setup$1.call(path, parentPath, container, listKey, key);
+        setup.call(path, parentPath, container, listKey, key);
         return path;
     }
     
@@ -52893,7 +51239,7 @@ function pushContext(context) {
     this.setContext(context);
 }
 
-function setup$1(parentPath, container, listKey, key) {
+function setup(parentPath, container, listKey, key) {
     this.listKey = listKey;
     this.container = container;
     this.parentPath = parentPath || this.parentPath;
@@ -53039,9 +51385,9 @@ var fullstore$3 = (value) => {
     };
 };
 
-var types$16 = {};
+var types$17 = {};
 
-types$16.TYPES = {
+types$17.TYPES = {
     TOKEN: 'Token',
     NEWLINE: 'Newline',
     LINEBREAK: 'Linebreak',
@@ -53061,7 +51407,7 @@ var arrowFunctionExpression = {};
 
 var is$3 = {};
 
-const {types: types$15} = bundle;
+const {types: types$16} = bundle;
 const {
     isStringLiteral: isStringLiteral$9,
     isIdentifier: isIdentifier$f,
@@ -53070,10 +51416,10 @@ const {
     isForOfStatement: isForOfStatement$1,
     isVariableDeclaration: isVariableDeclaration$4,
     isMemberExpression: isMemberExpression$7,
-    isArrayExpression: isArrayExpression$8,
-    isObjectExpression: isObjectExpression$7,
+    isArrayExpression: isArrayExpression$9,
+    isObjectExpression: isObjectExpression$8,
     isLabeledStatement: isLabeledStatement$1,
-} = types$15;
+} = types$16;
 
 const isParentProgram$1 = (path) => path.parentPath?.isProgram();
 const isParentBlock$3 = (path) => path.parentPath.isBlockStatement();
@@ -53142,10 +51488,10 @@ function isStringAndIdentifier$2([a, b]) {
 const checkObject = (elements) => {
     let a = elements.at(-1);
     
-    if (!isObjectExpression$7(a))
+    if (!isObjectExpression$8(a))
         a = elements.at(-2);
     
-    if (!isObjectExpression$7(a))
+    if (!isObjectExpression$8(a))
         return false;
     
     return a.node.properties.length;
@@ -53178,7 +51524,7 @@ is$3.isStringAndArray = ([a, b]) => {
     if (!isStringLiteral$9(a))
         return false;
     
-    if (!isArrayExpression$8(b))
+    if (!isArrayExpression$9(b))
         return false;
     
     return !isStringAndIdentifier$2(b.node.elements);
@@ -53349,8 +51695,7 @@ commentsPrinter.printLeadingComments = (path, printer, semantics, {currentTraver
 commentsPrinter.printTrailingComments = (path, printer, semantics, {currentTraverse}) => {
     const {print} = printer;
     const {
-        trailingComments = [],
-    } = path.node;
+        trailingComments = []} = path.node;
     
     const {
         printTrailingCommentLine,
@@ -53377,7 +51722,7 @@ commentsPrinter.printTrailingComments = (path, printer, semantics, {currentTrave
     }
 };
 
-const {types: types$14} = bundle;
+const {types: types$15} = bundle;
 const {
     hasTrailingComment: hasTrailingComment$5,
     satisfy: satisfy$3,
@@ -53403,7 +51748,7 @@ const {
     isBinaryExpression: isBinaryExpression$1,
     isClassMethod: isClassMethod$1,
     isDecorator: isDecorator$1,
-} = types$14;
+} = types$15;
 
 const isProperty = satisfy$3([
     isObjectProperty$2,
@@ -53655,7 +52000,7 @@ function build(path) {
     return prop;
 }
 
-const {types: types$13} = bundle;
+const {types: types$14} = bundle;
 const {chain: chain$2} = chain$3;
 const {satisfy: satisfy$2} = is$3;
 
@@ -53664,7 +52009,7 @@ const {
     isIfStatement: isIfStatement$1,
     isCallExpression: isCallExpression$8,
     isIdentifier: isIdentifier$e,
-} = types$13;
+} = types$14;
 
 const isArgOfCall = (path) => path.parentPath?.isCallExpression() && path.parentPath.get('arguments.0') === path;
 const isCall$1 = (a) => a.type === 'CallExpression';
@@ -53737,7 +52082,7 @@ const isIfUp = (path) => {
     return is;
 };
 
-const {types: types$12} = bundle;
+const {types: types$13} = bundle;
 
 const {
     isLast: isLast$c,
@@ -53757,7 +52102,7 @@ const {
     isMemberExpression: isMemberExpression$6,
     isExpressionStatement: isExpressionStatement$6,
     isCallExpression: isCallExpression$7,
-} = types$12;
+} = types$13;
 
 const hasBody$1 = (path) => {
     if (path.isTSModuleDeclaration())
@@ -54116,7 +52461,7 @@ arrowFunctionExpression.ArrowFunctionExpression = maybeParens$d((path, printer, 
 
 var functionDeclaration = {};
 
-const {types: types$11} = bundle;
+const {types: types$12} = bundle;
 const {markAfter: markAfter$a} = mark;
 const {isNext: isNext$m, isNextParent: isNextParent$4} = is$3;
 const {printParams: printParams$b} = params;
@@ -54132,7 +52477,7 @@ const {
     isExpressionStatement: isExpressionStatement$5,
     isFunctionDeclaration: isFunctionDeclaration$2,
     isExportDefaultDeclaration,
-} = types$11;
+} = types$12;
 
 const isInsideNamedExport$1 = ({parentPath}) => isExportNamedDeclaration$2(parentPath);
 
@@ -54637,7 +52982,7 @@ maybeDeclare$6.maybeDeclare = (visit) => (path, printer, semantics) => {
     visit(path, printer, semantics);
 };
 
-const {types: types$10} = bundle;
+const {types: types$11} = bundle;
 
 const {isNext: isNext$j} = is$3;
 const {markAfter: markAfter$9} = mark;
@@ -54653,7 +52998,7 @@ const isInsideTSModuleBlock = (path) => {
 const {
     isFunction: isFunction$6,
     isTSModuleBlock: isTSModuleBlock$2,
-} = types$10;
+} = types$11;
 
 const isInsideExport = ({parentPath}) => parentPath.isExportDeclaration();
 const isFunctionLike = (path) => isFunction$6(path.parentPath.parentPath);
@@ -54818,14 +53163,14 @@ function tooLong$1(args) {
 
 var newExpression = {};
 
-const {types: types$$} = bundle;
+const {types: types$10} = bundle;
 const {exists: exists$b} = is$3;
 const {isMarkedAfter: isMarkedAfter$2} = mark;
 
 const {
     isExpressionStatement: isExpressionStatement$4,
     isMemberExpression: isMemberExpression$5,
-} = types$$;
+} = types$10;
 
 const isInsideExpressionStatement = ({parentPath}) => isExpressionStatement$4(parentPath);
 const notFirst = ({parentPath}) => exists$b(parentPath.getPrevSibling());
@@ -54904,8 +53249,8 @@ var objectExpression$2 = {};
 
 var isInsideTuple$1 = {};
 
-const {types: types$_} = bundle;
-const {isArrayExpression: isArrayExpression$7} = types$_;
+const {types: types$$} = bundle;
+const {isArrayExpression: isArrayExpression$8} = types$$;
 
 const TYPES$3 = [
     'NullLiteral',
@@ -54916,7 +53261,7 @@ const TYPES$3 = [
 isInsideTuple$1.isInsideTuple = (path) => {
     const {parentPath} = path;
     
-    if (!isArrayExpression$7(parentPath))
+    if (!isArrayExpression$8(parentPath))
         return false;
     
     const [first, second] = parentPath.node.elements;
@@ -54929,15 +53274,15 @@ isInsideTuple$1.isInsideTuple = (path) => {
 
 var isThirdObjectInsideArray$1 = {};
 
-const {types: types$Z} = bundle;
+const {types: types$_} = bundle;
 const {
-    isArrayExpression: isArrayExpression$6,
+    isArrayExpression: isArrayExpression$7,
     isCallExpression: isCallExpression$6,
     isIdentifier: isIdentifier$d,
-} = types$Z;
+} = types$_;
 
 isThirdObjectInsideArray$1.isThirdObjectInsideArray = ({parentPath}) => {
-    if (!isArrayExpression$6(parentPath))
+    if (!isArrayExpression$7(parentPath))
         return false;
     
     const [, second] = parentPath.node.elements;
@@ -54945,7 +53290,7 @@ isThirdObjectInsideArray$1.isThirdObjectInsideArray = ({parentPath}) => {
     return isCallExpression$6(second) && !!isIdentifier$d(second);
 };
 
-const {types: types$Y} = bundle;
+const {types: types$Z} = bundle;
 const {
     isCoupleLines: isCoupleLines$7,
     isForOf: isForOf$3,
@@ -54964,8 +53309,8 @@ const {isThirdObjectInsideArray} = isThirdObjectInsideArray$1;
 
 const {
     isStringLiteral: isStringLiteral$8,
-    isArrayExpression: isArrayExpression$5,
-} = types$Y;
+    isArrayExpression: isArrayExpression$6,
+} = types$Z;
 
 const isBodyOfArrow = (path) => path.parentPath.node.body === path.node;
 const isLogical = (path) => path.get('argument').isLogicalExpression();
@@ -54987,10 +53332,10 @@ const isMemberExpressionCallee = ({parentPath}) => {
 const isInsideCall = ({parentPath}) => parentPath.isCallExpression();
 
 function isInsideNestedArrayCall({parentPath}) {
-    if (!isArrayExpression$5(parentPath))
+    if (!isArrayExpression$6(parentPath))
         return false;
     
-    if (!isArrayExpression$5(parentPath.parentPath))
+    if (!isArrayExpression$6(parentPath.parentPath))
         return false;
     
     return isInsideCall(parentPath.parentPath);
@@ -55131,12 +53476,12 @@ var objectProperty$3 = {};
 
 var concatenate$1 = {};
 
-const {types: types$X} = bundle;
+const {types: types$Y} = bundle;
 const {
     isStringLiteral: isStringLiteral$7,
     isTemplateLiteral: isTemplateLiteral$3,
     isBinaryExpression,
-} = types$X;
+} = types$Y;
 
 const isStringLike = (a) => {
     if (isStringLiteral$7(a))
@@ -55183,11 +53528,11 @@ concatenate$1.concatenate = (path, {print, indent}) => {
         indent.dec();
 };
 
-const {types: types$W} = bundle;
+const {types: types$X} = bundle;
 const {isConcatenation: isConcatenation$2} = concatenate$1;
 const {isOneLine} = objectExpression$2;
 const {printKey: printKey$4} = printKey$7;
-const {isTSImportType} = types$W;
+const {isTSImportType} = types$X;
 const isInsideTSImportType = ({parentPath}) => isTSImportType(parentPath.parentPath);
 
 objectProperty$3.ObjectProperty = (path, printer, semantics) => {
@@ -55241,11 +53586,11 @@ moreThenMaxPropertiesInOneLine$1.moreThenMaxPropertiesInOneLine = (path, {maxPro
 
 var maybeTypeAnnotation$4 = {};
 
-const {types: types$V} = bundle;
+const {types: types$W} = bundle;
 const {
     isMemberExpression: isMemberExpression$4,
     isSequenceExpression: isSequenceExpression$1,
-} = types$V;
+} = types$W;
 
 maybeTypeAnnotation$4.maybePrintTypeAnnotation = maybePrintTypeAnnotation$3;
 
@@ -55276,11 +53621,11 @@ function maybePrintTypeAnnotation$3(path, printer) {
 
 var moreThenMaxPropertiesLengthInOneLine$1 = {};
 
-const {types: types$U} = bundle;
+const {types: types$V} = bundle;
 const {
-    isAssignmentPattern: isAssignmentPattern$1,
+    isAssignmentPattern: isAssignmentPattern$2,
     isIdentifier: isIdentifier$c,
-} = types$U;
+} = types$V;
 
 function getLength(left, right) {
     if (isIdentifier$c(left) && isIdentifier$c(right))
@@ -55296,7 +53641,7 @@ moreThenMaxPropertiesLengthInOneLine$1.moreThenMaxPropertiesLengthInOneLine = (p
     const {properties} = path.node;
     
     for (const {key, value} of properties) {
-        if (isAssignmentPattern$1(value)) {
+        if (isAssignmentPattern$2(value)) {
             const {left, right} = value;
             
             const length = getLength(left, right);
@@ -55317,6 +53662,45 @@ moreThenMaxPropertiesLengthInOneLine$1.moreThenMaxPropertiesLengthInOneLine = (p
     return false;
 };
 
+var calculateLongAssignPattern = {};
+
+const {types: types$U} = bundle;
+const {
+    isAssignmentPattern: isAssignmentPattern$1,
+    isArrayExpression: isArrayExpression$5,
+    isObjectExpression: isObjectExpression$7,
+} = types$U;
+
+calculateLongAssignPattern.calculateAssigns = (property, semantics) => {
+    const currentAssign = isLongAssignPattern$1(property, semantics);
+    
+    const {right} = property.node.value;
+    const isArrayOrObjectRight = isArrayExpression$5(right) || isComplexObject(right);
+    const complexAssign = currentAssign && isArrayOrObjectRight;
+    
+    return {
+        complexAssign,
+    };
+};
+
+calculateLongAssignPattern.isLongAssignPattern = isLongAssignPattern$1;
+
+function isLongAssignPattern$1(path, semantics) {
+    if (!isAssignmentPattern$1(path.node.value))
+        return false;
+    
+    const {maxPropertiesLengthInOneLine} = semantics;
+    
+    return path.node.key.name.length > maxPropertiesLengthInOneLine;
+}
+
+function isComplexObject(node) {
+    if (!isObjectExpression$7(node))
+        return false;
+    
+    return node.properties.length;
+}
+
 const {types: types$T} = bundle;
 const {wrongShorthand} = wrongShortand;
 
@@ -55331,6 +53715,11 @@ const {moreThenMaxPropertiesInOneLine} = moreThenMaxPropertiesInOneLine$1;
 const {maybeTypeAnnotation: maybeTypeAnnotation$3} = maybeTypeAnnotation$4;
 const {moreThenMaxPropertiesLengthInOneLine} = moreThenMaxPropertiesLengthInOneLine$1;
 const {printKey: printKey$3} = printKey$7;
+
+const {
+    calculateAssigns,
+    isLongAssignPattern,
+} = calculateLongAssignPattern;
 
 const {
     isObjectExpression: isObjectExpression$6,
@@ -55459,7 +53848,7 @@ objectPattern$1.ObjectPattern = {
             });
             
             maybe.indent((prevAssignObject || is) && notInsideFn);
-            maybe.print.breakline(couple);
+            maybe.print.breakline(couple && !isLongAssignPattern(property, semantics));
             
             if (!isAssign && nextAssignObject)
                 print.breakline();
@@ -55491,7 +53880,9 @@ objectPattern$1.ObjectPattern = {
                 continue;
             }
             
-            if (is || hasObject || prevAssignObject && notInsideFn) {
+            const {complexAssign} = calculateAssigns(property, semantics);
+            
+            if (!complexAssign && (is || hasObject || prevAssignObject && notInsideFn)) {
                 print(',');
                 print.newline();
                 
@@ -61593,7 +59984,7 @@ function snakeCase(str) {
 const process$1 = require$$0$2;
 const toSnakeCase = justSnakeCase;
 const {codeFrameColumns: codeFrameColumns$1} = bundle;
-const {TYPES: TYPES$2} = types$16;
+const {TYPES: TYPES$2} = types$17;
 
 const {stringify: stringify$7} = JSON;
 const {
@@ -61780,7 +60171,7 @@ const initSemantics = (format, semantics = {}) => ({
 const fullstore$2 = fullstore$3;
 
 const babelTraverse$2 = bundle.traverse;
-const {TYPES: TYPES$1} = types$16;
+const {TYPES: TYPES$1} = types$17;
 const baseVisitors = visitors$1;
 
 const {
@@ -64826,750 +63217,9 @@ lib$1.validateRulesRelations = validateRulesRelations$1;
 
 var lib = {};
 
-var browser = {exports: {}};
-
-/**
- * Helpers.
- */
-
-var ms;
-var hasRequiredMs;
-
-function requireMs () {
-	if (hasRequiredMs) return ms;
-	hasRequiredMs = 1;
-	var s = 1000;
-	var m = s * 60;
-	var h = m * 60;
-	var d = h * 24;
-	var w = d * 7;
-	var y = d * 365.25;
-
-	/**
-	 * Parse or format the given `val`.
-	 *
-	 * Options:
-	 *
-	 *  - `long` verbose formatting [false]
-	 *
-	 * @param {String|Number} val
-	 * @param {Object} [options]
-	 * @throws {Error} throw an error if val is not a non-empty string or a number
-	 * @return {String|Number}
-	 * @api public
-	 */
-
-	ms = function (val, options) {
-	  options = options || {};
-	  var type = typeof val;
-	  if (type === 'string' && val.length > 0) {
-	    return parse(val);
-	  } else if (type === 'number' && isFinite(val)) {
-	    return options.long ? fmtLong(val) : fmtShort(val);
-	  }
-	  throw new Error(
-	    'val is not a non-empty string or a valid number. val=' +
-	      JSON.stringify(val)
-	  );
-	};
-
-	/**
-	 * Parse the given `str` and return milliseconds.
-	 *
-	 * @param {String} str
-	 * @return {Number}
-	 * @api private
-	 */
-
-	function parse(str) {
-	  str = String(str);
-	  if (str.length > 100) {
-	    return;
-	  }
-	  var match = /^(-?(?:\d+)?\.?\d+) *(milliseconds?|msecs?|ms|seconds?|secs?|s|minutes?|mins?|m|hours?|hrs?|h|days?|d|weeks?|w|years?|yrs?|y)?$/i.exec(
-	    str
-	  );
-	  if (!match) {
-	    return;
-	  }
-	  var n = parseFloat(match[1]);
-	  var type = (match[2] || 'ms').toLowerCase();
-	  switch (type) {
-	    case 'years':
-	    case 'year':
-	    case 'yrs':
-	    case 'yr':
-	    case 'y':
-	      return n * y;
-	    case 'weeks':
-	    case 'week':
-	    case 'w':
-	      return n * w;
-	    case 'days':
-	    case 'day':
-	    case 'd':
-	      return n * d;
-	    case 'hours':
-	    case 'hour':
-	    case 'hrs':
-	    case 'hr':
-	    case 'h':
-	      return n * h;
-	    case 'minutes':
-	    case 'minute':
-	    case 'mins':
-	    case 'min':
-	    case 'm':
-	      return n * m;
-	    case 'seconds':
-	    case 'second':
-	    case 'secs':
-	    case 'sec':
-	    case 's':
-	      return n * s;
-	    case 'milliseconds':
-	    case 'millisecond':
-	    case 'msecs':
-	    case 'msec':
-	    case 'ms':
-	      return n;
-	    default:
-	      return undefined;
-	  }
-	}
-
-	/**
-	 * Short format for `ms`.
-	 *
-	 * @param {Number} ms
-	 * @return {String}
-	 * @api private
-	 */
-
-	function fmtShort(ms) {
-	  var msAbs = Math.abs(ms);
-	  if (msAbs >= d) {
-	    return Math.round(ms / d) + 'd';
-	  }
-	  if (msAbs >= h) {
-	    return Math.round(ms / h) + 'h';
-	  }
-	  if (msAbs >= m) {
-	    return Math.round(ms / m) + 'm';
-	  }
-	  if (msAbs >= s) {
-	    return Math.round(ms / s) + 's';
-	  }
-	  return ms + 'ms';
-	}
-
-	/**
-	 * Long format for `ms`.
-	 *
-	 * @param {Number} ms
-	 * @return {String}
-	 * @api private
-	 */
-
-	function fmtLong(ms) {
-	  var msAbs = Math.abs(ms);
-	  if (msAbs >= d) {
-	    return plural(ms, msAbs, d, 'day');
-	  }
-	  if (msAbs >= h) {
-	    return plural(ms, msAbs, h, 'hour');
-	  }
-	  if (msAbs >= m) {
-	    return plural(ms, msAbs, m, 'minute');
-	  }
-	  if (msAbs >= s) {
-	    return plural(ms, msAbs, s, 'second');
-	  }
-	  return ms + ' ms';
-	}
-
-	/**
-	 * Pluralization helper.
-	 */
-
-	function plural(ms, msAbs, n, name) {
-	  var isPlural = msAbs >= n * 1.5;
-	  return Math.round(ms / n) + ' ' + name + (isPlural ? 's' : '');
-	}
-	return ms;
-}
-
-/**
- * This is the common logic for both the Node.js and web browser
- * implementations of `debug()`.
- */
-
-function setup(env) {
-	createDebug.debug = createDebug;
-	createDebug.default = createDebug;
-	createDebug.coerce = coerce;
-	createDebug.disable = disable;
-	createDebug.enable = enable;
-	createDebug.enabled = enabled;
-	createDebug.humanize = requireMs();
-	createDebug.destroy = destroy;
-
-	Object.keys(env).forEach(key => {
-		createDebug[key] = env[key];
-	});
-
-	/**
-	* The currently active debug mode names, and names to skip.
-	*/
-
-	createDebug.names = [];
-	createDebug.skips = [];
-
-	/**
-	* Map of special "%n" handling functions, for the debug "format" argument.
-	*
-	* Valid key names are a single, lower or upper-case letter, i.e. "n" and "N".
-	*/
-	createDebug.formatters = {};
-
-	/**
-	* Selects a color for a debug namespace
-	* @param {String} namespace The namespace string for the debug instance to be colored
-	* @return {Number|String} An ANSI color code for the given namespace
-	* @api private
-	*/
-	function selectColor(namespace) {
-		let hash = 0;
-
-		for (let i = 0; i < namespace.length; i++) {
-			hash = ((hash << 5) - hash) + namespace.charCodeAt(i);
-			hash |= 0; // Convert to 32bit integer
-		}
-
-		return createDebug.colors[Math.abs(hash) % createDebug.colors.length];
-	}
-	createDebug.selectColor = selectColor;
-
-	/**
-	* Create a debugger with the given `namespace`.
-	*
-	* @param {String} namespace
-	* @return {Function}
-	* @api public
-	*/
-	function createDebug(namespace) {
-		let prevTime;
-		let enableOverride = null;
-		let namespacesCache;
-		let enabledCache;
-
-		function debug(...args) {
-			// Disabled?
-			if (!debug.enabled) {
-				return;
-			}
-
-			const self = debug;
-
-			// Set `diff` timestamp
-			const curr = Number(new Date());
-			const ms = curr - (prevTime || curr);
-			self.diff = ms;
-			self.prev = prevTime;
-			self.curr = curr;
-			prevTime = curr;
-
-			args[0] = createDebug.coerce(args[0]);
-
-			if (typeof args[0] !== 'string') {
-				// Anything else let's inspect with %O
-				args.unshift('%O');
-			}
-
-			// Apply any `formatters` transformations
-			let index = 0;
-			args[0] = args[0].replace(/%([a-zA-Z%])/g, (match, format) => {
-				// If we encounter an escaped % then don't increase the array index
-				if (match === '%%') {
-					return '%';
-				}
-				index++;
-				const formatter = createDebug.formatters[format];
-				if (typeof formatter === 'function') {
-					const val = args[index];
-					match = formatter.call(self, val);
-
-					// Now we need to remove `args[index]` since it's inlined in the `format`
-					args.splice(index, 1);
-					index--;
-				}
-				return match;
-			});
-
-			// Apply env-specific formatting (colors, etc.)
-			createDebug.formatArgs.call(self, args);
-
-			const logFn = self.log || createDebug.log;
-			logFn.apply(self, args);
-		}
-
-		debug.namespace = namespace;
-		debug.useColors = createDebug.useColors();
-		debug.color = createDebug.selectColor(namespace);
-		debug.extend = extend;
-		debug.destroy = createDebug.destroy; // XXX Temporary. Will be removed in the next major release.
-
-		Object.defineProperty(debug, 'enabled', {
-			enumerable: true,
-			configurable: false,
-			get: () => {
-				if (enableOverride !== null) {
-					return enableOverride;
-				}
-				if (namespacesCache !== createDebug.namespaces) {
-					namespacesCache = createDebug.namespaces;
-					enabledCache = createDebug.enabled(namespace);
-				}
-
-				return enabledCache;
-			},
-			set: v => {
-				enableOverride = v;
-			}
-		});
-
-		// Env-specific initialization logic for debug instances
-		if (typeof createDebug.init === 'function') {
-			createDebug.init(debug);
-		}
-
-		return debug;
-	}
-
-	function extend(namespace, delimiter) {
-		const newDebug = createDebug(this.namespace + (typeof delimiter === 'undefined' ? ':' : delimiter) + namespace);
-		newDebug.log = this.log;
-		return newDebug;
-	}
-
-	/**
-	* Enables a debug mode by namespaces. This can include modes
-	* separated by a colon and wildcards.
-	*
-	* @param {String} namespaces
-	* @api public
-	*/
-	function enable(namespaces) {
-		createDebug.save(namespaces);
-		createDebug.namespaces = namespaces;
-
-		createDebug.names = [];
-		createDebug.skips = [];
-
-		const split = (typeof namespaces === 'string' ? namespaces : '')
-			.trim()
-			.replace(/\s+/g, ',')
-			.split(',')
-			.filter(Boolean);
-
-		for (const ns of split) {
-			if (ns[0] === '-') {
-				createDebug.skips.push(ns.slice(1));
-			} else {
-				createDebug.names.push(ns);
-			}
-		}
-	}
-
-	/**
-	 * Checks if the given string matches a namespace template, honoring
-	 * asterisks as wildcards.
-	 *
-	 * @param {String} search
-	 * @param {String} template
-	 * @return {Boolean}
-	 */
-	function matchesTemplate(search, template) {
-		let searchIndex = 0;
-		let templateIndex = 0;
-		let starIndex = -1;
-		let matchIndex = 0;
-
-		while (searchIndex < search.length) {
-			if (templateIndex < template.length && (template[templateIndex] === search[searchIndex] || template[templateIndex] === '*')) {
-				// Match character or proceed with wildcard
-				if (template[templateIndex] === '*') {
-					starIndex = templateIndex;
-					matchIndex = searchIndex;
-					templateIndex++; // Skip the '*'
-				} else {
-					searchIndex++;
-					templateIndex++;
-				}
-			} else if (starIndex !== -1) { // eslint-disable-line no-negated-condition
-				// Backtrack to the last '*' and try to match more characters
-				templateIndex = starIndex + 1;
-				matchIndex++;
-				searchIndex = matchIndex;
-			} else {
-				return false; // No match
-			}
-		}
-
-		// Handle trailing '*' in template
-		while (templateIndex < template.length && template[templateIndex] === '*') {
-			templateIndex++;
-		}
-
-		return templateIndex === template.length;
-	}
-
-	/**
-	* Disable debug output.
-	*
-	* @return {String} namespaces
-	* @api public
-	*/
-	function disable() {
-		const namespaces = [
-			...createDebug.names,
-			...createDebug.skips.map(namespace => '-' + namespace)
-		].join(',');
-		createDebug.enable('');
-		return namespaces;
-	}
-
-	/**
-	* Returns true if the given mode name is enabled, false otherwise.
-	*
-	* @param {String} name
-	* @return {Boolean}
-	* @api public
-	*/
-	function enabled(name) {
-		for (const skip of createDebug.skips) {
-			if (matchesTemplate(name, skip)) {
-				return false;
-			}
-		}
-
-		for (const ns of createDebug.names) {
-			if (matchesTemplate(name, ns)) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	/**
-	* Coerce `val`.
-	*
-	* @param {Mixed} val
-	* @return {Mixed}
-	* @api private
-	*/
-	function coerce(val) {
-		if (val instanceof Error) {
-			return val.stack || val.message;
-		}
-		return val;
-	}
-
-	/**
-	* XXX DO NOT USE. This is a temporary stub function.
-	* XXX It WILL be removed in the next major release.
-	*/
-	function destroy() {
-		console.warn('Instance method `debug.destroy()` is deprecated and no longer does anything. It will be removed in the next major version of `debug`.');
-	}
-
-	createDebug.enable(createDebug.load());
-
-	return createDebug;
-}
-
-var common = setup;
-
-(function (module, exports) {
-	/**
-	 * This is the web browser implementation of `debug()`.
-	 */
-
-	exports.formatArgs = formatArgs;
-	exports.save = save;
-	exports.load = load;
-	exports.useColors = useColors;
-	exports.storage = localstorage();
-	exports.destroy = (() => {
-		let warned = false;
-
-		return () => {
-			if (!warned) {
-				warned = true;
-				console.warn('Instance method `debug.destroy()` is deprecated and no longer does anything. It will be removed in the next major version of `debug`.');
-			}
-		};
-	})();
-
-	/**
-	 * Colors.
-	 */
-
-	exports.colors = [
-		'#0000CC',
-		'#0000FF',
-		'#0033CC',
-		'#0033FF',
-		'#0066CC',
-		'#0066FF',
-		'#0099CC',
-		'#0099FF',
-		'#00CC00',
-		'#00CC33',
-		'#00CC66',
-		'#00CC99',
-		'#00CCCC',
-		'#00CCFF',
-		'#3300CC',
-		'#3300FF',
-		'#3333CC',
-		'#3333FF',
-		'#3366CC',
-		'#3366FF',
-		'#3399CC',
-		'#3399FF',
-		'#33CC00',
-		'#33CC33',
-		'#33CC66',
-		'#33CC99',
-		'#33CCCC',
-		'#33CCFF',
-		'#6600CC',
-		'#6600FF',
-		'#6633CC',
-		'#6633FF',
-		'#66CC00',
-		'#66CC33',
-		'#9900CC',
-		'#9900FF',
-		'#9933CC',
-		'#9933FF',
-		'#99CC00',
-		'#99CC33',
-		'#CC0000',
-		'#CC0033',
-		'#CC0066',
-		'#CC0099',
-		'#CC00CC',
-		'#CC00FF',
-		'#CC3300',
-		'#CC3333',
-		'#CC3366',
-		'#CC3399',
-		'#CC33CC',
-		'#CC33FF',
-		'#CC6600',
-		'#CC6633',
-		'#CC9900',
-		'#CC9933',
-		'#CCCC00',
-		'#CCCC33',
-		'#FF0000',
-		'#FF0033',
-		'#FF0066',
-		'#FF0099',
-		'#FF00CC',
-		'#FF00FF',
-		'#FF3300',
-		'#FF3333',
-		'#FF3366',
-		'#FF3399',
-		'#FF33CC',
-		'#FF33FF',
-		'#FF6600',
-		'#FF6633',
-		'#FF9900',
-		'#FF9933',
-		'#FFCC00',
-		'#FFCC33'
-	];
-
-	/**
-	 * Currently only WebKit-based Web Inspectors, Firefox >= v31,
-	 * and the Firebug extension (any Firefox version) are known
-	 * to support "%c" CSS customizations.
-	 *
-	 * TODO: add a `localStorage` variable to explicitly enable/disable colors
-	 */
-
-	// eslint-disable-next-line complexity
-	function useColors() {
-		// NB: In an Electron preload script, document will be defined but not fully
-		// initialized. Since we know we're in Chrome, we'll just detect this case
-		// explicitly
-		if (typeof window !== 'undefined' && window.process && (window.process.type === 'renderer' || window.process.__nwjs)) {
-			return true;
-		}
-
-		// Internet Explorer and Edge do not support colors.
-		if (typeof navigator !== 'undefined' && navigator.userAgent && navigator.userAgent.toLowerCase().match(/(edge|trident)\/(\d+)/)) {
-			return false;
-		}
-
-		let m;
-
-		// Is webkit? http://stackoverflow.com/a/16459606/376773
-		// document is undefined in react-native: https://github.com/facebook/react-native/pull/1632
-		// eslint-disable-next-line no-return-assign
-		return (typeof document !== 'undefined' && document.documentElement && document.documentElement.style && document.documentElement.style.WebkitAppearance) ||
-			// Is firebug? http://stackoverflow.com/a/398120/376773
-			(typeof window !== 'undefined' && window.console && (window.console.firebug || (window.console.exception && window.console.table))) ||
-			// Is firefox >= v31?
-			// https://developer.mozilla.org/en-US/docs/Tools/Web_Console#Styling_messages
-			(typeof navigator !== 'undefined' && navigator.userAgent && (m = navigator.userAgent.toLowerCase().match(/firefox\/(\d+)/)) && parseInt(m[1], 10) >= 31) ||
-			// Double check webkit in userAgent just in case we are in a worker
-			(typeof navigator !== 'undefined' && navigator.userAgent && navigator.userAgent.toLowerCase().match(/applewebkit\/(\d+)/));
-	}
-
-	/**
-	 * Colorize log arguments if enabled.
-	 *
-	 * @api public
-	 */
-
-	function formatArgs(args) {
-		args[0] = (this.useColors ? '%c' : '') +
-			this.namespace +
-			(this.useColors ? ' %c' : ' ') +
-			args[0] +
-			(this.useColors ? '%c ' : ' ') +
-			'+' + module.exports.humanize(this.diff);
-
-		if (!this.useColors) {
-			return;
-		}
-
-		const c = 'color: ' + this.color;
-		args.splice(1, 0, c, 'color: inherit');
-
-		// The final "%c" is somewhat tricky, because there could be other
-		// arguments passed either before or after the %c, so we need to
-		// figure out the correct index to insert the CSS into
-		let index = 0;
-		let lastC = 0;
-		args[0].replace(/%[a-zA-Z%]/g, match => {
-			if (match === '%%') {
-				return;
-			}
-			index++;
-			if (match === '%c') {
-				// We only are interested in the *last* %c
-				// (the user may have provided their own)
-				lastC = index;
-			}
-		});
-
-		args.splice(lastC, 0, c);
-	}
-
-	/**
-	 * Invokes `console.debug()` when available.
-	 * No-op when `console.debug` is not a "function".
-	 * If `console.debug` is not available, falls back
-	 * to `console.log`.
-	 *
-	 * @api public
-	 */
-	exports.log = console.debug || console.log || (() => {});
-
-	/**
-	 * Save `namespaces`.
-	 *
-	 * @param {String} namespaces
-	 * @api private
-	 */
-	function save(namespaces) {
-		try {
-			if (namespaces) {
-				exports.storage.setItem('debug', namespaces);
-			} else {
-				exports.storage.removeItem('debug');
-			}
-		} catch (error) {
-			// Swallow
-			// XXX (@Qix-) should we be logging these?
-		}
-	}
-
-	/**
-	 * Load `namespaces`.
-	 *
-	 * @return {String} returns the previously persisted debug modes
-	 * @api private
-	 */
-	function load() {
-		let r;
-		try {
-			r = exports.storage.getItem('debug') || exports.storage.getItem('DEBUG') ;
-		} catch (error) {
-			// Swallow
-			// XXX (@Qix-) should we be logging these?
-		}
-
-		// If debug isn't set in LS, and we're in Electron, try to load $DEBUG
-		if (!r && typeof browser$1$1 !== 'undefined' && 'env' in browser$1$1) {
-			r = browser$1$1.env.DEBUG;
-		}
-
-		return r;
-	}
-
-	/**
-	 * Localstorage attempts to return the localstorage.
-	 *
-	 * This is necessary because safari throws
-	 * when a user disables cookies/localstorage
-	 * and you attempt to access it.
-	 *
-	 * @return {LocalStorage}
-	 * @api private
-	 */
-
-	function localstorage() {
-		try {
-			// TVMLKit (Apple TV JS Runtime) does not have a window object, just localStorage in the global context
-			// The Browser also has localStorage in the global context.
-			return localStorage;
-		} catch (error) {
-			// Swallow
-			// XXX (@Qix-) should we be logging these?
-		}
-	}
-
-	module.exports = common(exports);
-
-	const {formatters} = module.exports;
-
-	/**
-	 * Map %j to `JSON.stringify()`, since no Web Inspectors do that by default.
-	 */
-
-	formatters.j = function (v) {
-		try {
-			return JSON.stringify(v);
-		} catch (error) {
-			return '[UnexpectedJSONParseError]: ' + error.message;
-		}
-	}; 
-} (browser, browser.exports));
-
-var browserExports = browser.exports;
-browserExports.default;
-
 var debug$6 = {};
 
-const debug$5 = browserExports;
+const debug$5 = require$$1$1;
 
 debug$6.createDebug = (namespace) => {
     const log = debug$5(namespace);
@@ -66650,7 +64300,7 @@ var runComparators$1 = {};
 
 var log$5 = {exports: {}};
 
-const debug$3 = browserExports('putout:compare');
+const debug$3 = require$$1$1('putout:compare');
 
 const {isArray: isArray$5} = Array;
 const isObject$4 = (a) => a && typeof a === 'object';
@@ -67832,7 +65482,7 @@ tryThrowWithReason$1.tryThrowWithReason = (fn, ...args) => {
 
 var includer = {};
 
-const log$2 = browserExports('putout:runner:include');
+const log$2 = require$$1$1('putout:runner:include');
 const maybeArray$2 = maybeArray_1;
 const {validate} = validate$2;
 
@@ -69277,7 +66927,7 @@ const {
     start,
 } = filesystem;
 
-const log = browserExports('putout:runner:scanner');
+const log = require$$1$1('putout:runner:scanner');
 
 const fromSimple = convertSimpleFilesystemToFilesystem;
 const toSimple = convertFilesystemToSimpleFilesystem;
@@ -69428,7 +67078,7 @@ function parseVisitor(visitors) {
 
 const {traverse: defaultTraverse} = bundle;
 const once = onceExports;
-const debug = browserExports('putout:runner:find');
+const debug = require$$1$1('putout:runner:find');
 
 const runFix = runFix$3;
 const mergeVisitors = mergeVisitors$1;

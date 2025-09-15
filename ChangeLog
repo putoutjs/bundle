@@ -1,3 +1,8 @@
+2025.09.15, v4.7.0
+
+feature:
+- 57a5dd8 @putout/bundle: rm debug
+
 2025.09.10, v4.6.10
 
 feature:
