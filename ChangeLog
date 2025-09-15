@@ -1,3 +1,8 @@
+2025.09.15, v4.7.2
+
+fix:
+- 2d30cf5 @putout/bundle: debug
+
 2025.09.15, v4.7.1
 
 feature:

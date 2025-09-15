@@ -50458,7 +50458,7 @@ function addComments2(type, comments) {
 
 var {validate: validate3} = lib_exports;
 
-var debug$8 = (0, import_debug.default)('babel');
+var debug$a = (0, import_debug.default)('babel');
 var REMOVED = 1 << 0;
 var SHOULD_STOP = 1 << 1;
 var SHOULD_SKIP = 1 << 2;
@@ -50601,10 +50601,10 @@ var NodePath_Final = class NodePath {
     }
     
     debug(message) {
-        if (!debug$8.enabled)
+        if (!debug$a.enabled)
             return;
         
-        debug$8(`${this.getPathLocation()} ${this.type}: ${message}`);
+        debug$a(`${this.getPathLocation()} ${this.type}: ${message}`);
     }
     
     toString() {
@@ -59952,7 +59952,7 @@ function objectPlugin(plugin, path, printer, semantics) {
         after(path, printer, semantics);
 }
 
-var debug$7 = {};
+var debug$9 = {};
 
 var require$$0$2 = /*@__PURE__*/getAugmentedNamespace(_polyfillNode_process);
 
@@ -59999,7 +59999,7 @@ const {
     LOG_DEBUG,
 } = {};
 
-debug$7.createDebug = (tokens) => (a) => {
+debug$9.createDebug = (tokens) => (a) => {
     if (!LOG_DEBUG)
         return;
     
@@ -60009,7 +60009,7 @@ debug$7.createDebug = (tokens) => (a) => {
     });
 };
 
-debug$7.createLog = ({newline = '\n', store = createStore$1()} = {}) => ({type, value}) => {
+debug$9.createLog = ({newline = '\n', store = createStore$1()} = {}) => ({type, value}) => {
     if (LOG_TOKENS) {
         console.log(codeFrameColumns$1(stringify$7({
             type,
@@ -60184,7 +60184,7 @@ const {
     maybeThrow,
 } = maybe;
 
-const {createDebug: createDebug$3, createLog} = debug$7;
+const {createDebug: createDebug$3, createLog} = debug$9;
 const {maybeMarkAfter} = mark;
 
 const {
@@ -61416,7 +61416,7 @@ var acornPrivateMethods = /*#__PURE__*/Object.freeze({
 	default: privateMethods
 });
 
-var require$$2 = /*@__PURE__*/getAugmentedNamespace(acornPrivateMethods);
+var require$$2$1 = /*@__PURE__*/getAugmentedNamespace(acornPrivateMethods);
 
 var acornStage3;
 var hasRequiredAcornStage3;
@@ -61429,7 +61429,7 @@ function requireAcornStage3 () {
 	  return Parser.extend(
 	    require$$1$1,
 	    require$$1$1,
-	    require$$2
+	    require$$2$1
 	  )
 	};
 	return acornStage3;
@@ -63221,9 +63221,20 @@ lib$1.validateRulesRelations = validateRulesRelations$1;
 
 var lib = {};
 
+function debug$7() {
+    return () => {}
+}
+
+var debug$8 = /*#__PURE__*/Object.freeze({
+	__proto__: null,
+	default: debug$7
+});
+
+var require$$2 = /*@__PURE__*/getAugmentedNamespace(debug$8);
+
 var debug$6 = {};
 
-const debug$5 = require$$1$1;
+const debug$5 = require$$2;
 
 debug$6.createDebug = (namespace) => {
     const log = debug$5(namespace);
@@ -64304,7 +64315,7 @@ var runComparators$1 = {};
 
 var log$5 = {exports: {}};
 
-const debug$3 = require$$1$1('putout:compare');
+const debug$3 = require$$2('putout:compare');
 
 const {isArray: isArray$5} = Array;
 const isObject$4 = (a) => a && typeof a === 'object';
@@ -65486,7 +65497,7 @@ tryThrowWithReason$1.tryThrowWithReason = (fn, ...args) => {
 
 var includer = {};
 
-const log$2 = require$$1$1('putout:runner:include');
+const log$2 = require$$2('putout:runner:include');
 const maybeArray$2 = maybeArray_1;
 const {validate} = validate$2;
 
@@ -66931,7 +66942,7 @@ const {
     start,
 } = filesystem;
 
-const log = require$$1$1('putout:runner:scanner');
+const log = require$$2('putout:runner:scanner');
 
 const fromSimple = convertSimpleFilesystemToFilesystem;
 const toSimple = convertFilesystemToSimpleFilesystem;
@@ -67082,7 +67093,7 @@ function parseVisitor(visitors) {
 
 const {traverse: defaultTraverse} = bundle;
 const once = onceExports;
-const debug = require$$1$1('putout:runner:find');
+const debug = require$$2('putout:runner:find');
 
 const runFix = runFix$3;
 const mergeVisitors = mergeVisitors$1;
