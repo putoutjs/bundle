@@ -36,6 +36,7 @@
   "dependencies": {},
   "keywords": [
     "putout",
+    "codemod",
     "putout-editor",
     "bundle",
     "deno",
