@@ -33,7 +33,21 @@ export default {
                 find: './loader.mjs',
                 replacement: new URL('./lib/loader.js', import.meta.url).pathname,
             },
-            createEmpty('esprima'), createEmpty('espree'), createEmpty('acorn'), createEmpty('hermes-parser'), createEmpty('tenko'), createEmpty('ignore'), createEmpty('acorn-private-class-elements'), createEmpty('acorn-class-fields'), createEmpty('acorn-static-class-features'), createEmpty('acorn-typescript'), createEmpty('acorn-stage-3'), ...[
+            ...[
+                'debug',
+                'esprima',
+                'espree',
+                'acorn',
+                'hermes-parser',
+                'tenko',
+                'ignore',
+                'acorn-private-class-elements',
+                'acorn-class-fields',
+                'acorn-static-class-features',
+                'acorn-typescript',
+                'acorn-stage-3',
+            ].map(createEmpty),
+            ...[
                 'events',
                 'module',
                 'path',
