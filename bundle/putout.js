@@ -68394,6 +68394,7 @@ function getAttributeValue(path, attributeName) {
     
     return attribute.value.value;
 }
+
 jsx.addAttributeValue = addAttributeValue;
 function addAttributeValue(path, name, value) {
     const attributeNode = getAttributeNode(path, name);
@@ -68403,6 +68404,7 @@ function addAttributeValue(path, name, value) {
     
     setLiteralValue(attributeNode.value, `${attributeNode.value.value} ${value}`);
 }
+
 jsx.removeAttributeValue = removeAttributeValue;
 function removeAttributeValue(path, name, attributeValue) {
     if (!path)
@@ -68416,6 +68418,7 @@ function removeAttributeValue(path, name, attributeValue) {
     if (value.includes(attributeValue))
         setLiteralValue(classAttribute.value, value.replace(RegExp(`\\s?${attributeValue}`), ''));
 }
+
 jsx.setAttributeValue = (node, name, value) => {
     const attributeNode = getAttributeNode(node, name);
     
@@ -68443,6 +68446,11 @@ jsx.containsClassName = (path, className) => {
 
 jsx.hasDataName = (path, value = '') => {
     const attribute = getAttributeValue(path, 'data-name');
+    return attribute === value;
+};
+
+jsx.hasAttributeValue = (path, name, value = '') => {
+    const attribute = getAttributeValue(path, name);
     return attribute === value;
 };
 
