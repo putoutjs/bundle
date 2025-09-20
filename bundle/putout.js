@@ -4381,14 +4381,14 @@ __export(lib_exports, {
     isWhileStatement: () => isWhileStatement,
     isWithStatement: () => isWithStatement,
     isYieldExpression: () => isYieldExpression,
-    jsxAttribute: () => jsxAttribute$1,
+    jsxAttribute: () => jsxAttribute$2,
     jsxClosingElement: () => jsxClosingElement,
     jsxClosingFragment: () => jsxClosingFragment,
     jsxElement: () => jsxElement$1,
     jsxEmptyExpression: () => jsxEmptyExpression,
     jsxExpressionContainer: () => jsxExpressionContainer,
     jsxFragment: () => jsxFragment$1,
-    jsxIdentifier: () => jsxIdentifier,
+    jsxIdentifier: () => jsxIdentifier$1,
     jsxMemberExpression: () => jsxMemberExpression,
     jsxNamespacedName: () => jsxNamespacedName,
     jsxOpeningElement: () => jsxOpeningElement$1,
@@ -4450,7 +4450,7 @@ __export(lib_exports, {
     spreadElement: () => spreadElement$1,
     spreadProperty: () => SpreadProperty,
     staticBlock: () => staticBlock$1,
-    stringLiteral: () => stringLiteral$5,
+    stringLiteral: () => stringLiteral$6,
     stringLiteralTypeAnnotation: () => stringLiteralTypeAnnotation,
     stringTypeAnnotation: () => stringTypeAnnotation,
     super: () => _super,
@@ -14633,7 +14633,7 @@ function labeledStatement$1(label, body) {
     return node;
 }
 
-function stringLiteral$5(value) {
+function stringLiteral$6(value) {
     const node = {
         type: 'StringLiteral',
         value,
@@ -16275,7 +16275,7 @@ function optionalIndexedAccessType(objectType, indexType) {
     return node;
 }
 
-function jsxAttribute$1(name, value = null) {
+function jsxAttribute$2(name, value = null) {
     const node = {
         type: 'JSXAttribute',
         name,
@@ -16342,7 +16342,7 @@ function jsxSpreadChild(expression2) {
     return node;
 }
 
-function jsxIdentifier(name) {
+function jsxIdentifier$1(name) {
     const node = {
         type: 'JSXIdentifier',
         name,
@@ -17497,14 +17497,14 @@ var b = /* @__PURE__ */Object.freeze({
     interfaceTypeAnnotation,
     interpreterDirective,
     intersectionTypeAnnotation,
-    jsxAttribute: jsxAttribute$1,
+    jsxAttribute: jsxAttribute$2,
     jsxClosingElement,
     jsxClosingFragment,
     jsxElement: jsxElement$1,
     jsxEmptyExpression,
     jsxExpressionContainer,
     jsxFragment: jsxFragment$1,
-    jsxIdentifier,
+    jsxIdentifier: jsxIdentifier$1,
     jsxMemberExpression,
     jsxNamespacedName,
     jsxOpeningElement: jsxOpeningElement$1,
@@ -17558,7 +17558,7 @@ var b = /* @__PURE__ */Object.freeze({
     spreadElement: spreadElement$1,
     spreadProperty: SpreadProperty,
     staticBlock: staticBlock$1,
-    stringLiteral: stringLiteral$5,
+    stringLiteral: stringLiteral$6,
     stringLiteralTypeAnnotation,
     stringTypeAnnotation,
     super: _super,
@@ -17963,7 +17963,7 @@ function cleanJSXElementLiteralChild(child, args) {
     }
     
     if (str)
-        args.push(inherits(stringLiteral$5(str), child));
+        args.push(inherits(stringLiteral$6(str), child));
 }
 
 function buildChildren(node) {
@@ -19756,7 +19756,7 @@ function toBindingIdentifierName(name) {
 
 function toComputedKey(node, key = node.key || node.property) {
     if (!node.computed && isIdentifier$g(key))
-        key = stringLiteral$5(key.name);
+        key = stringLiteral$6(key.name);
     
     return key;
 }
@@ -19966,7 +19966,7 @@ function valueToNode(value) {
     }
     
     if (typeof value === 'string') {
-        return stringLiteral$5(value);
+        return stringLiteral$6(value);
     }
     
     if (typeof value === 'number') {
@@ -20021,12 +20021,12 @@ function valueToNode(value) {
             if (isValidIdentifier(key)) {
                 if (key === '__proto__') {
                     computed = true;
-                    nodeKey = stringLiteral$5(key);
+                    nodeKey = stringLiteral$6(key);
                 } else {
                     nodeKey = identifier$3(key);
                 }
             } else {
-                nodeKey = stringLiteral$5(key);
+                nodeKey = stringLiteral$6(key);
             }
             
             props.push(objectProperty$4(nodeKey, valueToNode(value[key]), computed));
@@ -54737,7 +54737,7 @@ const {
 
 const nodeOrPath = (path) => path.node || path;
 
-function getNode(path) {
+function getNode$1(path) {
     if (!isObjectExpression$5(path))
         return nodeOrPath(path);
     
@@ -54752,7 +54752,7 @@ function getNode(path) {
 
 traverseProperties$4.traverseProperties = (path, name, {firstLevel = false} = {}) => {
     const collector = [];
-    const node = getNode(path);
+    const node = getNode$1(path);
     
     const fn = collect({
         name,
@@ -58296,9 +58296,9 @@ var decorator = {exports: {}};
 var decoratorExports = decorator.exports;
 decoratorExports.default;
 
-var stringLiteral$4 = {};
+var stringLiteral$5 = {};
 
-stringLiteral$4.StringLiteral = (path, {write}, semantics) => {
+stringLiteral$5.StringLiteral = (path, {write}, semantics) => {
     const {value, raw = `'${value}'`} = path.node;
     
     if (path.parentPath.isJSXAttribute()) {
@@ -58367,7 +58367,7 @@ const {TemplateLiteral} = templateLiteral;
 const {Identifier} = identifier$2;
 
 const {Decorator} = decoratorExports;
-const {StringLiteral} = stringLiteral$4;
+const {StringLiteral} = stringLiteral$5;
 const {DirectiveLiteral} = directiveLiteral$1;
 const {VoidPattern} = voidPattern;
 
@@ -59600,11 +59600,11 @@ function isNeedIndent(path) {
     return insideJSX || insideFn && insideCall;
 }
 
-var jsxAttribute = {};
+var jsxAttribute$1 = {};
 
 const {isCoupleLines: isCoupleLines$2} = is$3;
 
-jsxAttribute.JSXAttribute = {
+jsxAttribute$1.JSXAttribute = {
     condition(path) {
         return isCoupleLines$2(path.parentPath);
     },
@@ -59743,7 +59743,7 @@ jsxText.JSXText = (path, {write, indent}) => {
 };
 
 const {JSXElement} = jsxElement;
-const {JSXAttribute} = jsxAttribute;
+const {JSXAttribute} = jsxAttribute$1;
 const {isCoupleLines} = is$3;
 const {JSXOpeningElement} = jsxOpeningElement;
 const fragments = jsxFragment;
@@ -66672,7 +66672,7 @@ record.addDeclarationForESLint = (name, path) => {
     const programPath = getProgramParentPath(path);
     maybeInit(prefix, programPath);
     
-    return programPath[prefix][name] = true;
+    programPath[prefix][name] = true;
 };
 
 record.setModuleType = (type, path) => {
@@ -66978,12 +66978,12 @@ var property = {};
 const {types: types$9} = bundle;
 const {
     arrayExpression: arrayExpression$2,
-    stringLiteral: stringLiteral$3,
+    stringLiteral: stringLiteral$4,
     objectProperty: objectProperty$2,
 } = types$9;
 
 property.createTypeProperty = (type) => {
-    const value = stringLiteral$3(type);
+    const value = stringLiteral$4(type);
     return createProperty$1('type', value);
 };
 
@@ -66993,17 +66993,17 @@ property.createFilesProperty = (files) => {
 };
 
 property.createFilenameProperty = (filename) => {
-    const value = stringLiteral$3(filename);
+    const value = stringLiteral$4(filename);
     return createProperty$1('filename', value);
 };
 
 property.createContentProperty = (content) => {
-    const value = stringLiteral$3(content);
+    const value = stringLiteral$4(content);
     return createProperty$1('content', value);
 };
 
 function createProperty$1(name, value) {
-    const key = stringLiteral$3(name);
+    const key = stringLiteral$4(name);
     return objectProperty$2(key, value);
 }
 
@@ -67467,7 +67467,7 @@ const {replaceWith: replaceWith$1, getProperty: getProperty$1} = operate;
 const {
     objectExpression,
     arrayExpression: arrayExpression$1,
-    stringLiteral: stringLiteral$2,
+    stringLiteral: stringLiteral$3,
     isArrayExpression,
     isStringLiteral,
     isTemplateLiteral,
@@ -67480,22 +67480,22 @@ const isDirectory = (a) => a.endsWith('/');
 const getType = (a) => {
     const type = isDirectory(a) ? 'directory' : 'file';
     
-    return objectProperty$1(stringLiteral$2('type'), stringLiteral$2(type));
+    return objectProperty$1(stringLiteral$3('type'), stringLiteral$3(type));
 };
 
 const createFilename = (filename) => {
-    return objectProperty$1(stringLiteral$2('filename'), stringLiteral$2(filename));
+    return objectProperty$1(stringLiteral$3('filename'), stringLiteral$3(filename));
 };
 
 const getFiles = (a) => {
     if (isDirectory(a))
-        return objectProperty$1(stringLiteral$2('files'), arrayExpression$1([]));
+        return objectProperty$1(stringLiteral$3('files'), arrayExpression$1([]));
     
     return null;
 };
 
 const getContent = (a) => {
-    return objectProperty$1(stringLiteral$2('content'), stringLiteral$2(a));
+    return objectProperty$1(stringLiteral$3('content'), stringLiteral$3(a));
 };
 
 function parseContent(node, path) {
@@ -67603,7 +67603,7 @@ const {
 } = filesystem;
 
 const {
-    stringLiteral: stringLiteral$1,
+    stringLiteral: stringLiteral$2,
     arrayExpression,
 } = types$6;
 
@@ -67639,13 +67639,13 @@ convertFilesystemToSimpleFilesystem.fix = (root, {files}) => {
     for (const name of names) {
         if (isArray$1(name)) {
             list.push(arrayExpression([
-                stringLiteral$1(name[0]),
-                stringLiteral$1(name[1]),
+                stringLiteral$2(name[0]),
+                stringLiteral$2(name[1]),
             ]));
             continue;
         }
         
-        list.push(stringLiteral$1(name));
+        list.push(stringLiteral$2(name));
     }
     
     replaceWith(root, arrayExpression(list));
@@ -68343,10 +68343,17 @@ var jsx = {};
 
 const {setLiteralValue} = operate;
 const {types: types$4} = bundle;
-const {isJSXElement} = types$4;
+const {
+    isJSXElement,
+    jsxAttribute,
+    jsxIdentifier,
+    stringLiteral: stringLiteral$1,
+} = types$4;
+
+const getNode = (a) => a.node || a;
 
 jsx.hasTagName = (path, name) => {
-    const node = path.node || path;
+    const node = getNode(path);
     
     if (!isJSXElement(path))
         return false;
@@ -68368,11 +68375,7 @@ jsx.getAttributePath = (path, name) => {
 jsx.getAttributeNode = getAttributeNode;
 function getAttributeNode(path, name) {
     let result = null;
-    
-    if (!path)
-        return result;
-    
-    const node = path.node || path;
+    const node = getNode(path);
     const {attributes} = node.openingElement;
     
     for (const attr of attributes) {
@@ -68399,10 +68402,24 @@ jsx.addAttributeValue = addAttributeValue;
 function addAttributeValue(path, name, value) {
     const attributeNode = getAttributeNode(path, name);
     
+    if (!attributeNode)
+        return addAttribute(path, name, value);
+    
     if (attributeNode.value.value.includes(value))
         return;
     
     setLiteralValue(attributeNode.value, `${attributeNode.value.value} ${value}`);
+}
+
+jsx.addAttribute = addAttribute;
+function addAttribute(path, name, value) {
+    const node = getNode(path);
+    let attributeNode = getAttributeNode(node, name);
+    
+    if (!attributeNode) {
+        attributeNode = jsxAttribute(jsxIdentifier(name), stringLiteral$1(value));
+        node.openingElement.attributes.push(attributeNode);
+    }
 }
 
 jsx.removeAttributeValue = removeAttributeValue;
@@ -68415,15 +68432,22 @@ function removeAttributeValue(path, name, attributeValue) {
     
     const {value} = classAttribute.value;
     
-    if (value.includes(attributeValue))
-        setLiteralValue(classAttribute.value, value.replace(RegExp(`\\s?${attributeValue}`), ''));
+    if (!value.includes(attributeValue))
+        return;
+    
+    const newValue = value
+        .replace(RegExp(`\\s?${attributeValue}`), '')
+        .trim();
+    setLiteralValue(classAttribute.value, newValue);
 }
 
-jsx.setAttributeValue = (node, name, value) => {
-    const attributeNode = getAttributeNode(node, name);
+jsx.setAttributeValue = (path, name, value) => {
+    const attributeNode = getAttributeNode(path, name);
     
-    if (attributeNode)
-        setLiteralValue(attributeNode.value, value);
+    if (!attributeNode)
+        return addAttribute(path, name, value);
+    
+    setLiteralValue(attributeNode.value, value);
 };
 
 jsx.addClassName = (path, name) => {
