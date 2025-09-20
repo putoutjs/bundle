@@ -36,6 +36,7 @@
   "dependencies": {},
   "keywords": [
     "putout",
+    "babel",
     "codemod",
     "putout-editor",
     "bundle",
