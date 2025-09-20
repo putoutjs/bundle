@@ -41744,8 +41744,6 @@ function DeclareExportDeclaration2(node) {
         this.word('default');
         this.space();
     }
-    
-    FlowExportDeclaration.call(this, node);
 }
 
 function DeclareExportAllDeclaration2(node) {
@@ -41846,35 +41844,6 @@ function EnumNumberMember2(node) {
 
 function EnumStringMember2(node) {
     enumInitializedMember(this, node);
-}
-
-function FlowExportDeclaration(node) {
-    if (node.declaration) {
-        const declar = node.declaration;
-        this.print(declar);
-        
-        if (!isStatement$12(declar))
-            this.semicolon();
-    } else {
-        this.tokenChar(123);
-        
-        if (node.specifiers.length) {
-            this.space();
-            this.printList(node.specifiers);
-            this.space();
-        }
-        
-        this.tokenChar(125);
-        
-        if (node.source) {
-            this.space();
-            this.word('from');
-            this.space();
-            this.print(node.source);
-        }
-        
-        this.semicolon();
-    }
 }
 
 function ExistsTypeAnnotation2() {
