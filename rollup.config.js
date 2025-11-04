@@ -20,6 +20,11 @@ const createEmpty = (find) => ({
     replacement: new URL('./lib/empty.js', import.meta.url).pathname,
 });
 
+const createDebug = () => ({
+    find: 'debug',
+    replacement: new URL('./lib/debug.js', import.meta.url).pathname,
+});
+
 export default {
     input: 'lib/putout.js',
     output: {
@@ -45,8 +50,8 @@ export default {
                 'acorn-static-class-features',
                 'acorn-typescript',
                 'acorn-stage-3',
-                SLIM && 'debug',
-            ].filter(Boolean).map(createEmpty),
+            ].map(createEmpty),
+            ...SLIM ? [createDebug()] : [],
             ...[
                 'events',
                 'module',

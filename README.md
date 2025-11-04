@@ -45,6 +45,15 @@ console.log(putout('compare(a, b)', {
 });
 ```
 
+## Slim
+
+When you need super slim bundle without `debug` use:
+
+
+```js
+import {putout} from 'https://esm.sh/@putout/bundle/slim';
+```
+
 ## License
 
 MIT

@@ -25,7 +25,7 @@ export default {
         name: 'putout',
         format: 'es',
         input: 'lib/putout.js',
-        output: 'bundle/putout-slim.min.js',
+        output: 'bundle/putout.slim.js',
     }))],
     'build:putout:esm': async () => [env, await run('build:putout', build({
         name: 'putout',
