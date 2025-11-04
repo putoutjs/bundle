@@ -8,7 +8,7 @@ import alias from '@rollup/plugin-alias';
 import terser from '@rollup/plugin-terser';
 import {visualizer} from 'rollup-plugin-visualizer';
 
-const {MINIFY} = process.env;
+const {MINIFY, SLIM} = process.env;
 
 const createReplacement = (a) => ({
     find: `node:${a}`,
@@ -45,7 +45,8 @@ export default {
                 'acorn-static-class-features',
                 'acorn-typescript',
                 'acorn-stage-3',
-            ].map(createEmpty),
+                SLIM && 'debug',
+            ].filter(Boolean).map(createEmpty),
             ...[
                 'events',
                 'module',

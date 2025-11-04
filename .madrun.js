@@ -4,6 +4,11 @@ const env = {
     MINIFY: 1,
 };
 
+const slimEnv= {
+    MINIFY: 1,
+    SLIM: 1,
+};
+
 export default {
     'test': () => `tape 'test/*.js'`,
     'watch:test': async () => `nodemon -w lib -w test -x "${await run('test')}"`,
@@ -16,6 +21,12 @@ export default {
     'wisdom': () => run('build:*'),
     'build': () => run('build:*'),
     'build:putout': () => 'rollup -c',
+    'build:putout:slim': async () => [slimEnv, await run('build:putout', build({
+        name: 'putout',
+        format: 'es',
+        input: 'lib/putout.js',
+        output: 'bundle/putout-slim.min.js',
+    }))],
     'build:putout:esm': async () => [env, await run('build:putout', build({
         name: 'putout',
         format: 'es',
