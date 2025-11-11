@@ -32,6 +32,7 @@
     "wisdom": "madrun wisdom",
     "build": "madrun build",
     "build:putout": "madrun build:putout",
+    "build:putout:slim": "madrun build:putout:slim",
     "build:putout:esm": "madrun build:putout:esm"
   },
   "dependencies": {},

@@ -5,7 +5,6 @@ const env = {
 };
 
 const slimEnv= {
-    MINIFY: 1,
     SLIM: 1,
 };
 
