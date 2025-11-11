@@ -4099,7 +4099,7 @@ __export(lib_exports, {
     isCompletionStatement: () => isCompletionStatement,
     isConditional: () => isConditional,
     isConditionalExpression: () => isConditionalExpression,
-    isContinueStatement: () => isContinueStatement,
+    isContinueStatement: () => isContinueStatement$1,
     isDebuggerStatement: () => isDebuggerStatement,
     isDeclaration: () => isDeclaration,
     isDeclareClass: () => isDeclareClass,
@@ -4140,7 +4140,7 @@ __export(lib_exports, {
     isExportNamespaceSpecifier: () => isExportNamespaceSpecifier$1,
     isExportSpecifier: () => isExportSpecifier$1,
     isExpression: () => isExpression$2,
-    isExpressionStatement: () => isExpressionStatement$7,
+    isExpressionStatement: () => isExpressionStatement$8,
     isExpressionWrapper: () => isExpressionWrapper,
     isFile: () => isFile$2,
     isFlow: () => isFlow,
@@ -4254,7 +4254,7 @@ __export(lib_exports, {
     isRegexLiteral: () => isRegexLiteral,
     isRestElement: () => isRestElement,
     isRestProperty: () => isRestProperty,
-    isReturnStatement: () => isReturnStatement$3,
+    isReturnStatement: () => isReturnStatement$4,
     isScopable: () => isScopable,
     isScope: () => isScope,
     isSequenceExpression: () => isSequenceExpression$2,
@@ -6129,7 +6129,7 @@ function isConditionalExpression(node, opts) {
     return opts == null || shallowEqual(node, opts);
 }
 
-function isContinueStatement(node, opts) {
+function isContinueStatement$1(node, opts) {
     if (!node)
         return false;
     
@@ -6169,7 +6169,7 @@ function isEmptyStatement(node, opts) {
     return opts == null || shallowEqual(node, opts);
 }
 
-function isExpressionStatement$7(node, opts) {
+function isExpressionStatement$8(node, opts) {
     if (!node)
         return false;
     
@@ -6389,7 +6389,7 @@ function isRestElement(node, opts) {
     return opts == null || shallowEqual(node, opts);
 }
 
-function isReturnStatement$3(node, opts) {
+function isReturnStatement$4(node, opts) {
     if (!node)
         return false;
     
@@ -19762,7 +19762,7 @@ function toComputedKey(node, key = node.key || node.property) {
 }
 
 function toExpression$4(node) {
-    if (isExpressionStatement$7(node)) {
+    if (isExpressionStatement$8(node)) {
         node = node.expression;
     }
     
@@ -52073,7 +52073,7 @@ const {
 const {
     isDecorator,
     isMemberExpression: isMemberExpression$6,
-    isExpressionStatement: isExpressionStatement$6,
+    isExpressionStatement: isExpressionStatement$7,
     isCallExpression: isCallExpression$7,
 } = types$13;
 
@@ -52218,7 +52218,7 @@ parseTrailingComments$2.parseTrailingComments = (path, printer, semantics, {curr
 function isPrevCall(path) {
     const prev = path.getPrevSibling();
     
-    if (isExpressionStatement$6(prev))
+    if (isExpressionStatement$7(prev))
         return false;
     
     const {expression} = path.node;
@@ -52447,7 +52447,7 @@ const {
     isTSModuleBlock: isTSModuleBlock$3,
     isBlockStatement: isBlockStatement$6,
     isExportNamedDeclaration: isExportNamedDeclaration$2,
-    isExpressionStatement: isExpressionStatement$5,
+    isExpressionStatement: isExpressionStatement$6,
     isFunctionDeclaration: isFunctionDeclaration$2,
     isExportDefaultDeclaration,
 } = types$12;
@@ -52505,7 +52505,7 @@ const isNextFunction = (path) => {
 const isNextAssign$1 = (path) => {
     const next = path.getNextSibling();
     
-    if (!isExpressionStatement$5(next))
+    if (!isExpressionStatement$6(next))
         return false;
     
     return isAssignmentExpression$2(next.node.expression);
@@ -53141,11 +53141,11 @@ const {exists: exists$b} = is$3;
 const {isMarkedAfter: isMarkedAfter$2} = mark;
 
 const {
-    isExpressionStatement: isExpressionStatement$4,
+    isExpressionStatement: isExpressionStatement$5,
     isMemberExpression: isMemberExpression$5,
 } = types$10;
 
-const isInsideExpressionStatement = ({parentPath}) => isExpressionStatement$4(parentPath);
+const isInsideExpressionStatement = ({parentPath}) => isExpressionStatement$5(parentPath);
 const notFirst = ({parentPath}) => exists$b(parentPath.getPrevSibling());
 const isInsideMember = ({parentPath}) => isMemberExpression$5(parentPath);
 
@@ -54095,13 +54095,13 @@ var assignmentExpressionComments = {};
 
 const {types: types$S} = bundle;
 const {hasLeadingComment: hasLeadingComment$1} = is$3;
-const {isReturnStatement: isReturnStatement$2} = types$S;
+const {isReturnStatement: isReturnStatement$3} = types$S;
 
 assignmentExpressionComments.printLeadingCommentLine = (path, printer, semantics, {printComment, isLast}) => {
     const {parentPath} = path;
     const {print, maybe} = printer;
     
-    if (isReturnStatement$2(parentPath))
+    if (isReturnStatement$3(parentPath))
         return;
     
     maybe.print.breakline(!isLast);
@@ -54113,7 +54113,7 @@ assignmentExpressionComments.printLeadingCommentBlock = (path, printer, semantic
     const {parentPath} = path;
     const {print} = printer;
     
-    if (isReturnStatement$2(parentPath))
+    if (isReturnStatement$3(parentPath))
         return;
     
     printComment();
@@ -54122,7 +54122,7 @@ assignmentExpressionComments.printLeadingCommentBlock = (path, printer, semantic
 
 assignmentExpressionComments.maybeInsideReturnWithCommentStart = (path, {print, indent}) => {
     const {parentPath} = path;
-    const is = isReturnStatement$2(parentPath);
+    const is = isReturnStatement$3(parentPath);
     
     if (is && hasLeadingComment$1(path)) {
         indent.inc();
@@ -54142,7 +54142,7 @@ assignmentExpressionComments.maybeInsideReturnWithCommentStart = (path, {print, 
 
 assignmentExpressionComments.maybeInsideReturnWithCommentEnd = (path, {print, indent}) => {
     const {parentPath} = path;
-    const is = isReturnStatement$2(parentPath);
+    const is = isReturnStatement$3(parentPath);
     
     if (!is || !hasLeadingComment$1(path))
         return;
@@ -54156,7 +54156,7 @@ var printSeparator = {};
 const {types: types$R} = bundle;
 const {
     isAssignmentExpression: isAssignmentExpression$1,
-    isExpressionStatement: isExpressionStatement$3,
+    isExpressionStatement: isExpressionStatement$4,
 } = types$R;
 
 printSeparator.printSeparator = (path, {print}) => {
@@ -54169,7 +54169,7 @@ printSeparator.printSeparator = (path, {print}) => {
 function isMultiline(path) {
     const {right} = path.node;
     
-    if (!path.parentPath.find(isExpressionStatement$3))
+    if (!path.parentPath.find(isExpressionStatement$4))
         return false;
     
     return isAssignmentExpression$1(right);
@@ -55989,12 +55989,12 @@ var chain$1 = {};
 const {types: types$G} = bundle;
 const {
     isLogicalExpression,
-    isReturnStatement: isReturnStatement$1,
+    isReturnStatement: isReturnStatement$2,
     isVariableDeclarator: isVariableDeclarator$1,
 } = types$G;
 
 chain$1.isRootOk = (path) => {
-    return isReturnStatement$1(path) || isVariableDeclarator$1(path);
+    return isReturnStatement$2(path) || isVariableDeclarator$1(path);
 };
 
 chain$1.chain = (path) => {
@@ -56241,7 +56241,7 @@ var isInsideAssignNextAssignFunction = {};
 
 const {types: types$E} = bundle;
 const {
-    isExpressionStatement: isExpressionStatement$2,
+    isExpressionStatement: isExpressionStatement$3,
     isFunction: isFunction$4,
     isAssignmentExpression,
 } = types$E;
@@ -56257,7 +56257,7 @@ isInsideAssignNextAssignFunction.isInsideAssignNextAssignFunction = (path) => {
     if (isFunction$4(next) && next.node.leadingComments)
         return true;
     
-    if (!isExpressionStatement$2(next))
+    if (!isExpressionStatement$3(next))
         return false;
     
     const {leadingComments} = next.node;
@@ -56765,7 +56765,23 @@ const {
     isBlockStatement: isBlockStatement$3,
     isFunctionDeclaration: isFunctionDeclaration$1,
     isStatement: isStatement$3,
+    isExpressionStatement: isExpressionStatement$2,
+    isReturnStatement: isReturnStatement$1,
+    isContinueStatement,
 } = types$B;
+
+const isStatementNotExpression = (path) => {
+    if (isBlockStatement$3(path))
+        return false;
+    
+    if (isReturnStatement$1(path))
+        return false;
+    
+    if (isContinueStatement(path))
+        return false;
+    
+    return !isExpressionStatement$2(path);
+};
 
 const isTopLevel = ({parentPath}) => parentPath.parentPath.isProgram();
 const isEmptyConsequent = (path) => path.get('consequent').isEmptyStatement();
@@ -56835,15 +56851,17 @@ ifStatement.IfStatement = {
             write.space();
             traverse(alternate);
         } else if (alternate.isIfStatement()) {
-            if (alternate.get('consequent').isBlockStatement())
+            if (alternate.get('consequent').isBlockStatement()) {
                 write.space();
-            else
+            } else {
+                maybe.write.newline(isStatementNotExpression(consequent));
                 indent();
+            }
             
             write('else ');
             traverse(alternate);
         } else if (exists$6(alternate)) {
-            maybe.write.newline(isVar);
+            maybe.write.newline(isVar || isStatementNotExpression(consequent));
             maybe.indent(!isConsequentBlock);
             maybe.write.space(isConsequentBlock);
             write('else');
@@ -63770,17 +63788,17 @@ function setup(env) {
 
 var common = setup;
 
-(function (module, exports) {
+(function (module, exports$1) {
 	/**
 	 * This is the web browser implementation of `debug()`.
 	 */
 
-	exports.formatArgs = formatArgs;
-	exports.save = save;
-	exports.load = load;
-	exports.useColors = useColors;
-	exports.storage = localstorage();
-	exports.destroy = (() => {
+	exports$1.formatArgs = formatArgs;
+	exports$1.save = save;
+	exports$1.load = load;
+	exports$1.useColors = useColors;
+	exports$1.storage = localstorage();
+	exports$1.destroy = (() => {
 		let warned = false;
 
 		return () => {
@@ -63795,7 +63813,7 @@ var common = setup;
 	 * Colors.
 	 */
 
-	exports.colors = [
+	exports$1.colors = [
 		'#0000CC',
 		'#0000FF',
 		'#0033CC',
@@ -63960,7 +63978,7 @@ var common = setup;
 	 *
 	 * @api public
 	 */
-	exports.log = console.debug || console.log || (() => {});
+	exports$1.log = console.debug || console.log || (() => {});
 
 	/**
 	 * Save `namespaces`.
@@ -63971,9 +63989,9 @@ var common = setup;
 	function save(namespaces) {
 		try {
 			if (namespaces) {
-				exports.storage.setItem('debug', namespaces);
+				exports$1.storage.setItem('debug', namespaces);
 			} else {
-				exports.storage.removeItem('debug');
+				exports$1.storage.removeItem('debug');
 			}
 		} catch (error) {
 			// Swallow
@@ -63990,7 +64008,7 @@ var common = setup;
 	function load() {
 		let r;
 		try {
-			r = exports.storage.getItem('debug') || exports.storage.getItem('DEBUG') ;
+			r = exports$1.storage.getItem('debug') || exports$1.storage.getItem('DEBUG') ;
 		} catch (error) {
 			// Swallow
 			// XXX (@Qix-) should we be logging these?
@@ -64026,7 +64044,7 @@ var common = setup;
 		}
 	}
 
-	module.exports = common(exports);
+	module.exports = common(exports$1);
 
 	const {formatters} = module.exports;
 
