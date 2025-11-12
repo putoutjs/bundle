@@ -9,8 +9,7 @@
   "exports": {
     ".": "./bundle/putout.min.js",
     "./dev": "./bundle/putout.js",
-    "./slim": "./bundle/putout.slim.js",
-    "./slim/min": "./bundle/putout.slim.js"
+    "./slim": "./bundle/putout.slim.js"
   },
   "repository": {
     "type": "git",
