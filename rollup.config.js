@@ -25,6 +25,11 @@ const createDebug = () => ({
     replacement: new URL('./lib/debug.js', import.meta.url).pathname,
 });
 
+const createObug = () => ({
+    find: 'obug',
+    replacement: new URL('./lib/debug.js', import.meta.url).pathname,
+});
+
 export default {
     input: 'lib/putout.js',
     output: {
@@ -52,6 +57,7 @@ export default {
                 'acorn-stage-3',
             ].map(createEmpty),
             ...SLIM ? [createDebug()] : [],
+            ...SLIM ? [createObug()] : [],
             ...[
                 'events',
                 'module',
