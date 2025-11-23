@@ -1,3 +1,9 @@
+2025.11.24, v4.10.0
+
+feature:
+- fee4de0 @putout/bundle: putout v40.15.0
+- edf2f3d @putout/bundle: slim: obug
+
 2025.11.12, v4.9.2
 
 fix:

@@ -2315,9 +2315,9 @@ var __toCommonJS = (mod) => __copyProps(__defProp({}, '__esModule', {
 }), mod);
 var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== 'symbol' ? key + '' : key, value);
 
-// node_modules/picocolors/picocolors.js
+// ../babel-babel/node_modules/picocolors/picocolors.js
 var require_picocolors = __commonJS({
-    'node_modules/picocolors/picocolors.js'(exports2, module2) {
+    '../babel-babel/node_modules/picocolors/picocolors.js'(exports2, module2) {
         var p = browser$1 || {};
         var argv = p.argv || [];
         var env = p.env || {};
@@ -2400,9 +2400,9 @@ var require_picocolors = __commonJS({
     },
 });
 
-// node_modules/js-tokens/index.js
-var require_js_tokens = __commonJS({
-    'node_modules/js-tokens/index.js'(exports2, module2) {
+// ../babel-babel/node_modules/js-tokens-BABEL_8_BREAKING-true/index.js
+var require_js_tokens_BABEL_8_BREAKING_true = __commonJS({
+    '../babel-babel/node_modules/js-tokens-BABEL_8_BREAKING-true/index.js'(exports2, module2) {
         var Identifier3;
         var JSXIdentifier3;
         var JSXPunctuator;
@@ -2423,19 +2423,19 @@ var require_js_tokens = __commonJS({
         var TokensPrecedingExpression;
         var WhiteSpace;
         
-        RegularExpressionLiteral = /\/(?![*\/])(?:\[(?:[^\]\\\n\r\u2028\u2029]+|\\.)*\]|[^\/\\\n\r\u2028\u2029]+|\\.)*(\/[$_\u200C\u200D\p{ID_Continue}]*|\\)?/yu;
+        RegularExpressionLiteral = /\/(?![*\/])(?:\[(?:(?![\]\\]).|\\.)*\]|(?![\/\]\\]).|\\.)*(\/[$_\u200C\u200D\p{ID_Continue}]*|\\)?/yu;
         Punctuator = /--|\+\+|=>|\.{3}|\??\.(?!\d)|(?:&&|\|\||\?\?|[+\-%&|^]|\*{1,2}|<{1,2}|>{1,3}|!=?|={1,2}|\/(?![\/*]))=?|[?~,:;[\](){}]/y;
-        Identifier3 = /(\x23?)(?=[$_\p{ID_Start}\\])(?:[$_\u200C\u200D\p{ID_Continue}]+|\\u[\da-fA-F]{4}|\\u\{[\da-fA-F]+\})+/yu;
-        StringLiteral4 = /(['"])(?:[^'"\\\n\r]+|(?!\1)['"]|\\(?:\r\n|[^]))*(\1)?/y;
+        Identifier3 = /(\x23?)(?=[$_\p{ID_Start}\\])(?:[$_\u200C\u200D\p{ID_Continue}]|\\u[\da-fA-F]{4}|\\u\{[\da-fA-F]+\})+/yu;
+        StringLiteral4 = /(['"])(?:(?!\1)[^\\\n\r]|\\(?:\r\n|[^]))*(\1)?/y;
         NumericLiteral4 = /(?:0[xX][\da-fA-F](?:_?[\da-fA-F])*|0[oO][0-7](?:_?[0-7])*|0[bB][01](?:_?[01])*)n?|0n|[1-9](?:_?\d)*n|(?:(?:0(?!\d)|0\d*[89]\d*|[1-9](?:_?\d)*)(?:\.(?:\d(?:_?\d)*)?)?|\.\d(?:_?\d)*)(?:[eE][+-]?\d(?:_?\d)*)?|0[0-7]+/y;
-        Template = /[`}](?:[^`\\$]+|\\[^]|\$(?!\{))*(`|\$\{)?/y;
+        Template = /[`}](?:[^`\\$]|\\[^]|\$(?!\{))*(`|\$\{)?/y;
         WhiteSpace = /[\t\v\f\ufeff\p{Zs}]+/yu;
         LineTerminatorSequence = /\r?\n|[\r\u2028\u2029]/y;
-        MultiLineComment = /\/\*(?:[^*]+|\*(?!\/))*(\*\/)?/y;
+        MultiLineComment = /\/\*(?:[^*]|\*(?!\/))*(\*\/)?/y;
         SingleLineComment = /\/\/.*/y;
         JSXPunctuator = /[<>.:={}]|\/(?![\/*])/y;
         JSXIdentifier3 = /[$_\p{ID_Start}][$_\u200C\u200D\p{ID_Continue}-]*/yu;
-        JSXString = /(['"])(?:[^'"]+|(?!\1)['"])*(\1)?/y;
+        JSXString = /(['"])(?:(?!\1)[^])*(\1)?/y;
         JSXText3 = /[^<>{}]+/y;
         TokensPrecedingExpression = /^(?:[\/+-]|\.{3}|\?(?:InterpolationIn(?:JSX|Template)|NoLineTerminatorHere|NonExpressionParenEnd|UnaryIncDec))?$|[{}([,;<>=*%&|^!~?:]$/;
         TokensNotPrecedingObjectLiteral = /^(?:=>|[;\]){}]|else|\?(?:NoLineTerminatorHere|NonExpressionParenEnd))?$/;
@@ -2902,9 +2902,16 @@ var require_js_tokens = __commonJS({
     },
 });
 
-// node_modules/jsesc/jsesc.js
+// ../babel-babel/node_modules/js-tokens-BABEL_8_BREAKING-false/index.js
+var require_js_tokens = __commonJS({
+    '../babel-babel/node_modules/js-tokens/index.js'(exports2, module2) {
+        module2.exports = require_js_tokens_BABEL_8_BREAKING_true();
+    },
+});
+
+// ../babel-babel/node_modules/jsesc/jsesc.js
 var require_jsesc = __commonJS({
-    'node_modules/jsesc/jsesc.js'(exports2, module2) {
+    '../babel-babel/node_modules/jsesc/jsesc.js'(exports2, module2) {
         
         var object = {};
         var hasOwnProperty = object.hasOwnProperty;
@@ -2966,10 +2973,6 @@ var require_jsesc = __commonJS({
         
         var isNumber2 = (value) => {
             return typeof value == 'number' || toString.call(value) == '[object Number]';
-        };
-        
-        var isBigInt = (value) => {
-            return typeof value == 'bigint';
         };
         
         var isFunction5 = (value) => {
@@ -3120,41 +3123,32 @@ var require_jsesc = __commonJS({
                     }
                     
                     return '[' + newLine + result.join(',' + newLine) + newLine + (compact ? '' : oldIndent) + ']';
-                } else if (isNumber2(argument) || isBigInt(argument)) {
+                } else if (isNumber2(argument)) {
                     if (json) {
-                        return JSON.stringify(Number(argument));
+                        return JSON.stringify(argument);
                     }
                     
-                    let result2;
-                    
                     if (useDecNumbers) {
-                        result2 = String(argument);
-                    } else if (useHexNumbers) {
+                        return String(argument);
+                    }
+                    
+                    if (useHexNumbers) {
                         let hexadecimal2 = argument.toString(16);
                         
                         if (!lowercaseHex) {
                             hexadecimal2 = hexadecimal2.toUpperCase();
                         }
                         
-                        result2 = '0x' + hexadecimal2;
-                    } else if (useBinNumbers) {
-                        result2 = '0b' + argument.toString(2);
-                    } else if (useOctNumbers) {
-                        result2 = '0o' + argument.toString(8);
-                    }
-
-                    
-                    if (isBigInt(argument)) {
-                        return result2 + 'n';
+                        return '0x' + hexadecimal2;
                     }
                     
-                    return result2;
-                } else if (isBigInt(argument)) {
-                    if (json) {
-                        return JSON.stringify(Number(argument));
+                    if (useBinNumbers) {
+                        return '0b' + argument.toString(2);
                     }
                     
-                    return argument + 'n';
+                    if (useOctNumbers) {
+                        return '0o' + argument.toString(8);
+                    }
                 } else if (!isObject(argument)) {
                     if (json) {
                         return JSON.stringify(argument) || 'null';
@@ -3176,7 +3170,6 @@ var require_jsesc = __commonJS({
                     
                     return '{' + newLine + result.join(',' + newLine) + newLine + (compact ? '' : oldIndent) + '}';
                 }
-
 
             }
             
@@ -3264,19 +3257,20 @@ var require_jsesc = __commonJS({
     },
 });
 
-// node_modules/debug/src/browser.js
+// ../babel-babel/node_modules/ms/index.js
+// ../babel-babel/node_modules/debug/src/common.js
 var require_browser = () => () => ({
     enabled: false,
 });
 
-// node_modules/debug/src/node.js
+// ../babel-babel/node_modules/has-flag/index.js
 var require_node = () => () => ({
     enabled: false,
 });
 
-// node_modules/debug/src/index.js
+// ../babel-babel/node_modules/debug/src/index.js
 var require_src = __commonJS({
-    'node_modules/debug/src/index.js'(exports2, module2) {
+    '../babel-babel/node_modules/debug/src/index.js'(exports2, module2) {
         if (typeof browser$1 === 'undefined' || browser$1.type === 'renderer' || browser$1.browser === true || browser$1.__nwjs) {
             module2.exports = require_browser();
         } else {
@@ -3299,7 +3293,7 @@ __export(index_exports, {
     types: () => lib_exports,
 });
 var bundle = __toCommonJS(index_exports);
-// node_modules/@babel/types/lib/index.js
+// ../babel-babel/packages/babel-types/lib/index.js
 var lib_exports = {};
 
 __export(lib_exports, {
@@ -3467,6 +3461,7 @@ __export(lib_exports, {
     ModuleExpression: () => ModuleExpression,
     NODE_FIELDS: () => NODE_FIELDS$1,
     NODE_PARENT_VALIDATIONS: () => NODE_PARENT_VALIDATIONS,
+    NODE_UNION_SHAPES__PRIVATE: () => NODE_UNION_SHAPES__PRIVATE,
     NUMBER_BINARY_OPERATORS: () => NUMBER_BINARY_OPERATORS,
     NUMBER_UNARY_OPERATORS: () => NUMBER_UNARY_OPERATORS,
     NewExpression: () => NewExpression$1,
@@ -3507,7 +3502,6 @@ __export(lib_exports, {
     PrivateName: () => PrivateName$1,
     Program: () => Program$1,
     QualifiedTypeIdentifier: () => QualifiedTypeIdentifier,
-    RecordExpression: () => RecordExpression,
     RegExpLiteral: () => RegExpLiteral,
     RestElement: () => RestElement$1,
     ReturnStatement: () => ReturnStatement$1,
@@ -3609,7 +3603,6 @@ __export(lib_exports, {
     ThrowStatement: () => ThrowStatement,
     TopicReference: () => TopicReference,
     TryStatement: () => TryStatement,
-    TupleExpression: () => TupleExpression,
     TupleTypeAnnotation: () => TupleTypeAnnotation,
     TypeAlias: () => TypeAlias,
     TypeAnnotation: () => TypeAnnotation,
@@ -3828,7 +3821,6 @@ __export(lib_exports, {
     assertProperty: () => assertProperty,
     assertPureish: () => assertPureish,
     assertQualifiedTypeIdentifier: () => assertQualifiedTypeIdentifier,
-    assertRecordExpression: () => assertRecordExpression,
     assertRegExpLiteral: () => assertRegExpLiteral,
     assertRegexLiteral: () => assertRegexLiteral,
     assertRestElement: () => assertRestElement,
@@ -3929,7 +3921,6 @@ __export(lib_exports, {
     assertThrowStatement: () => assertThrowStatement,
     assertTopicReference: () => assertTopicReference,
     assertTryStatement: () => assertTryStatement,
-    assertTupleExpression: () => assertTupleExpression,
     assertTupleTypeAnnotation: () => assertTupleTypeAnnotation,
     assertTypeAlias: () => assertTypeAlias,
     assertTypeAnnotation: () => assertTypeAnnotation,
@@ -4067,7 +4058,7 @@ __export(lib_exports, {
     isArrayExpression: () => isArrayExpression$a,
     isArrayPattern: () => isArrayPattern,
     isArrayTypeAnnotation: () => isArrayTypeAnnotation,
-    isArrowFunctionExpression: () => isArrowFunctionExpression$2,
+    isArrowFunctionExpression: () => isArrowFunctionExpression$3,
     isAssignmentExpression: () => isAssignmentExpression$3,
     isAssignmentPattern: () => isAssignmentPattern$3,
     isAwaitExpression: () => isAwaitExpression$1,
@@ -4219,7 +4210,7 @@ __export(lib_exports, {
     isNumberLiteralTypeAnnotation: () => isNumberLiteralTypeAnnotation,
     isNumberTypeAnnotation: () => isNumberTypeAnnotation,
     isNumericLiteral: () => isNumericLiteral,
-    isObjectExpression: () => isObjectExpression$9,
+    isObjectExpression: () => isObjectExpression$a,
     isObjectMember: () => isObjectMember,
     isObjectMethod: () => isObjectMethod$1,
     isObjectPattern: () => isObjectPattern$3,
@@ -4248,7 +4239,6 @@ __export(lib_exports, {
     isProperty: () => isProperty$1,
     isPureish: () => isPureish,
     isQualifiedTypeIdentifier: () => isQualifiedTypeIdentifier,
-    isRecordExpression: () => isRecordExpression,
     isReferenced: () => isReferenced,
     isRegExpLiteral: () => isRegExpLiteral$2,
     isRegexLiteral: () => isRegexLiteral,
@@ -4352,7 +4342,6 @@ __export(lib_exports, {
     isThrowStatement: () => isThrowStatement,
     isTopicReference: () => isTopicReference,
     isTryStatement: () => isTryStatement,
-    isTupleExpression: () => isTupleExpression,
     isTupleTypeAnnotation: () => isTupleTypeAnnotation,
     isType: () => isType,
     isTypeAlias: () => isTypeAlias,
@@ -4435,7 +4424,6 @@ __export(lib_exports, {
     program: () => program$2,
     qualifiedTypeIdentifier: () => qualifiedTypeIdentifier,
     react: () => react,
-    recordExpression: () => recordExpression,
     regExpLiteral: () => regExpLiteral,
     regexLiteral: () => RegexLiteral,
     removeComments: () => removeComments,
@@ -4542,7 +4530,6 @@ __export(lib_exports, {
     tsUnionType: () => tsUnionType$1,
     tsUnknownKeyword: () => tsUnknownKeyword,
     tsVoidKeyword: () => tsVoidKeyword,
-    tupleExpression: () => tupleExpression,
     tupleTypeAnnotation: () => tupleTypeAnnotation,
     typeAlias: () => typeAlias,
     typeAnnotation: () => typeAnnotation,
@@ -4567,9 +4554,9 @@ __export(lib_exports, {
     yieldExpression: () => yieldExpression,
 });
 
-// node_modules/@babel/helper-validator-identifier/lib/index.js
-var nonASCIIidentifierStartChars = '\xAA\xB5\xBA\xC0-\xD6\xD8-\xF6\xF8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377\u037A-\u037D\u037F\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5\u03F7-\u0481\u048A-\u052F\u0531-\u0556\u0559\u0560-\u0588\u05D0-\u05EA\u05EF-\u05F2\u0620-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06E5\u06E6\u06EE\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA\u07F4\u07F5\u07FA\u0800-\u0815\u081A\u0824\u0828\u0840-\u0858\u0860-\u086A\u0870-\u0887\u0889-\u088E\u08A0-\u08C9\u0904-\u0939\u093D\u0950\u0958-\u0961\u0971-\u0980\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u09FC\u0A05-\u0A0A\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0AF9\u0B05-\u0B0C\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C39\u0C3D\u0C58-\u0C5A\u0C5D\u0C60\u0C61\u0C80\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3\u0CB5-\u0CB9\u0CBD\u0CDD\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D04-\u0D0C\u0D0E-\u0D10\u0D12-\u0D3A\u0D3D\u0D4E\u0D54-\u0D56\u0D5F-\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E46\u0E81\u0E82\u0E84\u0E86-\u0E8A\u0E8C-\u0EA3\u0EA5\u0EA7-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EC6\u0EDC-\u0EDF\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081\u108E\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F5\u13F8-\u13FD\u1401-\u166C\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u16EE-\u16F8\u1700-\u1711\u171F-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17D7\u17DC\u1820-\u1878\u1880-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191E\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19B0-\u19C9\u1A00-\u1A16\u1A20-\u1A54\u1AA7\u1B05-\u1B33\u1B45-\u1B4C\u1B83-\u1BA0\u1BAE\u1BAF\u1BBA-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C7D\u1C80-\u1C8A\u1C90-\u1CBA\u1CBD-\u1CBF\u1CE9-\u1CEC\u1CEE-\u1CF3\u1CF5\u1CF6\u1CFA\u1D00-\u1DBF\u1E00-\u1F15\u1F18-\u1F1D\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u2071\u207F\u2090-\u209C\u2102\u2107\u210A-\u2113\u2115\u2118-\u211D\u2124\u2126\u2128\u212A-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2160-\u2188\u2C00-\u2CE4\u2CEB-\u2CEE\u2CF2\u2CF3\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D80-\u2D96\u2DA0-\u2DA6\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE\u2DD0-\u2DD6\u2DD8-\u2DDE\u3005-\u3007\u3021-\u3029\u3031-\u3035\u3038-\u303C\u3041-\u3096\u309B-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312F\u3131-\u318E\u31A0-\u31BF\u31F0-\u31FF\u3400-\u4DBF\u4E00-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA61F\uA62A\uA62B\uA640-\uA66E\uA67F-\uA69D\uA6A0-\uA6EF\uA717-\uA71F\uA722-\uA788\uA78B-\uA7CD\uA7D0\uA7D1\uA7D3\uA7D5-\uA7DC\uA7F2-\uA801\uA803-\uA805\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB\uA8FD\uA8FE\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uA9CF\uA9E0-\uA9E4\uA9E6-\uA9EF\uA9FA-\uA9FE\uAA00-\uAA28\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA76\uAA7A\uAA7E-\uAAAF\uAAB1\uAAB5\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB-\uAADD\uAAE0-\uAAEA\uAAF2-\uAAF4\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E\uAB30-\uAB5A\uAB5C-\uAB69\uAB70-\uABE2\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF\uFFD2-\uFFD7\uFFDA-\uFFDC';
-var nonASCIIidentifierChars = '\xB7\u0300-\u036F\u0387\u0483-\u0487\u0591-\u05BD\u05BF\u05C1\u05C2\u05C4\u05C5\u05C7\u0610-\u061A\u064B-\u0669\u0670\u06D6-\u06DC\u06DF-\u06E4\u06E7\u06E8\u06EA-\u06ED\u06F0-\u06F9\u0711\u0730-\u074A\u07A6-\u07B0\u07C0-\u07C9\u07EB-\u07F3\u07FD\u0816-\u0819\u081B-\u0823\u0825-\u0827\u0829-\u082D\u0859-\u085B\u0897-\u089F\u08CA-\u08E1\u08E3-\u0903\u093A-\u093C\u093E-\u094F\u0951-\u0957\u0962\u0963\u0966-\u096F\u0981-\u0983\u09BC\u09BE-\u09C4\u09C7\u09C8\u09CB-\u09CD\u09D7\u09E2\u09E3\u09E6-\u09EF\u09FE\u0A01-\u0A03\u0A3C\u0A3E-\u0A42\u0A47\u0A48\u0A4B-\u0A4D\u0A51\u0A66-\u0A71\u0A75\u0A81-\u0A83\u0ABC\u0ABE-\u0AC5\u0AC7-\u0AC9\u0ACB-\u0ACD\u0AE2\u0AE3\u0AE6-\u0AEF\u0AFA-\u0AFF\u0B01-\u0B03\u0B3C\u0B3E-\u0B44\u0B47\u0B48\u0B4B-\u0B4D\u0B55-\u0B57\u0B62\u0B63\u0B66-\u0B6F\u0B82\u0BBE-\u0BC2\u0BC6-\u0BC8\u0BCA-\u0BCD\u0BD7\u0BE6-\u0BEF\u0C00-\u0C04\u0C3C\u0C3E-\u0C44\u0C46-\u0C48\u0C4A-\u0C4D\u0C55\u0C56\u0C62\u0C63\u0C66-\u0C6F\u0C81-\u0C83\u0CBC\u0CBE-\u0CC4\u0CC6-\u0CC8\u0CCA-\u0CCD\u0CD5\u0CD6\u0CE2\u0CE3\u0CE6-\u0CEF\u0CF3\u0D00-\u0D03\u0D3B\u0D3C\u0D3E-\u0D44\u0D46-\u0D48\u0D4A-\u0D4D\u0D57\u0D62\u0D63\u0D66-\u0D6F\u0D81-\u0D83\u0DCA\u0DCF-\u0DD4\u0DD6\u0DD8-\u0DDF\u0DE6-\u0DEF\u0DF2\u0DF3\u0E31\u0E34-\u0E3A\u0E47-\u0E4E\u0E50-\u0E59\u0EB1\u0EB4-\u0EBC\u0EC8-\u0ECE\u0ED0-\u0ED9\u0F18\u0F19\u0F20-\u0F29\u0F35\u0F37\u0F39\u0F3E\u0F3F\u0F71-\u0F84\u0F86\u0F87\u0F8D-\u0F97\u0F99-\u0FBC\u0FC6\u102B-\u103E\u1040-\u1049\u1056-\u1059\u105E-\u1060\u1062-\u1064\u1067-\u106D\u1071-\u1074\u1082-\u108D\u108F-\u109D\u135D-\u135F\u1369-\u1371\u1712-\u1715\u1732-\u1734\u1752\u1753\u1772\u1773\u17B4-\u17D3\u17DD\u17E0-\u17E9\u180B-\u180D\u180F-\u1819\u18A9\u1920-\u192B\u1930-\u193B\u1946-\u194F\u19D0-\u19DA\u1A17-\u1A1B\u1A55-\u1A5E\u1A60-\u1A7C\u1A7F-\u1A89\u1A90-\u1A99\u1AB0-\u1ABD\u1ABF-\u1ACE\u1B00-\u1B04\u1B34-\u1B44\u1B50-\u1B59\u1B6B-\u1B73\u1B80-\u1B82\u1BA1-\u1BAD\u1BB0-\u1BB9\u1BE6-\u1BF3\u1C24-\u1C37\u1C40-\u1C49\u1C50-\u1C59\u1CD0-\u1CD2\u1CD4-\u1CE8\u1CED\u1CF4\u1CF7-\u1CF9\u1DC0-\u1DFF\u200C\u200D\u203F\u2040\u2054\u20D0-\u20DC\u20E1\u20E5-\u20F0\u2CEF-\u2CF1\u2D7F\u2DE0-\u2DFF\u302A-\u302F\u3099\u309A\u30FB\uA620-\uA629\uA66F\uA674-\uA67D\uA69E\uA69F\uA6F0\uA6F1\uA802\uA806\uA80B\uA823-\uA827\uA82C\uA880\uA881\uA8B4-\uA8C5\uA8D0-\uA8D9\uA8E0-\uA8F1\uA8FF-\uA909\uA926-\uA92D\uA947-\uA953\uA980-\uA983\uA9B3-\uA9C0\uA9D0-\uA9D9\uA9E5\uA9F0-\uA9F9\uAA29-\uAA36\uAA43\uAA4C\uAA4D\uAA50-\uAA59\uAA7B-\uAA7D\uAAB0\uAAB2-\uAAB4\uAAB7\uAAB8\uAABE\uAABF\uAAC1\uAAEB-\uAAEF\uAAF5\uAAF6\uABE3-\uABEA\uABEC\uABED\uABF0-\uABF9\uFB1E\uFE00-\uFE0F\uFE20-\uFE2F\uFE33\uFE34\uFE4D-\uFE4F\uFF10-\uFF19\uFF3F\uFF65';
+// ../babel-babel/packages/babel-helper-validator-identifier/lib/index.js
+var nonASCIIidentifierStartChars = '\xAA\xB5\xBA\xC0-\xD6\xD8-\xF6\xF8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377\u037A-\u037D\u037F\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5\u03F7-\u0481\u048A-\u052F\u0531-\u0556\u0559\u0560-\u0588\u05D0-\u05EA\u05EF-\u05F2\u0620-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06E5\u06E6\u06EE\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA\u07F4\u07F5\u07FA\u0800-\u0815\u081A\u0824\u0828\u0840-\u0858\u0860-\u086A\u0870-\u0887\u0889-\u088F\u08A0-\u08C9\u0904-\u0939\u093D\u0950\u0958-\u0961\u0971-\u0980\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u09FC\u0A05-\u0A0A\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0AF9\u0B05-\u0B0C\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C39\u0C3D\u0C58-\u0C5A\u0C5C\u0C5D\u0C60\u0C61\u0C80\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3\u0CB5-\u0CB9\u0CBD\u0CDC-\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D04-\u0D0C\u0D0E-\u0D10\u0D12-\u0D3A\u0D3D\u0D4E\u0D54-\u0D56\u0D5F-\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E46\u0E81\u0E82\u0E84\u0E86-\u0E8A\u0E8C-\u0EA3\u0EA5\u0EA7-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EC6\u0EDC-\u0EDF\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081\u108E\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F5\u13F8-\u13FD\u1401-\u166C\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u16EE-\u16F8\u1700-\u1711\u171F-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17D7\u17DC\u1820-\u1878\u1880-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191E\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19B0-\u19C9\u1A00-\u1A16\u1A20-\u1A54\u1AA7\u1B05-\u1B33\u1B45-\u1B4C\u1B83-\u1BA0\u1BAE\u1BAF\u1BBA-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C7D\u1C80-\u1C8A\u1C90-\u1CBA\u1CBD-\u1CBF\u1CE9-\u1CEC\u1CEE-\u1CF3\u1CF5\u1CF6\u1CFA\u1D00-\u1DBF\u1E00-\u1F15\u1F18-\u1F1D\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u2071\u207F\u2090-\u209C\u2102\u2107\u210A-\u2113\u2115\u2118-\u211D\u2124\u2126\u2128\u212A-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2160-\u2188\u2C00-\u2CE4\u2CEB-\u2CEE\u2CF2\u2CF3\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D80-\u2D96\u2DA0-\u2DA6\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE\u2DD0-\u2DD6\u2DD8-\u2DDE\u3005-\u3007\u3021-\u3029\u3031-\u3035\u3038-\u303C\u3041-\u3096\u309B-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312F\u3131-\u318E\u31A0-\u31BF\u31F0-\u31FF\u3400-\u4DBF\u4E00-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA61F\uA62A\uA62B\uA640-\uA66E\uA67F-\uA69D\uA6A0-\uA6EF\uA717-\uA71F\uA722-\uA788\uA78B-\uA7DC\uA7F1-\uA801\uA803-\uA805\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB\uA8FD\uA8FE\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uA9CF\uA9E0-\uA9E4\uA9E6-\uA9EF\uA9FA-\uA9FE\uAA00-\uAA28\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA76\uAA7A\uAA7E-\uAAAF\uAAB1\uAAB5\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB-\uAADD\uAAE0-\uAAEA\uAAF2-\uAAF4\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E\uAB30-\uAB5A\uAB5C-\uAB69\uAB70-\uABE2\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF\uFFD2-\uFFD7\uFFDA-\uFFDC';
+var nonASCIIidentifierChars = '\xB7\u0300-\u036F\u0387\u0483-\u0487\u0591-\u05BD\u05BF\u05C1\u05C2\u05C4\u05C5\u05C7\u0610-\u061A\u064B-\u0669\u0670\u06D6-\u06DC\u06DF-\u06E4\u06E7\u06E8\u06EA-\u06ED\u06F0-\u06F9\u0711\u0730-\u074A\u07A6-\u07B0\u07C0-\u07C9\u07EB-\u07F3\u07FD\u0816-\u0819\u081B-\u0823\u0825-\u0827\u0829-\u082D\u0859-\u085B\u0897-\u089F\u08CA-\u08E1\u08E3-\u0903\u093A-\u093C\u093E-\u094F\u0951-\u0957\u0962\u0963\u0966-\u096F\u0981-\u0983\u09BC\u09BE-\u09C4\u09C7\u09C8\u09CB-\u09CD\u09D7\u09E2\u09E3\u09E6-\u09EF\u09FE\u0A01-\u0A03\u0A3C\u0A3E-\u0A42\u0A47\u0A48\u0A4B-\u0A4D\u0A51\u0A66-\u0A71\u0A75\u0A81-\u0A83\u0ABC\u0ABE-\u0AC5\u0AC7-\u0AC9\u0ACB-\u0ACD\u0AE2\u0AE3\u0AE6-\u0AEF\u0AFA-\u0AFF\u0B01-\u0B03\u0B3C\u0B3E-\u0B44\u0B47\u0B48\u0B4B-\u0B4D\u0B55-\u0B57\u0B62\u0B63\u0B66-\u0B6F\u0B82\u0BBE-\u0BC2\u0BC6-\u0BC8\u0BCA-\u0BCD\u0BD7\u0BE6-\u0BEF\u0C00-\u0C04\u0C3C\u0C3E-\u0C44\u0C46-\u0C48\u0C4A-\u0C4D\u0C55\u0C56\u0C62\u0C63\u0C66-\u0C6F\u0C81-\u0C83\u0CBC\u0CBE-\u0CC4\u0CC6-\u0CC8\u0CCA-\u0CCD\u0CD5\u0CD6\u0CE2\u0CE3\u0CE6-\u0CEF\u0CF3\u0D00-\u0D03\u0D3B\u0D3C\u0D3E-\u0D44\u0D46-\u0D48\u0D4A-\u0D4D\u0D57\u0D62\u0D63\u0D66-\u0D6F\u0D81-\u0D83\u0DCA\u0DCF-\u0DD4\u0DD6\u0DD8-\u0DDF\u0DE6-\u0DEF\u0DF2\u0DF3\u0E31\u0E34-\u0E3A\u0E47-\u0E4E\u0E50-\u0E59\u0EB1\u0EB4-\u0EBC\u0EC8-\u0ECE\u0ED0-\u0ED9\u0F18\u0F19\u0F20-\u0F29\u0F35\u0F37\u0F39\u0F3E\u0F3F\u0F71-\u0F84\u0F86\u0F87\u0F8D-\u0F97\u0F99-\u0FBC\u0FC6\u102B-\u103E\u1040-\u1049\u1056-\u1059\u105E-\u1060\u1062-\u1064\u1067-\u106D\u1071-\u1074\u1082-\u108D\u108F-\u109D\u135D-\u135F\u1369-\u1371\u1712-\u1715\u1732-\u1734\u1752\u1753\u1772\u1773\u17B4-\u17D3\u17DD\u17E0-\u17E9\u180B-\u180D\u180F-\u1819\u18A9\u1920-\u192B\u1930-\u193B\u1946-\u194F\u19D0-\u19DA\u1A17-\u1A1B\u1A55-\u1A5E\u1A60-\u1A7C\u1A7F-\u1A89\u1A90-\u1A99\u1AB0-\u1ABD\u1ABF-\u1ADD\u1AE0-\u1AEB\u1B00-\u1B04\u1B34-\u1B44\u1B50-\u1B59\u1B6B-\u1B73\u1B80-\u1B82\u1BA1-\u1BAD\u1BB0-\u1BB9\u1BE6-\u1BF3\u1C24-\u1C37\u1C40-\u1C49\u1C50-\u1C59\u1CD0-\u1CD2\u1CD4-\u1CE8\u1CED\u1CF4\u1CF7-\u1CF9\u1DC0-\u1DFF\u200C\u200D\u203F\u2040\u2054\u20D0-\u20DC\u20E1\u20E5-\u20F0\u2CEF-\u2CF1\u2D7F\u2DE0-\u2DFF\u302A-\u302F\u3099\u309A\u30FB\uA620-\uA629\uA66F\uA674-\uA67D\uA69E\uA69F\uA6F0\uA6F1\uA802\uA806\uA80B\uA823-\uA827\uA82C\uA880\uA881\uA8B4-\uA8C5\uA8D0-\uA8D9\uA8E0-\uA8F1\uA8FF-\uA909\uA926-\uA92D\uA947-\uA953\uA980-\uA983\uA9B3-\uA9C0\uA9D0-\uA9D9\uA9E5\uA9F0-\uA9F9\uAA29-\uAA36\uAA43\uAA4C\uAA4D\uAA50-\uAA59\uAA7B-\uAA7D\uAAB0\uAAB2-\uAAB4\uAAB7\uAAB8\uAABE\uAABF\uAAC1\uAAEB-\uAAEF\uAAF5\uAAF6\uABE3-\uABEA\uABEC\uABED\uABF0-\uABF9\uFB1E\uFE00-\uFE0F\uFE20-\uFE2F\uFE33\uFE34\uFE4D-\uFE4F\uFF10-\uFF19\uFF3F\uFF65';
 var nonASCIIidentifierStart = new RegExp('[' + nonASCIIidentifierStartChars + ']');
 var nonASCIIidentifier = new RegExp('[' + nonASCIIidentifierStartChars + nonASCIIidentifierChars + ']');
 
@@ -4674,7 +4661,9 @@ var astralIdentifierStartCodes = [
     21,
     11,
     25,
-    71,
+    7,
+    25,
+    39,
     55,
     7,
     1,
@@ -4719,8 +4708,8 @@ var astralIdentifierStartCodes = [
     7,
     1,
     17,
-    2,
-    60,
+    5,
+    57,
     28,
     11,
     0,
@@ -4904,7 +4893,9 @@ var astralIdentifierStartCodes = [
     31,
     15,
     0,
-    328,
+    24,
+    43,
+    261,
     18,
     16,
     0,
@@ -4952,7 +4943,11 @@ var astralIdentifierStartCodes = [
     44,
     212,
     63,
-    129,
+    33,
+    24,
+    3,
+    24,
+    45,
     74,
     6,
     0,
@@ -4962,13 +4957,15 @@ var astralIdentifierStartCodes = [
     1,
     2,
     0,
-    29,
-    6135,
-    9,
-    1237,
+    15,
+    4,
+    10,
+    7381,
     42,
-    9,
-    8936,
+    31,
+    98,
+    114,
+    8702,
     3,
     2,
     6,
@@ -5076,7 +5073,19 @@ var astralIdentifierStartCodes = [
     29,
     3,
     0,
-    496,
+    208,
+    30,
+    2,
+    2,
+    2,
+    1,
+    2,
+    6,
+    3,
+    4,
+    10,
+    1,
+    225,
     6,
     2,
     3,
@@ -5159,12 +5168,10 @@ var astralIdentifierStartCodes = [
     4421,
     42719,
     33,
-    4153,
-    7,
-    221,
+    4381,
     3,
-    5761,
-    15,
+    5773,
+    3,
     7472,
     16,
     621,
@@ -5173,7 +5180,7 @@ var astralIdentifierStartCodes = [
     1507,
     4938,
     6,
-    4191,
+    8489,
 ];
 var astralIdentifierCodes = [
     509,
@@ -5206,8 +5213,8 @@ var astralIdentifierCodes = [
     4,
     318,
     1,
-    80,
-    3,
+    78,
+    5,
     71,
     10,
     50,
@@ -5352,7 +5359,9 @@ var astralIdentifierCodes = [
     10,
     47,
     15,
-    343,
+    199,
+    7,
+    137,
     9,
     54,
     7,
@@ -5384,7 +5393,9 @@ var astralIdentifierCodes = [
     4,
     9,
     9,
-    330,
+    55,
+    9,
+    266,
     3,
     10,
     1,
@@ -5484,7 +5495,15 @@ var astralIdentifierCodes = [
     1,
     2,
     9,
-    726,
+    233,
+    0,
+    3,
+    0,
+    8,
+    1,
+    6,
+    0,
+    475,
     6,
     110,
     6,
@@ -5636,13 +5655,10 @@ var reservedWords = {
         'public',
         'static',
         'yield',
-    ],
-    strictBind: ['eval', 'arguments'],
-};
+    ]};
 
 var keywords$1 = new Set(reservedWords.keyword);
 var reservedWordsStrictSet = new Set(reservedWords.strict);
-new Set(reservedWords.strictBind);
 
 function isReservedWord(word, inModule) {
     return inModule && word === 'await' || word === 'enum';
@@ -5656,7 +5672,7 @@ function isKeyword(word) {
     return keywords$1.has(word);
 }
 
-// node_modules/@babel/helper-string-parser/lib/index.js
+// ../babel-babel/packages/babel-helper-string-parser/lib/index.js
 var _isDigit = function isDigit(code2) {
     return code2 >= 48 && code2 <= 57;
 };
@@ -5957,7 +5973,7 @@ function readCodePoint(input, pos, lineStart, curLine, throwOnInvalid, errors) {
     };
 }
 
-// node_modules/@babel/types/lib/index.js
+// ../babel-babel/packages/babel-types/lib/index.js
 function shallowEqual(actual, expected) {
     const keys2 = Object.keys(expected);
     
@@ -6349,7 +6365,7 @@ function isProgram$5(node, opts) {
     return opts == null || shallowEqual(node, opts);
 }
 
-function isObjectExpression$9(node, opts) {
+function isObjectExpression$a(node, opts) {
     if (!node)
         return false;
     
@@ -6549,7 +6565,7 @@ function isArrayPattern(node, opts) {
     return opts == null || shallowEqual(node, opts);
 }
 
-function isArrowFunctionExpression$2(node, opts) {
+function isArrowFunctionExpression$3(node, opts) {
     if (!node)
         return false;
     
@@ -7779,26 +7795,6 @@ function isExportDefaultSpecifier(node, opts) {
     return opts == null || shallowEqual(node, opts);
 }
 
-function isRecordExpression(node, opts) {
-    if (!node)
-        return false;
-    
-    if (node.type !== 'RecordExpression')
-        return false;
-    
-    return opts == null || shallowEqual(node, opts);
-}
-
-function isTupleExpression(node, opts) {
-    if (!node)
-        return false;
-    
-    if (node.type !== 'TupleExpression')
-        return false;
-    
-    return opts == null || shallowEqual(node, opts);
-}
-
 function isModuleExpression(node, opts) {
     if (!node)
         return false;
@@ -8700,8 +8696,6 @@ function isExpression$2(node, opts) {
     case 'JSXFragment':    
     case 'BindExpression':    
     case 'DoExpression':    
-    case 'RecordExpression':    
-    case 'TupleExpression':    
     case 'ModuleExpression':    
     case 'TopicReference':    
     case 'PipelineTopicExpression':    
@@ -10127,6 +10121,7 @@ var NODE_FIELDS$1 = {};
 var BUILDER_KEYS = {};
 var DEPRECATED_KEYS = {};
 var NODE_PARENT_VALIDATIONS = {};
+var NODE_UNION_SHAPES__PRIVATE = {};
 
 function getType$1(val) {
     if (Array.isArray(val)) {
@@ -10365,6 +10360,7 @@ var validTypeOpts = /* @__PURE__ */new Set([
     'inherits',
     'visitor',
     'validate',
+    'unionShape',
 ]);
 var validFieldKeys = /* @__PURE__ */new Set([
     'default',
@@ -10478,6 +10474,10 @@ function defineType$5(type, opts = {}) {
         NODE_PARENT_VALIDATIONS[type] = opts.validate;
     }
     
+    if (opts.unionShape) {
+        NODE_UNION_SHAPES__PRIVATE[type] = opts.unionShape;
+    }
+    
     store$1[type] = opts;
 }
 
@@ -10489,6 +10489,7 @@ var utils$1 = /* @__PURE__ */Object.freeze({
     FLIPPED_ALIAS_KEYS,
     NODE_FIELDS: NODE_FIELDS$1,
     NODE_PARENT_VALIDATIONS,
+    NODE_UNION_SHAPES__PRIVATE,
     VISITOR_KEYS,
     allExpandedTypes,
     arrayOf,
@@ -10508,6 +10509,29 @@ var utils$1 = /* @__PURE__ */Object.freeze({
     validateOptional,
     validateOptionalType,
     validateType,
+});
+
+var classMethodOrPropertyUnionShapeCommon = (allowPrivateName = false) => ({
+    unionShape: {
+        discriminator: 'computed',
+        shapes: [{
+            name: 'computed',
+            value: [true],
+            properties: {
+                key: {
+                    validate: assertNodeType('Expression'),
+                },
+            },
+        }, {
+            name: 'nonComputed',
+            value: [false],
+            properties: {
+                key: {
+                    validate: allowPrivateName ? assertNodeType('Identifier', 'StringLiteral', 'NumericLiteral', 'BigIntLiteral', 'PrivateName') : assertNodeType('Identifier', 'StringLiteral', 'NumericLiteral', 'BigIntLiteral'),
+                },
+            },
+        }],
+    },
 });
 
 var defineType$4 = defineAliasedType('Standardized');
@@ -11152,6 +11176,26 @@ defineType$4('MemberExpression', {
         'LVal',
         'PatternLike',
     ],
+    unionShape: {
+        discriminator: 'computed',
+        shapes: [{
+            name: 'computed',
+            value: [true],
+            properties: {
+                property: {
+                    validate: assertNodeType('Expression'),
+                },
+            },
+        }, {
+            name: 'nonComputed',
+            value: [false],
+            properties: {
+                property: {
+                    validate: assertNodeType('Identifier', 'PrivateName'),
+                },
+            },
+        }],
+    },
     fields: Object.assign({
         object: {
             validate: assertNodeType('Expression', 'Super'),
@@ -11218,7 +11262,7 @@ defineType$4('ObjectExpression', {
         properties: validateArrayOfType('ObjectMethod', 'ObjectProperty', 'SpreadElement'),
     },
 });
-defineType$4('ObjectMethod', {
+defineType$4('ObjectMethod', Object.assign({
     builder: [
         'kind',
         'key',
@@ -11236,6 +11280,7 @@ defineType$4('ObjectMethod', {
         'returnType',
         'body',
     ],
+}, classMethodOrPropertyUnionShapeCommon(), {
     fields: Object.assign({}, functionCommon(), functionTypeAnnotationCommon(), {
         kind: Object.assign({
             validate: assertOneOf('method', 'get', 'set'),
@@ -11279,7 +11324,7 @@ defineType$4('ObjectMethod', {
         'Method',
         'ObjectMember',
     ],
-});
+}));
 defineType$4('ObjectProperty', {
     builder: [
         'key',
@@ -11288,6 +11333,26 @@ defineType$4('ObjectProperty', {
         'shorthand',
         ...[],
     ],
+    unionShape: {
+        discriminator: 'computed',
+        shapes: [{
+            name: 'computed',
+            value: [true],
+            properties: {
+                key: {
+                    validate: assertNodeType('Expression'),
+                },
+            },
+        }, {
+            name: 'nonComputed',
+            value: [false],
+            properties: {
+                key: {
+                    validate: assertNodeType('Identifier', 'StringLiteral', 'NumericLiteral', 'BigIntLiteral', 'PrivateName'),
+                },
+            },
+        }],
+    },
     fields: {
         computed: {
             default: false,
@@ -12151,7 +12216,7 @@ var classMethodOrDeclareMethodCommon = () => Object.assign({}, functionCommon(),
     },
 });
 
-defineType$4('ClassMethod', {
+defineType$4('ClassMethod', Object.assign({
     aliases: [
         'Function',
         'Scopable',
@@ -12177,12 +12242,13 @@ defineType$4('ClassMethod', {
         'returnType',
         'body',
     ],
+}, classMethodOrPropertyUnionShapeCommon(), {
     fields: Object.assign({}, classMethodOrDeclareMethodCommon(), functionTypeAnnotationCommon(), {
         body: {
             validate: assertNodeType('BlockStatement'),
         },
     }),
-});
+}));
 defineType$4('ObjectPattern', {
     visitor: [
         'decorators',
@@ -12410,7 +12476,7 @@ defineType$4('OptionalCallExpression', {
         },
     }, {}),
 });
-defineType$4('ClassProperty', {
+defineType$4('ClassProperty', Object.assign({
     visitor: [
         'decorators',
         'variance',
@@ -12427,6 +12493,7 @@ defineType$4('ClassProperty', {
         'static',
     ],
     aliases: ['Property'],
+}, classMethodOrPropertyUnionShapeCommon(), {
     fields: Object.assign({}, classMethodOrPropertyCommon(), {
         value: {
             validate: assertNodeType('Expression'),
@@ -12457,8 +12524,8 @@ defineType$4('ClassProperty', {
             optional: true,
         },
     }),
-});
-defineType$4('ClassAccessorProperty', {
+}));
+defineType$4('ClassAccessorProperty', Object.assign({
     visitor: [
         'decorators',
         'key',
@@ -12474,6 +12541,7 @@ defineType$4('ClassAccessorProperty', {
         'static',
     ],
     aliases: ['Property', 'Accessor'],
+}, classMethodOrPropertyUnionShapeCommon(true), {
     fields: Object.assign({}, classMethodOrPropertyCommon(), {
         key: {
             validate: chain$4((function() {
@@ -12515,7 +12583,7 @@ defineType$4('ClassAccessorProperty', {
             optional: true,
         },
     }),
-});
+}));
 defineType$4('ClassPrivateProperty', {
     visitor: [
         'decorators',
@@ -13524,23 +13592,6 @@ defineType$5('ExportDefaultSpecifier', {
         },
     },
 });
-defineType$5('RecordExpression', {
-    visitor: ['properties'],
-    aliases: ['Expression'],
-    fields: {
-        properties: validateArrayOfType('ObjectProperty', 'SpreadElement'),
-    },
-});
-defineType$5('TupleExpression', {
-    fields: {
-        elements: {
-            validate: arrayOfType('Expression', 'SpreadElement'),
-            default: [],
-        },
-    },
-    visitor: ['elements'],
-    aliases: ['Expression'],
-});
 defineType$5('ModuleExpression', {
     visitor: ['body'],
     fields: {
@@ -13632,7 +13683,7 @@ defineType('TSDeclareFunction', {
     ],
     fields: Object.assign({}, functionDeclarationCommon(), tSFunctionTypeAnnotationCommon()),
 });
-defineType('TSDeclareMethod', {
+defineType('TSDeclareMethod', Object.assign({
     visitor: [
         'decorators',
         'key',
@@ -13640,8 +13691,9 @@ defineType('TSDeclareMethod', {
         'params',
         'returnType',
     ],
+}, classMethodOrPropertyUnionShapeCommon(), {
     fields: Object.assign({}, classMethodOrDeclareMethodCommon(), tSFunctionTypeAnnotationCommon()),
-});
+}));
 defineType('TSQualifiedName', {
     aliases: ['TSEntityName'],
     visitor: ['left', 'right'],
@@ -13952,14 +14004,14 @@ defineType('TSLiteralType', {
                 const unaryOperator = assertOneOf('-');
                 const literal = assertNodeType('NumericLiteral', 'StringLiteral', 'BooleanLiteral', 'BigIntLiteral', 'TemplateLiteral');
                 
-                function validator(parent, key, node) {
+                const validator = function validator2(parent, key, node) {
                     if (is$4('UnaryExpression', node)) {
                         unaryOperator(node, 'operator', node.operator);
                         unaryExpression3(node, 'argument', node.argument);
                     } else {
                         literal(parent, key, node);
                     }
-                }
+                };
                 
                 validator.oneOfNodeTypes = [
                     'NumericLiteral',
@@ -16521,28 +16573,6 @@ function exportDefaultSpecifier(exported) {
     return node;
 }
 
-function recordExpression(properties) {
-    const node = {
-        type: 'RecordExpression',
-        properties,
-    };
-    
-    const defs = NODE_FIELDS.RecordExpression;
-    validate$4(defs.properties, node, 'properties', properties, 1);
-    return node;
-}
-
-function tupleExpression(elements = []) {
-    const node = {
-        type: 'TupleExpression',
-        elements,
-    };
-    
-    const defs = NODE_FIELDS.TupleExpression;
-    validate$4(defs.elements, node, 'elements', elements, 1);
-    return node;
-}
-
 function moduleExpression(body) {
     const node = {
         type: 'ModuleExpression',
@@ -17548,7 +17578,6 @@ var b = /* @__PURE__ */Object.freeze({
     privateName: privateName$1,
     program: program$2,
     qualifiedTypeIdentifier,
-    recordExpression,
     regExpLiteral,
     regexLiteral: RegexLiteral,
     restElement: restElement$1,
@@ -17641,7 +17670,6 @@ var b = /* @__PURE__ */Object.freeze({
     tsUnionType: tsUnionType$1,
     tsUnknownKeyword,
     tsVoidKeyword,
-    tupleExpression,
     tupleTypeAnnotation,
     typeAlias,
     typeAnnotation,
@@ -17849,8 +17877,6 @@ var BindExpression = alias('bindExpression');
 var Decorator$1 = alias('decorator');
 var DoExpression = alias('doExpression');
 var ExportDefaultSpecifier = alias('exportDefaultSpecifier');
-var RecordExpression = alias('recordExpression');
-var TupleExpression = alias('tupleExpression');
 var ModuleExpression = alias('moduleExpression');
 var TopicReference = alias('topicReference');
 var PipelineTopicExpression = alias('pipelineTopicExpression');
@@ -18708,14 +18734,6 @@ function assertDoExpression(node, opts) {
 
 function assertExportDefaultSpecifier(node, opts) {
     assert('ExportDefaultSpecifier', node, opts);
-}
-
-function assertRecordExpression(node, opts) {
-    assert('RecordExpression', node, opts);
-}
-
-function assertTupleExpression(node, opts) {
-    assert('TupleExpression', node, opts);
 }
 
 function assertModuleExpression(node, opts) {
@@ -19854,7 +19872,7 @@ function removeProperties(node, opts = {}) {
     }
     
     for (const key of Object.keys(node)) {
-        if (key[0] === '_' && node[key] != null)
+        if (key.startsWith('_') && node[key] != null)
             node[key] = void 0;
     }
     
@@ -20056,7 +20074,7 @@ function inherits(child, parent) {
     }
     
     for (const key of Object.keys(parent)) {
-        if (key[0] === '_' && key !== '__clone') {
+        if (key.startsWith('_') && key !== '__clone') {
             child[key] = parent[key];
         }
     }
@@ -20514,7 +20532,7 @@ function isReferenced(node, parent, grandparent) {
             return !!parent.computed;
         }
         
-        return !grandparent || grandparent.type !== 'ObjectPattern';
+        return grandparent?.type !== 'ObjectPattern';
     
     case 'ClassProperty':    
     case 'ClassAccessorProperty':
@@ -20661,7 +20679,7 @@ var react = {
     buildChildren,
 };
 
-// node_modules/@babel/parser/lib/index.js
+// ../babel-babel/packages/babel-parser/lib/index.js
 function _objectWithoutPropertiesLoose(r, e) {
     if (null == r)
         return {};
@@ -21050,7 +21068,7 @@ function createDefaultOptions() {
         allowUndeclaredExports: false,
         allowYieldOutsideFunction: false,
         plugins: [],
-        strictMode: null,
+        strictMode: void 0,
         ranges: false,
         tokens: false,
         createImportExpressions: true,
@@ -21139,7 +21157,7 @@ var estree = (superClass) => class ESTreeParserMixin extends superClass {
         
         try {
             regex = new RegExp(pattern, flags);
-        } catch(_) {}
+        } catch {}
 
 
                 const node = this.estreeParseLiteral(regex);
@@ -21216,7 +21234,7 @@ var estree = (superClass) => class ESTreeParserMixin extends superClass {
         return stmt;
     }
     
-    fillOptionalPropertiesForTSESLint(node) {}
+    fillOptionalPropertiesForTSESLint() {}
     
     cloneEstreeStringLiteral(node) {
         const {
@@ -21279,8 +21297,6 @@ var estree = (superClass) => class ESTreeParserMixin extends superClass {
     
     convertPrivateNameToPrivateIdentifier(node) {
         const name = super.getPrivateNameSV(node);
-        
-        node = node;
         delete node.id;
         node.name = name;
         return this.castNodeTo(node, 'PrivateIdentifier');
@@ -21410,8 +21426,8 @@ var estree = (superClass) => class ESTreeParserMixin extends superClass {
         return this.finishNode(node, 'Property');
     }
     
-    isValidLVal(type, isUnparenthesizedInAssign, binding) {
-        return type === 'Property' ? 'value' : super.isValidLVal(type, isUnparenthesizedInAssign, binding);
+    isValidLVal(type, disallowCallExpression, isUnparenthesizedInAssign, binding) {
+        return type === 'Property' ? 'value' : super.isValidLVal(type, disallowCallExpression, isUnparenthesizedInAssign, binding);
     }
     
     isAssignable(node, isBinding3) {
@@ -21601,7 +21617,7 @@ var TokContext = class {
     }
 };
 
-var types$18 = {
+var types$19 = {
     brace: new TokContext('{'),
     j_oTag: new TokContext('<tag'),
     j_cTag: new TokContext('</tag'),
@@ -22159,8 +22175,8 @@ function getExportedToken(token) {
     return tokenTypes[token];
 }
 
-var nonASCIIidentifierStartChars2 = '\xAA\xB5\xBA\xC0-\xD6\xD8-\xF6\xF8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377\u037A-\u037D\u037F\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5\u03F7-\u0481\u048A-\u052F\u0531-\u0556\u0559\u0560-\u0588\u05D0-\u05EA\u05EF-\u05F2\u0620-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06E5\u06E6\u06EE\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA\u07F4\u07F5\u07FA\u0800-\u0815\u081A\u0824\u0828\u0840-\u0858\u0860-\u086A\u0870-\u0887\u0889-\u088E\u08A0-\u08C9\u0904-\u0939\u093D\u0950\u0958-\u0961\u0971-\u0980\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u09FC\u0A05-\u0A0A\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0AF9\u0B05-\u0B0C\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C39\u0C3D\u0C58-\u0C5A\u0C5D\u0C60\u0C61\u0C80\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3\u0CB5-\u0CB9\u0CBD\u0CDD\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D04-\u0D0C\u0D0E-\u0D10\u0D12-\u0D3A\u0D3D\u0D4E\u0D54-\u0D56\u0D5F-\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E46\u0E81\u0E82\u0E84\u0E86-\u0E8A\u0E8C-\u0EA3\u0EA5\u0EA7-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EC6\u0EDC-\u0EDF\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081\u108E\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F5\u13F8-\u13FD\u1401-\u166C\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u16EE-\u16F8\u1700-\u1711\u171F-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17D7\u17DC\u1820-\u1878\u1880-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191E\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19B0-\u19C9\u1A00-\u1A16\u1A20-\u1A54\u1AA7\u1B05-\u1B33\u1B45-\u1B4C\u1B83-\u1BA0\u1BAE\u1BAF\u1BBA-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C7D\u1C80-\u1C8A\u1C90-\u1CBA\u1CBD-\u1CBF\u1CE9-\u1CEC\u1CEE-\u1CF3\u1CF5\u1CF6\u1CFA\u1D00-\u1DBF\u1E00-\u1F15\u1F18-\u1F1D\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u2071\u207F\u2090-\u209C\u2102\u2107\u210A-\u2113\u2115\u2118-\u211D\u2124\u2126\u2128\u212A-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2160-\u2188\u2C00-\u2CE4\u2CEB-\u2CEE\u2CF2\u2CF3\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D80-\u2D96\u2DA0-\u2DA6\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE\u2DD0-\u2DD6\u2DD8-\u2DDE\u3005-\u3007\u3021-\u3029\u3031-\u3035\u3038-\u303C\u3041-\u3096\u309B-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312F\u3131-\u318E\u31A0-\u31BF\u31F0-\u31FF\u3400-\u4DBF\u4E00-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA61F\uA62A\uA62B\uA640-\uA66E\uA67F-\uA69D\uA6A0-\uA6EF\uA717-\uA71F\uA722-\uA788\uA78B-\uA7CD\uA7D0\uA7D1\uA7D3\uA7D5-\uA7DC\uA7F2-\uA801\uA803-\uA805\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB\uA8FD\uA8FE\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uA9CF\uA9E0-\uA9E4\uA9E6-\uA9EF\uA9FA-\uA9FE\uAA00-\uAA28\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA76\uAA7A\uAA7E-\uAAAF\uAAB1\uAAB5\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB-\uAADD\uAAE0-\uAAEA\uAAF2-\uAAF4\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E\uAB30-\uAB5A\uAB5C-\uAB69\uAB70-\uABE2\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF\uFFD2-\uFFD7\uFFDA-\uFFDC';
-var nonASCIIidentifierChars2 = '\xB7\u0300-\u036F\u0387\u0483-\u0487\u0591-\u05BD\u05BF\u05C1\u05C2\u05C4\u05C5\u05C7\u0610-\u061A\u064B-\u0669\u0670\u06D6-\u06DC\u06DF-\u06E4\u06E7\u06E8\u06EA-\u06ED\u06F0-\u06F9\u0711\u0730-\u074A\u07A6-\u07B0\u07C0-\u07C9\u07EB-\u07F3\u07FD\u0816-\u0819\u081B-\u0823\u0825-\u0827\u0829-\u082D\u0859-\u085B\u0897-\u089F\u08CA-\u08E1\u08E3-\u0903\u093A-\u093C\u093E-\u094F\u0951-\u0957\u0962\u0963\u0966-\u096F\u0981-\u0983\u09BC\u09BE-\u09C4\u09C7\u09C8\u09CB-\u09CD\u09D7\u09E2\u09E3\u09E6-\u09EF\u09FE\u0A01-\u0A03\u0A3C\u0A3E-\u0A42\u0A47\u0A48\u0A4B-\u0A4D\u0A51\u0A66-\u0A71\u0A75\u0A81-\u0A83\u0ABC\u0ABE-\u0AC5\u0AC7-\u0AC9\u0ACB-\u0ACD\u0AE2\u0AE3\u0AE6-\u0AEF\u0AFA-\u0AFF\u0B01-\u0B03\u0B3C\u0B3E-\u0B44\u0B47\u0B48\u0B4B-\u0B4D\u0B55-\u0B57\u0B62\u0B63\u0B66-\u0B6F\u0B82\u0BBE-\u0BC2\u0BC6-\u0BC8\u0BCA-\u0BCD\u0BD7\u0BE6-\u0BEF\u0C00-\u0C04\u0C3C\u0C3E-\u0C44\u0C46-\u0C48\u0C4A-\u0C4D\u0C55\u0C56\u0C62\u0C63\u0C66-\u0C6F\u0C81-\u0C83\u0CBC\u0CBE-\u0CC4\u0CC6-\u0CC8\u0CCA-\u0CCD\u0CD5\u0CD6\u0CE2\u0CE3\u0CE6-\u0CEF\u0CF3\u0D00-\u0D03\u0D3B\u0D3C\u0D3E-\u0D44\u0D46-\u0D48\u0D4A-\u0D4D\u0D57\u0D62\u0D63\u0D66-\u0D6F\u0D81-\u0D83\u0DCA\u0DCF-\u0DD4\u0DD6\u0DD8-\u0DDF\u0DE6-\u0DEF\u0DF2\u0DF3\u0E31\u0E34-\u0E3A\u0E47-\u0E4E\u0E50-\u0E59\u0EB1\u0EB4-\u0EBC\u0EC8-\u0ECE\u0ED0-\u0ED9\u0F18\u0F19\u0F20-\u0F29\u0F35\u0F37\u0F39\u0F3E\u0F3F\u0F71-\u0F84\u0F86\u0F87\u0F8D-\u0F97\u0F99-\u0FBC\u0FC6\u102B-\u103E\u1040-\u1049\u1056-\u1059\u105E-\u1060\u1062-\u1064\u1067-\u106D\u1071-\u1074\u1082-\u108D\u108F-\u109D\u135D-\u135F\u1369-\u1371\u1712-\u1715\u1732-\u1734\u1752\u1753\u1772\u1773\u17B4-\u17D3\u17DD\u17E0-\u17E9\u180B-\u180D\u180F-\u1819\u18A9\u1920-\u192B\u1930-\u193B\u1946-\u194F\u19D0-\u19DA\u1A17-\u1A1B\u1A55-\u1A5E\u1A60-\u1A7C\u1A7F-\u1A89\u1A90-\u1A99\u1AB0-\u1ABD\u1ABF-\u1ACE\u1B00-\u1B04\u1B34-\u1B44\u1B50-\u1B59\u1B6B-\u1B73\u1B80-\u1B82\u1BA1-\u1BAD\u1BB0-\u1BB9\u1BE6-\u1BF3\u1C24-\u1C37\u1C40-\u1C49\u1C50-\u1C59\u1CD0-\u1CD2\u1CD4-\u1CE8\u1CED\u1CF4\u1CF7-\u1CF9\u1DC0-\u1DFF\u200C\u200D\u203F\u2040\u2054\u20D0-\u20DC\u20E1\u20E5-\u20F0\u2CEF-\u2CF1\u2D7F\u2DE0-\u2DFF\u302A-\u302F\u3099\u309A\u30FB\uA620-\uA629\uA66F\uA674-\uA67D\uA69E\uA69F\uA6F0\uA6F1\uA802\uA806\uA80B\uA823-\uA827\uA82C\uA880\uA881\uA8B4-\uA8C5\uA8D0-\uA8D9\uA8E0-\uA8F1\uA8FF-\uA909\uA926-\uA92D\uA947-\uA953\uA980-\uA983\uA9B3-\uA9C0\uA9D0-\uA9D9\uA9E5\uA9F0-\uA9F9\uAA29-\uAA36\uAA43\uAA4C\uAA4D\uAA50-\uAA59\uAA7B-\uAA7D\uAAB0\uAAB2-\uAAB4\uAAB7\uAAB8\uAABE\uAABF\uAAC1\uAAEB-\uAAEF\uAAF5\uAAF6\uABE3-\uABEA\uABEC\uABED\uABF0-\uABF9\uFB1E\uFE00-\uFE0F\uFE20-\uFE2F\uFE33\uFE34\uFE4D-\uFE4F\uFF10-\uFF19\uFF3F\uFF65';
+var nonASCIIidentifierStartChars2 = '\xAA\xB5\xBA\xC0-\xD6\xD8-\xF6\xF8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377\u037A-\u037D\u037F\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5\u03F7-\u0481\u048A-\u052F\u0531-\u0556\u0559\u0560-\u0588\u05D0-\u05EA\u05EF-\u05F2\u0620-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06E5\u06E6\u06EE\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA\u07F4\u07F5\u07FA\u0800-\u0815\u081A\u0824\u0828\u0840-\u0858\u0860-\u086A\u0870-\u0887\u0889-\u088F\u08A0-\u08C9\u0904-\u0939\u093D\u0950\u0958-\u0961\u0971-\u0980\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u09FC\u0A05-\u0A0A\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0AF9\u0B05-\u0B0C\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C39\u0C3D\u0C58-\u0C5A\u0C5C\u0C5D\u0C60\u0C61\u0C80\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3\u0CB5-\u0CB9\u0CBD\u0CDC-\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D04-\u0D0C\u0D0E-\u0D10\u0D12-\u0D3A\u0D3D\u0D4E\u0D54-\u0D56\u0D5F-\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E46\u0E81\u0E82\u0E84\u0E86-\u0E8A\u0E8C-\u0EA3\u0EA5\u0EA7-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EC6\u0EDC-\u0EDF\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081\u108E\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F5\u13F8-\u13FD\u1401-\u166C\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u16EE-\u16F8\u1700-\u1711\u171F-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17D7\u17DC\u1820-\u1878\u1880-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191E\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19B0-\u19C9\u1A00-\u1A16\u1A20-\u1A54\u1AA7\u1B05-\u1B33\u1B45-\u1B4C\u1B83-\u1BA0\u1BAE\u1BAF\u1BBA-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C7D\u1C80-\u1C8A\u1C90-\u1CBA\u1CBD-\u1CBF\u1CE9-\u1CEC\u1CEE-\u1CF3\u1CF5\u1CF6\u1CFA\u1D00-\u1DBF\u1E00-\u1F15\u1F18-\u1F1D\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u2071\u207F\u2090-\u209C\u2102\u2107\u210A-\u2113\u2115\u2118-\u211D\u2124\u2126\u2128\u212A-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2160-\u2188\u2C00-\u2CE4\u2CEB-\u2CEE\u2CF2\u2CF3\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D80-\u2D96\u2DA0-\u2DA6\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE\u2DD0-\u2DD6\u2DD8-\u2DDE\u3005-\u3007\u3021-\u3029\u3031-\u3035\u3038-\u303C\u3041-\u3096\u309B-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312F\u3131-\u318E\u31A0-\u31BF\u31F0-\u31FF\u3400-\u4DBF\u4E00-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA61F\uA62A\uA62B\uA640-\uA66E\uA67F-\uA69D\uA6A0-\uA6EF\uA717-\uA71F\uA722-\uA788\uA78B-\uA7DC\uA7F1-\uA801\uA803-\uA805\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB\uA8FD\uA8FE\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uA9CF\uA9E0-\uA9E4\uA9E6-\uA9EF\uA9FA-\uA9FE\uAA00-\uAA28\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA76\uAA7A\uAA7E-\uAAAF\uAAB1\uAAB5\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB-\uAADD\uAAE0-\uAAEA\uAAF2-\uAAF4\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E\uAB30-\uAB5A\uAB5C-\uAB69\uAB70-\uABE2\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF\uFFD2-\uFFD7\uFFDA-\uFFDC';
+var nonASCIIidentifierChars2 = '\xB7\u0300-\u036F\u0387\u0483-\u0487\u0591-\u05BD\u05BF\u05C1\u05C2\u05C4\u05C5\u05C7\u0610-\u061A\u064B-\u0669\u0670\u06D6-\u06DC\u06DF-\u06E4\u06E7\u06E8\u06EA-\u06ED\u06F0-\u06F9\u0711\u0730-\u074A\u07A6-\u07B0\u07C0-\u07C9\u07EB-\u07F3\u07FD\u0816-\u0819\u081B-\u0823\u0825-\u0827\u0829-\u082D\u0859-\u085B\u0897-\u089F\u08CA-\u08E1\u08E3-\u0903\u093A-\u093C\u093E-\u094F\u0951-\u0957\u0962\u0963\u0966-\u096F\u0981-\u0983\u09BC\u09BE-\u09C4\u09C7\u09C8\u09CB-\u09CD\u09D7\u09E2\u09E3\u09E6-\u09EF\u09FE\u0A01-\u0A03\u0A3C\u0A3E-\u0A42\u0A47\u0A48\u0A4B-\u0A4D\u0A51\u0A66-\u0A71\u0A75\u0A81-\u0A83\u0ABC\u0ABE-\u0AC5\u0AC7-\u0AC9\u0ACB-\u0ACD\u0AE2\u0AE3\u0AE6-\u0AEF\u0AFA-\u0AFF\u0B01-\u0B03\u0B3C\u0B3E-\u0B44\u0B47\u0B48\u0B4B-\u0B4D\u0B55-\u0B57\u0B62\u0B63\u0B66-\u0B6F\u0B82\u0BBE-\u0BC2\u0BC6-\u0BC8\u0BCA-\u0BCD\u0BD7\u0BE6-\u0BEF\u0C00-\u0C04\u0C3C\u0C3E-\u0C44\u0C46-\u0C48\u0C4A-\u0C4D\u0C55\u0C56\u0C62\u0C63\u0C66-\u0C6F\u0C81-\u0C83\u0CBC\u0CBE-\u0CC4\u0CC6-\u0CC8\u0CCA-\u0CCD\u0CD5\u0CD6\u0CE2\u0CE3\u0CE6-\u0CEF\u0CF3\u0D00-\u0D03\u0D3B\u0D3C\u0D3E-\u0D44\u0D46-\u0D48\u0D4A-\u0D4D\u0D57\u0D62\u0D63\u0D66-\u0D6F\u0D81-\u0D83\u0DCA\u0DCF-\u0DD4\u0DD6\u0DD8-\u0DDF\u0DE6-\u0DEF\u0DF2\u0DF3\u0E31\u0E34-\u0E3A\u0E47-\u0E4E\u0E50-\u0E59\u0EB1\u0EB4-\u0EBC\u0EC8-\u0ECE\u0ED0-\u0ED9\u0F18\u0F19\u0F20-\u0F29\u0F35\u0F37\u0F39\u0F3E\u0F3F\u0F71-\u0F84\u0F86\u0F87\u0F8D-\u0F97\u0F99-\u0FBC\u0FC6\u102B-\u103E\u1040-\u1049\u1056-\u1059\u105E-\u1060\u1062-\u1064\u1067-\u106D\u1071-\u1074\u1082-\u108D\u108F-\u109D\u135D-\u135F\u1369-\u1371\u1712-\u1715\u1732-\u1734\u1752\u1753\u1772\u1773\u17B4-\u17D3\u17DD\u17E0-\u17E9\u180B-\u180D\u180F-\u1819\u18A9\u1920-\u192B\u1930-\u193B\u1946-\u194F\u19D0-\u19DA\u1A17-\u1A1B\u1A55-\u1A5E\u1A60-\u1A7C\u1A7F-\u1A89\u1A90-\u1A99\u1AB0-\u1ABD\u1ABF-\u1ADD\u1AE0-\u1AEB\u1B00-\u1B04\u1B34-\u1B44\u1B50-\u1B59\u1B6B-\u1B73\u1B80-\u1B82\u1BA1-\u1BAD\u1BB0-\u1BB9\u1BE6-\u1BF3\u1C24-\u1C37\u1C40-\u1C49\u1C50-\u1C59\u1CD0-\u1CD2\u1CD4-\u1CE8\u1CED\u1CF4\u1CF7-\u1CF9\u1DC0-\u1DFF\u200C\u200D\u203F\u2040\u2054\u20D0-\u20DC\u20E1\u20E5-\u20F0\u2CEF-\u2CF1\u2D7F\u2DE0-\u2DFF\u302A-\u302F\u3099\u309A\u30FB\uA620-\uA629\uA66F\uA674-\uA67D\uA69E\uA69F\uA6F0\uA6F1\uA802\uA806\uA80B\uA823-\uA827\uA82C\uA880\uA881\uA8B4-\uA8C5\uA8D0-\uA8D9\uA8E0-\uA8F1\uA8FF-\uA909\uA926-\uA92D\uA947-\uA953\uA980-\uA983\uA9B3-\uA9C0\uA9D0-\uA9D9\uA9E5\uA9F0-\uA9F9\uAA29-\uAA36\uAA43\uAA4C\uAA4D\uAA50-\uAA59\uAA7B-\uAA7D\uAAB0\uAAB2-\uAAB4\uAAB7\uAAB8\uAABE\uAABF\uAAC1\uAAEB-\uAAEF\uAAF5\uAAF6\uABE3-\uABEA\uABEC\uABED\uABF0-\uABF9\uFB1E\uFE00-\uFE0F\uFE20-\uFE2F\uFE33\uFE34\uFE4D-\uFE4F\uFF10-\uFF19\uFF3F\uFF65';
 var nonASCIIidentifierStart2 = new RegExp('[' + nonASCIIidentifierStartChars2 + ']');
 var nonASCIIidentifier2 = new RegExp('[' + nonASCIIidentifierStartChars2 + nonASCIIidentifierChars2 + ']');
 
@@ -22265,7 +22281,9 @@ var astralIdentifierStartCodes2 = [
     21,
     11,
     25,
-    71,
+    7,
+    25,
+    39,
     55,
     7,
     1,
@@ -22310,8 +22328,8 @@ var astralIdentifierStartCodes2 = [
     7,
     1,
     17,
-    2,
-    60,
+    5,
+    57,
     28,
     11,
     0,
@@ -22495,7 +22513,9 @@ var astralIdentifierStartCodes2 = [
     31,
     15,
     0,
-    328,
+    24,
+    43,
+    261,
     18,
     16,
     0,
@@ -22543,7 +22563,11 @@ var astralIdentifierStartCodes2 = [
     44,
     212,
     63,
-    129,
+    33,
+    24,
+    3,
+    24,
+    45,
     74,
     6,
     0,
@@ -22553,13 +22577,15 @@ var astralIdentifierStartCodes2 = [
     1,
     2,
     0,
-    29,
-    6135,
-    9,
-    1237,
+    15,
+    4,
+    10,
+    7381,
     42,
-    9,
-    8936,
+    31,
+    98,
+    114,
+    8702,
     3,
     2,
     6,
@@ -22667,7 +22693,19 @@ var astralIdentifierStartCodes2 = [
     29,
     3,
     0,
-    496,
+    208,
+    30,
+    2,
+    2,
+    2,
+    1,
+    2,
+    6,
+    3,
+    4,
+    10,
+    1,
+    225,
     6,
     2,
     3,
@@ -22750,12 +22788,10 @@ var astralIdentifierStartCodes2 = [
     4421,
     42719,
     33,
-    4153,
-    7,
-    221,
+    4381,
     3,
-    5761,
-    15,
+    5773,
+    3,
     7472,
     16,
     621,
@@ -22764,7 +22800,7 @@ var astralIdentifierStartCodes2 = [
     1507,
     4938,
     6,
-    4191,
+    8489,
 ];
 var astralIdentifierCodes2 = [
     509,
@@ -22797,8 +22833,8 @@ var astralIdentifierCodes2 = [
     4,
     318,
     1,
-    80,
-    3,
+    78,
+    5,
     71,
     10,
     50,
@@ -22943,7 +22979,9 @@ var astralIdentifierCodes2 = [
     10,
     47,
     15,
-    343,
+    199,
+    7,
+    137,
     9,
     54,
     7,
@@ -22975,7 +23013,9 @@ var astralIdentifierCodes2 = [
     4,
     9,
     9,
-    330,
+    55,
+    9,
+    266,
     3,
     10,
     1,
@@ -23075,7 +23115,15 @@ var astralIdentifierCodes2 = [
     1,
     2,
     9,
-    726,
+    233,
+    0,
+    3,
+    0,
+    8,
+    1,
+    6,
+    0,
+    475,
     6,
     110,
     6,
@@ -23434,7 +23482,7 @@ var ScopeHandler = class {
             return scope2.names.has(name);
         }
         
-        const type = scope2.names.get(name);
+        const type = scope2.names.get(name) || 0;
         
         if (bindingType & 16) {
             return (type & 2) > 0 || !this.treatFunctionsAsVarInScope(scope2) && (type & 1) > 0;
@@ -24035,9 +24083,9 @@ var jsx$3 = (superClass) => class JSXParserMixin extends superClass {
         switch(this.state.type) {
         case 5:
             node = this.startNode();
-            this.setContext(types$18.brace);
+            this.setContext(types$19.brace);
             this.next();
-            node = this.jsxParseExpressionContainer(node, types$18.j_oTag);
+            node = this.jsxParseExpressionContainer(node, types$19.j_oTag);
             
             if (node.expression.type === 'JSXEmptyExpression') {
                 this.raise(JsxErrors.AttributeIsEmpty, node);
@@ -24062,7 +24110,7 @@ var jsx$3 = (superClass) => class JSXParserMixin extends superClass {
     jsxParseSpreadChild(node) {
         this.next();
         node.expression = this.parseExpression();
-        this.setContext(types$18.j_expr);
+        this.setContext(types$19.j_expr);
         this.state.canStartJSXElement = true;
         this.expect(8);
         return this.finishNode(node, 'JSXSpreadChild');
@@ -24092,11 +24140,11 @@ var jsx$3 = (superClass) => class JSXParserMixin extends superClass {
         const node = this.startNode();
         
         if (this.match(5)) {
-            this.setContext(types$18.brace);
+            this.setContext(types$19.brace);
             this.next();
             this.expect(21);
             node.argument = this.parseMaybeAssignAllowIn();
-            this.setContext(types$18.j_oTag);
+            this.setContext(types$19.j_oTag);
             this.state.canStartJSXElement = true;
             this.expect(8);
             return this.finishNode(node, 'JSXSpreadAttribute');
@@ -24150,7 +24198,7 @@ var jsx$3 = (superClass) => class JSXParserMixin extends superClass {
         let closingElement = null;
         
         if (!openingElement.selfClosing) {
-            contents:             for (;;) {
+            contents: for (;;) {
                 switch(this.state.type) {
                 case 143:
                     startLoc = this.state.startLoc;
@@ -24170,13 +24218,13 @@ var jsx$3 = (superClass) => class JSXParserMixin extends superClass {
                 
                 case 5: {
                     const node2 = this.startNode();
-                    this.setContext(types$18.brace);
+                    this.setContext(types$19.brace);
                     this.next();
                     
                     if (this.match(21)) {
                         children.push(this.jsxParseSpreadChild(node2));
                     } else {
-                        children.push(this.jsxParseExpressionContainer(node2, types$18.j_expr));
+                        children.push(this.jsxParseExpressionContainer(node2, types$19.j_expr));
                     }
                     
                     break;
@@ -24252,12 +24300,12 @@ var jsx$3 = (superClass) => class JSXParserMixin extends superClass {
     getTokenFromCode(code2) {
         const context = this.curContext();
         
-        if (context === types$18.j_expr) {
+        if (context === types$19.j_expr) {
             this.jsxReadToken();
             return;
         }
         
-        if (context === types$18.j_oTag || context === types$18.j_cTag) {
+        if (context === types$19.j_oTag || context === types$19.j_cTag) {
             if (isIdentifierStart2(code2)) {
                 this.jsxReadWord();
                 return;
@@ -24269,7 +24317,7 @@ var jsx$3 = (superClass) => class JSXParserMixin extends superClass {
                 return;
             }
             
-            if ((code2 === 34 || code2 === 39) && context === types$18.j_oTag) {
+            if ((code2 === 34 || code2 === 39) && context === types$19.j_oTag) {
                 this.jsxReadString(code2);
                 return;
             }
@@ -24288,18 +24336,18 @@ var jsx$3 = (superClass) => class JSXParserMixin extends superClass {
         const {context, type} = this.state;
         
         if (type === 56 && prevType === 143) {
-            context.splice(-2, 2, types$18.j_cTag);
+            context.splice(-2, 2, types$19.j_cTag);
             this.state.canStartJSXElement = false;
         } else if (type === 143) {
-            context.push(types$18.j_oTag);
+            context.push(types$19.j_oTag);
         } else if (type === 144) {
             const out = context[context.length - 1];
             
-            if (out === types$18.j_oTag && prevType === 56 || out === types$18.j_cTag) {
+            if (out === types$19.j_oTag && prevType === 56 || out === types$19.j_cTag) {
                 context.pop();
-                this.state.canStartJSXElement = context[context.length - 1] === types$18.j_expr;
+                this.state.canStartJSXElement = context[context.length - 1] === types$19.j_expr;
             } else {
-                this.setContext(types$18.j_expr);
+                this.setContext(types$19.j_expr);
                 this.state.canStartJSXElement = true;
             }
         } else {
@@ -24642,7 +24690,8 @@ var CommentsParser = class extends BaseParser {
                 setLeadingComments(commentWS.trailingNode, comments);
             }
         } else {
-            const {containingNode: node, start: commentStart} = commentWS;
+            const node = commentWS.containingNode;
+            const commentStart = commentWS.start;
             
             if (this.input.charCodeAt(this.offsetToSourcePos(commentStart) - 1) === 44) {
                 switch(node.type) {
@@ -24778,7 +24827,7 @@ var State$2 = class _State {
         __publicField(this, 'end', 0);
         __publicField(this, 'lastTokEndLoc', null);
         __publicField(this, 'lastTokStartLoc', null);
-        __publicField(this, 'context', [types$18.brace]);
+        __publicField(this, 'context', [types$19.brace]);
         __publicField(this, 'firstInvalidTemplateEscapePos', null);
         __publicField(this, 'strictErrors',         /* @__PURE__ */new Map());
         __publicField(this, 'tokensLength', 0);
@@ -26517,7 +26566,7 @@ var Tokenizer = class extends CommentsParser {
         return this.raise(toParseError, at, details);
     }
     
-    updateContext(prevType) {}
+    updateContext() {}
     
     unexpected(loc, type) {
         throw this.raise(Errors.UnexpectedToken, loc != null ? loc : this.state.startLoc, {
@@ -27056,6 +27105,11 @@ var UtilParser = class extends Tokenizer {
             scopeFlags |= 512;
         }
         
+        {
+            if (this.optionFlags & 16) {
+                scopeFlags |= 16 | 32;
+            }
+        }
         this.scope.enter(scopeFlags);
     }
     
@@ -27215,7 +27269,7 @@ var LValParser = class extends NodeUtils {
             if (isLHS) {
                 if (parenthesized.type === 'Identifier') {
                     this.expressionScope.recordArrowParameterBindingError(Errors.InvalidParenthesizedAssignment, node);
-                } else if (parenthesized.type !== 'MemberExpression' && !this.isOptionalMemberExpression(parenthesized)) {
+                } else if (parenthesized.type !== 'CallExpression' && parenthesized.type !== 'MemberExpression' && !this.isOptionalMemberExpression(parenthesized)) {
                     this.raise(Errors.InvalidParenthesizedAssignment, node);
                 }
             } else {
@@ -27383,7 +27437,7 @@ var LValParser = class extends NodeUtils {
         }
     }
     
-    toReferencedList(exprList, isParenthesizedExpr) {
+    toReferencedList(exprList) {
         return exprList;
     }
     
@@ -27559,7 +27613,7 @@ var LValParser = class extends NodeUtils {
         return this.finishNode(node, 'AssignmentPattern');
     }
     
-    isValidLVal(type, isUnparenthesizedInAssign, binding) {
+    isValidLVal(type, disallowCallExpression) {
         switch(type) {
         case 'AssignmentPattern':
             return 'left';
@@ -27581,6 +27635,11 @@ var LValParser = class extends NodeUtils {
         
         case 'VoidPattern':
             return true;
+        
+        case 'CallExpression':
+            if (!disallowCallExpression && !this.state.strict && this.optionFlags & 8192) {
+                return true;
+            }
         }
         
         return false;
@@ -27590,7 +27649,7 @@ var LValParser = class extends NodeUtils {
         return expression2.type === 'OptionalMemberExpression';
     }
     
-    checkLVal(expression2, ancestor, binding = 64, checkClashes = false, strictModeChanged = false, hasParenthesizedAncestor = false) {
+    checkLVal(expression2, ancestor, binding = 64, checkClashes = false, strictModeChanged = false, hasParenthesizedAncestor = false, disallowCallExpression = false) {
         const type = expression2.type;
         
         if (this.isObjectMethod(expression2))
@@ -27633,7 +27692,9 @@ var LValParser = class extends NodeUtils {
             this.raise(Errors.VoidPatternCatchClauseParam, expression2);
         }
         
-        const validity = this.isValidLVal(type, !(hasParenthesizedAncestor || expression2.extra?.parenthesized) && ancestor.type === 'AssignmentExpression', binding);
+        const unwrappedExpression = unwrapParenthesizedExpression(expression2);
+        disallowCallExpression || (disallowCallExpression = unwrappedExpression.type === 'CallExpression' && (unwrappedExpression.callee.type === 'Import' || unwrappedExpression.callee.type === 'Super'));
+        const validity = this.isValidLVal(type, disallowCallExpression, !(hasParenthesizedAncestor || expression2.extra?.parenthesized) && ancestor.type === 'AssignmentExpression', binding);
         
         if (validity === true)
             return;
@@ -27665,11 +27726,11 @@ var LValParser = class extends NodeUtils {
         if (Array.isArray(val)) {
             for (const child of val) {
                 if (child) {
-                    this.checkLVal(child, nextAncestor, binding, checkClashes, strictModeChanged, isParenthesizedExpression3);
+                    this.checkLVal(child, nextAncestor, binding, checkClashes, strictModeChanged, isParenthesizedExpression3, true);
                 }
             }
         } else if (val) {
-            this.checkLVal(val, nextAncestor, binding, checkClashes, strictModeChanged, isParenthesizedExpression3);
+            this.checkLVal(val, nextAncestor, binding, checkClashes, strictModeChanged, isParenthesizedExpression3, disallowCallExpression);
         }
     }
     
@@ -27729,6 +27790,8 @@ var LValParser = class extends NodeUtils {
         return true;
     }
 };
+
+var keywordAndTSRelationalOperator = /in(?:stanceof)?|as|satisfies/y;
 
 function nonNull(x) {
     if (x == null) {
@@ -28883,7 +28946,7 @@ var typescript$3 = (superClass) => class TypeScriptParserMixin extends superClas
         }
         }
         
-        this.unexpected();
+        throw this.unexpected();
     }
     
     tsParseArrayTypeOrHigher() {
@@ -29301,7 +29364,7 @@ var typescript$3 = (superClass) => class TypeScriptParserMixin extends superClas
     }
     
     tsInTopLevelContext(cb) {
-        if (this.curContext() !== types$18.brace) {
+        if (this.curContext() !== types$19.brace) {
             const oldContext = this.state.context;
             
             this.state.context = [oldContext[0]];
@@ -29414,7 +29477,7 @@ var typescript$3 = (superClass) => class TypeScriptParserMixin extends superClas
         return this.finishNode(node, 'TSModuleBlock');
     }
     
-    tsParseModuleOrNamespaceDeclaration(node, nested = false) {
+    tsParseModuleOrNamespaceDeclaration(node) {
         node.id = this.tsParseEntityName(1);
         
         if (node.id.type === 'Identifier') {
@@ -29456,7 +29519,7 @@ var typescript$3 = (superClass) => class TypeScriptParserMixin extends superClas
         return this.finishNode(node, 'TSModuleDeclaration');
     }
     
-    tsParseImportEqualsDeclaration(node, maybeDefaultIdentifier, isExport) {
+    tsParseImportEqualsDeclaration(node, maybeDefaultIdentifier) {
         node.id = maybeDefaultIdentifier || this.parseIdentifier();
         this.checkIdentifier(node.id, 4096);
         this.expect(29);
@@ -29598,59 +29661,26 @@ var typescript$3 = (superClass) => class TypeScriptParserMixin extends superClas
             
             default:
                 if (tokenIsIdentifier(startType)) {
-                    return this.tsParseDeclaration(node, this.state.value, true, null);
+                    return this.tsParseDeclaration(node, this.state.type, true, null);
                 }
             }
         });
     }
     
     tsTryParseExportDeclaration() {
-        return this.tsParseDeclaration(this.startNode(), this.state.value, true, null);
+        return this.tsParseDeclaration(this.startNode(), this.state.type, true, null);
     }
     
-    tsParseExpressionStatement(node, expr, decorators) {
-        switch(expr.name) {
-        case 'declare': {
-            const declaration = this.tsTryParseDeclare(node);
-            
-            if (declaration) {
-                declaration.declare = true;
-            }
-            
-            return declaration;
-        }
-        
-        case 'global':
-            if (this.match(5)) {
-                this.scope.enter(1024);
-                this.prodParam.enter(0);
-                const mod = node;
-                
-                mod.kind = 'global';
-                mod.id = expr;
-                mod.body = this.tsParseModuleBlock();
-                this.scope.exit();
-                this.prodParam.exit();
-                return this.finishNode(mod, 'TSModuleDeclaration');
-            }
-            
-            break;
-        
-        default:
-            return this.tsParseDeclaration(node, expr.name, false, decorators);
-        }
-    }
-    
-    tsParseDeclaration(node, value, next, decorators) {
-        switch(value) {
-        case 'abstract':
+    tsParseDeclaration(node, type, next, decorators) {
+        switch(type) {
+        case 124:
             if (this.tsCheckLineTerminator(next) && (this.match(80) || tokenIsIdentifier(this.state.type))) {
                 return this.tsParseAbstractDeclaration(node, decorators);
             }
             
             break;
         
-        case 'module':
+        case 127:
             if (this.tsCheckLineTerminator(next)) {
                 if (this.match(134)) {
                     return this.tsParseAmbientExternalModuleDeclaration(node);
@@ -29662,7 +29692,7 @@ var typescript$3 = (superClass) => class TypeScriptParserMixin extends superClas
             
             break;
         
-        case 'namespace':
+        case 128:
             if (this.tsCheckLineTerminator(next) && tokenIsIdentifier(this.state.type)) {
                 node.kind = 'namespace';
                 return this.tsParseModuleOrNamespaceDeclaration(node);
@@ -29670,7 +29700,7 @@ var typescript$3 = (superClass) => class TypeScriptParserMixin extends superClas
             
             break;
         
-        case 'type':
+        case 130:
             if (this.tsCheckLineTerminator(next) && tokenIsIdentifier(this.state.type)) {
                 return this.tsParseTypeAliasDeclaration(node);
             }
@@ -29733,7 +29763,7 @@ var typescript$3 = (superClass) => class TypeScriptParserMixin extends superClas
         
         if (node.params.length === 0) {
             this.raise(TSErrors.EmptyTypeArguments, node);
-        } else if (!this.state.inType && this.curContext() === types$18.brace) {
+        } else if (!this.state.inType && this.curContext() === types$19.brace) {
             this.reScan_lt_gt();
         }
         
@@ -29868,13 +29898,13 @@ var typescript$3 = (superClass) => class TypeScriptParserMixin extends superClas
         });
     }
     
-    toReferencedList(exprList, isInParens) {
+    toReferencedList(exprList) {
         this.tsCheckForInvalidTypeCasts(exprList);
         return exprList;
     }
     
-    parseArrayLike(close, canBePattern, isTuple, refExpressionErrors) {
-        const node = super.parseArrayLike(close, canBePattern, isTuple, refExpressionErrors);
+    parseArrayLike(close, isTuple, refExpressionErrors) {
+        const node = super.parseArrayLike(close, isTuple, refExpressionErrors);
         
         if (node.type === 'ArrayExpression') {
             this.tsCheckForInvalidTypeCasts(node.elements);
@@ -30193,23 +30223,97 @@ var typescript$3 = (superClass) => class TypeScriptParserMixin extends superClas
     }
     
     parseStatementContent(flags, decorators) {
-        if (this.match(75) && this.isLookaheadContextual('enum')) {
-            const node = this.startNode();
-            this.expect(75);
-            return this.tsParseEnumDeclaration(node, {
-                const: true,
-            });
-        }
-        
-        if (this.isContextual(126)) {
-            return this.tsParseEnumDeclaration(this.startNode());
-        }
-        
-        if (this.isContextual(129)) {
-            const result = this.tsParseInterfaceDeclaration(this.startNode());
+        if (!this.state.containsEsc) {
+            switch(this.state.type) {
+            case 75: {
+                if (this.isLookaheadContextual('enum')) {
+                    const node = this.startNode();
+                    this.expect(75);
+                    return this.tsParseEnumDeclaration(node, {
+                        const: true,
+                    });
+                }
+                
+                break;
+            }
             
-            if (result)
-                return result;
+            case 124:            
+            case 125: {
+                if (this.nextTokenIsIdentifierAndNotTSRelationalOperatorOnSameLine()) {
+                    const token = this.state.type;
+                    const node = this.startNode();
+                    this.next();
+                    const declaration = token === 125 ? this.tsTryParseDeclare(node) : this.tsParseAbstractDeclaration(node, decorators);
+                    
+                    if (declaration) {
+                        if (token === 125) {
+                            declaration.declare = true;
+                        }
+                        
+                        return declaration;
+                    } else {
+                        node.expression = this.createIdentifier(this.startNodeAt(node.loc.start), token === 125 ? 'declare' : 'abstract');
+                        this.semicolon(false);
+                        return this.finishNode(node, 'ExpressionStatement');
+                    }
+                }
+                
+                break;
+            }
+            
+            case 126:
+                return this.tsParseEnumDeclaration(this.startNode());
+            
+            case 112: {
+                const nextCh = this.lookaheadCharCode();
+                
+                if (nextCh === 123) {
+                    const node = this.startNode();
+                    return this.tsParseAmbientExternalModuleDeclaration(node);
+                }
+                
+                break;
+            }
+            
+            case 129: {
+                const result = this.tsParseInterfaceDeclaration(this.startNode());
+                
+                if (result)
+                    return result;
+                
+                break;
+            }
+            
+            case 127: {
+                if (this.nextTokenIsIdentifierOrStringLiteralOnSameLine()) {
+                    const node = this.startNode();
+                    this.next();
+                    return this.tsParseDeclaration(node, 127, false, decorators);
+                }
+                
+                break;
+            }
+            
+            case 128: {
+                if (this.nextTokenIsIdentifierOnSameLine()) {
+                    const node = this.startNode();
+                    this.next();
+                    return this.tsParseDeclaration(node, 128, false, decorators);
+                }
+                
+                break;
+            }
+            
+            case 130: {
+                if (this.nextTokenIsIdentifierOnSameLine()) {
+                    const node = this.startNode();
+                    this.next();
+                    return this.tsParseTypeAliasDeclaration(node);
+                }
+                
+                break;
+            }
+            }
         }
         
         return super.parseStatementContent(flags, decorators);
@@ -30328,11 +30432,6 @@ var typescript$3 = (superClass) => class TypeScriptParserMixin extends superClas
         }
     }
     
-    parseExpressionStatement(node, expr, decorators) {
-        const decl = expr.type === 'Identifier' ? this.tsParseExpressionStatement(node, expr, decorators) : void 0;
-        return decl || super.parseExpressionStatement(node, expr, decorators);
-    }
-    
     shouldParseExportDeclaration() {
         if (this.tsIsDeclarationStart())
             return true;
@@ -30405,7 +30504,7 @@ var typescript$3 = (superClass) => class TypeScriptParserMixin extends superClas
         return declaration;
     }
     
-    parseClassId(node, isStatement5, optionalId, bindingType) {
+    parseClassId(node, isStatement5, optionalId) {
         if ((!isStatement5 || optionalId) && this.isContextual(113)) {
             return;
         }
@@ -30587,7 +30686,7 @@ var typescript$3 = (superClass) => class TypeScriptParserMixin extends superClas
             
             const currentContext = context[context.length - 1];
             
-            if (currentContext === types$18.j_oTag || currentContext === types$18.j_expr) {
+            if (currentContext === types$19.j_oTag || currentContext === types$19.j_expr) {
                 context.pop();
             }
         }
@@ -30790,7 +30889,7 @@ var typescript$3 = (superClass) => class TypeScriptParserMixin extends superClas
         }
     }
     
-    isValidLVal(type, isUnparenthesizedInAssign, binding) {
+    isValidLVal(type, disallowCallExpression, isUnparenthesizedInAssign, binding) {
         switch(type) {
         case 'TSTypeCastExpression':
             return true;
@@ -30810,7 +30909,7 @@ var typescript$3 = (superClass) => class TypeScriptParserMixin extends superClas
             ];
         
         default:
-            return super.isValidLVal(type, isUnparenthesizedInAssign, binding);
+            return super.isValidLVal(type, disallowCallExpression, isUnparenthesizedInAssign, binding);
         }
     }
     
@@ -31012,10 +31111,12 @@ var typescript$3 = (superClass) => class TypeScriptParserMixin extends superClas
                 node.abstract = true;
                 this.raise(TSErrors.NonClassMethodPropertyHasAbstractModifier, node);
                 return this.tsParseInterfaceDeclaration(node);
+            } else {
+                return null;
             }
-        } else {
-            this.unexpected(null, 80);
         }
+        
+        throw this.unexpected(null, 80);
     }
     
     parseMethod(node, isGenerator, isAsync, isConstructor, allowDirectSuper, type, inClassScope) {
@@ -31072,7 +31173,7 @@ var typescript$3 = (superClass) => class TypeScriptParserMixin extends superClas
         return super.parseExportSpecifier(node, isString, isInTypeExport, isMaybeTypeOnly);
     }
     
-    parseImportSpecifier(specifier, importedIsString, isInTypeOnlyImport, isMaybeTypeOnly, bindingType) {
+    parseImportSpecifier(specifier, importedIsString, isInTypeOnlyImport, isMaybeTypeOnly) {
         if (!importedIsString && isMaybeTypeOnly) {
             this.parseTypeOnlyImportExportSpecifier(specifier, true, isInTypeOnlyImport);
             return this.finishNode(specifier, 'ImportSpecifier');
@@ -31281,6 +31382,40 @@ var typescript$3 = (superClass) => class TypeScriptParserMixin extends superClas
             return;
         }
     }
+    
+    chStartsBindingIdentifierAndNotRelationalOperator(ch, pos) {
+        if (isIdentifierStart2(ch)) {
+            keywordAndTSRelationalOperator.lastIndex = pos;
+            
+            if (keywordAndTSRelationalOperator.test(this.input)) {
+                const endCh = this.codePointAtPos(keywordAndTSRelationalOperator.lastIndex);
+                
+                if (!isIdentifierChar2(endCh) && endCh !== 92) {
+                    return false;
+                }
+            }
+            
+            return true;
+        } else if (ch === 92) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    nextTokenIsIdentifierAndNotTSRelationalOperatorOnSameLine() {
+        const next = this.nextTokenInLineStart();
+        const nextCh = this.codePointAtPos(next);
+        
+        return this.chStartsBindingIdentifierAndNotRelationalOperator(nextCh, next);
+    }
+    
+    nextTokenIsIdentifierOrStringLiteralOnSameLine() {
+        const next = this.nextTokenInLineStart();
+        const nextCh = this.codePointAtPos(next);
+        
+        return this.chStartsBindingIdentifier(nextCh, next) || nextCh === 34 || nextCh === 39;
+    }
 };
 
 function isPossiblyLiteralEnum(expression2) {
@@ -31436,8 +31571,8 @@ var placeholders = (superClass) => class PlaceholdersParserMixin extends superCl
         return this.parsePlaceholder('Pattern') || super.parseBindingAtom();
     }
     
-    isValidLVal(type, isParenthesized, binding) {
-        return type === 'Placeholder' || super.isValidLVal(type, isParenthesized, binding);
+    isValidLVal(type, disallowCallExpression, isParenthesized, binding) {
+        return type === 'Placeholder' || super.isValidLVal(type, disallowCallExpression, isParenthesized, binding);
     }
     
     toAssignable(node, isLHS) {
@@ -31463,7 +31598,7 @@ var placeholders = (superClass) => class PlaceholdersParserMixin extends superCl
     }
     
     verifyBreakContinue(node, isBreak) {
-        if (node.label && node.label.type === 'Placeholder')
+        if (node.label?.type === 'Placeholder')
             return;
         
         super.verifyBreakContinue(node, isBreak);
@@ -31951,7 +32086,7 @@ var ExpressionParser = class extends LValParser {
             
             this.next();
             node.right = this.parseMaybeAssign();
-            this.checkLVal(left, this.finishNode(node, 'AssignmentExpression'));
+            this.checkLVal(left, this.finishNode(node, 'AssignmentExpression'), void 0, void 0, void 0, void 0, operator === '||=' || operator === '&&=' || operator === '??=');
             return node;
         } else if (ownExpressionErrors) {
             this.checkExpressionErrors(refExpressionErrors, true);
@@ -31983,7 +32118,7 @@ var ExpressionParser = class extends LValParser {
         return this.parseConditional(expr, startLoc, refExpressionErrors);
     }
     
-    parseConditional(expr, startLoc, refExpressionErrors) {
+    parseConditional(expr, startLoc) {
         if (this.eat(17)) {
             const node = this.startNodeAt(startLoc);
             
@@ -32540,7 +32675,7 @@ var ExpressionParser = class extends LValParser {
         }
         
         case 0: {
-            return this.parseArrayLike(3, true, false, refExpressionErrors);
+            return this.parseArrayLike(3, false, refExpressionErrors);
         }
         
         case 5: {
@@ -32605,20 +32740,17 @@ var ExpressionParser = class extends LValParser {
                 return this.parseTopicReference(pipeProposal);
             }
             
-            this.unexpected();
-            break;
+            throw this.unexpected();
         }
         
         case 47: {
             const lookaheadCh = this.input.codePointAt(this.nextTokenStart());
             
             if (isIdentifierStart2(lookaheadCh) || lookaheadCh === 62) {
-                this.expectOnePlugin(['jsx', 'flow', 'typescript']);
-            } else {
-                this.unexpected();
+                throw this.expectOnePlugin(['jsx', 'flow', 'typescript']);
             }
             
-            break;
+            throw this.unexpected();
         }
         
         default:
@@ -32658,7 +32790,7 @@ var ExpressionParser = class extends LValParser {
                 
                 return id;
             } else {
-                this.unexpected();
+                throw this.unexpected();
             }
         }
     }
@@ -32673,9 +32805,9 @@ var ExpressionParser = class extends LValParser {
             this.state.end--;
             this.state.endLoc = createPositionWithColumnOffset(this.state.endLoc, -1);
             return this.parseTopicReference(pipeProposal);
-        } else {
-            this.unexpected();
         }
+        
+        throw this.unexpected();
     }
     
     parseTopicReference(pipeProposal) {
@@ -32764,10 +32896,14 @@ var ExpressionParser = class extends LValParser {
         const node = this.startNode();
         this.next();
         
-        if (this.match(10) && !this.scope.allowDirectSuper && !(this.optionFlags & 16)) {
-            this.raise(Errors.SuperNotAllowed, node);
-        } else if (!this.scope.allowSuper && !(this.optionFlags & 16)) {
-            this.raise(Errors.UnexpectedSuper, node);
+        if (this.match(10) && !this.scope.allowDirectSuper) {
+            {
+                this.raise(Errors.SuperNotAllowed, node);
+            }
+        } else if (!this.scope.allowSuper) {
+            {
+                this.raise(Errors.UnexpectedSuper, node);
+            }
         }
         
         if (!this.match(10) && !this.match(0) && !this.match(16)) {
@@ -33017,7 +33153,7 @@ var ExpressionParser = class extends LValParser {
         return this.finishNode(parenExpression, 'ParenthesizedExpression');
     }
     
-    shouldParseArrow(params) {
+    shouldParseArrow() {
         return !this.canInsertSemicolon();
     }
     
@@ -33027,7 +33163,7 @@ var ExpressionParser = class extends LValParser {
         }
     }
     
-    parseParenItem(node, startLoc) {
+    parseParenItem(node) {
         return node;
     }
     
@@ -33428,7 +33564,7 @@ var ExpressionParser = class extends LValParser {
         return finishedNode;
     }
     
-    parseArrayLike(close, canBePattern, isTuple, refExpressionErrors) {
+    parseArrayLike(close, isTuple, refExpressionErrors) {
         if (isTuple) {
             this.expectPlugin('recordAndTuple');
         }
@@ -33978,7 +34114,7 @@ var ExpressionParser = class extends LValParser {
         return this.parseMaybeAssignAllowIn(refExpressionErrors, afterLeftParse);
     }
     
-    parsePropertyNamePrefixOperator(prop) {}
+    parsePropertyNamePrefixOperator() {}
 };
 
 var loopLabel = {
@@ -33992,7 +34128,7 @@ var switchLabel = {
 var loneSurrogate = /[\uD800-\uDFFF]/u;
 var keywordRelationalOperator = /in(?:stanceof)?/y;
 
-function babel7CompatTokens(tokens, input, startIndex) {
+function babel7CompatTokens(tokens) {
     for (let i = 0; i < tokens.length; i++) {
         const token = tokens[i];
         const {type} = token;
@@ -34085,10 +34221,7 @@ var StatementParser = class extends ExpressionParser {
             return false;
         }
         
-        const next = this.nextTokenInLineStart();
-        const nextCh = this.codePointAtPos(next);
-        
-        return this.chStartsBindingIdentifier(nextCh, next);
+        return this.nextTokenIsIdentifierOnSameLine();
     }
     
     isForUsing() {
@@ -34112,6 +34245,13 @@ var StatementParser = class extends ExpressionParser {
         }
         
         return false;
+    }
+    
+    nextTokenIsIdentifierOnSameLine() {
+        const next = this.nextTokenInLineStart();
+        const nextCh = this.codePointAtPos(next);
+        
+        return this.chStartsBindingIdentifier(nextCh, next);
     }
     
     isAwaitUsing() {
@@ -34865,7 +35005,7 @@ var StatementParser = class extends ExpressionParser {
         return this.finishNode(node, 'LabeledStatement');
     }
     
-    parseExpressionStatement(node, expr, decorators) {
+    parseExpressionStatement(node, expr) {
         node.expression = expr;
         this.semicolon();
         return this.finishNode(node, 'ExpressionStatement');
@@ -35450,7 +35590,7 @@ var StatementParser = class extends ExpressionParser {
         this.classScope.declarePrivateName(this.getPrivateNameSV(node.key), kind, node.key.loc.start);
     }
     
-    parsePostMemberNameModifiers(methodOrProp) {}
+    parsePostMemberNameModifiers() {}
     
     parseClassPrivateProperty(node) {
         this.parseInitializer(node);
@@ -35577,10 +35717,10 @@ var StatementParser = class extends ExpressionParser {
             return this.finishNode(node2, 'ExportDefaultDeclaration');
         }
         
-        this.unexpected(null, 5);
+        throw this.unexpected(null, 5);
     }
     
-    eatExportStar(node) {
+    eatExportStar() {
         return this.eat(55);
     }
     
@@ -35689,7 +35829,7 @@ var StatementParser = class extends ExpressionParser {
         return res;
     }
     
-    parseExportDeclaration(node) {
+    parseExportDeclaration() {
         if (this.match(80)) {
             const node2 = this.parseClass(this.startNode(), true, false);
             return node2;
@@ -35903,7 +36043,7 @@ var StatementParser = class extends ExpressionParser {
         return nodes2;
     }
     
-    parseExportSpecifier(node, isString, isInTypeExport, isMaybeTypeOnly) {
+    parseExportSpecifier(node, isString) {
         if (this.eatContextual(93)) {
             node.exported = this.parseModuleExportName();
         } else if (isString) {
@@ -36043,7 +36183,7 @@ var StatementParser = class extends ExpressionParser {
         }
     }
     
-    isPrecedingIdImportPhase(phase) {
+    isPrecedingIdImportPhase() {
         const {type} = this.state;
         
         return tokenIsIdentifier(type) ? type !== 98 || this.lookaheadCharCode() === 102 : type !== 12;
@@ -36287,68 +36427,68 @@ var StatementParser = class extends ExpressionParser {
 
 var Parser = class extends StatementParser {
     constructor(options, input, pluginsMap) {
-        options = getOptions(options);
-        super(options, input);
-        this.options = options;
+        const normalizedOptions = getOptions(options);
+        super(normalizedOptions, input);
+        this.options = normalizedOptions;
         this.initializeScopes();
         this.plugins = pluginsMap;
-        this.filename = options.sourceFilename;
-        this.startIndex = options.startIndex;
+        this.filename = normalizedOptions.sourceFilename;
+        this.startIndex = normalizedOptions.startIndex;
         let optionFlags = 0;
         
-        if (options.allowAwaitOutsideFunction) {
+        if (normalizedOptions.allowAwaitOutsideFunction) {
             optionFlags |= 1;
         }
         
-        if (options.allowReturnOutsideFunction) {
+        if (normalizedOptions.allowReturnOutsideFunction) {
             optionFlags |= 2;
         }
         
-        if (options.allowImportExportEverywhere) {
+        if (normalizedOptions.allowImportExportEverywhere) {
             optionFlags |= 8;
         }
         
-        if (options.allowSuperOutsideMethod) {
+        if (normalizedOptions.allowSuperOutsideMethod) {
             optionFlags |= 16;
         }
         
-        if (options.allowUndeclaredExports) {
+        if (normalizedOptions.allowUndeclaredExports) {
             optionFlags |= 64;
         }
         
-        if (options.allowNewTargetOutsideFunction) {
+        if (normalizedOptions.allowNewTargetOutsideFunction) {
             optionFlags |= 4;
         }
         
-        if (options.allowYieldOutsideFunction) {
+        if (normalizedOptions.allowYieldOutsideFunction) {
             optionFlags |= 32;
         }
         
-        if (options.ranges) {
+        if (normalizedOptions.ranges) {
             optionFlags |= 128;
         }
         
-        if (options.tokens) {
+        if (normalizedOptions.tokens) {
             optionFlags |= 256;
         }
         
-        if (options.createImportExpressions) {
+        if (normalizedOptions.createImportExpressions) {
             optionFlags |= 512;
         }
         
-        if (options.createParenthesizedExpressions) {
+        if (normalizedOptions.createParenthesizedExpressions) {
             optionFlags |= 1024;
         }
         
-        if (options.errorRecovery) {
+        if (normalizedOptions.errorRecovery) {
             optionFlags |= 2048;
         }
         
-        if (options.attachComment) {
+        if (normalizedOptions.attachComment) {
             optionFlags |= 4096;
         }
         
-        if (options.annexB) {
+        if (normalizedOptions.annexB) {
             optionFlags |= 8192;
         }
         
@@ -36366,10 +36506,11 @@ var Parser = class extends StatementParser {
         
         this.nextToken();
         file2.errors = null;
-        this.parseTopLevel(file2, program3);
-        file2.errors = this.state.errors;
-        file2.comments.length = this.state.commentsLen;
-        return file2;
+        const result = this.parseTopLevel(file2, program3);
+        
+        result.errors = this.state.errors;
+        result.comments.length = this.state.commentsLen;
+        return result;
     }
 };
 
@@ -36483,7 +36624,7 @@ function getParserClass(pluginsMap) {
     return cls;
 }
 
-// node_modules/@babel/code-frame/lib/index.js
+// ../babel-babel/packages/babel-code-frame/lib/index.js
 var import_picocolors = __toESM(require_picocolors());
 var import_js_tokens = __toESM(require_js_tokens());
 
@@ -36533,12 +36674,24 @@ var tokenize$2;
 {
     const getTokenType = function(token) {
         if (token.type === 'IdentifierName') {
-            if (isKeyword(token.value) || isStrictReservedWord(token.value, true) || sometimesKeywords.has(token.value)) {
+            const tokenValue = token.value;
+            
+            if (isKeyword(tokenValue) || isStrictReservedWord(tokenValue, true) || sometimesKeywords.has(tokenValue)) {
                 return 'keyword';
             }
             
-            if (token.value[0] !== token.value[0].toLowerCase()) {
-                return 'capitalized';
+            const firstChar = tokenValue.charCodeAt(0);
+            
+            if (firstChar < 128) {
+                if (firstChar >= 65 && firstChar <= 90) {
+                    return 'capitalized';
+                }
+            } else {
+                const firstChar2 = String.fromCodePoint(tokenValue.codePointAt(0));
+                
+                if (firstChar2 !== firstChar2.toLowerCase()) {
+                    return 'capitalized';
+                }
             }
         }
         
@@ -36796,7 +36949,7 @@ ${frame}`;
     }
 }
 
-// node_modules/@babel/template/lib/index.js
+// ../babel-babel/packages/babel-template/lib/index.js
 var {assertExpressionStatement: assertExpressionStatement2} = lib_exports;
 
 function makeStatementFormatter(fn) {
@@ -37463,7 +37616,7 @@ var index$1 = Object.assign(smart.bind(void 0), {
     ast: smart.ast,
 });
 
-// node_modules/@jridgewell/sourcemap-codec/dist/sourcemap-codec.mjs
+// ../babel-babel/node_modules/@jridgewell/sourcemap-codec/dist/sourcemap-codec.mjs
 var comma = ','.charCodeAt(0);
 var semicolon = ';'.charCodeAt(0);
 var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
@@ -37712,7 +37865,7 @@ function encode(decoded) {
     return writer.flush();
 }
 
-// node_modules/@jridgewell/resolve-uri/dist/resolve-uri.mjs
+// ../babel-babel/node_modules/@jridgewell/resolve-uri/dist/resolve-uri.mjs
 var schemeRegex = /^[\w+.-]+:\/\//;
 var urlRegex = /^([\w+.-]+:)\/\/([^@/#?]*@)?([^:/#?]*)(:\d+)?(\/[^#?]*)?(\?[^#]*)?(#.*)?/;
 var fileRegex = /^file:(?:\/\/((?![a-z]:)[^/#?]*)?)?(\/?[^#?]*)(\?[^#]*)?(#.*)?/i;
@@ -37932,7 +38085,7 @@ case 2:
     }
 }
 
-// node_modules/@jridgewell/trace-mapping/dist/trace-mapping.mjs
+// ../babel-babel/node_modules/@jridgewell/trace-mapping/dist/trace-mapping.mjs
 function stripFilename(path) {
     if (!path)
         return '';
@@ -38204,7 +38357,7 @@ function traceSegmentInternal(segments, memo, line, column, bias) {
     return index2;
 }
 
-// node_modules/@jridgewell/gen-mapping/dist/gen-mapping.mjs
+// ../babel-babel/node_modules/@jridgewell/gen-mapping/dist/gen-mapping.mjs
 var SetArray = class {
     constructor() {
         this._indexes = {
@@ -38473,7 +38626,7 @@ function addMappingInternal(skipable, map, mapping) {
     return addSegmentInternal(skipable, map, generated.line - 1, generated.column, source, original.line - 1, original.column, name, content);
 }
 
-// node_modules/@babel/generator/lib/index.js
+// ../babel-babel/packages/babel-generator/lib/index.js
 var import_jsesc = __toESM(require_jsesc());
 
 var SourceMap = class {
@@ -38484,7 +38637,7 @@ var SourceMap = class {
         __publicField(this, '_lastGenLine', 0);
         __publicField(this, '_lastSourceLine', 0);
         __publicField(this, '_lastSourceColumn', 0);
-        __publicField(this, '_inputMap');
+        __publicField(this, '_inputMap', null);
         const map = this._map = new GenMapping({
             sourceRoot: opts.sourceRoot,
         });
@@ -38544,6 +38697,7 @@ var SourceMap = class {
                 }
             } else {
                 originalMapping = {
+                    name: null,
                     source: filename?.replace(/\\/g, '/') || this._sourceFileName,
                     line,
                     column,
@@ -38795,7 +38949,7 @@ var Buffer2 = class {
             last2 = i + 1;
             
             if (last2 < len && line !== void 0) {
-                this._mark(++line, 0, null, null, filename);
+                this._mark(++line, 0, void 0, void 0, filename);
             }
             
             i = str.indexOf('\n', last2);
@@ -39038,6 +39192,8 @@ var nodes = {
         if (state.hasCall && state.hasHelper || state.hasFunction) {
             return state.hasFunction ? 1 | 2 : 2;
         }
+        
+        return 0;
     },
     SwitchCase(node, parent) {
         return (!!node.consequent.length || parent.cases[0] === node ? 1 : 0) | (!node.consequent.length && parent.cases[parent.cases.length - 1] === node ? 2 : 0);
@@ -39046,21 +39202,29 @@ var nodes = {
         if (isFunction$1$1(node.left) || isFunction$1$1(node.right)) {
             return 2;
         }
+        
+        return 0;
     },
     Literal(node) {
         if (isStringLiteral3(node) && node.value === 'use strict') {
             return 2;
         }
+        
+        return 0;
     },
     CallExpression(node) {
         if (isFunction$1$1(node.callee) || isHelper(node)) {
             return 1 | 2;
         }
+        
+        return 0;
     },
     OptionalCallExpression(node) {
         if (isFunction$1$1(node.callee)) {
             return 1 | 2;
         }
+        
+        return 0;
     },
     VariableDeclaration(node) {
         for (let i = 0; i < node.declarations.length; i++) {
@@ -39076,11 +39240,15 @@ var nodes = {
                 return 1 | 2;
             }
         }
+        
+        return 0;
     },
     IfStatement(node) {
         if (isBlockStatement2(node.consequent)) {
             return 1 | 2;
         }
+        
+        return 0;
     },
 };
 
@@ -39090,21 +39258,29 @@ nodes.ObjectMethod = function(node, parent) {
     if (parent.properties[0] === node) {
         return 1;
     }
+    
+    return 0;
 };
 nodes.ObjectTypeCallProperty = function(node, parent) {
     if (parent.callProperties[0] === node && !parent.properties?.length) {
         return 1;
     }
+    
+    return 0;
 };
 nodes.ObjectTypeIndexer = function(node, parent) {
     if (parent.indexers[0] === node && !parent.properties?.length && !parent.callProperties?.length) {
         return 1;
     }
+    
+    return 0;
 };
 nodes.ObjectTypeInternalSlot = function(node, parent) {
     if (parent.internalSlots[0] === node && !parent.properties?.length && !parent.callProperties?.length && !parent.indexers?.length) {
         return 1;
     }
+    
+    return 0;
 };
 [
     ['Function', true],
@@ -39248,8 +39424,6 @@ function Binary(node, parent) {
             return true;
         }
     }
-    
-    return void 0;
 }
 
 function UnionTypeAnnotation$1(node, parent) {
@@ -39636,7 +39810,7 @@ function needsParens$1(node, parent, tokenContext, getRawIdentifier) {
         return !isDecoratorMemberExpression(node) && !(isCallExpression$1$1(node) && isDecoratorMemberExpression(node.callee)) && !isParenthesizedExpression2(node);
     }
     
-    return expandedParens.get(node.type)?.(node, parent, tokenContext, getRawIdentifier);
+    return expandedParens.get(node.type)?.(node, parent, tokenContext, getRawIdentifier) || false;
 }
 
 function isDecoratorMemberExpression(node) {
@@ -39702,7 +39876,7 @@ var TokenMap = class {
             if (indexes.length > 0)
                 this._nodesToTokenIndexes.set(node, indexes);
         });
-        this._tokensCache = null;
+        this._tokensCache.clear();
     }
     
     has(node) {
@@ -39755,7 +39929,7 @@ var TokenMap = class {
             if (count > 1) {
                 const cache2 = this._nodesOccurrencesCountCache.get(node);
                 
-                if (cache2 && cache2.test === test && cache2.count < count) {
+                if (cache2?.test === test && cache2.count < count) {
                     i = cache2.i + 1;
                     occurrenceCount -= cache2.count + 1;
                 }
@@ -39832,7 +40006,7 @@ var TokenMap = class {
         let low = first;
         const children = childrenIterator(node);
         
-        if ((node.type === 'ExportNamedDeclaration' || node.type === 'ExportDefaultDeclaration') && node.declaration && node.declaration.type === 'ClassDeclaration') {
+        if ((node.type === 'ExportNamedDeclaration' || node.type === 'ExportDefaultDeclaration') && node.declaration?.type === 'ClassDeclaration') {
             children.next();
         }
         
@@ -40484,10 +40658,7 @@ function SwitchStatement2(node) {
     this.tokenChar(41);
     this.space();
     this.tokenChar(123);
-    this.printSequence(node.cases, true, void 0, function addNewlines(leading, cas) {
-        if (!leading && node.cases[node.cases.length - 1] === cas)
-            return -1;
-    });
+    this.printSequence(node.cases, true);
     this.rightBrace(node);
 }
 
@@ -40853,7 +41024,7 @@ function _parameters(parameters, endToken) {
         this._param(parameters[i]);
         
         if (trailingComma || i < paramLength - 1) {
-            this.token(',', null, i);
+            this.token(',', void 0, i);
             this.space();
         }
     }
@@ -40905,7 +41076,7 @@ function _methodHead(node) {
         this.tokenChar(63);
     }
     
-    this._params(node, node.computed && node.key.type !== 'StringLiteral' ? void 0 : node.key, void 0);
+    this._params(node, node.computed && node.key.type !== 'StringLiteral' ? void 0 : node.key);
 }
 
 function _predicate(node, noLineTerminatorAfter) {
@@ -41128,11 +41299,11 @@ function _printAttributes(node, hasPreviousBrace) {
     this.word(useAssertKeyword ? 'assert' : 'with');
     this.space();
     const occurrenceCount = hasPreviousBrace ? 1 : 0;
-    this.token('{', null, occurrenceCount);
+    this.token('{', void 0, occurrenceCount);
     this.space();
     this.printList(attributes || assertions, this.shouldPrintTrailingComma('}'));
     this.space();
-    this.token('}', null, occurrenceCount);
+    this.token('}', void 0, occurrenceCount);
 }
 
 function ExportAllDeclaration2(node) {
@@ -41473,54 +41644,8 @@ function ArrayExpression2(node) {
     this.tokenChar(93);
 }
 
-function RecordExpression2(node) {
-    const props = node.properties;
-    let startToken;
-    let endToken;
-    
-    {
-        startToken = '#{';
-        endToken = '}';
-    }
-    this.token(startToken);
-    
-    if (props.length) {
-        this.space();
-        this.printList(props, this.shouldPrintTrailingComma(endToken), true, true);
-        this.space();
-    }
-    
-    this.token(endToken);
-}
-
-function TupleExpression2(node) {
-    const elems = node.elements;
-    const len = elems.length;
-    let startToken;
-    let endToken;
-    
-    {
-        startToken = '#[';
-        endToken = ']';
-    }
-    this.token(startToken);
-    for (let i = 0; i < elems.length; i++) {
-        const elem = elems[i];
-        
-        if (elem) {
-            if (i > 0)
-                this.space();
-            
-            this.print(elem);
-            
-            if (i < len - 1 || this.shouldPrintTrailingComma(endToken)) {
-                this.token(',', false, i);
-            }
-        }
-    }
-    
-    this.token(endToken);
-}
+var RecordExpression;
+var TupleExpression;
 
 function RegExpLiteral2(node) {
     this.word(`/${node.pattern}/${node.flags}`);
@@ -41611,10 +41736,7 @@ function VoidPattern2() {
     this.word('void');
 }
 
-var {
-    isDeclareExportDeclaration: isDeclareExportDeclaration2,
-    isStatement: isStatement$12,
-} = lib_exports;
+var {isDeclareExportDeclaration: isDeclareExportDeclaration2} = lib_exports;
 
 function AnyTypeAnnotation2() {
     this.word('any');
@@ -42109,10 +42231,7 @@ function ObjectTypeAnnotation2(node) {
     if (props.length) {
         this.newline();
         this.space();
-        this.printJoin(props, true, true, void 0, void 0, function addNewlines(leading) {
-            if (leading && !props[0])
-                return 1;
-        }, () => {
+        this.printJoin(props, true, true, void 0, void 0, () => {
             if (props.length !== 1 || node.inexact) {
                 this.tokenChar(44);
                 this.space();
@@ -42847,7 +42966,7 @@ function tsPrintUnionOrIntersectionType(printer, node, sep) {
     
     printer.printJoin(node.types, void 0, void 0, function(i) {
         this.space();
-        this.token(sep, null, i + hasLeadingToken);
+        this.token(sep, void 0, i + hasLeadingToken);
         this.space();
     });
 }
@@ -43097,11 +43216,7 @@ function TSEnumMember2(node) {
 }
 
 function TSModuleDeclaration2(node) {
-    const {
-        declare,
-        id,
-        kind,
-    } = node;
+    const {declare, kind} = node;
     
     if (declare) {
         this.word('declare');
@@ -43255,6 +43370,8 @@ function printModifiersList(printer, node, modifiers) {
             
             return modifiersSet.size === 0;
         }
+        
+        return false;
     });
     
     for (const modifier of modifiersSet) {
@@ -43406,7 +43523,7 @@ var generatorFunctions = /* @__PURE__ */Object.freeze({
     PrivateName: PrivateName2,
     Program: Program2,
     QualifiedTypeIdentifier: QualifiedTypeIdentifier2,
-    RecordExpression: RecordExpression2,
+    RecordExpression,
     RegExpLiteral: RegExpLiteral2,
     RestElement: RestElement2,
     ReturnStatement: ReturnStatement2,
@@ -43496,7 +43613,7 @@ var generatorFunctions = /* @__PURE__ */Object.freeze({
     ThrowStatement: ThrowStatement2,
     TopicReference: TopicReference2,
     TryStatement: TryStatement2,
-    TupleExpression: TupleExpression2,
+    TupleExpression,
     TupleTypeAnnotation: TupleTypeAnnotation2,
     TypeAlias: TypeAlias2,
     TypeAnnotation: TypeAnnotation2,
@@ -43558,7 +43675,7 @@ function commentIsNewline(c) {
 var {needsParens} = n;
 
 var Printer = class {
-    constructor(format, map, tokens, originalCode) {
+    constructor(format, map, tokens = null, originalCode = null) {
         __publicField(this, 'tokenContext', TokenContext.normal);
         __publicField(this, '_tokens', null);
         __publicField(this, '_originalCode', null);
@@ -43584,7 +43701,7 @@ var Printer = class {
         this._tokens = tokens;
         this._originalCode = originalCode;
         this._indentRepeat = format.indent.style.length;
-        this._inputMap = map?._inputMap;
+        this._inputMap = map?._inputMap || null;
         this._buf = new Buffer2(map, format.indent.style[0]);
     }
     
@@ -43972,7 +44089,7 @@ var Printer = class {
         this.print(node);
     }
     
-    print(node, noLineTerminatorAfter, trailingCommentsLineOffset) {
+    print(node, noLineTerminatorAfter = false, trailingCommentsLineOffset) {
         if (!node)
             return;
         
@@ -44043,7 +44160,7 @@ var Printer = class {
         let oldTokenContext;
         
         if (!shouldPrintParens) {
-            noLineTerminatorAfter || (noLineTerminatorAfter = parent && this._noLineTerminatorAfterNode === parent && isLastChild(parent, node));
+            noLineTerminatorAfter || (noLineTerminatorAfter = !!parent && this._noLineTerminatorAfterNode === parent && isLastChild(parent, node));
             
             if (noLineTerminatorAfter) {
                 if (node.trailingComments?.some(commentIsNewline)) {
@@ -44155,7 +44272,7 @@ var Printer = class {
         }
     }
     
-    printJoin(nodes2, statement2, indent, separator, printTrailingSeparator, addNewlines, iterator, trailingCommentsLineOffset) {
+    printJoin(nodes2, statement2, indent, separator, printTrailingSeparator, iterator, trailingCommentsLineOffset) {
         if (!nodes2?.length)
             return;
         
@@ -44171,7 +44288,6 @@ var Printer = class {
             this.indent();
         
         const newlineOpts = {
-            addNewlines,
             nextNodeStartLine: 0,
         };
         
@@ -44304,12 +44420,12 @@ var Printer = class {
         this._indentInnerComments = false;
     }
     
-    printSequence(nodes2, indent, trailingCommentsLineOffset, addNewlines) {
-        this.printJoin(nodes2, true, indent ?? false, void 0, void 0, addNewlines, void 0, trailingCommentsLineOffset);
+    printSequence(nodes2, indent, trailingCommentsLineOffset) {
+        this.printJoin(nodes2, true, indent ?? false, void 0, void 0, void 0, trailingCommentsLineOffset);
     }
     
     printList(items, printTrailingSeparator, statement2, indent, separator, iterator) {
-        this.printJoin(items, statement2, indent, separator ?? commaSeparator, printTrailingSeparator, void 0, iterator);
+        this.printJoin(items, statement2, indent, separator ?? commaSeparator, printTrailingSeparator, iterator);
     }
     
     shouldPrintTrailingComma(listEnd) {
@@ -44667,10 +44783,10 @@ function generate$6(ast, opts = {}, code2) {
     return printer.generate(ast);
 }
 
-// node_modules/@babel/traverse/lib/index.js
+// ../babel-babel/packages/babel-traverse/lib/index.js
 var import_debug = __toESM(require_src());
 
-// node_modules/@babel/helper-globals/data/builtin-lower.json
+// ../babel-babel/packages/babel-helper-globals/data/builtin-lower.json
 var builtin_lower_default = [
     'decodeURI',
     'decodeURIComponent',
@@ -44687,7 +44803,7 @@ var builtin_lower_default = [
     'unescape',
 ];
 
-// node_modules/@babel/helper-globals/data/builtin-upper.json
+// ../babel-babel/packages/babel-helper-globals/data/builtin-upper.json
 var builtin_upper_default = [
     'AggregateError',
     'Array',
@@ -44740,7 +44856,7 @@ var builtin_upper_default = [
     'WeakSet',
 ];
 
-// node_modules/@babel/traverse/lib/index.js
+// ../babel-babel/packages/babel-traverse/lib/index.js
 var ReferencedIdentifier = [
     'Identifier',
     'JSXIdentifier',
@@ -44756,7 +44872,11 @@ var Scope$1 = [
     'Pattern',
 ];
 var Referenced = null;
-var BlockScoped = null;
+var BlockScoped = [
+    'FunctionDeclaration',
+    'ClassDeclaration',
+    'VariableDeclaration',
+];
 var Var = [
     'VariableDeclaration',
 ];
@@ -44836,16 +44956,16 @@ var {isCompatTag: isCompatTag2} = react2;
 function isReferencedIdentifier(opts) {
     const {node, parent} = this;
     
-    if (!isIdentifier$6$1(node, opts) && !isJSXMemberExpression2(parent, opts)) {
-        if (isJSXIdentifier3(node, opts)) {
-            if (isCompatTag2(node.name))
-                return false;
-        } else {
+    if (isIdentifier$6$1(node, opts)) {
+        return nodeIsReferenced(node, parent, this.parentPath.parent);
+    } else if (isJSXIdentifier3(node, opts)) {
+        if (!isJSXMemberExpression2(parent) && isCompatTag2(node.name))
             return false;
-        }
+        
+        return nodeIsReferenced(node, parent, this.parentPath.parent);
+    } else {
+        return false;
     }
-    
-    return nodeIsReferenced(node, parent, this.parentPath.parent);
 }
 
 function isReferencedMemberExpression() {
@@ -44905,7 +45025,7 @@ function isVar2() {
 }
 
 function isUser() {
-    return this.node && !!this.node.loc;
+    return !!this.node?.loc;
 }
 
 function isGenerated() {
@@ -45028,11 +45148,8 @@ function explode$1(visitor) {
         
         if (types2 !== null) {
             for (const type of types2) {
-                if (visitor[type]) {
-                    mergePair(visitor[type], fns);
-                } else {
-                    visitor[type] = fns;
-                }
+                visitor[type] ?? (visitor[type] = {});
+                mergePair(visitor[type], fns);
             }
         } else {
             mergePair(visitor, fns);
@@ -45098,7 +45215,7 @@ function verify$1(visitor) {
             continue;
         
         if (!TYPES2.includes(nodeType)) {
-            throw new Error(`You gave us a visitor for the node type ${nodeType} but it's not a valid type in @babel/traverse ${'8.0.0-beta.2'}`);
+            throw new Error(`You gave us a visitor for the node type ${nodeType} but it's not a valid type in @babel/traverse ${'8.0.0-beta.3'}`);
         }
         
         const visitors2 = visitor[nodeType];
@@ -45232,7 +45349,7 @@ function wrapCheck(nodeType, fn) {
 }
 
 function shouldIgnoreKey(key) {
-    if (key[0] === '_')
+    if (key.startsWith('_'))
         return true;
     
     if (key === 'enter' || key === 'exit' || key === 'shouldSkip')
@@ -45415,6 +45532,73 @@ var Renamer = class {
     }
 };
 
+var {VISITOR_KEYS: VISITOR_KEYS$5} = lib_exports;
+
+function traverseForScope(path, visitors2, state) {
+    const exploded = explode$1(visitors2);
+    
+    if (exploded.enter || exploded.exit) {
+        throw new Error('Should not be used with enter/exit visitors.');
+    }
+    
+    _traverse2(path.parentPath, path.parent, path.node, path.container, path.key, path.listKey, path.hub, path);
+    function _traverse2(parentPath, parent, node, container, key, listKey, hub, inPath) {
+        if (!node) {
+            return;
+        }
+        
+        const path2 = inPath || NodePath_Final.get({
+            hub,
+            parentPath,
+            parent,
+            container,
+            listKey,
+            key,
+        });
+        
+        _forceSetScope.call(path2);
+        const visitor = exploded[node.type];
+        
+        if (visitor?.enter) {
+            for (const visit2 of visitor.enter) {
+                visit2.call(state, path2, state);
+            }
+        }
+        
+        if (path2.shouldSkip) {
+            return;
+        }
+        
+        const keys2 = VISITOR_KEYS$5[node.type];
+        
+        if (!keys2?.length) {
+            return;
+        }
+        
+        for (const key2 of keys2) {
+            const prop = node[key2];
+            
+            if (!prop)
+                continue;
+            
+            if (Array.isArray(prop)) {
+                for (let i = 0; i < prop.length; i++) {
+                    const value = prop[i];
+                    _traverse2(path2, node, value, prop, i, key2);
+                }
+            } else {
+                _traverse2(path2, node, prop, node, key2, null);
+            }
+        }
+        
+        if (visitor?.exit) {
+            for (const visit2 of visitor.exit) {
+                visit2.call(state, path2, state);
+            }
+        }
+    }
+}
+
 var Binding = class {
     constructor({identifier: identifier4, scope: scope2, path, kind}) {
         __publicField(this, 'identifier');
@@ -45553,9 +45737,8 @@ var cache = /* @__PURE__ */Object.freeze({
 
 var {
     assignmentExpression: assignmentExpression$3,
-    callExpression: callExpression$3,
     cloneNode: cloneNode$3,
-    getBindingIdentifiers: getBindingIdentifiers$3,
+    getBindingIdentifiers: getBindingIdentifiers$2,
     identifier: identifier$3$1,
     isArrayExpression: isArrayExpression3,
     isBinary: isBinary3,
@@ -45586,13 +45769,9 @@ var {
     isVariableDeclaration: isVariableDeclaration$1$1,
     expressionStatement: expressionStatement$3$1,
     matchesPattern: matchesPattern$1$1,
-    memberExpression: memberExpression$1,
-    numericLiteral: numericLiteral$2,
     toIdentifier: toIdentifier2,
     variableDeclaration: variableDeclaration$1$1,
     variableDeclarator: variableDeclarator$1,
-    isRecordExpression: isRecordExpression2,
-    isTupleExpression: isTupleExpression2,
     isObjectProperty: isObjectProperty2,
     isTopicReference: isTopicReference2,
     isMetaProperty: isMetaProperty2,
@@ -45757,6 +45936,10 @@ function resetScope(scope2) {
     scope2.globals =     /* @__PURE__ */Object.create(null);
 }
 
+function isAnonymousFunctionExpression(path) {
+    return path.isFunctionExpression() && !path.node.id || path.isArrowFunctionExpression();
+}
+
 var collectorVisitor = {
     ForStatement(path) {
         const declar = path.get('init');
@@ -45830,7 +46013,7 @@ var collectorVisitor = {
                 binding?.reference(path);
             } else if (isVariableDeclaration$1$1(declar)) {
                 for (const decl of declar.declarations) {
-                    for (const name of Object.keys(getBindingIdentifiers$3(decl))) {
+                    for (const name of Object.keys(getBindingIdentifiers$2(decl))) {
                         const binding = scope2.getBinding(name);
                         binding?.reference(path);
                     }
@@ -46045,7 +46228,7 @@ var _Scope = class _Scope {
         }
     }
     
-    checkBlockScopedCollisions(local, kind, name, id) {
+    checkBlockScopedCollisions(local, kind, name) {
         if (kind === 'param')
             return;
         
@@ -46059,7 +46242,7 @@ var _Scope = class _Scope {
             || local.kind === 'param' && kind === 'const';
         
         if (duplicate) {
-            throw this.path.hub.buildError(id, `Duplicate declaration "${name}"`, TypeError);
+            throw Error(`Duplicate declaration '${name}'`, TypeError);
         }
     }
     
@@ -46275,14 +46458,14 @@ var _Scope = class _Scope {
             return true;
         } else if (isBinary3(node)) {
             return this.isPure(node.left, constantsOnly) && this.isPure(node.right, constantsOnly);
-        } else if (isArrayExpression3(node) || isTupleExpression2(node)) {
+        } else if (isArrayExpression3(node)) {
             for (const elem of node.elements) {
                 if (elem !== null && !this.isPure(elem, constantsOnly))
                     return false;
             }
             
             return true;
-        } else if (isObjectExpression3(node) || isRecordExpression2(node)) {
+        } else if (isObjectExpression3(node)) {
             for (const prop of node.properties) {
                 if (!this.isPure(prop, constantsOnly))
                     return false;
@@ -46423,10 +46606,6 @@ var _Scope = class _Scope {
 collectorVisitor]));
         
         if (path.type !== 'Program') {
-            for (const visit2 of scopeVisitor.enter) {
-                visit2.call(state, path, state);
-            }
-            
             const typeVisitors = scopeVisitor[path.type];
             
             if (typeVisitors) {
@@ -46436,7 +46615,9 @@ collectorVisitor]));
             }
         }
         
-        path.traverse(scopeVisitor, state);
+        {
+            traverseForScope(path, scopeVisitor, state);
+        }
         this.crawling = false;
         
         for (const path2 of state.assignments) {
@@ -46487,7 +46668,7 @@ collectorVisitor]));
             id,
         } = opts;
         
-        if (!init && !unique && (kind === 'var' || kind === 'let') && path.isFunction() && !path.node.name && isCallExpression$12(path.parent, {callee: path.node}) && path.parent.arguments.length <= path.node.params.length && isIdentifier$5$1(id)) {
+        if (!init && !unique && (kind === 'var' || kind === 'let') && isAnonymousFunctionExpression(path) && isCallExpression$12(path.parent, {callee: path.node}) && path.parent.arguments.length <= path.node.params.length && isIdentifier$5$1(id)) {
             path.pushContainer('params', id);
             path.scope.registerBinding('param', path.get('params')[path.node.params.length - 1]);
             return;
@@ -46721,14 +46902,14 @@ collectorVisitor]));
                     init.push(assignmentExpression$3('=', decl.id, decl.init));
                 }
                 
-                const ids = Object.keys(getBindingIdentifiers$3(decl, false, true, true));
+                const ids = Object.keys(getBindingIdentifiers$2(decl, false, true, true));
                 
                 for (const name2 of ids) {
                     emit(identifier$3$1(name2), decl.init != null);
                 }
             }
             
-            if (parentPath.parentPath.isFor({left: parent})) {
+            if (parentPath.parentPath.isForXStatement({left: parent})) {
                 parentPath.replaceWith(firstId);
             } else if (init.length === 0) {
                 parentPath.remove();
@@ -46858,7 +47039,7 @@ function getDeepestCommonAncestorFrom(paths, filter) {
     
     const first = ancestries[0];
     
-    depthLoop:     for (let i = 0; i < minDepth; i++) {
+    depthLoop: for (let i = 0; i < minDepth; i++) {
         const shouldMatch = first[i];
         
         for (const ancestry of ancestries) {
@@ -46916,7 +47097,6 @@ function inType(...candidateTypes) {
 var {
     createFlowUnionType: createFlowUnionType2,
     createTSUnionType: createTSUnionType2,
-    createUnionTypeAnnotation,
     isFlowType: isFlowType2,
     isTSType: isTSType2,
 } = lib_exports;
@@ -47073,7 +47253,7 @@ function getParentConditionalPath(binding, path, name) {
         }
         
         if (parentPath.isFunction()) {
-            if (parentPath.parentPath.scope.getBinding(name) !== binding)
+            if (name == null || parentPath.parentPath.scope.getBinding(name) !== binding)
                 return;
         }
         
@@ -47590,14 +47770,13 @@ var hooks = [
         if (parent.isIfStatement() && self.key === 'consequent' || self.key === 'body' && (parent.isLoop() || parent.isArrowFunctionExpression())) {
             self.replaceWith({
                 type: 'BlockStatement',
+                directives: [],
                 body: [],
             });
             return true;
         }
     },
 ];
-
-var {getBindingIdentifiers: getBindingIdentifiers$2} = lib_exports;
 
 function remove$3() {
     _assertUnremoved.call(this);
@@ -47618,7 +47797,7 @@ function remove$3() {
 }
 
 function _removeFromScope() {
-    const bindings = getBindingIdentifiers$2(this.node, false, false, true);
+    const bindings = getBindingIdentifiers(this.node, false, false, true);
     Object
         .keys(bindings)
         .forEach((name) => this.scope.removeBinding(name));
@@ -48058,7 +48237,7 @@ function _replaceWith(node) {
     
     this.debug(`Replace with ${node?.type}`);
     getCachedPaths(this)?.set(node, this).delete(this.node);
-    this.node =
+    this.node = node;
     this.container[this.key] = node;
 }
 
@@ -49077,8 +49256,7 @@ function standardizeSuperProperty(superProp) {
         
         if (superProp.node.computed) {
             const tmp = superProp.scope.generateDeclaredUidIdentifier('tmp');
-            const object = superProp.node.object;
-            const property = superProp.node.property;
+            const {object, property} = superProp.node;
             
             assignmentPath.get('left').replaceWith(memberExpression2(object, assignmentExpression2('=', tmp, property), true));
             assignmentPath.get('right').replaceWith(rightExpression(isLogicalAssignment ? '=' : op, memberExpression2(object, identifier3(tmp.name), true), value));
@@ -49538,7 +49716,7 @@ function referencesImport(moduleSource, importName) {
     
     const binding = this.scope.getBinding(this.node.name);
     
-    if (!binding || binding.kind !== 'module')
+    if (binding?.kind !== 'module')
         return false;
     
     const path = binding.path;
@@ -49958,6 +50136,8 @@ function isInStrictMode() {
                 return true;
             }
         }
+        
+        return false;
     });
     
     return !!strictParent;
@@ -50427,7 +50607,7 @@ function addComments2(type, comments) {
 
 var {validate: validate3} = lib_exports;
 
-var debug$a = (0, import_debug.default)('babel');
+var debug$9 = (0, import_debug.default)('babel');
 var REMOVED = 1 << 0;
 var SHOULD_STOP = 1 << 1;
 var SHOULD_SKIP = 1 << 2;
@@ -50436,7 +50616,6 @@ var NodePath_Final = class NodePath {
     constructor(hub, parent) {
         __publicField(this, 'contexts', []);
         __publicField(this, 'state', null);
-        __publicField(this, 'opts', null);
         __publicField(this, '_traverseFlags', 0);
         __publicField(this, 'skipKeys', null);
         __publicField(this, 'parentPath', null);
@@ -50570,10 +50749,10 @@ var NodePath_Final = class NodePath {
     }
     
     debug(message) {
-        if (!debug$a.enabled)
+        if (!debug$9.enabled)
             return;
         
-        debug$a(`${this.getPathLocation()} ${this.type}: ${message}`);
+        debug$9(`${this.getPathLocation()} ${this.type}: ${message}`);
     }
     
     toString() {
@@ -50686,7 +50865,7 @@ for (const type of TYPES$4) {
 
 Object.assign(NodePath_Final.prototype, NodePath_virtual_types_validator);
 for (const type of Object.keys(virtualTypes)) {
-    if (type[0] === '_')
+    if (type.startsWith('_'))
         continue;
     
     if (!TYPES$4.includes(type))
@@ -50785,12 +50964,12 @@ var TraversalContext = class {
             visitIndex++;
             resync.call(path);
             
+            if (path.key === null)
+                continue;
+            
             if (path.contexts.length === 0 || path.contexts[path.contexts.length - 1] !== this) {
                 pushContext.call(path, this);
             }
-            
-            if (path.key === null)
-                continue;
             
             const {node} = path;
             
@@ -50816,6 +50995,9 @@ var TraversalContext = class {
         }
         
         for (let i = 0; i < visitIndex; i++) {
+            if (queue[i].key === null)
+                continue;
+            
             popContext.call(queue[i]);
         }
         
@@ -51102,6 +51284,24 @@ function stop() {
     this._traverseFlags |= SHOULD_SKIP | SHOULD_STOP;
 }
 
+function _forceSetScope() {
+    let path = this.parentPath;
+    
+    if ((this.key === 'key' || this.listKey === 'decorators') && path.isMethod() || this.key === 'discriminant' && path.isSwitchStatement()) {
+        path = path.parentPath;
+    }
+    
+    let target;
+    
+    while (path && !target) {
+        target = path.scope;
+        path = path.parentPath;
+    }
+    
+    this.scope = this.getScope(target);
+    this.scope?.init();
+}
+
 function setScope() {
     if (this.opts?.noScope)
         return;
@@ -51294,7 +51494,7 @@ function traverse3(parent, opts = {}, scope2, state, parentPath, visitSelf) {
     }
     
     explode$1(opts);
-    traverseNode(parent, opts, scope2, state, parentPath, null, visitSelf);
+    traverseNode(parent, opts, scope2, state, parentPath, void 0, visitSelf);
 }
 
 traverse3.visitors = visitors$2;
@@ -51358,9 +51558,9 @@ var fullstore$3 = (value) => {
     };
 };
 
-var types$17 = {};
+var types$18 = {};
 
-types$17.TYPES = {
+types$18.TYPES = {
     TOKEN: 'Token',
     NEWLINE: 'Newline',
     LINEBREAK: 'Linebreak',
@@ -51380,7 +51580,7 @@ var arrowFunctionExpression = {};
 
 var is$3 = {};
 
-const {types: types$16} = bundle;
+const {types: types$17} = bundle;
 const {
     isStringLiteral: isStringLiteral$9,
     isIdentifier: isIdentifier$g,
@@ -51390,9 +51590,9 @@ const {
     isVariableDeclaration: isVariableDeclaration$4,
     isMemberExpression: isMemberExpression$7,
     isArrayExpression: isArrayExpression$9,
-    isObjectExpression: isObjectExpression$8,
+    isObjectExpression: isObjectExpression$9,
     isLabeledStatement: isLabeledStatement$1,
-} = types$16;
+} = types$17;
 
 const isParentProgram$1 = (path) => path.parentPath?.isProgram();
 const isParentBlock$3 = (path) => path.parentPath.isBlockStatement();
@@ -51461,10 +51661,10 @@ function isStringAndIdentifier$2([a, b]) {
 const checkObject = (elements) => {
     let a = elements.at(-1);
     
-    if (!isObjectExpression$8(a))
+    if (!isObjectExpression$9(a))
         a = elements.at(-2);
     
-    if (!isObjectExpression$8(a))
+    if (!isObjectExpression$9(a))
         return false;
     
     return a.node.properties.length;
@@ -51695,7 +51895,7 @@ commentsPrinter.printTrailingComments = (path, printer, semantics, {currentTrave
     }
 };
 
-const {types: types$15} = bundle;
+const {types: types$16} = bundle;
 const {
     hasTrailingComment: hasTrailingComment$5,
     satisfy: satisfy$3,
@@ -51711,7 +51911,7 @@ const {
 } = commentsPrinter;
 
 const {
-    isArrowFunctionExpression: isArrowFunctionExpression$1,
+    isArrowFunctionExpression: isArrowFunctionExpression$2,
     isObjectProperty: isObjectProperty$2,
     isVariableDeclarator: isVariableDeclarator$3,
     isClassProperty,
@@ -51721,7 +51921,7 @@ const {
     isBinaryExpression: isBinaryExpression$1,
     isClassMethod: isClassMethod$1,
     isDecorator: isDecorator$1,
-} = types$15;
+} = types$16;
 
 const isProperty = satisfy$3([
     isObjectProperty$2,
@@ -51737,7 +51937,7 @@ const isInsideVar = (path) => {
     if (isVariableDeclarator$3(parentPath) && path === parentPath.get('init'))
         return true;
     
-    if (!isArrowFunctionExpression$1(parentPath))
+    if (!isArrowFunctionExpression$2(parentPath))
         return false;
     
     return isVariableDeclarator$3(parentPath.parentPath);
@@ -51973,7 +52173,7 @@ function build(path) {
     return prop;
 }
 
-const {types: types$14} = bundle;
+const {types: types$15} = bundle;
 const {chain: chain$2} = chain$3;
 const {satisfy: satisfy$2} = is$3;
 
@@ -51982,7 +52182,7 @@ const {
     isIfStatement: isIfStatement$1,
     isCallExpression: isCallExpression$8,
     isIdentifier: isIdentifier$f,
-} = types$14;
+} = types$15;
 
 const isArgOfCall = (path) => path.parentPath?.isCallExpression() && path.parentPath.get('arguments.0') === path;
 const isCall$1 = (a) => a.type === 'CallExpression';
@@ -52055,7 +52255,7 @@ const isIfUp = (path) => {
     return is;
 };
 
-const {types: types$13} = bundle;
+const {types: types$14} = bundle;
 
 const {
     isLast: isLast$c,
@@ -52075,7 +52275,7 @@ const {
     isMemberExpression: isMemberExpression$6,
     isExpressionStatement: isExpressionStatement$7,
     isCallExpression: isCallExpression$7,
-} = types$13;
+} = types$14;
 
 const hasBody$1 = (path) => {
     if (path.isTSModuleDeclaration())
@@ -52434,7 +52634,7 @@ arrowFunctionExpression.ArrowFunctionExpression = maybeParens$d((path, printer, 
 
 var functionDeclaration = {};
 
-const {types: types$12} = bundle;
+const {types: types$13} = bundle;
 const {markAfter: markAfter$b} = mark;
 const {isNext: isNext$n, isNextParent: isNextParent$4} = is$3;
 const {printParams: printParams$b} = params;
@@ -52450,7 +52650,7 @@ const {
     isExpressionStatement: isExpressionStatement$6,
     isFunctionDeclaration: isFunctionDeclaration$2,
     isExportDefaultDeclaration,
-} = types$12;
+} = types$13;
 
 const isInsideNamedExport$1 = ({parentPath}) => isExportNamedDeclaration$2(parentPath);
 
@@ -52891,38 +53091,46 @@ function printUnary(name, {print}) {
 
 var memberExpressions$1 = {};
 
+const {types: types$12} = bundle;
 const {maybePrintComputed} = maybePrintComputed$2;
 const {maybeParens: maybeParens$a} = maybeParens$e;
 const {isLooksLikeChain: isLooksLikeChain$2} = isLooksLikeChain$4;
 
-memberExpressions$1.MemberExpression = (path, printer) => {
-    const {
-        print,
-        maybe,
-        traverse,
-    } = printer;
-    
-    const object = path.get('object');
-    const property = path.get('property');
-    const isParens = object.isAssignmentExpression();
-    const {computed} = path.node;
-    
-    const isChain = isLooksLikeChain$2(path);
-    
-    maybe.print(isParens, '(');
-    traverse(object);
-    maybe.print(isParens, ')');
-    
-    if (computed)
-        return maybePrintComputed(path, property, printer);
-    
-    maybe.indent.inc(isChain);
-    maybe.print.breakline(isChain);
-    
-    print('.');
-    print('__property');
-    maybe.indent.dec(isChain);
-};
+const {
+    isObjectExpression: isObjectExpression$8,
+    isArrowFunctionExpression: isArrowFunctionExpression$1,
+} = types$12;
+
+memberExpressions$1.MemberExpression = maybeParens$a({
+    checkParens: false,
+    condition: (path) => isObjectInsideArrow(path),
+    print: (path, printer) => {
+        const {
+            print,
+            maybe,
+            traverse,
+        } = printer;
+        
+        const object = path.get('object');
+        const property = path.get('property');
+        
+        const {computed} = path.node;
+        
+        const isChain = isLooksLikeChain$2(path);
+        
+        traverse(object);
+        
+        if (computed)
+            return maybePrintComputed(path, property, printer);
+        
+        maybe.indent.inc(isChain);
+        maybe.print.breakline(isChain);
+        
+        print('.');
+        print('__property');
+        maybe.indent.dec(isChain);
+    },
+});
 
 memberExpressions$1.OptionalMemberExpression = maybeParens$a((path, {print, maybe}) => {
     const {computed, optional} = path.node;
@@ -52942,6 +53150,13 @@ memberExpressions$1.OptionalMemberExpression = maybeParens$a((path, {print, mayb
     
     print('__property');
 });
+
+const isObjectInsideArrow = ({node, parentPath}) => {
+    if (!isObjectExpression$8(node.object))
+        return false;
+    
+    return isArrowFunctionExpression$1(parentPath);
+};
 
 var _class = {};
 
@@ -54074,6 +54289,9 @@ maybeParensCondition.condition = (path, printer, semantics) => {
     const {roundBraces} = semantics;
     
     if (path.node.left.type === 'ObjectPattern')
+        return true;
+    
+    if (parentPath.type === 'MemberExpression')
         return true;
     
     if (type === 'LogicalExpression')
@@ -60054,9 +60272,9 @@ function objectPlugin(plugin, path, printer, semantics) {
         after(path, printer, semantics);
 }
 
-var debug$9 = {};
+var debug$8 = {};
 
-var require$$0$2 = /*@__PURE__*/getAugmentedNamespace(_polyfillNode_process);
+var require$$0$3 = /*@__PURE__*/getAugmentedNamespace(_polyfillNode_process);
 
 var justSnakeCase = snakeCase;
 
@@ -60087,10 +60305,10 @@ function snakeCase(str) {
     .join('_');
 }
 
-const process$1 = require$$0$2;
+const process$1 = require$$0$3;
 const toSnakeCase = justSnakeCase;
 const {codeFrameColumns: codeFrameColumns$1} = bundle;
-const {TYPES: TYPES$2} = types$17;
+const {TYPES: TYPES$2} = types$18;
 
 const {stringify: stringify$7} = JSON;
 const {
@@ -60101,7 +60319,7 @@ const {
     LOG_DEBUG,
 } = {};
 
-debug$9.createDebug = (tokens) => (a) => {
+debug$8.createDebug = (tokens) => (a) => {
     if (!LOG_DEBUG)
         return;
     
@@ -60111,7 +60329,7 @@ debug$9.createDebug = (tokens) => (a) => {
     });
 };
 
-debug$9.createLog = ({newline = '\n', store = createStore$1()} = {}) => ({type, value}) => {
+debug$8.createLog = ({newline = '\n', store = createStore$1()} = {}) => ({type, value}) => {
     if (LOG_TOKENS) {
         console.log(codeFrameColumns$1(stringify$7({
             type,
@@ -60277,7 +60495,7 @@ const initSemantics = (format, semantics = {}) => ({
 const fullstore$2 = fullstore$3;
 
 const babelTraverse$2 = bundle.traverse;
-const {TYPES: TYPES$1} = types$17;
+const {TYPES: TYPES$1} = types$18;
 const baseVisitors = visitors$1;
 
 const {
@@ -60286,7 +60504,7 @@ const {
     maybeThrow,
 } = maybe;
 
-const {createDebug: createDebug$3, createLog} = debug$9;
+const {createDebug: createDebug$a, createLog} = debug$8;
 const {maybeMarkAfter} = mark;
 
 const {
@@ -60321,7 +60539,7 @@ tokenize$1.tokenize = (ast, overrides) => {
     
     const tokens = [];
     const addToken = createAddToken(tokens);
-    const debug = createDebug$3(tokens);
+    const debug = createDebug$a(tokens);
     
     const write = (value) => {
         addToken({
@@ -61518,7 +61736,7 @@ var acornPrivateMethods = /*#__PURE__*/Object.freeze({
 	default: privateMethods
 });
 
-var require$$2$1 = /*@__PURE__*/getAugmentedNamespace(acornPrivateMethods);
+var require$$2 = /*@__PURE__*/getAugmentedNamespace(acornPrivateMethods);
 
 var acornStage3;
 var hasRequiredAcornStage3;
@@ -61531,7 +61749,7 @@ function requireAcornStage3 () {
 	  return Parser.extend(
 	    require$$1$1,
 	    require$$1$1,
-	    require$$2$1
+	    require$$2
 	  )
 	};
 	return acornStage3;
@@ -62405,7 +62623,7 @@ var _polyfillNode_path$1 = /*#__PURE__*/Object.freeze({
 	sep: sep
 });
 
-var require$$0$1 = /*@__PURE__*/getAugmentedNamespace(_polyfillNode_path$1);
+var require$$0$2 = /*@__PURE__*/getAugmentedNamespace(_polyfillNode_path$1);
 
 var tryToCatch$1 = async (fn, ...args) => {
     check$d(fn);
@@ -62430,8 +62648,8 @@ simpleImport$1.simpleImport = async (url) => {
     return result.default || result;
 };
 
-const process = require$$0$2;
-const {join: join$3} = require$$0$1;
+const process = require$$0$3;
+const {join: join$3} = require$$0$2;
 const once$1 = onceExports;
 const {nanomemoize} = require$$3;
 const tryToCatch = tryToCatch$1;
@@ -62929,7 +63147,7 @@ function isExactRuleEnabled(name, status, rules) {
     return false;
 }
 
-const {basename: basename$2} = require$$0$1;
+const {basename: basename$2} = require$$0$2;
 
 const {isEnabled: isEnabled$1} = rules;
 
@@ -63050,9 +63268,9 @@ function requireLoad () {
 	if (hasRequiredLoad) return load;
 	hasRequiredLoad = 1;
 
-	const process = require$$0$2;
+	const process = require$$0$3;
 	const {createRequire} = require$$1;
-	const {join} = require$$0$1;
+	const {join} = require$$0$2;
 	const tryCatch = tryCatch$7;
 	const once = onceExports;
 	const {assign} = Object;
@@ -63323,23 +63541,23 @@ lib$1.validateRulesRelations = validateRulesRelations$1;
 
 var lib = {};
 
-function debug$7() {
+var debug$7 = {};
+
+function createDebug$9() {
     return () => {}
 }
 
-var debug$8 = /*#__PURE__*/Object.freeze({
+var debug$6 = /*#__PURE__*/Object.freeze({
 	__proto__: null,
-	default: debug$7
+	createDebug: createDebug$9
 });
 
-var require$$2 = /*@__PURE__*/getAugmentedNamespace(debug$8);
+var require$$0$1 = /*@__PURE__*/getAugmentedNamespace(debug$6);
 
-var debug$6 = {};
+const {createDebug: createDebug$8} = require$$0$1;
 
-const debug$5 = require$$2;
-
-debug$6.createDebug = (namespace) => {
-    const log = debug$5(namespace);
+debug$7.createDebug = (namespace) => {
+    const log = createDebug$8(namespace);
     
     return new Proxy(log, {
         apply(target, thisArg, args) {
@@ -63356,13 +63574,13 @@ debug$6.createDebug = (namespace) => {
 };
 
 const tryCatch$4 = tryCatch$7;
-const {createDebug: createDebug$2} = debug$6;
+const {createDebug: createDebug$7} = debug$7;
 
 const {stringify: stringify$5} = JSON;
 
 const isFn$4 = (a) => typeof a === 'function';
 const getPath$2 = (path) => path.path || path;
-const debug$4 = createDebug$2('putout:runner:fix');
+const debug$5 = createDebug$7('putout:runner:fix');
 
 const chooseFixArgs = ({path, pathOptions, options}) => {
     if (pathOptions)
@@ -63407,8 +63625,8 @@ var runFix$3 = (is, fix, {path, pathOptions, rule, position, options}) => {
     if (!is)
         return;
     
-    if (debug$4.enabled)
-        debug$4(`${rule}:`, position, getPath$2(path).toString());
+    if (debug$5.enabled)
+        debug$5(`${rule}:`, position, getPath$2(path).toString());
     
     validate$3('fix', fix);
     
@@ -64417,7 +64635,29 @@ var runComparators$1 = {};
 
 var log$5 = {exports: {}};
 
-const debug$3 = require$$2('putout:compare');
+var debug$4 = {};
+
+const {createDebug: createDebug$6} = require$$0$1;
+
+debug$4.createDebug = (namespace) => {
+    const log = createDebug$6(namespace);
+    
+    return new Proxy(log, {
+        apply(target, thisArg, args) {
+            commonjsGlobal.__putout_debug?.(namespace, ...args);
+            return target(...args);
+        },
+        get(target, prop) {
+            if (commonjsGlobal.__putout_debug?.[prop])
+                return true;
+            
+            return target[prop];
+        },
+    });
+};
+
+const {createDebug: createDebug$5} = debug$4;
+const debug$3 = createDebug$5('putout:compare');
 
 const {isArray: isArray$5} = Array;
 const isObject$4 = (a) => a && typeof a === 'object';
@@ -64949,8 +65189,8 @@ const {
 } = compare$5;
 
 const maybeArray$3 = maybeArray_1;
-const {createDebug: createDebug$1} = debug$6;
-const debug$2 = createDebug$1('putout:runner:template');
+const {createDebug: createDebug$4} = debug$7;
+const debug$2 = createDebug$4('putout:runner:template');
 
 const {entries: entries$5} = Object;
 const isFn$2 = (a) => typeof a === 'function';
@@ -65599,10 +65839,11 @@ tryThrowWithReason$1.tryThrowWithReason = (fn, ...args) => {
 
 var includer = {};
 
-const log$2 = require$$2('putout:runner:include');
+const {createDebug: createDebug$3} = debug$7;
+
 const maybeArray$2 = maybeArray_1;
 const {validate} = validate$2;
-
+const log$2 = createDebug$3('putout:runner:include');
 const stub$1 = () => [];
 const good = () => true;
 
@@ -65805,8 +66046,8 @@ const {
 
 const maybeArray$1 = maybeArray_1;
 const watermark = watermarkExports;
-const {createDebug} = debug$6;
-const debug$1 = createDebug('putout:runner:replace');
+const {createDebug: createDebug$2} = debug$7;
+const debug$1 = createDebug$2('putout:runner:replace');
 
 const log$1 = (from, path) => {
     debug$1.enabled && debug$1(`${from} -> ${path}\n`);
@@ -66383,7 +66624,7 @@ const {
     join: join$2,
     basename: basename$1,
     dirname: dirname$1,
-} = require$$0$1;
+} = require$$0$2;
 
 const {types: types$8} = bundle;
 const tryCatch$1 = tryCatch$7;
@@ -66824,7 +67065,7 @@ filesystem.start = maybeFS.start;
 
 var convertSimpleFilesystemToFilesystem = {};
 
-const {basename, dirname} = require$$0$1;
+const {basename, dirname} = require$$0$2;
 const {types: types$7} = bundle;
 const {
     createDirectory,
@@ -67044,10 +67285,10 @@ const {
     start,
 } = filesystem;
 
-const log = require$$2('putout:runner:scanner');
-
 const fromSimple = convertSimpleFilesystemToFilesystem;
 const toSimple = convertFilesystemToSimpleFilesystem;
+const {createDebug: createDebug$1} = debug$7;
+const log = createDebug$1('putout:runner:scanner');
 
 scanner.scan = ({rule, plugin, msg, options}, {progress}) => {
     const {
@@ -67195,7 +67436,7 @@ function parseVisitor(visitors) {
 
 const {traverse: defaultTraverse} = bundle;
 const once = onceExports;
-const debug = require$$2('putout:runner:find');
+const {createDebug} = debug$7;
 
 const runFix = runFix$3;
 const mergeVisitors = mergeVisitors$1;
@@ -67210,7 +67451,7 @@ const {declare} = declarator;
 const {scan: scan$1} = scanner;
 
 const {getPath, getPosition} = getPosition$2;
-
+const debug = createDebug('putout:runner:find');
 const isRemoved = (a) => a?.removed;
 
 lib.runPlugins = ({ast, shebang, fix, fixCount = 2, plugins, progress = createProgress$1(), traverse = defaultTraverse}) => {
@@ -75209,7 +75450,7 @@ keyword.isTSKeyword = (name) => {
 
 var matchFiles = {};
 
-const {relative} = require$$0$1;
+const {relative} = require$$0$2;
 const ignore$1 = require$$1$1;
 
 const isNegative = (a) => !a.indexOf('!');
@@ -75240,7 +75481,7 @@ function mergeIgnores(ignores) {
 
 ignores$2.default;
 
-const path = require$$0$1;
+const path = require$$0$2;
 
 const {parse: parse$2, print: print$1} = parser$5;
 const {transform: transform$1} = transform$5;
@@ -75456,7 +75697,7 @@ function parseOptions(inputFilename, rawOptions) {
 
 var renameFiles = {};
 
-const {join} = require$$0$1;
+const {join} = require$$0$2;
 
 const {
     getParentDirectory,
