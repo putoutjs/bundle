@@ -42,7 +42,7 @@ export default {
             entries: [{
                 find: './loader.mjs',
                 replacement: new URL('./lib/loader.js', import.meta.url).pathname,
-            }, 
+            },
             ...[
                 'esprima',
                 'espree',
@@ -55,10 +55,7 @@ export default {
                 'acorn-static-class-features',
                 'acorn-typescript',
                 'acorn-stage-3',
-            ].map(createEmpty),
-            ...SLIM ? [createDebug()] : [],
-            ...SLIM ? [createObug()] : [],
-            ...[
+            ].map(createEmpty), ...SLIM ? [createDebug()] : [], ...SLIM ? [createObug()] : [], ...[
                 'events',
                 'module',
                 'path',

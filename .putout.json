@@ -8,5 +8,5 @@
             "remove-console": "off"
         }
     },
-    "ignore": ["**/bundle"]
+    "ignore": ["**/bundle", "**/example*", "**/lib"]
 }

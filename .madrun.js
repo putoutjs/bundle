@@ -4,7 +4,7 @@ const env = {
     MINIFY: 1,
 };
 
-const slimEnv= {
+const slimEnv = {
     SLIM: 1,
 };
 

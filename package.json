@@ -44,7 +44,6 @@
     "bundle",
     "deno",
     "esm",
-    "codemod",
     "linter",
     "fix",
     "bun",
