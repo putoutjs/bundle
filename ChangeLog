@@ -1,3 +1,9 @@
+2025.12.05, v5.0.0
+
+feature:
+- 9735d4d @putout/bundle: putout v41.0.0
+- 387c41a @putout/bundle: eslint-plugin-putout v29.0.2
+
 2025.11.24, v4.10.0
 
 feature:
