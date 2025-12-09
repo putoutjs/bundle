@@ -178,15 +178,15 @@ var versions = {};
 var release = {};
 var config = {};
 
-function noop$6() {}
+function noop$7() {}
 
-var on = noop$6;
-var addListener = noop$6;
-var once$a = noop$6;
-var off = noop$6;
-var removeListener = noop$6;
-var removeAllListeners = noop$6;
-var emit = noop$6;
+var on = noop$7;
+var addListener = noop$7;
+var once$a = noop$7;
+var off = noop$7;
+var removeListener = noop$7;
+var removeAllListeners = noop$7;
+var emit = noop$7;
 
 function binding(name) {
     throw new Error('process.binding is not supported');
@@ -2346,11 +2346,11 @@ var require_picocolors$1 = __commonJS$1({
             return result + string.substring(cursor);
         };
         
-        var createColors2 = (enabled = isColorSupported2) => {
-            let f = enabled ? formatter : () => String;
+        var createColors2 = (enabled2 = isColorSupported2) => {
+            let f = enabled2 ? formatter : () => String;
             
             return {
-                isColorSupported: enabled,
+                isColorSupported: enabled2,
                 reset: f('\x1B[0m', '\x1B[0m'),
                 bold: f('\x1B[1m', '\x1B[22m', '\x1B[22m\x1B[1m'),
                 dim: f('\x1B[2m', '\x1B[22m', '\x1B[22m\x1B[2m'),
@@ -2400,9 +2400,9 @@ var require_picocolors$1 = __commonJS$1({
     },
 });
 
-// ../babel-babel/node_modules/js-tokens-BABEL_8_BREAKING-true/index.js
-var require_js_tokens_BABEL_8_BREAKING_true$1 = __commonJS$1({
-    '../babel-babel/node_modules/js-tokens-BABEL_8_BREAKING-true/index.js'(exports2, module2) {
+// ../babel-babel/node_modules/js-tokens/index.js
+var require_js_tokens$1 = __commonJS$1({
+    '../babel-babel/node_modules/js-tokens/index.js'(exports2, module2) {
         var Identifier3;
         var JSXIdentifier3;
         var JSXPunctuator;
@@ -2423,7 +2423,7 @@ var require_js_tokens_BABEL_8_BREAKING_true$1 = __commonJS$1({
         var TokensPrecedingExpression;
         var WhiteSpace;
         
-        RegularExpressionLiteral = /\/(?![*\/])(?:\[(?:(?![\]\\]).|\\.)*\]|(?![\/\]\\]).|\\.)*(\/[$_\u200C\u200D\p{ID_Continue}]*|\\)?/yu;
+        RegularExpressionLiteral = /\/(?![*\/])(?:\[(?:(?![\]\\]).|\\.)*\]|(?![\/\\]).|\\.)*(\/[$_\u200C\u200D\p{ID_Continue}]*|\\)?/yu;
         Punctuator = /--|\+\+|=>|\.{3}|\??\.(?!\d)|(?:&&|\|\||\?\?|[+\-%&|^]|\*{1,2}|<{1,2}|>{1,3}|!=?|={1,2}|\/(?![\/*]))=?|[?~,:;[\](){}]/y;
         Identifier3 = /(\x23?)(?=[$_\p{ID_Start}\\])(?:[$_\u200C\u200D\p{ID_Continue}]|\\u[\da-fA-F]{4}|\\u\{[\da-fA-F]+\})+/yu;
         StringLiteral4 = /(['"])(?:(?!\1)[^\\\n\r]|\\(?:\r\n|[^]))*(\1)?/y;
@@ -2902,13 +2902,6 @@ var require_js_tokens_BABEL_8_BREAKING_true$1 = __commonJS$1({
     },
 });
 
-// ../babel-babel/node_modules/js-tokens-BABEL_8_BREAKING-false/index.js
-var require_js_tokens$1 = __commonJS$1({
-    '../babel-babel/node_modules/js-tokens/index.js'(exports2, module2) {
-        module2.exports = require_js_tokens_BABEL_8_BREAKING_true$1();
-    },
-});
-
 // ../babel-babel/node_modules/jsesc/jsesc.js
 var require_jsesc$1 = __commonJS$1({
     '../babel-babel/node_modules/jsesc/jsesc.js'(exports2, module2) {
@@ -3257,28 +3250,6 @@ var require_jsesc$1 = __commonJS$1({
     },
 });
 
-// ../babel-babel/node_modules/ms/index.js
-// ../babel-babel/node_modules/debug/src/common.js
-var require_browser$1 = () => () => ({
-    enabled: false,
-});
-
-// ../babel-babel/node_modules/has-flag/index.js
-var require_node$1 = () => () => ({
-    enabled: false,
-});
-
-// ../babel-babel/node_modules/debug/src/index.js
-var require_src$1 = __commonJS$1({
-    '../babel-babel/node_modules/debug/src/index.js'(exports2, module2) {
-        if (typeof browser$1 === 'undefined' || browser$1.type === 'renderer' || browser$1.browser === true || browser$1.__nwjs) {
-            module2.exports = require_browser$1();
-        } else {
-            module2.exports = require_node$1();
-        }
-    },
-});
-
 // lib/index.mjs
 var index_exports$1 = {};
 
@@ -3584,7 +3555,7 @@ __export$1(lib_exports$1, {
     TSTypeLiteral: () => TSTypeLiteral$2,
     TSTypeOperator: () => TSTypeOperator$2,
     TSTypeParameter: () => TSTypeParameter$2,
-    TSTypeParameterDeclaration: () => TSTypeParameterDeclaration$1,
+    TSTypeParameterDeclaration: () => TSTypeParameterDeclaration$2,
     TSTypeParameterInstantiation: () => TSTypeParameterInstantiation$1,
     TSTypePredicate: () => TSTypePredicate$1,
     TSTypeQuery: () => TSTypeQuery$2,
@@ -4330,7 +4301,7 @@ __export$1(lib_exports$1, {
     isTSTypeQuery: () => isTSTypeQuery$1,
     isTSTypeReference: () => isTSTypeReference$4,
     isTSUndefinedKeyword: () => isTSUndefinedKeyword$1,
-    isTSUnionType: () => isTSUnionType$1,
+    isTSUnionType: () => isTSUnionType$2,
     isTSUnknownKeyword: () => isTSUnknownKeyword$1,
     isTSVoidKeyword: () => isTSVoidKeyword$1,
     isTaggedTemplateExpression: () => isTaggedTemplateExpression$1,
@@ -4521,7 +4492,7 @@ __export$1(lib_exports$1, {
     tsTypeLiteral: () => tsTypeLiteral$2,
     tsTypeOperator: () => tsTypeOperator$1,
     tsTypeParameter: () => tsTypeParameter$2,
-    tsTypeParameterDeclaration: () => tsTypeParameterDeclaration$1,
+    tsTypeParameterDeclaration: () => tsTypeParameterDeclaration$2,
     tsTypeParameterInstantiation: () => tsTypeParameterInstantiation$1,
     tsTypePredicate: () => tsTypePredicate$1,
     tsTypeQuery: () => tsTypeQuery$2,
@@ -8195,7 +8166,7 @@ function isTSNamedTupleMember$1(node, opts) {
     return opts == null || shallowEqual$1(node, opts);
 }
 
-function isTSUnionType$1(node, opts) {
+function isTSUnionType$2(node, opts) {
     if (!node)
         return false;
     
@@ -10670,7 +10641,7 @@ defineType$4$1('CallExpression', {
     ],
     builder: ['callee', 'arguments'],
     aliases: ['Expression'],
-    fields: Object.assign({
+    fields: {
         callee: {
             validate: assertNodeType$1('Expression', 'Super', 'V8IntrinsicIdentifier'),
         },
@@ -10679,7 +10650,7 @@ defineType$4$1('CallExpression', {
             validate: assertNodeType$1('TypeParameterInstantiation', 'TSTypeParameterInstantiation'),
             optional: true,
         },
-    }, {}),
+    },
 });
 defineType$4$1('CatchClause', {
     visitor: ['param', 'body'],
@@ -11192,7 +11163,7 @@ defineType$4$1('MemberExpression', {
             },
         }],
     },
-    fields: Object.assign({
+    fields: {
         object: {
             validate: assertNodeType$1('Expression', 'Super'),
         },
@@ -11216,7 +11187,7 @@ defineType$4$1('MemberExpression', {
         computed: {
             default: false,
         },
-    }, {}),
+    },
 });
 defineType$4$1('NewExpression', {
     inherits: 'CallExpression',
@@ -11278,9 +11249,9 @@ defineType$4$1('ObjectMethod', Object.assign({
     ],
 }, classMethodOrPropertyUnionShapeCommon$1(), {
     fields: Object.assign({}, functionCommon$1(), functionTypeAnnotationCommon$1(), {
-        kind: Object.assign({
+        kind: {
             validate: assertOneOf$1('method', 'get', 'set'),
-        }, {}),
+        },
         computed: {
             default: false,
         },
@@ -12453,7 +12424,7 @@ defineType$4$1('OptionalCallExpression', {
         'optional',
     ],
     aliases: ['Expression'],
-    fields: Object.assign({
+    fields: {
         callee: {
             validate: assertNodeType$1('Expression'),
         },
@@ -12465,7 +12436,7 @@ defineType$4$1('OptionalCallExpression', {
             validate: assertNodeType$1('TypeParameterInstantiation', 'TSTypeParameterInstantiation'),
             optional: true,
         },
-    }, {}),
+    },
 });
 defineType$4$1('ClassProperty', Object.assign({
     visitor: [
@@ -13350,7 +13321,7 @@ defineType$2$1('JSXElement', {
         'closingElement',
     ],
     aliases: ['Immutable', 'Expression'],
-    fields: Object.assign({
+    fields: {
         openingElement: {
             validate: assertNodeType$1('JSXOpeningElement'),
         },
@@ -13359,7 +13330,7 @@ defineType$2$1('JSXElement', {
             validate: assertNodeType$1('JSXClosingElement'),
         },
         children: validateArrayOfType$1('JSXText', 'JSXExpressionContainer', 'JSXSpreadChild', 'JSXElement', 'JSXFragment'),
-    }, {}),
+    },
 });
 defineType$2$1('JSXEmptyExpression', {});
 defineType$2$1('JSXExpressionContainer', {
@@ -13422,7 +13393,7 @@ defineType$2$1('JSXOpeningElement', {
         'attributes',
     ],
     aliases: ['Immutable'],
-    fields: Object.assign({
+    fields: {
         name: {
             validate: assertNodeType$1('JSXIdentifier', 'JSXMemberExpression', 'JSXNamespacedName'),
         },
@@ -13434,7 +13405,7 @@ defineType$2$1('JSXOpeningElement', {
             validate: assertNodeType$1('TypeParameterInstantiation', 'TSTypeParameterInstantiation'),
             optional: true,
         },
-    }, {}),
+    },
 });
 defineType$2$1('JSXSpreadAttribute', {
     visitor: ['argument'],
@@ -13960,15 +13931,14 @@ defineType$6('TSMappedType', {
         'nameType',
         'typeAnnotation',
     ],
-    fields: Object.assign({}, {
+    fields: {
         key: validateType$1('Identifier'),
         constraint: validateType$1('TSType'),
-    }, {
         readonly: validateOptional$1(assertOneOf$1(true, false, '+', '-')),
         optional: validateOptional$1(assertOneOf$1(true, false, '+', '-')),
         typeAnnotation: validateOptionalType$1('TSType'),
         nameType: validateOptionalType$1('TSType'),
-    }),
+    },
 });
 defineType$6('TSTemplateLiteralType', {
     aliases: ['TSType', 'TSBaseType'],
@@ -14130,15 +14100,14 @@ defineType$6('TSEnumMember', {
 defineType$6('TSModuleDeclaration', {
     aliases: ['Statement', 'Declaration'],
     visitor: ['id', 'body'],
-    fields: Object.assign({
+    fields: {
         kind: {
             validate: assertOneOf$1('global', 'module', 'namespace'),
         },
         declare: validateOptional$1(bool$1),
-    }, false, {
         id: validateType$1('TSEntityName', 'StringLiteral'),
         body: validateType$1('TSModuleBlock'),
-    }),
+    },
 });
 defineType$6('TSModuleBlock', {
     aliases: [
@@ -14165,30 +14134,27 @@ defineType$6('TSImportType', {
         'qualifier',
         'typeArguments',
     ],
-    fields: Object.assign({}, {
+    fields: {
         source: validateType$1('StringLiteral'),
-    }, {
         qualifier: validateOptionalType$1('TSEntityName'),
-    }, {
         typeArguments: validateOptionalType$1('TSTypeParameterInstantiation'),
-    }, {
         options: {
             validate: assertNodeType$1('ObjectExpression'),
             optional: true,
         },
-    }),
+    },
 });
 defineType$6('TSImportEqualsDeclaration', {
     aliases: ['Statement', 'Declaration'],
     visitor: ['id', 'moduleReference'],
-    fields: Object.assign({}, {}, {
+    fields: {
         id: validateType$1('Identifier'),
         moduleReference: validateType$1('TSEntityName', 'TSExternalModuleReference'),
         importKind: {
             validate: assertOneOf$1('type', 'value'),
             optional: true,
         },
-    }),
+    },
 });
 defineType$6('TSExternalModuleReference', {
     visitor: ['expression'],
@@ -17379,7 +17345,7 @@ function tsTypeParameterInstantiation$1(params) {
     return node;
 }
 
-function tsTypeParameterDeclaration$1(params) {
+function tsTypeParameterDeclaration$2(params) {
     const node = {
         type: 'TSTypeParameterDeclaration',
         params,
@@ -17652,7 +17618,7 @@ var b$1 = /* @__PURE__ */Object.freeze({
     tsTypeLiteral: tsTypeLiteral$2,
     tsTypeOperator: tsTypeOperator$1,
     tsTypeParameter: tsTypeParameter$2,
-    tsTypeParameterDeclaration: tsTypeParameterDeclaration$1,
+    tsTypeParameterDeclaration: tsTypeParameterDeclaration$2,
     tsTypeParameterInstantiation: tsTypeParameterInstantiation$1,
     tsTypePredicate: tsTypePredicate$1,
     tsTypeQuery: tsTypeQuery$2,
@@ -17938,7 +17904,7 @@ var TSExportAssignment$2 = alias$1('tsExportAssignment');
 var TSNamespaceExportDeclaration$1 = alias$1('tsNamespaceExportDeclaration');
 var TSTypeAnnotation$1 = alias$1('tsTypeAnnotation');
 var TSTypeParameterInstantiation$1 = alias$1('tsTypeParameterInstantiation');
-var TSTypeParameterDeclaration$1 = alias$1('tsTypeParameterDeclaration');
+var TSTypeParameterDeclaration$2 = alias$1('tsTypeParameterDeclaration');
 var TSTypeParameter$2 = alias$1('tsTypeParameter');
 
 function cleanJSXElementLiteralChild$1(child, args) {
@@ -19390,7 +19356,7 @@ function removeTypeDuplicates$2(nodesIn) {
             continue;
         }
         
-        if (isTSUnionType$1(node)) {
+        if (isTSUnionType$2(node)) {
             if (!typeGroups.has(node.types)) {
                 nodes2.push(...node.types);
                 typeGroups.add(node.types);
@@ -20941,7 +20907,7 @@ var UnparenthesizedPipeBodyDescriptions$1 = /* @__PURE__ */new Set([
     'YieldExpression',
 ]);
 
-var PipelineOperatorErrors$1 = Object.assign({
+var PipelineOperatorErrors$1 = {
     PipeBodyIsTighter: 'Unexpected yield after pipeline body; any yield expression acting as Hack-style pipe body must be parenthesized due to its loose operator precedence.',
     PipeTopicRequiresHackPipes: 'Topic references are only supported when using the `"proposal": "hack"` version of the pipeline proposal.',
     PipeTopicUnbound: 'Topic reference is unbound; it must be inside a pipe body.',
@@ -20950,7 +20916,7 @@ var PipelineOperatorErrors$1 = Object.assign({
     PipeUnparenthesizedBody: ({type}) => `Hack-style pipe body cannot be an unparenthesized ${toNodeDescription$1({
         type,
     })}; please wrap it in parentheses.`,
-}, {});
+};
 
 var _excluded$1 = ['message'];
 
@@ -21591,22 +21557,6 @@ var estree$1 = (superClass) => class ESTreeParserMixin extends superClass {
     }
 };
 
-var TokContext$1 = class TokContext {
-    constructor(token, preserveSpace) {
-        __publicField$1(this, 'token');
-        __publicField$1(this, 'preserveSpace');
-        this.token = token;
-        this.preserveSpace = !!preserveSpace;
-    }
-};
-
-var types$1a = {
-    brace: new TokContext$1('{'),
-    j_oTag: new TokContext$1('<tag'),
-    j_cTag: new TokContext$1('</tag'),
-    j_expr: new TokContext$1('<tag>...</tag>', true),
-};
-
 var beforeExpr$1 = true;
 var startsExpr$1 = true;
 var isLoop2$1 = true;
@@ -22157,6 +22107,22 @@ function tokenIsTemplate$1(token) {
 function getExportedToken$1(token) {
     return tokenTypes$1[token];
 }
+
+var TokContext$1 = class TokContext {
+    constructor(token, preserveSpace) {
+        __publicField$1(this, 'token');
+        __publicField$1(this, 'preserveSpace');
+        this.token = token;
+        this.preserveSpace = !!preserveSpace;
+    }
+};
+
+var types$1b = {
+    brace: new TokContext$1('{'),
+    j_oTag: new TokContext$1('<tag'),
+    j_cTag: new TokContext$1('</tag'),
+    j_expr: new TokContext$1('<tag>...</tag>', true),
+};
 
 var nonASCIIidentifierStartChars2$1 = '\xAA\xB5\xBA\xC0-\xD6\xD8-\xF6\xF8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377\u037A-\u037D\u037F\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5\u03F7-\u0481\u048A-\u052F\u0531-\u0556\u0559\u0560-\u0588\u05D0-\u05EA\u05EF-\u05F2\u0620-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06E5\u06E6\u06EE\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA\u07F4\u07F5\u07FA\u0800-\u0815\u081A\u0824\u0828\u0840-\u0858\u0860-\u086A\u0870-\u0887\u0889-\u088F\u08A0-\u08C9\u0904-\u0939\u093D\u0950\u0958-\u0961\u0971-\u0980\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u09FC\u0A05-\u0A0A\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0AF9\u0B05-\u0B0C\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C39\u0C3D\u0C58-\u0C5A\u0C5C\u0C5D\u0C60\u0C61\u0C80\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3\u0CB5-\u0CB9\u0CBD\u0CDC-\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D04-\u0D0C\u0D0E-\u0D10\u0D12-\u0D3A\u0D3D\u0D4E\u0D54-\u0D56\u0D5F-\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E46\u0E81\u0E82\u0E84\u0E86-\u0E8A\u0E8C-\u0EA3\u0EA5\u0EA7-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EC6\u0EDC-\u0EDF\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081\u108E\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F5\u13F8-\u13FD\u1401-\u166C\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u16EE-\u16F8\u1700-\u1711\u171F-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17D7\u17DC\u1820-\u1878\u1880-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191E\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19B0-\u19C9\u1A00-\u1A16\u1A20-\u1A54\u1AA7\u1B05-\u1B33\u1B45-\u1B4C\u1B83-\u1BA0\u1BAE\u1BAF\u1BBA-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C7D\u1C80-\u1C8A\u1C90-\u1CBA\u1CBD-\u1CBF\u1CE9-\u1CEC\u1CEE-\u1CF3\u1CF5\u1CF6\u1CFA\u1D00-\u1DBF\u1E00-\u1F15\u1F18-\u1F1D\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u2071\u207F\u2090-\u209C\u2102\u2107\u210A-\u2113\u2115\u2118-\u211D\u2124\u2126\u2128\u212A-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2160-\u2188\u2C00-\u2CE4\u2CEB-\u2CEE\u2CF2\u2CF3\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D80-\u2D96\u2DA0-\u2DA6\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE\u2DD0-\u2DD6\u2DD8-\u2DDE\u3005-\u3007\u3021-\u3029\u3031-\u3035\u3038-\u303C\u3041-\u3096\u309B-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312F\u3131-\u318E\u31A0-\u31BF\u31F0-\u31FF\u3400-\u4DBF\u4E00-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA61F\uA62A\uA62B\uA640-\uA66E\uA67F-\uA69D\uA6A0-\uA6EF\uA717-\uA71F\uA722-\uA788\uA78B-\uA7DC\uA7F1-\uA801\uA803-\uA805\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB\uA8FD\uA8FE\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uA9CF\uA9E0-\uA9E4\uA9E6-\uA9EF\uA9FA-\uA9FE\uAA00-\uAA28\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA76\uAA7A\uAA7E-\uAAAF\uAAB1\uAAB5\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB-\uAADD\uAAE0-\uAAEA\uAAF2-\uAAF4\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E\uAB30-\uAB5A\uAB5C-\uAB69\uAB70-\uABE2\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF\uFFD2-\uFFD7\uFFDA-\uFFDC';
 var nonASCIIidentifierChars2$1 = '\xB7\u0300-\u036F\u0387\u0483-\u0487\u0591-\u05BD\u05BF\u05C1\u05C2\u05C4\u05C5\u05C7\u0610-\u061A\u064B-\u0669\u0670\u06D6-\u06DC\u06DF-\u06E4\u06E7\u06E8\u06EA-\u06ED\u06F0-\u06F9\u0711\u0730-\u074A\u07A6-\u07B0\u07C0-\u07C9\u07EB-\u07F3\u07FD\u0816-\u0819\u081B-\u0823\u0825-\u0827\u0829-\u082D\u0859-\u085B\u0897-\u089F\u08CA-\u08E1\u08E3-\u0903\u093A-\u093C\u093E-\u094F\u0951-\u0957\u0962\u0963\u0966-\u096F\u0981-\u0983\u09BC\u09BE-\u09C4\u09C7\u09C8\u09CB-\u09CD\u09D7\u09E2\u09E3\u09E6-\u09EF\u09FE\u0A01-\u0A03\u0A3C\u0A3E-\u0A42\u0A47\u0A48\u0A4B-\u0A4D\u0A51\u0A66-\u0A71\u0A75\u0A81-\u0A83\u0ABC\u0ABE-\u0AC5\u0AC7-\u0AC9\u0ACB-\u0ACD\u0AE2\u0AE3\u0AE6-\u0AEF\u0AFA-\u0AFF\u0B01-\u0B03\u0B3C\u0B3E-\u0B44\u0B47\u0B48\u0B4B-\u0B4D\u0B55-\u0B57\u0B62\u0B63\u0B66-\u0B6F\u0B82\u0BBE-\u0BC2\u0BC6-\u0BC8\u0BCA-\u0BCD\u0BD7\u0BE6-\u0BEF\u0C00-\u0C04\u0C3C\u0C3E-\u0C44\u0C46-\u0C48\u0C4A-\u0C4D\u0C55\u0C56\u0C62\u0C63\u0C66-\u0C6F\u0C81-\u0C83\u0CBC\u0CBE-\u0CC4\u0CC6-\u0CC8\u0CCA-\u0CCD\u0CD5\u0CD6\u0CE2\u0CE3\u0CE6-\u0CEF\u0CF3\u0D00-\u0D03\u0D3B\u0D3C\u0D3E-\u0D44\u0D46-\u0D48\u0D4A-\u0D4D\u0D57\u0D62\u0D63\u0D66-\u0D6F\u0D81-\u0D83\u0DCA\u0DCF-\u0DD4\u0DD6\u0DD8-\u0DDF\u0DE6-\u0DEF\u0DF2\u0DF3\u0E31\u0E34-\u0E3A\u0E47-\u0E4E\u0E50-\u0E59\u0EB1\u0EB4-\u0EBC\u0EC8-\u0ECE\u0ED0-\u0ED9\u0F18\u0F19\u0F20-\u0F29\u0F35\u0F37\u0F39\u0F3E\u0F3F\u0F71-\u0F84\u0F86\u0F87\u0F8D-\u0F97\u0F99-\u0FBC\u0FC6\u102B-\u103E\u1040-\u1049\u1056-\u1059\u105E-\u1060\u1062-\u1064\u1067-\u106D\u1071-\u1074\u1082-\u108D\u108F-\u109D\u135D-\u135F\u1369-\u1371\u1712-\u1715\u1732-\u1734\u1752\u1753\u1772\u1773\u17B4-\u17D3\u17DD\u17E0-\u17E9\u180B-\u180D\u180F-\u1819\u18A9\u1920-\u192B\u1930-\u193B\u1946-\u194F\u19D0-\u19DA\u1A17-\u1A1B\u1A55-\u1A5E\u1A60-\u1A7C\u1A7F-\u1A89\u1A90-\u1A99\u1AB0-\u1ABD\u1ABF-\u1ADD\u1AE0-\u1AEB\u1B00-\u1B04\u1B34-\u1B44\u1B50-\u1B59\u1B6B-\u1B73\u1B80-\u1B82\u1BA1-\u1BAD\u1BB0-\u1BB9\u1BE6-\u1BF3\u1C24-\u1C37\u1C40-\u1C49\u1C50-\u1C59\u1CD0-\u1CD2\u1CD4-\u1CE8\u1CED\u1CF4\u1CF7-\u1CF9\u1DC0-\u1DFF\u200C\u200D\u203F\u2040\u2054\u20D0-\u20DC\u20E1\u20E5-\u20F0\u2CEF-\u2CF1\u2D7F\u2DE0-\u2DFF\u302A-\u302F\u3099\u309A\u30FB\uA620-\uA629\uA66F\uA674-\uA67D\uA69E\uA69F\uA6F0\uA6F1\uA802\uA806\uA80B\uA823-\uA827\uA82C\uA880\uA881\uA8B4-\uA8C5\uA8D0-\uA8D9\uA8E0-\uA8F1\uA8FF-\uA909\uA926-\uA92D\uA947-\uA953\uA980-\uA983\uA9B3-\uA9C0\uA9D0-\uA9D9\uA9E5\uA9F0-\uA9F9\uAA29-\uAA36\uAA43\uAA4C\uAA4D\uAA50-\uAA59\uAA7B-\uAA7D\uAAB0\uAAB2-\uAAB4\uAAB7\uAAB8\uAABE\uAABF\uAAC1\uAAEB-\uAAEF\uAAF5\uAAF6\uABE3-\uABEA\uABEC\uABED\uABF0-\uABF9\uFB1E\uFE00-\uFE0F\uFE20-\uFE2F\uFE33\uFE34\uFE4D-\uFE4F\uFF10-\uFF19\uFF3F\uFF65';
@@ -24065,9 +24031,9 @@ var jsx$4 = (superClass) => class JSXParserMixin extends superClass {
         switch(this.state.type) {
         case 5:
             node = this.startNode();
-            this.setContext(types$1a.brace);
+            this.setContext(types$1b.brace);
             this.next();
-            node = this.jsxParseExpressionContainer(node, types$1a.j_oTag);
+            node = this.jsxParseExpressionContainer(node, types$1b.j_oTag);
             
             if (node.expression.type === 'JSXEmptyExpression') {
                 this.raise(JsxErrors$1.AttributeIsEmpty, node);
@@ -24092,7 +24058,7 @@ var jsx$4 = (superClass) => class JSXParserMixin extends superClass {
     jsxParseSpreadChild(node) {
         this.next();
         node.expression = this.parseExpression();
-        this.setContext(types$1a.j_expr);
+        this.setContext(types$1b.j_expr);
         this.state.canStartJSXElement = true;
         this.expect(8);
         return this.finishNode(node, 'JSXSpreadChild');
@@ -24121,11 +24087,11 @@ var jsx$4 = (superClass) => class JSXParserMixin extends superClass {
         const node = this.startNode();
         
         if (this.match(5)) {
-            this.setContext(types$1a.brace);
+            this.setContext(types$1b.brace);
             this.next();
             this.expect(21);
             node.argument = this.parseMaybeAssignAllowIn();
-            this.setContext(types$1a.j_oTag);
+            this.setContext(types$1b.j_oTag);
             this.state.canStartJSXElement = true;
             this.expect(8);
             return this.finishNode(node, 'JSXSpreadAttribute');
@@ -24199,13 +24165,13 @@ var jsx$4 = (superClass) => class JSXParserMixin extends superClass {
                 
                 case 5: {
                     const node2 = this.startNode();
-                    this.setContext(types$1a.brace);
+                    this.setContext(types$1b.brace);
                     this.next();
                     
                     if (this.match(21)) {
                         children.push(this.jsxParseSpreadChild(node2));
                     } else {
-                        children.push(this.jsxParseExpressionContainer(node2, types$1a.j_expr));
+                        children.push(this.jsxParseExpressionContainer(node2, types$1b.j_expr));
                     }
                     
                     break;
@@ -24281,12 +24247,12 @@ var jsx$4 = (superClass) => class JSXParserMixin extends superClass {
     getTokenFromCode(code2) {
         const context = this.curContext();
         
-        if (context === types$1a.j_expr) {
+        if (context === types$1b.j_expr) {
             this.jsxReadToken();
             return;
         }
         
-        if (context === types$1a.j_oTag || context === types$1a.j_cTag) {
+        if (context === types$1b.j_oTag || context === types$1b.j_cTag) {
             if (isIdentifierStart2$1(code2)) {
                 this.jsxReadWord();
                 return;
@@ -24298,7 +24264,7 @@ var jsx$4 = (superClass) => class JSXParserMixin extends superClass {
                 return;
             }
             
-            if ((code2 === 34 || code2 === 39) && context === types$1a.j_oTag) {
+            if ((code2 === 34 || code2 === 39) && context === types$1b.j_oTag) {
                 this.jsxReadString(code2);
                 return;
             }
@@ -24317,18 +24283,18 @@ var jsx$4 = (superClass) => class JSXParserMixin extends superClass {
         const {context, type} = this.state;
         
         if (type === 56 && prevType === 143) {
-            context.splice(-2, 2, types$1a.j_cTag);
+            context.splice(-2, 2, types$1b.j_cTag);
             this.state.canStartJSXElement = false;
         } else if (type === 143) {
-            context.push(types$1a.j_oTag);
+            context.push(types$1b.j_oTag);
         } else if (type === 144) {
             const out = context[context.length - 1];
             
-            if (out === types$1a.j_oTag && prevType === 56 || out === types$1a.j_cTag) {
+            if (out === types$1b.j_oTag && prevType === 56 || out === types$1b.j_cTag) {
                 context.pop();
-                this.state.canStartJSXElement = context[context.length - 1] === types$1a.j_expr;
+                this.state.canStartJSXElement = context[context.length - 1] === types$1b.j_expr;
             } else {
-                this.setContext(types$1a.j_expr);
+                this.setContext(types$1b.j_expr);
                 this.state.canStartJSXElement = true;
             }
         } else {
@@ -24805,7 +24771,7 @@ var State$3 = class _State {
         __publicField$1(this, 'end', 0);
         __publicField$1(this, 'lastTokEndLoc', null);
         __publicField$1(this, 'lastTokStartLoc', null);
-        __publicField$1(this, 'context', [types$1a.brace]);
+        __publicField$1(this, 'context', [types$1b.brace]);
         __publicField$1(this, 'firstInvalidTemplateEscapePos', null);
         __publicField$1(this, 'strictErrors',         /* @__PURE__ */new Map());
         __publicField$1(this, 'tokensLength', 0);
@@ -29318,7 +29284,7 @@ var typescript$4 = (superClass) => class TypeScriptParserMixin extends superClas
     }
     
     tsInTopLevelContext(cb) {
-        if (this.curContext() !== types$1a.brace) {
+        if (this.curContext() !== types$1b.brace) {
             const oldContext = this.state.context;
             
             this.state.context = [oldContext[0]];
@@ -29711,7 +29677,7 @@ var typescript$4 = (superClass) => class TypeScriptParserMixin extends superClas
         
         if (node.params.length === 0) {
             this.raise(TSErrors$1.EmptyTypeArguments, node);
-        } else if (!this.state.inType && this.curContext() === types$1a.brace) {
+        } else if (!this.state.inType && this.curContext() === types$1b.brace) {
             this.reScan_lt_gt();
         }
         
@@ -30083,7 +30049,7 @@ var typescript$4 = (superClass) => class TypeScriptParserMixin extends superClas
                 nodeImportEquals.importKind = 'value';
             }
             
-            const declaration = this.tsParseImportEqualsDeclaration(nodeImportEquals, maybeDefaultIdentifier, true);
+            const declaration = this.tsParseImportEqualsDeclaration(nodeImportEquals, maybeDefaultIdentifier);
             
             node.attributes = [];
             node.declaration = declaration;
@@ -30621,7 +30587,7 @@ var typescript$4 = (superClass) => class TypeScriptParserMixin extends superClas
             
             const currentContext = context[context.length - 1];
             
-            if (currentContext === types$1a.j_oTag || currentContext === types$1a.j_expr) {
+            if (currentContext === types$1b.j_oTag || currentContext === types$1b.j_expr) {
                 context.pop();
             }
         }
@@ -32091,8 +32057,6 @@ var ExpressionParser$1 = class ExpressionParser extends LValParser$1 {
                     if (this.state.inFSharpPipelineDirectBody) {
                         return left;
                     }
-                    
-                    this.checkPipelineAtInfixOperator(left, leftStartLoc);
                 }
                 
                 const node = this.startNodeAt(leftStartLoc);
@@ -32123,7 +32087,6 @@ var ExpressionParser$1 = class ExpressionParser extends LValParser$1 {
     }
     
     parseExprOpRightExpr(op, prec) {
-        this.state.startLoc;
         switch(op) {
         case 39:
             switch(this.getPluginOption('pipelineOperator', 'proposal')) {
@@ -33844,51 +33807,6 @@ var ExpressionParser$1 = class ExpressionParser extends LValParser$1 {
         return this.finishNode(node, 'ImportExpression');
     }
     
-    checkPipelineAtInfixOperator(left, leftStartLoc) {
-        if (this.hasPlugin(['pipelineOperator', {proposal: 'smart'}])) {
-            if (left.type === 'SequenceExpression') {
-                this.raise(Errors$1.PipelineHeadSequenceExpression, leftStartLoc);
-            }
-        }
-    }
-    
-    parseSmartPipelineBodyInStyle(childExpr, startLoc) {
-        if (this.isSimpleReference(childExpr)) {
-            const bodyNode = this.startNodeAt(startLoc);
-            
-            bodyNode.callee = childExpr;
-            return this.finishNode(bodyNode, 'PipelineBareFunction');
-        } else {
-            const bodyNode = this.startNodeAt(startLoc);
-            this.checkSmartPipeTopicBodyEarlyErrors(startLoc);
-            bodyNode.expression = childExpr;
-            return this.finishNode(bodyNode, 'PipelineTopicExpression');
-        }
-    }
-    
-    isSimpleReference(expression2) {
-        switch(expression2.type) {
-        case 'MemberExpression':
-            return !expression2.computed && this.isSimpleReference(expression2.object);
-        
-        case 'Identifier':
-            return true;
-        
-        default:
-            return false;
-        }
-    }
-    
-    checkSmartPipeTopicBodyEarlyErrors(startLoc) {
-        if (this.match(19)) {
-            throw this.raise(Errors$1.PipelineBodyNoArrow, this.state.startLoc);
-        }
-        
-        if (!this.topicReferenceWasUsedInCurrentContext()) {
-            this.raise(Errors$1.PipelineTopicUnused, startLoc);
-        }
-    }
-    
     withTopicBindingContext(callback) {
         const outerContextTopicState = this.state.topicContext;
         
@@ -34055,7 +33973,7 @@ var StatementParser$1 = class StatementParser extends ExpressionParser$1 {
         file2.comments = this.comments;
         
         if (this.optionFlags & 256) {
-            file2.tokens = babel7CompatTokens$1(this.tokens, this.input, this.startIndex);
+            file2.tokens = babel7CompatTokens$1(this.tokens);
         }
         
         return this.finishNode(file2, 'File');
@@ -36524,29 +36442,29 @@ function isColorSupported$1() {
 
 var compose$1 = (f, g) => (v) => f(g(v));
 
-function buildDefs$1(colors) {
+function buildDefs$1(colors2) {
     return {
-        keyword: colors.cyan,
-        capitalized: colors.yellow,
-        jsxIdentifier: colors.yellow,
-        punctuator: colors.yellow,
-        number: colors.magenta,
-        string: colors.green,
-        regex: colors.magenta,
-        comment: colors.gray,
-        invalid: compose$1(compose$1(colors.white, colors.bgRed), colors.bold),
-        gutter: colors.gray,
-        marker: compose$1(colors.red, colors.bold),
-        message: compose$1(colors.red, colors.bold),
-        reset: colors.reset,
+        keyword: colors2.cyan,
+        capitalized: colors2.yellow,
+        jsxIdentifier: colors2.yellow,
+        punctuator: colors2.yellow,
+        number: colors2.magenta,
+        string: colors2.green,
+        regex: colors2.magenta,
+        comment: colors2.gray,
+        invalid: compose$1(compose$1(colors2.white, colors2.bgRed), colors2.bold),
+        gutter: colors2.gray,
+        marker: compose$1(colors2.red, colors2.bold),
+        message: compose$1(colors2.red, colors2.bold),
+        reset: colors2.reset,
     };
 }
 
 var defsOn$1 = buildDefs$1((0, import_picocolors$1.createColors)(true));
 var defsOff$1 = buildDefs$1((0, import_picocolors$1.createColors)(false));
 
-function getDefs$1(enabled) {
-    return enabled ? defsOn$1 : defsOff$1;
+function getDefs$1(enabled2) {
+    return enabled2 ? defsOn$1 : defsOff$1;
 }
 
 var sometimesKeywords$1 = /* @__PURE__ */new Set([
@@ -36559,7 +36477,6 @@ var sometimesKeywords$1 = /* @__PURE__ */new Set([
 ]);
 var NEWLINE$1$1 = /\r\n|[\n\r\u2028\u2029]/;
 var BRACKET$1 = /^[()[\]{}]$/;
-var tokenize$3;
 
 var getTokenType$1 = function(token) {
     if (token.type === 'IdentifierName') {
@@ -36624,7 +36541,7 @@ var getTokenType$1 = function(token) {
     }
 };
 
-tokenize$3 = function*(text) {
+function* tokenize$3(text) {
     for (const token of (0, import_js_tokens$1.default)(text, {jsx: true})) {
         switch(token.type) {
         case 'TemplateHead':
@@ -36671,7 +36588,8 @@ tokenize$3 = function*(text) {
             };
         }
     }
-};
+}
+
 function highlight$1(text) {
     if (text === '')
         return '';
@@ -37335,13 +37253,13 @@ function stringTemplate$1(formatter, code2, opts) {
 }
 
 function literalTemplate$1(formatter, tpl, opts) {
-    const {metadata, names} = buildLiteralData$1(formatter, tpl, opts);
+    const {metadata, names: names2} = buildLiteralData$1(formatter, tpl, opts);
     
     return (arg) => {
         const defaultReplacements = {};
         
         arg.forEach((replacement, i) => {
-            defaultReplacements[names[i]] = replacement;
+            defaultReplacements[names2[i]] = replacement;
         });
         return (arg2) => {
             const replacements = normalizeReplacements$1(arg2);
@@ -37368,11 +37286,11 @@ function buildLiteralData$1(formatter, tpl, opts) {
     do {
         prefix2 = '$$' + prefix2;
     } while (raw.includes(prefix2))
-    const {names, code: code2} = buildTemplateCode$1(tpl, prefix2);
+    const {names: names2, code: code2} = buildTemplateCode$1(tpl, prefix2);
     
     const metadata = parseAndBuildMetadata$1(formatter, formatter.code(code2), {
         parser: opts.parser,
-        placeholderWhitelist: new Set(names.concat(opts.placeholderWhitelist ? Array.from(opts.placeholderWhitelist) : [])),
+        placeholderWhitelist: new Set(names2.concat(opts.placeholderWhitelist ? Array.from(opts.placeholderWhitelist) : [])),
         placeholderPattern: opts.placeholderPattern,
         preserveComments: opts.preserveComments,
         syntacticPlaceholders: opts.syntacticPlaceholders,
@@ -37380,22 +37298,22 @@ function buildLiteralData$1(formatter, tpl, opts) {
     
     return {
         metadata,
-        names,
+        names: names2,
     };
 }
 
 function buildTemplateCode$1(tpl, prefix2) {
-    const names = [];
+    const names2 = [];
     let code2 = tpl[0];
     
     for (let i = 1; i < tpl.length; i++) {
         const value = `${prefix2}${i - 1}`;
-        names.push(value);
+        names2.push(value);
         code2 += value + tpl[i];
     }
     
     return {
-        names,
+        names: names2,
         code: code2,
     };
 }
@@ -38138,7 +38056,7 @@ var TraceMap$1 = class TraceMap {
         const {
             version,
             file: file2,
-            names,
+            names: names2,
             sourceRoot,
             sources,
             sourcesContent,
@@ -38146,7 +38064,7 @@ var TraceMap$1 = class TraceMap {
         
         this.version = version;
         this.file = file2;
-        this.names = names || [];
+        this.names = names2 || [];
         this.sourceRoot = sourceRoot;
         this.sources = sources;
         this.sourcesContent = sourcesContent;
@@ -38215,11 +38133,11 @@ function originalPositionFor$1(map, needle) {
         return OMapping$1(null, null, null, null);
     
     const {
-        names,
+        names: names2,
         resolvedSources,
     } = map;
     
-    return OMapping$1(resolvedSources[segment[SOURCES_INDEX$1]], segment[SOURCE_LINE$1] + 1, segment[SOURCE_COLUMN$1], segment.length === 5 ? names[segment[NAMES_INDEX$1]] : null);
+    return OMapping$1(resolvedSources[segment[SOURCES_INDEX$1]], segment[SOURCE_LINE$1] + 1, segment[SOURCE_COLUMN$1], segment.length === 5 ? names2[segment[NAMES_INDEX$1]] : null);
 }
 
 function OMapping$1(source, line, column, name) {
@@ -38318,7 +38236,7 @@ function toDecodedMap$1(map) {
         _mappings: mappings,
         _sources: sources,
         _sourcesContent: sourcesContent,
-        _names: names,
+        _names: names2,
         _ignoreList: ignoreList,
     } = cast22$1(map);
     
@@ -38326,7 +38244,7 @@ function toDecodedMap$1(map) {
     return {
         version: 3,
         file: map.file || void 0,
-        names: names.array,
+        names: names2.array,
         sourceRoot: map.sourceRoot || void 0,
         sources: sources.array,
         sourcesContent,
@@ -38353,7 +38271,7 @@ function allMappings$1(map) {
     const {
         _mappings: mappings,
         _sources: sources,
-        _names: names,
+        _names: names2,
     } = cast22$1(map);
     
     for (let i = 0; i < mappings.length; i++) {
@@ -38377,7 +38295,7 @@ function allMappings$1(map) {
                 };
                 
                 if (seg.length === 5)
-                    name = names.array[seg[NAMES_INDEX2$1]];
+                    name = names2.array[seg[NAMES_INDEX2$1]];
             }
             
             out.push({
@@ -38397,7 +38315,7 @@ function addSegmentInternal$1(skipable, map, genLine, genColumn, source, sourceL
         _mappings: mappings,
         _sources: sources,
         _sourcesContent: sourcesContent,
-        _names: names,
+        _names: names2,
     } = cast22$1(map);
     
     const line = getIndex$1(mappings, genLine);
@@ -38410,7 +38328,7 @@ function addSegmentInternal$1(skipable, map, genLine, genColumn, source, sourceL
         return insert$2(line, index2, [genColumn]);
     }
     const sourcesIndex = put$1(sources, source);
-    const namesIndex = name ? put$1(names, name) : NO_NAME$1;
+    const namesIndex = name ? put$1(names2, name) : NO_NAME$1;
     
     if (sourcesIndex === sourcesContent.length)
         sourcesContent[sourcesIndex] = content != null ? content : null;
@@ -39117,14 +39035,14 @@ var nodes$1 = {
     VariableDeclaration(node) {
         for (let i = 0; i < node.declarations.length; i++) {
             const declar = node.declarations[i];
-            let enabled = isHelper$1(declar.id) && !isType2$1(declar.init);
+            let enabled2 = isHelper$1(declar.id) && !isType2$1(declar.init);
             
-            if (!enabled && declar.init) {
+            if (!enabled2 && declar.init) {
                 const state = crawl$1(declar.init);
-                enabled = isHelper$1(declar.init) && state.hasCall || state.hasFunction;
+                enabled2 = isHelper$1(declar.init) && state.hasCall || state.hasFunction;
             }
             
-            if (enabled) {
+            if (enabled2) {
                 return 1 | 2;
             }
         }
@@ -44644,10 +44562,107 @@ function generate$7(ast, opts = {}, code2) {
     return printer.generate(ast);
 }
 
-// ../babel-babel/packages/babel-traverse/lib/index.js
-var import_debug$1 = __toESM$1(require_src$1());
+// ../babel-babel/node_modules/obug/dist/core.js
+function selectColor(colors2, namespace) {
+    let hash = 0;
+    
+    for (let i = 0; i < namespace.length; i++) {
+        hash = (hash << 5) - hash + namespace.charCodeAt(i);
+        hash |= 0;
+    }
+    
+    return colors2[Math.abs(hash) % colors2.length];
+}
 
+function humanize(value) {
+    if (value >= 1e3)
+        return `${(value / 1e3).toFixed(1)}s`;
+    
+    return `${value}ms`;
+}
+
+var globalNamespaces = '';
+
+function createDebug$b() {
+    return {
+        enabled: false,
+    };
+}
+
+var names = [];
+var skips = [];
+
+function enable(namespaces$1) {
+    globalNamespaces = namespaces$1;
+    names = [];
+    skips = [];
+    const split = globalNamespaces
+        .trim()
+        .replace(/\s+/g, ',')
+        .split(',')
+        .filter(Boolean);
+    
+    for (const ns of split)
+        if (ns[0] === '-')
+            skips.push(ns.slice(1));
+        else
+            names.push(ns);
+}
+
+// ../babel-babel/node_modules/obug/dist/node.js
+var import_node_util = {
+    formatWithOptions: () => false,
+    inspect: () => false,
+};
+
+var colors = [];
+
+var inspectOpts = {};
+
+function useColors() {}
+
+function formatArgs() {}
+
+function log$6(...args) {
+    browser$1.stderr.write(`${(0, import_node_util.formatWithOptions)(this.inspectOpts, ...args)}
+`);
+}
+
+var defaultOptions$7 = {
+    useColors: useColors(),
+    formatArgs,
+    formatters: {
+        o(v) {
+            this.inspectOpts.colors = this.useColors;
+            return (0, import_node_util.inspect)(v, this
+                .inspectOpts)
+                .split('\n')
+                .map((str) => str.trim())
+                .join(' ');
+        },
+        O(v) {
+            this.inspectOpts.colors = this.useColors;
+            return (0, import_node_util.inspect)(v, this.inspectOpts);
+        },
+    },
+    inspectOpts,
+    log: log$6,
+    humanize,
+};
+
+function createDebug2(namespace, options) {
+    var _ref;
+    const color = (_ref = options) !== null && _ref !== void 0 ? _ref : selectColor(colors, namespace);
+    
+    return createDebug$b(namespace, Object.assign(
+        defaultOptions$7,{color},
+        options,
+    ));
+}
+
+enable(browser$1.env.DEBUG || '');
 // ../babel-babel/packages/babel-helper-globals/data/builtin-lower.json
+
 var builtin_lower_default$1 = [
     'decodeURI',
     'decodeURIComponent',
@@ -50440,7 +50455,7 @@ function addComments2$1(type, comments) {
 
 var {validate: validate3$1} = lib_exports$1;
 
-var debug$a = (0, import_debug$1.default)('babel');
+createDebug2('babel');
 var REMOVED$1 = 1 << 0;
 var SHOULD_STOP$1 = 1 << 1;
 var SHOULD_SKIP$1 = 1 << 2;
@@ -50582,10 +50597,7 @@ var NodePath_Final$1 = class NodePath {
     }
     
     debug(message) {
-        if (!debug$a.enabled)
-            return;
-        
-        debug$a(`${this.getPathLocation()} ${this.type}: ${message}`);
+        return;
     }
     
     toString() {
@@ -51387,9 +51399,9 @@ var fullstore$3 = (value) => {
     };
 };
 
-var types$19 = {};
+var types$1a = {};
 
-types$19.TYPES = {
+types$1a.TYPES = {
     TOKEN: 'Token',
     NEWLINE: 'Newline',
     LINEBREAK: 'Linebreak',
@@ -51409,7 +51421,7 @@ var arrowFunctionExpression$3 = {};
 
 var is$4 = {};
 
-const {types: types$18} = bundle$1;
+const {types: types$19} = bundle$1;
 const {
     isStringLiteral: isStringLiteral$a,
     isIdentifier: isIdentifier$i,
@@ -51421,7 +51433,7 @@ const {
     isArrayExpression: isArrayExpression$a,
     isObjectExpression: isObjectExpression$a,
     isLabeledStatement: isLabeledStatement$2,
-} = types$18;
+} = types$19;
 
 const isParentProgram$1 = (path) => path.parentPath?.isProgram();
 const isParentBlock$3 = (path) => path.parentPath.isBlockStatement();
@@ -51724,7 +51736,7 @@ commentsPrinter.printTrailingComments = (path, printer, semantics, {currentTrave
     }
 };
 
-const {types: types$17} = bundle$1;
+const {types: types$18} = bundle$1;
 const {
     hasTrailingComment: hasTrailingComment$5,
     satisfy: satisfy$3,
@@ -51750,7 +51762,7 @@ const {
     isBinaryExpression: isBinaryExpression$2,
     isClassMethod: isClassMethod$2,
     isDecorator: isDecorator$2,
-} = types$17;
+} = types$18;
 
 const isProperty$1 = satisfy$3([
     isObjectProperty$3,
@@ -52002,7 +52014,7 @@ function build(path) {
     return prop;
 }
 
-const {types: types$16} = bundle$1;
+const {types: types$17} = bundle$1;
 const {chain: chain$3} = chain$4;
 const {satisfy: satisfy$2} = is$4;
 
@@ -52011,7 +52023,7 @@ const {
     isIfStatement: isIfStatement$2,
     isCallExpression: isCallExpression$b,
     isIdentifier: isIdentifier$h,
-} = types$16;
+} = types$17;
 
 const isArgOfCall = (path) => path.parentPath?.isCallExpression() && path.parentPath.get('arguments.0') === path;
 const isCall$1 = (a) => a.type === 'CallExpression';
@@ -52084,7 +52096,7 @@ const isIfUp = (path) => {
     return is;
 };
 
-const {types: types$15} = bundle$1;
+const {types: types$16} = bundle$1;
 
 const {
     isLast: isLast$c,
@@ -52104,7 +52116,7 @@ const {
     isMemberExpression: isMemberExpression$a,
     isExpressionStatement: isExpressionStatement$8,
     isCallExpression: isCallExpression$a,
-} = types$15;
+} = types$16;
 
 const hasBody$1 = (path) => {
     if (path.isTSModuleDeclaration())
@@ -52307,7 +52319,7 @@ comment.parseComments = parseComments$7;
 
 const {parseComments: parseComments$6} = comment;
 
-const noop$5 = () => {};
+const noop$6 = () => {};
 const parseParams = (path) => path.get('params');
 
 params.printParams = (path, printer, semantics, customization = {}) => {
@@ -52323,8 +52335,9 @@ params.printParams = (path, printer, semantics, customization = {}) => {
         braceOpen = '(',
         braceClose = ')',
         printSpace = print.space,
-        printAfterOpen = noop$5,
-        printBeforeClose = noop$5,
+        printAfterOpen = noop$6,
+        printBeforeClose = noop$6,
+        printAfterClose = noop$6,
     } = customization;
     
     if (typeParameters)
@@ -52359,6 +52372,7 @@ params.printParams = (path, printer, semantics, customization = {}) => {
         print,
         braceClose,
     }, semantics);
+    printAfterClose();
 };
 
 function printBraceOpen(path, {print, braceOpen}, semantics) {
@@ -52425,7 +52439,7 @@ const maybeParensCondition$1 = ({print, condition, checkParens = true}) => ({
 });
 
 const {exists: exists$e} = is$4;
-const {printParams: printParams$c} = params;
+const {printParams: printParams$d} = params;
 const {maybeParens: maybeParens$d} = maybeParens$e;
 
 arrowFunctionExpression$3.ArrowFunctionExpression = maybeParens$d((path, printer, semantics) => {
@@ -52439,7 +52453,7 @@ arrowFunctionExpression$3.ArrowFunctionExpression = maybeParens$d((path, printer
     const {async} = path.node;
     
     maybe.print(async, 'async ');
-    printParams$c(path, printer, semantics);
+    printParams$d(path, printer, semantics);
     
     const returnType = path.get('returnType');
     
@@ -52463,10 +52477,10 @@ arrowFunctionExpression$3.ArrowFunctionExpression = maybeParens$d((path, printer
 
 var functionDeclaration$1 = {};
 
-const {types: types$14} = bundle$1;
+const {types: types$15} = bundle$1;
 const {markAfter: markAfter$b} = mark;
 const {isNext: isNext$n, isNextParent: isNextParent$4} = is$4;
-const {printParams: printParams$b} = params;
+const {printParams: printParams$c} = params;
 
 const not = (fn) => (...a) => !fn(...a);
 const notInsideExportDefaultWithBody = not(isInsideExportDefaultWithBody);
@@ -52479,7 +52493,7 @@ const {
     isExpressionStatement: isExpressionStatement$7,
     isFunctionDeclaration: isFunctionDeclaration$3,
     isExportDefaultDeclaration: isExportDefaultDeclaration$1,
-} = types$14;
+} = types$15;
 
 const isInsideNamedExport$1 = ({parentPath}) => isExportNamedDeclaration$4(parentPath);
 
@@ -52506,7 +52520,7 @@ functionDeclaration$1.FunctionDeclaration = {
         }
         
         print('__id');
-        printParams$b(path, printer, semantics);
+        printParams$c(path, printer, semantics);
         
         if (returnType) {
             print(': ');
@@ -52626,7 +52640,7 @@ kind.printKind = (path, {write}) => {
 
 var printFunctionParams$1 = {};
 
-const {printParams: printParams$a} = params;
+const {printParams: printParams$b} = params;
 const {hasLeadingComment: hasLeadingComment$4} = is$4;
 
 const isAllParamsHasLeadingComments = (path) => {
@@ -52657,7 +52671,7 @@ printFunctionParams$1.printFunctionParams = (path, printer, semantics) => {
     const isNewline = params.filter(hasDecorators).length;
     const isAllHasComments = isAllParamsHasLeadingComments(path);
     
-    const printSpace = createPrintSpace({
+    const printSpace = createPrintSpace$1({
         isNewline,
         printer,
     });
@@ -52676,7 +52690,7 @@ printFunctionParams$1.printFunctionParams = (path, printer, semantics) => {
         isAllHasComments,
     });
     
-    printParams$a(path, printer, semantics, {
+    printParams$b(path, printer, semantics, {
         printAfterOpen,
         printSpace,
         printBeforeClose,
@@ -52707,7 +52721,7 @@ const createPrintBeforeClose = ({isNewline, printer, isAllHasComments, type}) =>
     print.breakline();
 };
 
-const createPrintSpace = ({isNewline, printer}) => () => {
+const createPrintSpace$1 = ({isNewline, printer}) => () => {
     const {print} = printer;
     
     if (!isNewline)
@@ -52715,6 +52729,8 @@ const createPrintSpace = ({isNewline, printer}) => () => {
     
     print.breakline();
 };
+
+printFunctionParams$1.createPrintSpace = createPrintSpace$1;
 
 const {
     isNext: isNext$m,
@@ -52784,7 +52800,7 @@ classMethod$2.ClassMethod = ClassMethod$2;
 var objectMethod$2 = {};
 
 const {isNewlineBetweenSiblings: isNewlineBetweenSiblings$3} = is$4;
-const {printParams: printParams$9} = params;
+const {printParams: printParams$a} = params;
 const {printKey: printKey$5} = printKey$7;
 const {printKind: printKind$2} = kind;
 
@@ -52800,7 +52816,7 @@ objectMethod$2.ObjectMethod = {
         
         printKind$2(path, printer);
         printKey$5(path, printer);
-        printParams$9(path, printer, semantics);
+        printParams$a(path, printer, semantics);
         
         print.space();
         print('__body');
@@ -52816,7 +52832,7 @@ objectMethod$2.ObjectMethod = {
 var functionExpression$1 = {};
 
 const {exists: exists$d} = is$4;
-const {printParams: printParams$8} = params;
+const {printParams: printParams$9} = params;
 const {maybeParens: maybeParens$c} = maybeParens$e;
 
 functionExpression$1.FunctionExpression = maybeParens$c((path, printer, semantics) => {
@@ -52841,7 +52857,7 @@ functionExpression$1.FunctionExpression = maybeParens$c((path, printer, semantic
         traverse(id);
     }
     
-    printParams$8(path, printer, semantics);
+    printParams$9(path, printer, semantics);
     
     print.space();
     print('__body');
@@ -52920,7 +52936,7 @@ function printUnary(name, {print}) {
 
 var memberExpressions$1 = {};
 
-const {types: types$13} = bundle$1;
+const {types: types$14} = bundle$1;
 const {maybePrintComputed} = maybePrintComputed$2;
 const {maybeParens: maybeParens$a} = maybeParens$e;
 const {isLooksLikeChain: isLooksLikeChain$2} = isLooksLikeChain$4;
@@ -52928,7 +52944,7 @@ const {isLooksLikeChain: isLooksLikeChain$2} = isLooksLikeChain$4;
 const {
     isObjectExpression: isObjectExpression$9,
     isArrowFunctionExpression: isArrowFunctionExpression$2,
-} = types$13;
+} = types$14;
 
 memberExpressions$1.MemberExpression = maybeParens$a({
     checkParens: false,
@@ -52999,7 +53015,7 @@ maybeDeclare$6.maybeDeclare = (visit) => (path, printer, semantics) => {
     visit(path, printer, semantics);
 };
 
-const {types: types$12} = bundle$1;
+const {types: types$13} = bundle$1;
 
 const {isNext: isNext$k} = is$4;
 const {markAfter: markAfter$a} = mark;
@@ -53015,7 +53031,7 @@ const isInsideTSModuleBlock = (path) => {
 const {
     isFunction: isFunction$8,
     isTSModuleBlock: isTSModuleBlock$3,
-} = types$12;
+} = types$13;
 
 const isInsideExport = ({parentPath}) => parentPath.isExportDeclaration();
 const isFunctionLike = (path) => isFunction$8(path.parentPath.parentPath);
@@ -53051,8 +53067,20 @@ const classVisitor = maybeDecorators$2((path, printer, semantics) => {
     }
     
     if (node.implements) {
-        print(' implements ');
-        path.get('implements').forEach(print);
+        const {typeParameters} = node;
+        
+        if (!typeParameters || typeParameters.params.length < 2)
+            print(' ');
+        
+        print('implements ');
+        
+        const implementsPaths = path.get('implements');
+        const n = implementsPaths.length - 1;
+        
+        for (const [i, implement] of implementsPaths.entries()) {
+            print(implement);
+            maybe.print(i < n, ', ');
+        }
     }
     
     print.space();
@@ -53180,14 +53208,14 @@ function tooLong$1(args) {
 
 var newExpression$1 = {};
 
-const {types: types$11} = bundle$1;
+const {types: types$12} = bundle$1;
 const {exists: exists$b} = is$4;
 const {isMarkedAfter: isMarkedAfter$2} = mark;
 
 const {
     isExpressionStatement: isExpressionStatement$6,
     isMemberExpression: isMemberExpression$9,
-} = types$11;
+} = types$12;
 
 const isInsideExpressionStatement = ({parentPath}) => isExpressionStatement$6(parentPath);
 const notFirst = ({parentPath}) => exists$b(parentPath.getPrevSibling());
@@ -53266,8 +53294,8 @@ var objectExpression$3 = {};
 
 var isInsideTuple$1 = {};
 
-const {types: types$10} = bundle$1;
-const {isArrayExpression: isArrayExpression$9} = types$10;
+const {types: types$11} = bundle$1;
+const {isArrayExpression: isArrayExpression$9} = types$11;
 
 const TYPES$4 = [
     'NullLiteral',
@@ -53291,12 +53319,12 @@ isInsideTuple$1.isInsideTuple = (path) => {
 
 var isThirdObjectInsideArray$1 = {};
 
-const {types: types$$} = bundle$1;
+const {types: types$10} = bundle$1;
 const {
     isArrayExpression: isArrayExpression$8,
     isCallExpression: isCallExpression$9,
     isIdentifier: isIdentifier$g,
-} = types$$;
+} = types$10;
 
 isThirdObjectInsideArray$1.isThirdObjectInsideArray = ({parentPath}) => {
     if (!isArrayExpression$8(parentPath))
@@ -53307,7 +53335,7 @@ isThirdObjectInsideArray$1.isThirdObjectInsideArray = ({parentPath}) => {
     return isCallExpression$9(second) && !!isIdentifier$g(second);
 };
 
-const {types: types$_} = bundle$1;
+const {types: types$$} = bundle$1;
 const {
     isCoupleLines: isCoupleLines$7,
     isForOf: isForOf$3,
@@ -53327,7 +53355,7 @@ const {isThirdObjectInsideArray} = isThirdObjectInsideArray$1;
 const {
     isStringLiteral: isStringLiteral$9,
     isArrayExpression: isArrayExpression$7,
-} = types$_;
+} = types$$;
 
 const isBodyOfArrow = (path) => path.parentPath.node.body === path.node;
 const isLogical = (path) => path.get('argument').isLogicalExpression();
@@ -53493,12 +53521,12 @@ var objectProperty$4 = {};
 
 var concatenate$1 = {};
 
-const {types: types$Z} = bundle$1;
+const {types: types$_} = bundle$1;
 const {
     isStringLiteral: isStringLiteral$8,
     isTemplateLiteral: isTemplateLiteral$4,
     isBinaryExpression: isBinaryExpression$1,
-} = types$Z;
+} = types$_;
 
 const isStringLike = (a) => {
     if (isStringLiteral$8(a))
@@ -53545,11 +53573,11 @@ concatenate$1.concatenate = (path, {print, indent}) => {
         indent.dec();
 };
 
-const {types: types$Y} = bundle$1;
+const {types: types$Z} = bundle$1;
 const {isConcatenation: isConcatenation$2} = concatenate$1;
 const {isOneLine} = objectExpression$3;
 const {printKey: printKey$4} = printKey$7;
-const {isTSImportType: isTSImportType$1} = types$Y;
+const {isTSImportType: isTSImportType$1} = types$Z;
 const isInsideTSImportType = ({parentPath}) => isTSImportType$1(parentPath.parentPath);
 
 objectProperty$4.ObjectProperty = (path, printer, semantics) => {
@@ -53603,11 +53631,11 @@ moreThenMaxPropertiesInOneLine$1.moreThenMaxPropertiesInOneLine = (path, {maxPro
 
 var maybeTypeAnnotation$4 = {};
 
-const {types: types$X} = bundle$1;
+const {types: types$Y} = bundle$1;
 const {
     isMemberExpression: isMemberExpression$8,
     isSequenceExpression: isSequenceExpression$2,
-} = types$X;
+} = types$Y;
 
 maybeTypeAnnotation$4.maybePrintTypeAnnotation = maybePrintTypeAnnotation$3;
 
@@ -53638,11 +53666,11 @@ function maybePrintTypeAnnotation$3(path, printer) {
 
 var moreThenMaxPropertiesLengthInOneLine$1 = {};
 
-const {types: types$W} = bundle$1;
+const {types: types$X} = bundle$1;
 const {
     isAssignmentPattern: isAssignmentPattern$3,
     isIdentifier: isIdentifier$f,
-} = types$W;
+} = types$X;
 
 function getLength(left, right) {
     if (isIdentifier$f(left) && isIdentifier$f(right))
@@ -53681,13 +53709,13 @@ moreThenMaxPropertiesLengthInOneLine$1.moreThenMaxPropertiesLengthInOneLine = (p
 
 var calculateLongAssignPattern = {};
 
-const {types: types$V} = bundle$1;
+const {types: types$W} = bundle$1;
 const {
     isAssignmentPattern: isAssignmentPattern$2,
     isArrayExpression: isArrayExpression$6,
     isObjectExpression: isObjectExpression$8,
     isIdentifier: isIdentifier$e,
-} = types$V;
+} = types$W;
 
 calculateLongAssignPattern.calculateAssigns = (property, semantics) => {
     const currentAssign = isLongAssignPattern$1(property, semantics);
@@ -53747,7 +53775,7 @@ comments$1.printLeadingComments = (path, {print}) => {
     }
 };
 
-const {types: types$U} = bundle$1;
+const {types: types$V} = bundle$1;
 
 const {wrongShorthand} = wrongShorthand$1;
 
@@ -53779,7 +53807,7 @@ const {
     isObjectPattern: isObjectPattern$3,
     isForOfStatement: isForOfStatement$1,
     isVariableDeclaration: isVariableDeclaration$5,
-} = types$U;
+} = types$V;
 
 const isInsideFn = (path) => {
     if (isFunction$7(path.parentPath))
@@ -54181,9 +54209,9 @@ maybeParensCondition.condition = (path, printer, semantics) => {
 
 var assignmentExpressionComments = {};
 
-const {types: types$T} = bundle$1;
+const {types: types$U} = bundle$1;
 const {hasLeadingComment: hasLeadingComment$1} = is$4;
-const {isReturnStatement: isReturnStatement$4} = types$T;
+const {isReturnStatement: isReturnStatement$4} = types$U;
 
 assignmentExpressionComments.printLeadingCommentLine = (path, printer, semantics, {printComment, isLast}) => {
     const {parentPath} = path;
@@ -54241,11 +54269,11 @@ assignmentExpressionComments.maybeInsideReturnWithCommentEnd = (path, {print, in
 
 var printSeparator = {};
 
-const {types: types$S} = bundle$1;
+const {types: types$T} = bundle$1;
 const {
     isAssignmentExpression: isAssignmentExpression$2,
     isExpressionStatement: isExpressionStatement$5,
-} = types$S;
+} = types$T;
 
 printSeparator.printSeparator = (path, {print}) => {
     if (isMultiline(path))
@@ -54318,11 +54346,11 @@ var operate = {};
 
 var getBinding$3 = {};
 
-const {types: types$R} = bundle$1;
+const {types: types$S} = bundle$1;
 const {
     isIdentifier: isIdentifier$c,
     isMemberExpression: isMemberExpression$7,
-} = types$R;
+} = types$S;
 
 const isString$e = (a) => typeof a === 'string';
 
@@ -54349,13 +54377,13 @@ const parseName$1 = (node) => {
 
 var isSimple$2 = {};
 
-const {types: types$Q} = bundle$1;
+const {types: types$R} = bundle$1;
 const {
     isOptionalMemberExpression: isOptionalMemberExpression$2,
     isMemberExpression: isMemberExpression$6,
     isIdentifier: isIdentifier$b,
     isLiteral: isLiteral$4,
-} = types$Q;
+} = types$R;
 
 isSimple$2.isSimple = (a) => {
     if (isLiteral$4(a))
@@ -54372,7 +54400,7 @@ isSimple$2.isSimple = (a) => {
 
 var extract$6 = {};
 
-const {types: types$P} = bundle$1;
+const {types: types$Q} = bundle$1;
 const {
     isArrayExpression: isArrayExpression$5,
     isLiteral: isLiteral$3,
@@ -54388,7 +54416,7 @@ const {
     isTSTypeReference: isTSTypeReference$3,
     isTSTypeParameter: isTSTypeParameter$1,
     isTSAsExpression: isTSAsExpression$1,
-} = types$P;
+} = types$Q;
 
 extract$6.extract = extract$5;
 
@@ -54809,13 +54837,13 @@ var properties = {};
 
 var traverseProperties$4 = {};
 
-const {traverse: traverse$a, types: types$O} = bundle$1;
+const {traverse: traverse$a, types: types$P} = bundle$1;
 const {extract: extract$3} = extract$6;
 
 const {
     isCallExpression: isCallExpression$8,
     isObjectExpression: isObjectExpression$6,
-} = types$O;
+} = types$P;
 
 const nodeOrPath = (path) => path.node || path;
 
@@ -54955,13 +54983,13 @@ var replaceWithMultiple$3 = {};
 
 var maybeBody$2 = {};
 
-const {types: types$N} = bundle$1;
+const {types: types$O} = bundle$1;
 const {
     isStatement: isStatement$8,
     isBlockStatement: isBlockStatement$6,
     blockStatement: blockStatement$4,
     expressionStatement: expressionStatement$8,
-} = types$N;
+} = types$O;
 
 maybeBody$2.maybeBody = (path, node) => {
     const {parentPath} = path;
@@ -54982,12 +55010,12 @@ maybeBody$2.maybeBody = (path, node) => {
 
 var toExpression$4 = {};
 
-const {types: types$M} = bundle$1;
+const {types: types$N} = bundle$1;
 const {
     isExpression: isExpression$4,
     toStatement: toStatement$1,
     expressionStatement: expressionStatement$7,
-} = types$M;
+} = types$N;
 
 toExpression$4.toExpression = (el) => {
     const {type} = el;
@@ -55108,7 +55136,7 @@ replaceWith$8.replaceWith = replaceWith$6;
 replaceWith$8.replaceWithMultiple = replaceWithMultiple$2;
 replaceWith$8.toExpression = toExpression$2;
 
-const {types: types$L} = bundle$1;
+const {types: types$M} = bundle$1;
 
 const {getBinding: getBinding$1, getBindingPath} = getBinding$3;
 const {isSimple: isSimple$1} = isSimple$2;
@@ -55141,7 +55169,7 @@ const {
     isExportDeclaration: isExportDeclaration$5,
     isStatement: isStatement$7,
     expressionStatement: expressionStatement$6,
-} = types$L;
+} = types$M;
 
 operate.getBinding = getBinding$1;
 operate.getBindingPath = getBindingPath;
@@ -55227,7 +55255,7 @@ operate.isESM = (path) => {
 };
 
 const {isSimple} = operate;
-const {types: types$K} = bundle$1;
+const {types: types$L} = bundle$1;
 
 const {
     isStringAndMember,
@@ -55250,7 +55278,7 @@ const {
     isStringLiteral: isStringLiteral$7,
     isSpreadElement: isSpreadElement$2,
     isIdentifier: isIdentifier$9,
-} = types$K;
+} = types$L;
 
 const {round: round$1} = Math;
 
@@ -55541,13 +55569,13 @@ newline.isCurrentNewLine = (path) => {
 
 var indent = {};
 
-const {types: types$J} = bundle$1;
+const {types: types$K} = bundle$1;
 const {isIndented} = is$4;
 
 const {
     isStringLiteral: isStringLiteral$6,
     isArrayExpression: isArrayExpression$3,
-} = types$J;
+} = types$K;
 
 const isInsideArray$1 = (path) => path.parentPath.isArrayExpression();
 
@@ -55619,7 +55647,7 @@ isObjectAfterSimple$1.isNextSimple = (a) => {
     return SIMPLE_TYPES.includes(type);
 };
 
-const {types: types$I} = bundle$1;
+const {types: types$J} = bundle$1;
 const {
     isCoupleLines: isCoupleLines$4,
     isStringAndIdentifier,
@@ -55654,7 +55682,7 @@ const {
     isFunction: isFunction$6,
     isCallExpression: isCallExpression$6,
     isObjectProperty: isObjectProperty$1,
-} = types$I;
+} = types$J;
 
 const isNextString = (path) => isStringLiteral$5(path.getNextSibling());
 const isPrevString = (path) => isStringLiteral$5(path.getPrevSibling());
@@ -55935,10 +55963,10 @@ maybeWriteBrace.condition = (path, printer, semantics) => {
 var sequenceExpressionComments = {};
 
 const {hasLeadingComment} = is$4;
-const noop$4 = () => {};
+const noop$5 = () => {};
 
-sequenceExpressionComments.printLeadingCommentLine = noop$4;
-sequenceExpressionComments.printLeadingCommentBlock = noop$4;
+sequenceExpressionComments.printLeadingCommentLine = noop$5;
+sequenceExpressionComments.printLeadingCommentBlock = noop$5;
 
 sequenceExpressionComments.maybePrintComments = (path, {print}) => {
     if (hasLeadingComment(path)) {
@@ -56074,12 +56102,12 @@ var logicalExpression$1 = {};
 
 var chain$2 = {};
 
-const {types: types$H} = bundle$1;
+const {types: types$I} = bundle$1;
 const {
     isLogicalExpression: isLogicalExpression$1,
     isReturnStatement: isReturnStatement$3,
     isVariableDeclarator: isVariableDeclarator$2,
-} = types$H;
+} = types$I;
 
 chain$2.isRootOk = (path) => {
     return isReturnStatement$3(path) || isVariableDeclarator$2(path);
@@ -56225,8 +56253,8 @@ function createImportExpression$1(path, printer) {
 
 var parenthesizedExpression$3 = {};
 
-const {types: types$G} = bundle$1;
-const {isJSXElement: isJSXElement$5} = types$G;
+const {types: types$H} = bundle$1;
+const {isJSXElement: isJSXElement$5} = types$H;
 
 const condition$2 = (path) => {
     const {expression} = path.node;
@@ -56327,12 +56355,12 @@ var expressionStatement$5 = {exports: {}};
 
 var isInsideAssignNextAssignFunction = {};
 
-const {types: types$F} = bundle$1;
+const {types: types$G} = bundle$1;
 const {
     isExpressionStatement: isExpressionStatement$4,
     isFunction: isFunction$5,
     isAssignmentExpression: isAssignmentExpression$1,
-} = types$F;
+} = types$G;
 
 isInsideAssignNextAssignFunction.isInsideAssignNextAssignFunction = (path) => {
     const {expression} = path.node;
@@ -56361,14 +56389,14 @@ isInsideAssignNextAssignFunction.isInsideAssignNextAssignFunction = (path) => {
 
 var expressionStatementComments = {};
 
-const {types: types$E} = bundle$1;
+const {types: types$F} = bundle$1;
 const {hasTrailingComment: hasTrailingComment$1} = is$4;
 
 const {
     isBlockStatement: isBlockStatement$5,
     isProgram: isProgram$5,
     isIfStatement: isIfStatement$1,
-} = types$E;
+} = types$F;
 
 expressionStatementComments.printLeadingCommentLine = (path, printer, semantics, {index, isLast, printComment}) => {
     const {print, indent} = printer;
@@ -56624,7 +56652,7 @@ maybeSpaceAfterKeyword$3.maybeSpaceAfterKeyword = (path, {write}) => {
     write(' ');
 };
 
-const {types: types$D} = bundle$1;
+const {types: types$E} = bundle$1;
 const {
     isNext: isNext$j,
     isCoupleLines: isCoupleLines$3,
@@ -56640,7 +56668,7 @@ const {isConcatenation} = concatenate$1;
 const {parseLeadingComments: parseLeadingComments$2} = comment;
 const {maybeDeclare: maybeDeclare$4} = maybeDeclare$6;
 
-const {isExportDeclaration: isExportDeclaration$4} = types$D;
+const {isExportDeclaration: isExportDeclaration$4} = types$E;
 
 const isParentTSModuleBlock = (path) => path.parentPath.isTSModuleBlock();
 const isParentBlock$2 = (path) => /Program|BlockStatement|Export|LabeledStatement/.test(path.parentPath.type);
@@ -56840,7 +56868,7 @@ const isNextAssign = (path) => {
 
 var ifStatement$1 = {};
 
-const {types: types$C} = bundle$1;
+const {types: types$D} = bundle$1;
 
 const {markAfter: markAfter$9} = mark;
 const {
@@ -56856,7 +56884,7 @@ const {
     isExpressionStatement: isExpressionStatement$3,
     isReturnStatement: isReturnStatement$2,
     isContinueStatement: isContinueStatement$1,
-} = types$C;
+} = types$D;
 
 const isStatementNotExpression = (path) => {
     if (isBlockStatement$4(path))
@@ -57068,14 +57096,14 @@ getDirectives$2.getDirectives = (path) => !path.node.directives ? [] : path.get(
 
 var isCallInsideChain$1 = {};
 
-const {types: types$B} = bundle$1;
+const {types: types$C} = bundle$1;
 const {isLooksLikeChain} = isLooksLikeChain$4;
 const {
     isReturnStatement: isReturnStatement$1,
     isExpressionStatement: isExpressionStatement$2,
     isMemberExpression: isMemberExpression$4,
     isCallExpression: isCallExpression$5,
-} = types$B;
+} = types$C;
 
 isCallInsideChain$1.isCallInsideChain = (path) => {
     if (!isCallExpression$5(path.parentPath.parentPath))
@@ -57115,7 +57143,7 @@ function isTopCall(path) {
     return isExpressionStatement$2(parentPath);
 }
 
-const {types: types$A} = bundle$1;
+const {types: types$B} = bundle$1;
 const {
     isNext: isNext$g,
     isParentProgram,
@@ -57138,7 +57166,7 @@ const {
     isDoWhileStatement: isDoWhileStatement$1,
     isBlockStatement: isBlockStatement$3,
     isArrayExpression: isArrayExpression$2,
-} = types$A;
+} = types$B;
 
 const isFirstStatement = (path) => path.node.body[0];
 const isFirstDirective = (path) => path.node.directives?.[0];
@@ -57343,7 +57371,7 @@ maybeSpaceAfterKeyword$1.maybeSpaceAfterKeyword = (path, {print}, semantics) => 
     print(' ');
 };
 
-const {types: types$z} = bundle$1;
+const {types: types$A} = bundle$1;
 
 const {isInsideLabel: isInsideLabel$4} = is$4;
 const {
@@ -57355,7 +57383,7 @@ const {
 const {hasPrevNewline: hasPrevNewline$1} = mark;
 const {maybeSpaceAfterKeyword} = maybeSpaceAfterKeyword$1;
 
-const {isJSXElement: isJSXElement$4} = types$z;
+const {isJSXElement: isJSXElement$4} = types$A;
 const isBodyLength = ({parentPath}) => parentPath.node?.body?.length > 2;
 
 const isInsideIfWithElse = ({parentPath}) => parentPath.isIfStatement() && parentPath.node.alternate;
@@ -57602,8 +57630,8 @@ importAttribute$1.printAttributes = (path, keyword, {write, traverse, indent}) =
 
 var importDeclarationComments = {};
 
-const {types: types$y} = bundle$1;
-const {isExportDeclaration: isExportDeclaration$2} = types$y;
+const {types: types$z} = bundle$1;
+const {isExportDeclaration: isExportDeclaration$2} = types$z;
 
 importDeclarationComments.printTrailingCommentLine = (path, printer, semantics, {printComment}) => {
     const {print} = printer;
@@ -57768,7 +57796,7 @@ importDeclarationExports.default;
 
 var exportDeclaration = {};
 
-const {types: types$x} = bundle$1;
+const {types: types$y} = bundle$1;
 
 const {isParentBlock: isParentBlock$1} = is$4;
 const {
@@ -57788,7 +57816,7 @@ const {
     isExportNamespaceSpecifier: isExportNamespaceSpecifier$1,
     isVariableDeclaration: isVariableDeclaration$4,
     isExportNamedDeclaration: isExportNamedDeclaration$3,
-} = types$x;
+} = types$y;
 
 const isDeclarationNewline = (path) => isMarkedAfter(path.get('declaration'));
 const isInsideNamespace$1 = (path) => path.parentPath.isTSModuleBlock();
@@ -58072,13 +58100,13 @@ forInStatement$1.ForInStatement = (path, {print, indent}) => {
 
 var exportDefaultDeclaration$1 = {};
 
-const {types: types$w} = bundle$1;
+const {types: types$x} = bundle$1;
 const {isNext: isNext$a} = is$4;
 
 const {
     isVariableDeclaration: isVariableDeclaration$3,
     isFunction: isFunction$4,
-} = types$w;
+} = types$x;
 
 function shouldAddSemicolon(path) {
     if (path.isClassDeclaration())
@@ -58646,8 +58674,8 @@ tsTypeAliasDeclaration$1.TSTypeAliasDeclaration = {
 
 var tsMappedType$1 = {};
 
-const {types: types$v} = bundle$1;
-const {isTSConditionalType: isTSConditionalType$1} = types$v;
+const {types: types$w} = bundle$1;
+const {isTSConditionalType: isTSConditionalType$1} = types$w;
 
 tsMappedType$1.TSMappedType = (path, {print, indent, maybe}) => {
     const {
@@ -58757,7 +58785,7 @@ tsTypeParameter$1.TSTypeParameter = (path, {write, traverse}) => {
 
 var tsDeclareFunction$1 = {};
 
-const {printParams: printParams$7} = params;
+const {printParams: printParams$8} = params;
 const {isNext: isNext$7} = is$4;
 const {maybeDeclare: maybeDeclare$2} = maybeDeclare$6;
 
@@ -58780,7 +58808,7 @@ tsDeclareFunction$1.TSDeclareFunction = {
         print('function ');
         print('__id');
         
-        printParams$7(path, printer, semantics);
+        printParams$8(path, printer, semantics);
         
         print(':');
         print.space();
@@ -58797,7 +58825,7 @@ tsDeclareFunction$1.TSDeclareFunction = {
 
 var tsDeclareMethod$1 = {};
 
-const {printParams: printParams$6} = params;
+const {printParams: printParams$7} = params;
 
 tsDeclareMethod$1.TSDeclareMethod = (path, printer, semantics) => {
     const {print} = printer;
@@ -58819,7 +58847,7 @@ tsDeclareMethod$1.TSDeclareMethod = (path, printer, semantics) => {
     
     print('__key');
     
-    printParams$6(path, printer, semantics);
+    printParams$7(path, printer, semantics);
     
     if (returnType) {
         print(':');
@@ -58872,7 +58900,7 @@ tsModuleDeclaration$1.TSModuleBlock = (path, {print, traverse, indent}) => {
 
 var tsInterfaceDeclaration$1 = {};
 
-const {types: types$u} = bundle$1;
+const {types: types$v} = bundle$1;
 
 const {isNext: isNext$5, isNextParent: isNextParent$1} = is$4;
 const {maybeDeclare} = maybeDeclare$6;
@@ -58882,20 +58910,26 @@ const {
     isTSTypeAliasDeclaration: isTSTypeAliasDeclaration$1,
     isExportNamedDeclaration: isExportNamedDeclaration$2,
     isTSModuleBlock: isTSModuleBlock$2,
-} = types$u;
+} = types$v;
 
 const isInsideNamespace = (path) => isTSModuleBlock$2(path.parentPath.parentPath);
 
 tsInterfaceDeclaration$1.TSInterfaceDeclaration = {
     print: maybeDeclare((path, {print, maybe}) => {
         const {node} = path;
+        const {typeParameters} = node;
         
         maybe.indent(!isExportNamedDeclaration$2(path.parentPath));
         print('interface ');
         print('__id');
         
+        print('__typeParameters');
+        
         if (node.extends) {
-            print(' extends ');
+            if (!typeParameters || typeParameters.length < 2)
+                print(' ');
+            
+            print('extends ');
             
             const extendsPaths = path.get('extends');
             const n = extendsPaths.length - 1;
@@ -58906,7 +58940,6 @@ tsInterfaceDeclaration$1.TSInterfaceDeclaration = {
             }
         }
         
-        print('__typeParameters');
         print('__body');
     }),
     afterSatisfy: () => [isNext$5, isNextParent$1],
@@ -58924,13 +58957,13 @@ tsInterfaceDeclaration$1.TSInterfaceDeclaration = {
 
 var tsAsExpression$1 = {};
 
-const {types: types$t} = bundle$1;
+const {types: types$u} = bundle$1;
 const {maybeParens: maybeParens$4} = maybeParens$e;
 
 const {
     isVariableDeclarator: isVariableDeclarator$1,
     isObjectExpression: isObjectExpression$2,
-} = types$t;
+} = types$u;
 
 tsAsExpression$1.TSAsExpression = maybeParens$4((path, {print, maybe}) => {
     const is = isParens(path);
@@ -59057,7 +59090,7 @@ printReturnType$5.printReturnType = (path, {traverse}) => {
     traverse(path.get('returnType'));
 };
 
-const {printParams: printParams$5} = params;
+const {printParams: printParams$6} = params;
 const {printReturnType: printReturnType$4} = printReturnType$5;
 
 const {maybeParens: maybeParens$3} = maybeParens$e;
@@ -59065,7 +59098,7 @@ const {maybeParens: maybeParens$3} = maybeParens$e;
 tsFunctionType$1.TSFunctionType = maybeParens$3((path, printer, semantics) => {
     const {print} = printer;
     
-    printParams$5(path, printer, semantics);
+    printParams$6(path, printer, semantics);
     print.space();
     print('=>');
     print.space();
@@ -59184,7 +59217,7 @@ tsNamedTupleMember$1.TSNamedTupleMember = (path, {print}) => {
 
 var tsConstructorType$1 = {};
 
-const {printParams: printParams$4} = params;
+const {printParams: printParams$5} = params;
 const {printReturnType: printReturnType$3} = printReturnType$5;
 
 tsConstructorType$1.TSConstructorType = (path, printer, semantics) => {
@@ -59193,7 +59226,7 @@ tsConstructorType$1.TSConstructorType = (path, printer, semantics) => {
     print('new');
     print(' ');
     
-    printParams$4(path, printer, semantics);
+    printParams$5(path, printer, semantics);
     print.space();
     print('=>');
     print.space();
@@ -59203,11 +59236,11 @@ tsConstructorType$1.TSConstructorType = (path, printer, semantics) => {
 var tsCallSignatureDeclaration$1 = {};
 
 const {printReturnType: printReturnType$2} = printReturnType$5;
-const {printParams: printParams$3} = params;
+const {printParams: printParams$4} = params;
 
 tsCallSignatureDeclaration$1.TSCallSignatureDeclaration = (path, printer, semantics) => {
     const {print} = printer;
-    printParams$3(path, printer, semantics);
+    printParams$4(path, printer, semantics);
     print(':');
     print.space();
     printReturnType$2(path, printer);
@@ -59217,7 +59250,7 @@ tsCallSignatureDeclaration$1.TSCallSignatureDeclaration = (path, printer, semant
 
 var tsConstructSignatureDeclaration$1 = {};
 
-const {printParams: printParams$2} = params;
+const {printParams: printParams$3} = params;
 
 const {
     hasReturnType: hasReturnType$1,
@@ -59228,7 +59261,7 @@ tsConstructSignatureDeclaration$1.TSConstructSignatureDeclaration = (path, print
     const {write} = printer;
     
     write('new');
-    printParams$2(path, printer, semantics);
+    printParams$3(path, printer, semantics);
     
     if (hasReturnType$1(path)) {
         write(':');
@@ -59242,7 +59275,7 @@ tsConstructSignatureDeclaration$1.TSConstructSignatureDeclaration = (path, print
 
 var tsMethodSignature$1 = {};
 
-const {printParams: printParams$1} = params;
+const {printParams: printParams$2} = params;
 const {printKind} = kind;
 const {
     hasReturnType,
@@ -59256,7 +59289,7 @@ tsMethodSignature$1.TSMethodSignature = (path, printer, semantics) => {
     
     printKind(path, printer);
     printKey(path, printer);
-    printParams$1(path, printer, semantics);
+    printParams$2(path, printer, semantics);
     
     if (hasReturnType(path)) {
         write(':');
@@ -59428,6 +59461,57 @@ var tsParameterProperty$1 = {exports: {}};
 var tsParameterPropertyExports = tsParameterProperty$1.exports;
 tsParameterPropertyExports.default;
 
+var tsTypeParameterDeclaration$1 = {};
+
+const {types: types$t} = bundle$1;
+const {createPrintSpace} = printFunctionParams$1;
+const {printParams: printParams$1} = params;
+const {isTSUnionType: isTSUnionType$1} = types$t;
+const noop$4 = () => {};
+
+tsTypeParameterDeclaration$1.TSTypeParameterDeclaration = (path, printer, semantics) => {
+    const {print, indent} = printer;
+    const isNewline = hasComplexParameters(path);
+    const printSpace = createPrintSpace({
+        isNewline,
+        printer,
+    });
+    
+    const printAfterOpen = !isNewline ? noop$4 : () => {
+        indent.inc();
+        print.breakline();
+    };
+    
+    const printAfterClose = !isNewline ? noop$4 : () => {
+        print.breakline();
+    };
+    
+    const printBeforeClose = !isNewline ? noop$4 : () => {
+        indent.dec();
+        print.breakline();
+    };
+    
+    printParams$1(path, printer, semantics, {
+        printSpace,
+        braceOpen: '<',
+        braceClose: '>',
+        printAfterOpen,
+        printBeforeClose,
+        printAfterClose,
+    });
+};
+
+function hasComplexParameters({node}) {
+    const {params} = node;
+    
+    for (const {constraint} of params) {
+        if (isTSUnionType$1(constraint))
+            return true;
+    }
+    
+    return false;
+}
+
 var tsTypeQuery$1 = {};
 
 const {maybeParens} = maybeParens$e;
@@ -59500,6 +59584,7 @@ const {TSExportAssignment: TSExportAssignment$1} = tsExportAssignment$1;
 const {TSTypeReference: TSTypeReference$1} = tsTypeReference$1;
 const {TSInferType: TSInferType$2} = tsInferType$1;
 const {TSParameterProperty: TSParameterProperty$1} = tsParameterPropertyExports;
+const {TSTypeParameterDeclaration: TSTypeParameterDeclaration$1} = tsTypeParameterDeclaration$1;
 const {TSTypeQuery: TSTypeQuery$1} = tsTypeQuery$1;
 const {TSParenthesizedType: TSParenthesizedType$1} = tsParenthesizedType$3;
 const {TSTemplateLiteralType: TSTemplateLiteralType$1} = tsTemplateLiteralType$1;
@@ -59522,6 +59607,7 @@ var typescript$3 = {
     TSTypeQuery: TSTypeQuery$1,
     TSTemplateLiteralType: TSTemplateLiteralType$1,
     TSOptionalType: TSOptionalType$1,
+    TSTypeParameterDeclaration: TSTypeParameterDeclaration$1,
     TSBigIntKeyword(path, {write}) {
         write('bigint');
     },
@@ -59548,12 +59634,6 @@ var typescript$3 = {
     TSRestType(path, {print}) {
         print('...');
         print('__typeAnnotation');
-    },
-    TSTypeParameterDeclaration(path, printer, semantics) {
-        printParams(path, printer, semantics, {
-            braceOpen: '<',
-            braceClose: '>',
-        });
     },
     TSTypeParameterInstantiation(path, printer, semantics) {
         printParams(path, printer, semantics, {
@@ -59992,7 +60072,7 @@ const constant = (a) => () => a;
 const {keys: keys$4} = Object;
 
 var rendy$1 = (template, values, modifiers) => {
-    check$h(template, values);
+    check$i(template, values);
     
     let result = template;
     
@@ -60012,7 +60092,7 @@ var rendy$1 = (template, values, modifiers) => {
     return result;
 };
 
-function check$h(template, values) {
+function check$i(template, values) {
     if (!isString$c(template))
         throw Error('template should be a string!');
     
@@ -60168,7 +60248,7 @@ function snakeCase(str) {
 const process$1 = require$$0$3;
 const toSnakeCase = justSnakeCase;
 const {codeFrameColumns: codeFrameColumns$2} = bundle$1;
-const {TYPES: TYPES$3} = types$19;
+const {TYPES: TYPES$3} = types$1a;
 
 const {stringify: stringify$7} = JSON;
 const {
@@ -60355,7 +60435,7 @@ const initSemantics = (format, semantics = {}) => ({
 const fullstore$2 = fullstore$3;
 
 const babelTraverse$2 = bundle$1.traverse;
-const {TYPES: TYPES$2} = types$19;
+const {TYPES: TYPES$2} = types$1a;
 const baseVisitors = visitors$2;
 
 const {
@@ -60816,7 +60896,7 @@ const {maybeVisitor} = maybe;
 const visitors$1 = visitors$2;
 
 printer.print = (ast, overrides = {}) => {
-    check$g(ast);
+    check$h(ast);
     
     const options = maybeJSON(ast, overrides);
     const tokens = tokenize$1(ast, options);
@@ -60827,7 +60907,7 @@ printer.print = (ast, overrides = {}) => {
 printer.visitors = visitors$1;
 printer.maybeVisitor = maybeVisitor;
 
-function check$g(ast) {
+function check$h(ast) {
     if (typeof ast !== 'object')
         throw Error('☝️Looks like ast not an object');
 }
@@ -60837,7 +60917,7 @@ var babel$2 = {};
 const isString$a = (a) => typeof a === 'string';
 
 var alignSpaces = (str) => {
-    check$f(str);
+    check$g(str);
     
     const array = str.split('\n');
     const n = array.length - 1;
@@ -60881,7 +60961,7 @@ function getSpaces(s) {
     return spaces;
 }
 
-function check$f(str) {
+function check$g(str) {
     if (!isString$a(str))
         throw Error('str should be a string!');
 }
@@ -111053,7 +111133,7 @@ const {assign: assign$4} = Object;
 const isString$8 = (a) => typeof a === 'string';
 
 var parse$5 = (source, options) => {
-    check$e(source);
+    check$f(source);
     
     const {
         parser,
@@ -111091,7 +111171,7 @@ const getParser = ({parser = 'babel', isTS, isJSX, printer}) => ({
     },
 });
 
-function check$e(source) {
+function check$f(source) {
     if (!isString$8(source))
         throw Error(`☝️ Looks like type of 'source' is not 'string', but '${typeof source}'`);
 }
@@ -111597,7 +111677,7 @@ var _polyfillNode_path$1 = /*#__PURE__*/Object.freeze({
 var require$$0$2 = /*@__PURE__*/getAugmentedNamespace(_polyfillNode_path$1);
 
 var tryToCatch$1 = async (fn, ...args) => {
-    check$d(fn);
+    check$e(fn);
     
     try {
         return [null, await fn(...args)];
@@ -111606,7 +111686,7 @@ var tryToCatch$1 = async (fn, ...args) => {
     }
 };
 
-function check$d(fn) {
+function check$e(fn) {
     if (typeof fn !== 'function')
         throw Error('fn should be a function!');
 }
@@ -111768,7 +111848,7 @@ parseRules$2.parseRules = (rules) => {
     const plugin = null;
     const msg = '';
     
-    check$c(rules);
+    check$d(rules);
     
     for (const [rule, value] of entries$8(rules)) {
         if (isStr$3(value)) {
@@ -111870,7 +111950,7 @@ parseRules$2.enableNestedRules = (rules) => {
     return newRules;
 };
 
-function check$c(rules) {
+function check$d(rules) {
     if (isArray$b(rules))
         throw Error(`☝️Looks like type of 'rules' passed to @putout/engine-loader is 'array', expected: 'object'.`);
 }
@@ -111998,26 +112078,26 @@ var rules = {
     getLoadedRules: getLoadedRules$1,
 };
 
-var check$b = {};
+var check$c = {};
 
 const isString$7 = (a) => typeof a === 'string';
 
-check$b.check = (options) => {
+check$c.check = (options) => {
     if (!options || typeof options !== 'object')
         throw Error('options should be an object!');
 };
 
-check$b.checkRule = (rule) => {
+check$c.checkRule = (rule) => {
     if (!isString$7(rule))
         throw Error(`☝️ Looks like plugin name type is not 'string', but: '${typeof rule}'`);
 };
 
 const {parsePluginNames: parsePluginNames$1} = parsePluginNames$2;
 const {validateRules} = rules;
-const {check: check$a} = check$b;
+const {check: check$b} = check$c;
 
 validateRulesRelations$2.validateRulesRelations = (options) => {
-    check$a(options);
+    check$b(options);
     
     const {pluginNames = [], rules = {}} = options;
     const items = parsePluginNames$1(pluginNames);
@@ -112128,12 +112208,12 @@ const validatePlugin$1 = validatePlugin$2;
 const {filterEnabledPlugins: filterEnabledPlugins$1} = filterEnabledPlugins$2;
 
 const {createAsyncLoader: createAsyncLoader$2} = asyncLoader;
-const {check: check$9, checkRule: checkRule$1} = check$b;
+const {check: check$a, checkRule: checkRule$1} = check$c;
 
 const loadPluginAsync = createAsyncLoader$2('plugin');
 
 loadPluginsAsync$1.loadPluginsAsync = async (options) => {
-    check$9(options);
+    check$a(options);
     
     const {pluginNames = [], rules = {}} = options;
     const {
@@ -112342,12 +112422,12 @@ const {prepareRules} = prepareRules$2;
 const {isEnabled} = rules;
 
 const {filterEnabledPlugins} = filterEnabledPlugins$2;
-const {check: check$8, checkRule} = check$b;
+const {check: check$9, checkRule} = check$c;
 
 const {isArray: isArray$9} = Array;
 
 loadPlugins$2.loadPlugins = (options) => {
-    check$8(options);
+    check$9(options);
     
     const {pluginNames = [], rules = {}} = options;
     const {
@@ -112474,10 +112554,10 @@ const {createAsyncLoader: createAsyncLoader$1} = asyncLoader;
 
 const parseProcessorNames = parseProcessorNames$1;
 
-const {check: check$7} = check$b;
+const {check: check$8} = check$c;
 
 loadProcessorsAsync$1.loadProcessorsAsync = async (options, load) => {
-    check$7(options);
+    check$8(options);
     
     const {processors = []} = options;
     const parsedProcessors = parseProcessorNames(processors);
@@ -112957,7 +113037,7 @@ var jessy$1 = (selector, divider, value) => {
         divider = '.';
     }
     
-    check$6(selector, value);
+    check$7(selector, value);
     
     if (!selector)
         return value;
@@ -112990,7 +113070,7 @@ var jessy$1 = (selector, divider, value) => {
     return value;
 };
 
-function check$6(selector, obj) {
+function check$7(selector, obj) {
     if (!isString$6(selector))
         throw Error('selector should be string!');
     
@@ -113011,7 +113091,7 @@ var nessy$1 = (selector, value, divider, obj) => {
     
     const result = obj;
     
-    check$5(selector);
+    check$6(selector);
     
     const array = selector
         .split(divider)
@@ -113037,7 +113117,7 @@ var nessy$1 = (selector, value, divider, obj) => {
     return result;
 };
 
-function check$5(selector) {
+function check$6(selector) {
     if (!isString$5(selector))
         throw Error('selector should be string!');
 }
@@ -113121,14 +113201,14 @@ is$2.isTemplate = (a) => /[(;={.\s]/.test(a) || !/^[A-Z]/.test(a);
 
 is$2.is = (str, array = ALL) => {
     for (const item of array) {
-        if (check$4(str, item))
+        if (check$5(str, item))
             return true;
     }
     
     return false;
 };
 
-function check$4(str, item) {
+function check$5(str, item) {
     if (isStr$1(item))
         return str === item;
     
@@ -114881,7 +114961,7 @@ var watermark$1 = {exports: {}};
 const wrap = (fn) => (...a) => (...b) => fn(...a, ...b);
 
 var wraptile$1 = (fn, ...a) => {
-    check$3(fn);
+    check$4(fn);
     
     if (a.length)
         return wrap(fn)(...a);
@@ -114889,7 +114969,7 @@ var wraptile$1 = (fn, ...a) => {
     return wrap(fn);
 };
 
-function check$3(fn) {
+function check$4(fn) {
     if (typeof fn !== 'function')
         throw Error('fn should be a function!');
 }
@@ -116147,7 +116227,7 @@ function buildTree(path, list) {
     for (const filePath of files) {
         const filename = getFilename$3(filePath);
         
-        check$2(filename);
+        check$3(filename);
         
         const type = getFileType$1(filePath);
         const dir = dirname(filename);
@@ -116169,7 +116249,7 @@ function buildTree(path, list) {
     replaceWith$1(path, root);
 }
 
-function check$2(filename) {
+function check$3(filename) {
     if (!filename.includes('/'))
         throw Error(`☝️ Looks like directory path is missing: '${filename}'`);
 }
@@ -124161,12 +124241,20 @@ var transformRegexp = {};
 
 const regexpTree = regexpTree$2;
 
-transformRegexp.transformRegExp = (str, {report, traverse, fix}) => {
+transformRegexp.transformRegExp = (str, regExpTransformer) => {
+    check$2(regExpTransformer);
+    
+    const {
+        report,
+        traverse,
+        fix,
+    } = regExpTransformer;
     const ast = regexpTree.parse(str, {
         captureLocations: true,
     });
     
     const places = [];
+    
     const push = (path) => {
         const {start} = (path.path || path).node.loc;
         
@@ -124187,6 +124275,11 @@ transformRegexp.transformRegExp = (str, {report, traverse, fix}) => {
         places,
     ];
 };
+
+function check$2(regExpTransformer) {
+    if (!regExpTransformer)
+        throw Error('☝️ Looks like RegExpTransformer is missing');
+}
 
 const isSimpleRegExp = isSimpleRegexp;
 const {transformRegExp} = transformRegexp;
