@@ -111585,7 +111585,8 @@ const simpleImport = async (url) => {
 };
 
 const {createRequire: createRequire$1} = module$1;
-const require$2 = createRequire$1(import.meta.url);
+
+const require$1 = createRequire$1(import.meta.url);
 const {assign: assign$3} = Object;
 const stub$2 = () => () => {};
 
@@ -111602,7 +111603,7 @@ const createAsyncLoader = (type, overrides = {}) => {
             const shortName = name.replace('import:', '');
             
             return await cleverLoad([
-                require$2.resolve(shortName),
+                require$1.resolve(shortName),
             ], simpleImport$1);
         }
         
@@ -111633,7 +111634,7 @@ async function cleverLoad(names, load) {
             return reporter;
         
         if (e.code === 'ERR_UNSUPPORTED_DIR_IMPORT') {
-            const fullName = require$2.resolve(name);
+            const fullName = require$1.resolve(name);
             
             [e, reporter] = await tryToCatch$1(load, fullName);
             
@@ -112128,8 +112129,6 @@ function parseRuleName(rule) {
 }
 
 const {createRequire} = module$1;
-const require$1 = createRequire(import.meta.url);
-
 const {isArray: isArray$9} = Array;
 
 const loadPlugins = (options) => {
@@ -112212,7 +112211,8 @@ function extendRules(rule, plugin) {
 // add support of esm.sh
 // https://github.com/esm-dev/esm.sh/issues/1045
 function loadOnePlugin({name, namespace}) {
-    const {loadPlugin} = require$1('../load/load.js');
+    const require = createRequire(import.meta.url);
+    const {loadPlugin} = require('../load/load.js');
     
     return loadPlugin({
         name,
