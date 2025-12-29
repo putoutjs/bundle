@@ -1,3 +1,8 @@
+2025.12.29, v5.0.4
+
+feature:
+- 5a8b451 @putout/bundle: update createRequire
+
 2025.12.29, v5.0.3
 
 feature:
