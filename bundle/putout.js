@@ -182,7 +182,7 @@ function noop$8() {}
 
 var on = noop$8;
 var addListener = noop$8;
-var once$a = noop$8;
+var once$9 = noop$8;
 var off = noop$8;
 var removeListener = noop$8;
 var removeAllListeners = noop$8;
@@ -241,7 +241,7 @@ var browser$1$1 = {
   versions: versions,
   on: on,
   addListener: addListener,
-  once: once$a,
+  once: once$9,
   off: off,
   removeListener: removeListener,
   removeAllListeners: removeAllListeners,
@@ -273,7 +273,7 @@ var _polyfillNode_process = /*#__PURE__*/Object.freeze({
 	nextTick: nextTick,
 	off: off,
 	on: on,
-	once: once$a,
+	once: once$9,
 	platform: platform,
 	release: release,
 	removeAllListeners: removeAllListeners,
@@ -56462,9 +56462,9 @@ expressionStatementExports.default;
 
 var variableDeclaration$2 = {};
 
-var maybeSpaceAfterKeyword$3 = {};
+var maybeSpaceAfterKeyword$4 = {};
 
-maybeSpaceAfterKeyword$3.maybeSpaceAfterKeyword = (path, {write}) => {
+maybeSpaceAfterKeyword$4.maybeSpaceAfterKeyword = (path, {write}) => {
     const {declarations} = path.node;
     
     if (!declarations.length)
@@ -56488,7 +56488,7 @@ const {
 } = is$4;
 
 const {hasPrevNewline: hasPrevNewline$3} = mark;
-const {maybeSpaceAfterKeyword: maybeSpaceAfterKeyword$2} = maybeSpaceAfterKeyword$3;
+const {maybeSpaceAfterKeyword: maybeSpaceAfterKeyword$3} = maybeSpaceAfterKeyword$4;
 
 const {isConcatenation} = concatenate$1;
 const {parseLeadingComments: parseLeadingComments$2} = comment;
@@ -56514,7 +56514,7 @@ variableDeclaration$2.VariableDeclaration = {
         maybe.indent(isInsideBlock$3(path));
         
         write(path.node.kind);
-        maybeSpaceAfterKeyword$2(path, {
+        maybeSpaceAfterKeyword$3(path, {
             write,
         });
         
@@ -57168,16 +57168,16 @@ function isTry({parentPath}) {
 
 var returnStatement$2 = {};
 
-var maybeSpaceAfterKeyword$1 = {};
+var maybeSpaceAfterKeyword$2 = {};
 
-maybeSpaceAfterKeyword$1.maybeSpaceAfterKeyword = (path, {print}, semantics) => {
+maybeSpaceAfterKeyword$2.maybeSpaceAfterKeyword = (path, {print}, semantics) => {
     const {roundBraces} = semantics;
-    const {argument} = path.node;
+    const {node} = path;
     
-    if (!argument)
+    if (!node)
         return;
     
-    const {type} = argument;
+    const {type} = node;
     
     if (type === 'SequenceExpression' && roundBraces.sequence)
         return print.space();
@@ -57188,7 +57188,7 @@ maybeSpaceAfterKeyword$1.maybeSpaceAfterKeyword = (path, {print}, semantics) => 
     if (type === 'ArrayExpression' || type === 'ObjectExpression')
         return print.space();
     
-    if (type === 'UnaryExpression' && argument.operator === '!')
+    if (type === 'UnaryExpression' && node.operator === '!')
         return print.space();
     
     if (type === 'ArrowFunctionExpression' && roundBraces.arrow)
@@ -57207,7 +57207,7 @@ const {
 } = is$4;
 
 const {hasPrevNewline: hasPrevNewline$1} = mark;
-const {maybeSpaceAfterKeyword} = maybeSpaceAfterKeyword$1;
+const {maybeSpaceAfterKeyword: maybeSpaceAfterKeyword$1} = maybeSpaceAfterKeyword$2;
 
 const {isJSXElement: isJSXElement$4} = types$A;
 const isBodyLength = ({parentPath}) => parentPath.node?.body?.length > 2;
@@ -57226,7 +57226,10 @@ returnStatement$2.ReturnStatement = {
         
         maybe.indent(!isInsideLabel$4(path));
         print('return');
-        maybeSpaceAfterKeyword(path, printer, semantics);
+        
+        const arg = path.get('argument');
+        
+        maybeSpaceAfterKeyword$1(arg, printer, semantics);
         
         if (isJSXWithComment(path)) {
             print('(');
@@ -57837,6 +57840,8 @@ const {
 
 const {parseLeadingComments: parseLeadingComments$1} = comment;
 
+const {maybeSpaceAfterKeyword} = maybeSpaceAfterKeyword$2;
+
 switchStatement$1.SwitchStatement = {
     print(path, printer, semantics) {
         const {
@@ -57865,7 +57870,8 @@ switchStatement$1.SwitchStatement = {
             parseLeadingComments$1(switchCase, printer, semantics);
             
             if (exists$1(test)) {
-                write('case ');
+                write('case');
+                maybeSpaceAfterKeyword(test, printer, semantics);
                 traverse(test);
             } else {
                 write('default');
@@ -59955,7 +59961,7 @@ const constant = (a) => () => a;
 const {keys: keys$4} = Object;
 
 var rendy$1 = (template, values, modifiers) => {
-    check$i(template, values);
+    check$e(template, values);
     
     let result = template;
     
@@ -59975,7 +59981,7 @@ var rendy$1 = (template, values, modifiers) => {
     return result;
 };
 
-function check$i(template, values) {
+function check$e(template, values) {
     if (!isString$c(template))
         throw Error('template should be a string!');
     
@@ -60128,7 +60134,7 @@ function snakeCase(str) {
     .join('_');
 }
 
-const process$1 = require$$0$3;
+const process = require$$0$3;
 const toSnakeCase = justSnakeCase;
 const {codeFrameColumns: codeFrameColumns$2} = bundle$1;
 const {TYPES: TYPES$3} = types$19;
@@ -60185,7 +60191,7 @@ debug$8.createLog = ({newline = '\n', store = createStore$1()} = {}) => ({type, 
     }
     
     if (LOG_TERM)
-        process$1.stdout.write(value);
+        process.stdout.write(value);
 };
 
 function createStore$1() {
@@ -60779,7 +60785,7 @@ const {maybeVisitor} = maybe;
 const visitors$1 = visitors$2;
 
 printer.print = (ast, overrides = {}) => {
-    check$h(ast);
+    check$d(ast);
     
     const options = maybeJSON(ast, overrides);
     const tokens = tokenize$1(ast, options);
@@ -60790,7 +60796,7 @@ printer.print = (ast, overrides = {}) => {
 printer.visitors = visitors$1;
 printer.maybeVisitor = maybeVisitor;
 
-function check$h(ast) {
+function check$d(ast) {
     if (typeof ast !== 'object')
         throw Error('☝️Looks like ast not an object');
 }
@@ -60800,7 +60806,7 @@ var babel$2 = {};
 const isString$a = (a) => typeof a === 'string';
 
 var alignSpaces = (str) => {
-    check$g(str);
+    check$c(str);
     
     const array = str.split('\n');
     const n = array.length - 1;
@@ -60844,7 +60850,7 @@ function getSpaces(s) {
     return spaces;
 }
 
-function check$g(str) {
+function check$c(str) {
     if (!isString$a(str))
         throw Error('str should be a string!');
 }
@@ -110551,7 +110557,7 @@ function commonjsRequire(path) {
 
 var acorn$1 = {};
 
-var once$9 = {exports: {}};
+var once$8 = {exports: {}};
 
 // Returns a wrapper function that returns a wrapped callback
 // The wrapper function should do some stuff, and return a
@@ -110588,13 +110594,13 @@ function wrappy$1 (fn, cb) {
 }
 
 var wrappy = wrappy_1;
-once$9.exports = wrappy(once$8);
-once$9.exports.strict = wrappy(onceStrict);
+once$8.exports = wrappy(once$7);
+once$8.exports.strict = wrappy(onceStrict);
 
-once$8.proto = once$8(function () {
+once$7.proto = once$7(function () {
   Object.defineProperty(Function.prototype, 'once', {
     value: function () {
-      return once$8(this)
+      return once$7(this)
     },
     configurable: true
   });
@@ -110607,7 +110613,7 @@ once$8.proto = once$8(function () {
   });
 });
 
-function once$8 (fn) {
+function once$7 (fn) {
   var f = function () {
     if (f.called) return f.value
     f.called = true;
@@ -110630,7 +110636,7 @@ function onceStrict (fn) {
   return f
 }
 
-var onceExports = once$9.exports;
+var onceExports = once$8.exports;
 
 const noop$3 = () => {};
 
@@ -110639,7 +110645,7 @@ var empty = /*#__PURE__*/Object.freeze({
 	default: noop$3
 });
 
-var require$$1$1 = /*@__PURE__*/getAugmentedNamespace(empty);
+var require$$1$2 = /*@__PURE__*/getAugmentedNamespace(empty);
 
 // eslint-disable-next-line node/no-unsupported-features/es-syntax
 
@@ -110682,21 +110688,21 @@ function requireAcornStage3 () {
 
 	acornStage3 = function(Parser) {
 	  return Parser.extend(
-	    require$$1$1,
-	    require$$1$1,
+	    require$$1$2,
+	    require$$1$2,
 	    require$$2
 	  )
 	};
 	return acornStage3;
 }
 
-const once$7 = onceExports;
+const once$6 = onceExports;
 
-const initAcorn = once$7(() => {
-    const {Parser} = require$$1$1;
+const initAcorn = once$6(() => {
+    const {Parser} = require$$1$2;
     
     const stage3 = requireAcornStage3();
-    const typescript = require$$1$1.default;
+    const typescript = require$$1$2.default;
     
     return Parser.extend(typescript(), stage3);
 });
@@ -110752,14 +110758,14 @@ var options$1 = {
     allowImportExportEverywhere: true,
 };
 
-const once$6 = onceExports;
+const once$5 = onceExports;
 
 const plugins = plugins$1;
 const options = options$1;
 const {assign: assign$5} = Object;
 const getFlow = (a) => !a.indexOf('// @flow');
 const clean = (a) => a.filter(Boolean);
-const initBabel = once$6(() => bundle$1);
+const initBabel = once$5(() => bundle$1);
 
 babel$1.parse = function babelParse(source, overrides) {
     const {
@@ -110812,8 +110818,8 @@ function getBabelLangExts({isTS, isFlow, isJSX}) {
 
 var espree$1 = {};
 
-const once$5 = onceExports;
-const initEspree = once$5(() => require$$1$1);
+const once$4 = onceExports;
+const initEspree = once$4(() => require$$1$2);
 
 espree$1.parse = function espreeParse(source) {
     const {parse} = initEspree();
@@ -110833,8 +110839,8 @@ espree$1.parse = function espreeParse(source) {
 
 var esprima$1 = {};
 
-const once$4 = onceExports;
-const initEsprima = once$4(() => require$$1$1);
+const once$3 = onceExports;
+const initEsprima = once$3(() => require$$1$2);
 
 esprima$1.parse = function esprimaParse(source) {
     const {parse} = initEsprima();
@@ -110850,8 +110856,8 @@ esprima$1.parse = function esprimaParse(source) {
 
 var tenko$1 = {};
 
-const once$3 = onceExports;
-const initTenko = once$3(() => require$$1$1);
+const once$2 = onceExports;
+const initTenko = once$2(() => require$$1$2);
 
 tenko$1.parse = (source) => {
     const {Tenko} = initTenko();
@@ -110867,8 +110873,8 @@ tenko$1.parse = (source) => {
 
 var hermes$1 = {};
 
-const once$2 = onceExports;
-const initHermes = once$2(() => require$$1$1);
+const once$1 = onceExports;
+const initHermes = once$1(() => require$$1$2);
 
 hermes$1.parse = function hermesParse(source) {
     const parser = initHermes();
@@ -111016,7 +111022,7 @@ const {assign: assign$4} = Object;
 const isString$8 = (a) => typeof a === 'string';
 
 var parse$5 = (source, options) => {
-    check$f(source);
+    check$b(source);
     
     const {
         parser,
@@ -111054,7 +111060,7 @@ const getParser = ({parser = 'babel', isTS, isJSX, printer}) => ({
     },
 });
 
-function check$f(source) {
+function check$b(source) {
     if (!isString$8(source))
         throw Error(`☝️ Looks like type of 'source' is not 'string', but '${typeof source}'`);
 }
@@ -111179,12 +111185,12 @@ var nanoMemoize = /*#__PURE__*/Object.freeze({
 	nanomemoize: $cf838c15c8b009ba$export$22f15dd4e5be7e52
 });
 
-var require$$3 = /*@__PURE__*/getAugmentedNamespace(nanoMemoize);
+var require$$1$1 = /*@__PURE__*/getAugmentedNamespace(nanoMemoize);
 
 (function (module) {
 
 	const {types, template} = bundle$1;
-	const {nanomemoize} = require$$3;
+	const {nanomemoize} = require$$1$1;
 	const plugins = plugins$1;
 	const options = options$1;
 
@@ -111305,10 +111311,6 @@ shebang.cutShebang = (source) => {
 
 var defaultOptions$5 = {};
 
-var lib$1 = {};
-
-var asyncLoader = {};
-
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -111424,7 +111426,7 @@ function isAbsolute(path) {
 }
 
 // posix version
-function join$4() {
+function join$3() {
   var paths = Array.prototype.slice.call(arguments, 0);
   return normalize(filter$1(paths, function(p, index) {
     if (typeof p !== 'string') {
@@ -111499,7 +111501,7 @@ function dirname$2(path) {
   return root + dir;
 }
 
-function basename$3(path, ext) {
+function basename$2(path, ext) {
   var f = splitPath(path)[2];
   // TODO: make this comparison case-insensitive on windows?
   if (ext && f.substr(-1 * ext.length) === ext) {
@@ -111514,12 +111516,12 @@ function extname(path) {
 }
 var _polyfillNode_path = {
   extname: extname,
-  basename: basename$3,
+  basename: basename$2,
   dirname: dirname$2,
   sep: sep,
   delimiter: delimiter,
   relative: relative$1,
-  join: join$4,
+  join: join$3,
   isAbsolute: isAbsolute,
   normalize: normalize,
   resolve: resolve
@@ -111544,23 +111546,23 @@ var substr = 'ab'.substr(-1) === 'b' ?
 
 var _polyfillNode_path$1 = /*#__PURE__*/Object.freeze({
 	__proto__: null,
-	basename: basename$3,
+	basename: basename$2,
 	default: _polyfillNode_path,
 	delimiter: delimiter,
 	dirname: dirname$2,
 	extname: extname,
 	isAbsolute: isAbsolute,
-	join: join$4,
+	join: join$3,
 	normalize: normalize,
 	relative: relative$1,
 	resolve: resolve,
 	sep: sep
 });
 
-var require$$0$2 = /*@__PURE__*/getAugmentedNamespace(_polyfillNode_path$1);
+var module$1 = {};
 
-var tryToCatch$1 = async (fn, ...args) => {
-    check$e(fn);
+var tryToCatch = async (fn, ...args) => {
+    check$a(fn);
     
     try {
         return [null, await fn(...args)];
@@ -111569,70 +111571,71 @@ var tryToCatch$1 = async (fn, ...args) => {
     }
 };
 
-function check$e(fn) {
+function check$a(fn) {
     if (typeof fn !== 'function')
         throw Error('fn should be a function!');
 }
 
-var simpleImport$1 = {};
+var tryToCatch$1 = tryToCatch.default;
 
 // How in other way to mock import using mock require in CommonJS?
-simpleImport$1.simpleImport = async (url) => {
+const simpleImport = async (url) => {
     const result = await import(url);
     return result.default || result;
 };
 
-const process = require$$0$3;
-const {join: join$3} = require$$0$2;
-const once$1 = onceExports;
-const {nanomemoize} = require$$3;
-const tryToCatch = tryToCatch$1;
-const {simpleImport} = simpleImport$1;
-
+const {createRequire: createRequire$1} = module$1;
+const require$2 = createRequire$1(import.meta.url);
 const {assign: assign$3} = Object;
 const stub$2 = () => () => {};
 
-asyncLoader.createAsyncLoader = (type) => nanomemoize(async (name, load) => {
-    if (name === 'none')
-        return stub$2();
+const createAsyncLoader = (type, overrides = {}) => {
+    const {
+        simpleImport: simpleImport$1 = simpleImport,
+    } = overrides;
     
-    if (name.startsWith('import:')) {
-        const shortName = name.replace('import:', '');
+    return async (name) => {
+        if (name === 'none')
+            return stub$2();
         
-        return await cleverLoad([
-            require.resolve(shortName),
-        ], load);
-    }
-    
-    const namesBase = [
-        `@putout/${type}-${name}`,
-        `putout-${type}-${name}`,
-    ];
-    
-    const namesFromPluginsDirs = namesBase.flatMap(buildPluginsDirs);
-    
-    const names = Array.from(new Set([
-        ...namesBase,
-        ...namesFromPluginsDirs,
-    ]));
-    
-    return await cleverLoad(names, load);
-});
+        if (name.startsWith('import:')) {
+            const shortName = name.replace('import:', '');
+            
+            return await cleverLoad([
+                require$2.resolve(shortName),
+            ], simpleImport$1);
+        }
+        
+        const namesBase = [
+            `@putout/${type}-${name}`,
+            `putout-${type}-${name}`,
+        ];
+        
+        const namesFromPluginsDirs = namesBase.flatMap(buildPluginsDirs);
+        
+        const names = Array.from(new Set([
+            ...namesBase,
+            ...namesFromPluginsDirs,
+        ]));
+        
+        return await cleverLoad(names, simpleImport$1);
+    };
+};
 
-async function cleverLoad(names, load = simpleImport) {
+async function cleverLoad(names, load) {
     let e;
     let reporter;
     
     for (const name of names) {
-        [e, reporter] = await tryToCatch(load, name);
+        [e, reporter] = await tryToCatch$1(load, name);
         
         if (!e)
             return reporter;
         
         if (e.code === 'ERR_UNSUPPORTED_DIR_IMPORT') {
-            const fullName = require.resolve(name);
+            const fullName = require$2.resolve(name);
             
-            [e, reporter] = await tryToCatch(load, fullName);
+            [e, reporter] = await tryToCatch$1(load, fullName);
             
             if (!e)
                 return reporter;
@@ -111655,7 +111658,7 @@ async function cleverLoad(names, load = simpleImport) {
     throw e;
 }
 
-const getPutoutLoadDir = once$1(() => process.env.PUTOUT_LOAD_DIR);
+const getPutoutLoadDir = () => browser$1$1.env.PUTOUT_LOAD_DIR;
 
 function buildPluginsDirs(name) {
     const dir = getPutoutLoadDir();
@@ -111671,15 +111674,11 @@ function buildPluginsDirs(name) {
     ];
 }
 
-var validateRulesRelations$2 = {};
-
-var parsePluginNames$2 = {};
-
 const isStr$4 = (a) => typeof a === 'string';
 const {isArray: isArray$c} = Array;
 const {entries: entries$9} = Object;
 
-parsePluginNames$2.parsePluginNames = (plugins) => {
+const parsePluginNames = (plugins) => {
     const result = [];
     
     for (const plugin of plugins) {
@@ -111699,8 +111698,6 @@ parsePluginNames$2.parsePluginNames = (plugins) => {
     
     return result;
 };
-
-var parseRules$2 = {};
 
 const {isArray: isArray$b} = Array;
 const isBool$2 = (a) => typeof a === 'boolean';
@@ -111726,12 +111723,12 @@ const parseState = (rule, value) => {
     return value;
 };
 
-parseRules$2.parseRules = (rules) => {
+const parseRules = (rules) => {
     const result = [];
     const plugin = null;
     const msg = '';
     
-    check$d(rules);
+    check$9(rules);
     
     for (const [rule, value] of entries$8(rules)) {
         if (isStr$3(value)) {
@@ -111820,7 +111817,7 @@ function validateState(rule, value) {
 
 const cut = (a) => a.split('/')[0];
 
-parseRules$2.enableNestedRules = (rules) => {
+const enableNestedRules = (rules) => {
     const newRules = {};
     
     for (const [rule, value] of entries$8(rules)) {
@@ -111833,16 +111830,14 @@ parseRules$2.enableNestedRules = (rules) => {
     return newRules;
 };
 
-function check$d(rules) {
+function check$9(rules) {
     if (isArray$b(rules))
         throw Error(`☝️Looks like type of 'rules' passed to @putout/engine-loader is 'array', expected: 'object'.`);
 }
 
-var mergeRules$2 = {};
-
 const defaultOptions$3 = () => Object.create(null);
 
-mergeRules$2.mergeRules = ([rule, plugin], rules) => {
+const mergeRules = ([rule, plugin], rules) => {
     for (const currentRule of rules) {
         if (currentRule.rule !== rule)
             continue;
@@ -111865,8 +111860,6 @@ mergeRules$2.mergeRules = ([rule, plugin], rules) => {
     };
 };
 
-var validateRules$2 = {};
-
 const parseSlashes = (rule) => {
     if (rule.includes('/'))
         return rule
@@ -111882,7 +111875,7 @@ const parsePluginName = (a) => {
         .replace('@putout/plugin-', '');
 };
 
-validateRules$2.validateRules = ({items, rules}) => {
+const validateRules = ({items, rules}) => {
     const ruleItems = Object.keys(rules);
     
     for (const rule of ruleItems) {
@@ -111909,9 +111902,7 @@ validateRules$2.validateRules = ({items, rules}) => {
     }
 };
 
-var isEnabled$4 = {};
-
-isEnabled$4.isEnabled = (name, rules) => {
+const isEnabled = (name, rules) => {
     for (const {rule, state} of rules) {
         if (rule === name)
             return state;
@@ -111930,9 +111921,7 @@ isEnabled$4.isEnabled = (name, rules) => {
     return true;
 };
 
-var getLoadedRules$2 = {};
-
-getLoadedRules$2.getLoadedRules = (rules) => {
+const getLoadedRules = (rules) => {
     const loadedRules = [];
     
     for (const item of rules) {
@@ -111947,43 +111936,23 @@ getLoadedRules$2.getLoadedRules = (rules) => {
     return loadedRules;
 };
 
-const {parseRules: parseRules$1} = parseRules$2;
-const {mergeRules: mergeRules$1} = mergeRules$2;
-const {validateRules: validateRules$1} = validateRules$2;
-const {isEnabled: isEnabled$3} = isEnabled$4;
-const {getLoadedRules: getLoadedRules$1} = getLoadedRules$2;
-
-var rules = {
-    parseRules: parseRules$1,
-    mergeRules: mergeRules$1,
-    validateRules: validateRules$1,
-    isEnabled: isEnabled$3,
-    getLoadedRules: getLoadedRules$1,
-};
-
-var check$c = {};
-
 const isString$7 = (a) => typeof a === 'string';
 
-check$c.check = (options) => {
+const check$8 = (options) => {
     if (!options || typeof options !== 'object')
         throw Error('options should be an object!');
 };
 
-check$c.checkRule = (rule) => {
+const checkRule = (rule) => {
     if (!isString$7(rule))
         throw Error(`☝️ Looks like plugin name type is not 'string', but: '${typeof rule}'`);
 };
 
-const {parsePluginNames: parsePluginNames$1} = parsePluginNames$2;
-const {validateRules} = rules;
-const {check: check$b} = check$c;
-
-validateRulesRelations$2.validateRulesRelations = (options) => {
-    check$b(options);
+const validateRulesRelations$1 = (options) => {
+    check$8(options);
     
     const {pluginNames = [], rules = {}} = options;
-    const items = parsePluginNames$1(pluginNames);
+    const items = parsePluginNames(pluginNames);
     
     validateRules({
         rules,
@@ -111991,16 +111960,7 @@ validateRulesRelations$2.validateRulesRelations = (options) => {
     });
 };
 
-var loadPluginsAsync$1 = {};
-
-var prepareRules$2 = {};
-
-const {parsePluginNames} = parsePluginNames$2;
-const {enableNestedRules} = parseRules$2;
-
-const {parseRules, getLoadedRules} = rules;
-
-prepareRules$2.prepareRules = ({rules, pluginNames}) => {
+const prepareRules = ({rules, pluginNames}) => {
     const enabledRules = enableNestedRules(rules);
     const cookedEnabledRules = parseRules(enabledRules);
     const loadedRules = getLoadedRules(cookedEnabledRules);
@@ -112025,7 +111985,7 @@ const supportedKeys = [
     'scan',
 ];
 
-var validatePlugin$2 = ({plugin, rule}) => {
+var validatePlugin = ({plugin, rule}) => {
     const keys = Object.keys(plugin);
     
     for (const key of supportedKeys) {
@@ -112036,10 +111996,6 @@ var validatePlugin$2 = ({plugin, rule}) => {
     throw Error(`☝️ Cannot determine type of plugin '${rule}'. Here is list of supported plugins: https://git.io/JqcMn`);
 };
 
-var filterEnabledPlugins$2 = {};
-
-const {isEnabled: isEnabled$2, mergeRules} = rules;
-
 const {isArray: isArray$a} = Array;
 const maybeTuple = (a) => isArray$a(a) ? a : ['on', a];
 
@@ -112048,11 +112004,11 @@ const maybeTuple = (a) => isArray$a(a) ? a : ['on', a];
 // but we can't because of a way multi-rule plugins
 // works. We can't determine count and names of all
 // rules of a plugin before load.
-filterEnabledPlugins$2.filterEnabledPlugins = ({plugins, cookedRules}) => {
+const filterEnabledPlugins = ({plugins, cookedRules}) => {
     const result = [];
     
     for (const [name, plugin] of plugins) {
-        if (!isEnabled$2(name, cookedRules))
+        if (!isEnabled(name, cookedRules))
             continue;
         
         const [status, currentPlugin] = maybeTuple(plugin);
@@ -112081,39 +112037,27 @@ function isExactRuleEnabled(name, status, rules) {
     return false;
 }
 
-const {basename: basename$2} = require$$0$2;
+const loadPluginAsync = createAsyncLoader('plugin');
 
-const {isEnabled: isEnabled$1} = rules;
-
-const {prepareRules: prepareRules$1} = prepareRules$2;
-
-const validatePlugin$1 = validatePlugin$2;
-const {filterEnabledPlugins: filterEnabledPlugins$1} = filterEnabledPlugins$2;
-
-const {createAsyncLoader: createAsyncLoader$2} = asyncLoader;
-const {check: check$a, checkRule: checkRule$1} = check$c;
-
-const loadPluginAsync = createAsyncLoader$2('plugin');
-
-loadPluginsAsync$1.loadPluginsAsync = async (options) => {
-    check$a(options);
+const loadPluginsAsync = async (options) => {
+    check$8(options);
     
     const {pluginNames = [], rules = {}} = options;
     const {
         items,
         loadedRules,
         cookedRules,
-    } = prepareRules$1({
+    } = prepareRules({
         rules,
         pluginNames,
     });
     
-    const plugins = await loadPlugins$3({
+    const plugins = await loadPlugins$1({
         items,
         loadedRules,
     });
     
-    return filterEnabledPlugins$1({
+    return filterEnabledPlugins({
         plugins,
         cookedRules,
     });
@@ -112121,15 +112065,15 @@ loadPluginsAsync$1.loadPluginsAsync = async (options) => {
 
 const splitRule$1 = (rule) => [rule, 'putout'];
 
-async function loadPlugins$3({items, loadedRules}) {
+async function loadPlugins$1({items, loadedRules}) {
     const promises = [];
     const enabledRules = [];
     
     for (const [rule, itemPlugin] of items) {
-        if (!isEnabled$1(rule, loadedRules))
+        if (!isEnabled(rule, loadedRules))
             continue;
         
-        checkRule$1(rule);
+        checkRule(rule);
         
         const [name] = splitRule$1(rule);
         const plugin = itemPlugin || loadPluginAsync(name);
@@ -112144,7 +112088,7 @@ async function loadPlugins$3({items, loadedRules}) {
     for (const [i, rule] of enabledRules.entries()) {
         const plugin = resolvedPlugins[i];
         
-        validatePlugin$1({
+        validatePlugin({
             plugin,
             rule,
         });
@@ -112183,134 +112127,13 @@ function parseRuleName(rule) {
     return rule;
 }
 
-var loadPlugins$2 = {};
-
-var load$1 = {};
-
-var _polyfillNode_module = {};
-
-var _polyfillNode_module$1 = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	default: _polyfillNode_module
-});
-
-var require$$1 = /*@__PURE__*/getAugmentedNamespace(_polyfillNode_module$1);
-
-var hasRequiredLoad;
-
-function requireLoad () {
-	if (hasRequiredLoad) return load$1;
-	hasRequiredLoad = 1;
-
-	const process = require$$0$3;
-	const {createRequire} = require$$1;
-	const {join} = require$$0$2;
-	const tryCatch = tryCatch$7;
-	const once = onceExports;
-	const {assign} = Object;
-
-	const bigFirst = (a) => `${a[0].toUpperCase()}${a.slice(1)}`;
-
-	const load = (type) => ({name, namespace}) => {
-	    const [pluginPath, customRequire] = getPath(namespace, type, name);
-	    
-	    if (!pluginPath)
-	        throw Error(`${bigFirst(type)} "${namespace}-${type}-${name}" could not be found!`);
-	    
-	    const [error, result] = tryCatch(customRequire, pluginPath);
-	    
-	    /* c8 ignore start */
-	    if (error?.code === 'ERR_REQUIRE_ESM')
-	        assign(error, {
-	            message: `☝️ Looks like '${name}' is ESM, use 'await putoutAsync()' instead`,
-	            name,
-	        });
-	    
-	    /* c8 ignore end */
-	    if (error)
-	        throw error;
-	    
-	    return result;
-	};
-
-	load$1.loadPlugin = load('plugin');
-	load$1.loadProcessor = load('processor');
-
-	function getPath(namespace, type, name) {
-	    if (name.startsWith('import:'))
-	        return getModulePath(name.replace('import:', ''));
-	    
-	    let [path, customRequire] = getModulePath(`@${namespace}/${type}-${name}`);
-	    
-	    if (!path)
-	        [path, customRequire] = getModulePath(`${namespace}-${type}-${name}`);
-	    
-	    if (!path)
-	        [path, customRequire] = getModulePath(name);
-	    
-	    return [path, customRequire];
-	}
-
-	const {
-	    PUTOUT_YARN_PNP = 'putout',
-	} = {};
-
-	const createCustomRequire = once(() => createRequire(require.resolve(PUTOUT_YARN_PNP)));
-	const createPutoutRequire = once(() => createRequire(require.resolve('putout')));
-
-	// That's all for Yarn P'n'P
-	//
-	// We need to create a couple version of require for plugins, formatters and processors:
-	// - declared in 🐊Putout package.json;
-	// - declared in module that want to extend 🐊Putout;
-	//
-	// https://yarnpkg.com/advanced/rulebook#modules-shouldnt-hardcode-node_modules-paths-to-access-other-modules
-	function getModulePath(name, {again = false} = {}) {
-	    let path;
-	    
-	    const customRequire = createCustomRequire();
-	    const putoutRequire = createPutoutRequire();
-	    
-	    [, path] = tryCatch(putoutRequire.resolve, name);
-	    
-	    if (path)
-	        return [path, putoutRequire];
-	    
-	    [, path] = tryCatch(customRequire.resolve, name);
-	    
-	    if (!path && !again)
-	        return getModulePath(buildPluginsDir(name), {
-	            again: true,
-	        });
-	    
-	    return [path, customRequire];
-	}
-
-	const getPutoutLoadDir = once(() => process.env.PUTOUT_LOAD_DIR);
-
-	function buildPluginsDir(name) {
-	    const dir = getPutoutLoadDir();
-	    
-	    if (!dir)
-	        return name;
-	    
-	    return join(dir, name);
-	}
-	return load$1;
-}
-
-const validatePlugin = validatePlugin$2;
-const {prepareRules} = prepareRules$2;
-
-const {isEnabled} = rules;
-
-const {filterEnabledPlugins} = filterEnabledPlugins$2;
-const {check: check$9, checkRule} = check$c;
+const {createRequire} = module$1;
+const require$1 = createRequire(import.meta.url);
 
 const {isArray: isArray$9} = Array;
 
-loadPlugins$2.loadPlugins = (options) => {
-    check$9(options);
+const loadPlugins = (options) => {
+    check$8(options);
     
     const {pluginNames = [], rules = {}} = options;
     const {
@@ -112322,7 +112145,7 @@ loadPlugins$2.loadPlugins = (options) => {
         pluginNames,
     });
     
-    const plugins = loadPlugins$1({
+    const plugins = loadAllPlugins({
         items,
         loadedRules,
     });
@@ -112341,7 +112164,7 @@ const parseRule = (rule) => rule
 
 const maybeFromTuple = (a) => isArray$9(a) ? a[1] : a;
 
-function loadPlugins$1({items, loadedRules}) {
+function loadAllPlugins({items, loadedRules}) {
     const plugins = [];
     
     for (const [rule, itemPlugin] of items) {
@@ -112352,7 +112175,7 @@ function loadPlugins$1({items, loadedRules}) {
         const parsedRule = parseRule(rule);
         
         const [name, namespace] = splitRule(rule);
-        const plugin = maybeFromTuple(itemPlugin) || loadPlugin({
+        const plugin = maybeFromTuple(itemPlugin) || loadOnePlugin({
             name,
             namespace,
         });
@@ -112388,8 +112211,8 @@ function extendRules(rule, plugin) {
 
 // add support of esm.sh
 // https://github.com/esm-dev/esm.sh/issues/1045
-function loadPlugin({name, namespace}) {
-    const {loadPlugin} = requireLoad();
+function loadOnePlugin({name, namespace}) {
+    const {loadPlugin} = require$1('../load/load.js');
     
     return loadPlugin({
         name,
@@ -112397,15 +112220,13 @@ function loadPlugin({name, namespace}) {
     });
 }
 
-var loadProcessorsAsync$1 = {};
-
 const isStr$2 = (a) => typeof a === 'string';
 const {isArray: isArray$8} = Array;
 
 const isOn = (a) => a === 'on';
 const isOff = (a) => a === 'off';
 
-var parseProcessorNames$1 = (plugins) => {
+var parseProcessorNames = (plugins) => {
     const result = [];
     
     for (const plugin of plugins) {
@@ -112433,18 +112254,15 @@ var parseProcessorNames$1 = (plugins) => {
     return result;
 };
 
-const {createAsyncLoader: createAsyncLoader$1} = asyncLoader;
-
-const parseProcessorNames = parseProcessorNames$1;
-
-const {check: check$8} = check$c;
-
-loadProcessorsAsync$1.loadProcessorsAsync = async (options, load) => {
+const loadProcessorsAsync = async (options, simpleImport) => {
     check$8(options);
     
     const {processors = []} = options;
     const parsedProcessors = parseProcessorNames(processors);
-    const loadProcessor = createAsyncLoader$1('processor');
+    
+    const loadProcessor = createAsyncLoader('processor', {
+        simpleImport,
+    });
     
     const list = [];
     
@@ -112454,24 +112272,22 @@ loadProcessorsAsync$1.loadProcessorsAsync = async (options, load) => {
             continue;
         }
         
-        list.push(loadProcessor(name, load));
+        list.push(loadProcessor(name));
     }
     
     return await Promise.all(list);
 };
 
-const {createAsyncLoader} = asyncLoader;
+var lib$1 = /*#__PURE__*/Object.freeze({
+	__proto__: null,
+	createAsyncLoader: createAsyncLoader,
+	loadPlugins: loadPlugins,
+	loadPluginsAsync: loadPluginsAsync,
+	loadProcessorsAsync: loadProcessorsAsync,
+	validateRulesRelations: validateRulesRelations$1
+});
 
-const {validateRulesRelations: validateRulesRelations$1} = validateRulesRelations$2;
-const {loadPluginsAsync} = loadPluginsAsync$1;
-const {loadPlugins} = loadPlugins$2;
-const {loadProcessorsAsync} = loadProcessorsAsync$1;
-
-lib$1.loadPlugins = loadPlugins;
-lib$1.loadPluginsAsync = loadPluginsAsync;
-lib$1.loadProcessorsAsync = loadProcessorsAsync;
-lib$1.createAsyncLoader = createAsyncLoader;
-lib$1.validateRulesRelations = validateRulesRelations$1;
+var require$$1 = /*@__PURE__*/getAugmentedNamespace(lib$1);
 
 var lib = {};
 
@@ -112745,20 +112561,22 @@ var browser = /*#__PURE__*/Object.freeze({
 	namespaces: namespaces
 });
 
-var require$$0$1 = /*@__PURE__*/getAugmentedNamespace(browser);
+var require$$0$2 = /*@__PURE__*/getAugmentedNamespace(browser);
 
-const {createDebug: createDebug$8} = require$$0$1;
+const {createDebug: createDebug$8} = require$$0$2;
 
 debug$6.createDebug = (namespace) => {
-    const log = createDebug$8(namespace);
+    const log = createDebug$8(namespace, {
+        useColors: true,
+    });
     
     return new Proxy(log, {
         apply(target, thisArg, args) {
-            commonjsGlobal.__putout_debug?.(namespace, ...args);
+            globalThis.__putout_debug?.(namespace, ...args);
             return target(...args);
         },
         get(target, prop) {
-            if (commonjsGlobal.__putout_debug?.[prop])
+            if (globalThis.__putout_debug?.[prop])
                 return true;
             
             return target[prop];
@@ -113830,7 +113648,7 @@ var log$5 = {exports: {}};
 
 var debug$4 = {};
 
-const {createDebug: createDebug$6} = require$$0$1;
+const {createDebug: createDebug$6} = require$$0$2;
 
 debug$4.createDebug = (namespace) => {
     const log = createDebug$6(namespace);
@@ -114959,9 +114777,9 @@ var _polyfillNode_events = /*#__PURE__*/Object.freeze({
 	default: EventEmitter$1
 });
 
-var require$$0 = /*@__PURE__*/getAugmentedNamespace(_polyfillNode_events);
+var require$$0$1 = /*@__PURE__*/getAugmentedNamespace(_polyfillNode_events);
 
-const {EventEmitter} = require$$0;
+const {EventEmitter} = require$$0$1;
 
 progress.createProgress = () => {
     let pluginsCount = 0;
@@ -115714,6 +115532,8 @@ var scanner = {};
 
 var filesystem = {};
 
+var require$$0 = /*@__PURE__*/getAugmentedNamespace(_polyfillNode_path$1);
+
 var maybeFs = {};
 
 const fullstore$1 = fullstore$3;
@@ -115817,7 +115637,7 @@ const {
     join: join$2,
     basename: basename$1,
     dirname: dirname$1,
-} = require$$0$2;
+} = require$$0;
 
 const {types: types$8} = bundle$1;
 const tryCatch$1 = tryCatch$7;
@@ -116258,7 +116078,7 @@ filesystem.start = maybeFS.start;
 
 var convertSimpleFilesystemToFilesystem = {};
 
-const {basename, dirname} = require$$0$2;
+const {basename, dirname} = require$$0;
 const {types: types$7} = bundle$1;
 const {
     createDirectory,
@@ -116823,7 +116643,7 @@ function splitPlugins(plugins, {progress}) {
     };
 }
 
-const loader = lib$1;
+const loader = require$$1;
 const runner = lib;
 const {createProgress} = progress;
 
@@ -116877,7 +116697,7 @@ const cutBrackets = (a) => a.replace(/\s\(\d:\d+\)/, '');
 
 const tryCatch = tryCatch$7;
 
-const {validateRulesRelations} = lib$1;
+const {validateRulesRelations} = require$$1;
 const {defaultOptions: defaultOptions$1} = defaultOptions$5;
 const {cutShebang: cutShebang$1} = shebang;
 const parseError$1 = parseError$2;
@@ -124659,8 +124479,8 @@ keyword.isTSKeyword = (name) => {
 
 var matchFiles = {};
 
-const {relative} = require$$0$2;
-const ignore$1 = require$$1$1;
+const {relative} = require$$0;
+const ignore$1 = require$$1$2;
 
 const isNegative = (a) => !a.indexOf('!');
 const positive = (a) => a.replace(/^!/, '');
@@ -124690,7 +124510,7 @@ function mergeIgnores(ignores) {
 
 ignores$2.default;
 
-const path = require$$0$2;
+const path = require$$0;
 
 const {parse: parse$2, print: print$1} = parser$5;
 const {transform: transform$1} = transform$5;
@@ -124827,7 +124647,7 @@ const createScan = ({files, exclude, defaultFilename}) => (mainPath, {push, prog
 };
 
 function magicParse(name, content) {
-    if (/\.json$/.test(name)) {
+    if (name.endsWith('.json')) {
         const js = toJS(content);
         const ast = parse$2(js);
         
@@ -124846,7 +124666,7 @@ function magicParse(name, content) {
 }
 
 function magicPrint(name, ast) {
-    if (/\.json$/.test(name)) {
+    if (name.endsWith('.json')) {
         const js = print$1(ast);
         
         return fromJS(js);
@@ -124906,7 +124726,7 @@ function parseOptions(inputFilename, rawOptions) {
 
 var renameFiles = {};
 
-const {join} = require$$0$2;
+const {join} = require$$0;
 
 const {
     getParentDirectory,
