@@ -482,7 +482,7 @@ function write (buffer, value, offset, isLE, mLen, nBytes) {
 
 var toString = {}.toString;
 
-var isArray$f = Array.isArray || function (arr) {
+var isArray$d = Array.isArray || function (arr) {
   return toString.call(arr) == '[object Array]';
 };
 
@@ -766,7 +766,7 @@ function fromObject (that, obj) {
       return fromArrayLike(that, obj)
     }
 
-    if (obj.type === 'Buffer' && isArray$f(obj.data)) {
+    if (obj.type === 'Buffer' && isArray$d(obj.data)) {
       return fromArrayLike(that, obj.data)
     }
   }
@@ -831,7 +831,7 @@ Buffer.isEncoding = function isEncoding (encoding) {
 };
 
 Buffer.concat = function concat (list, length) {
-  if (!isArray$f(list)) {
+  if (!isArray$d(list)) {
     throw new TypeError('"list" argument must be an Array of Buffers')
   }
 
@@ -2752,7 +2752,7 @@ var require_jsesc$1 = __commonJS$1({
 var index_exports$1 = {};
 
 __export$1(index_exports$1, {
-    codeFrameColumns: () => codeFrameColumns$3,
+    codeFrameColumns: () => codeFrameColumns$2,
     generate: () => generate$7,
     parse: () => parse$7,
     parseExpression: () => parseExpression$2,
@@ -36520,7 +36520,7 @@ function getMarkerLines$1(loc, source, opts) {
     };
 }
 
-function codeFrameColumns$3(rawLines, loc, opts = {}) {
+function codeFrameColumns$2(rawLines, loc, opts = {}) {
     const shouldHighlight = opts.forceColor || isColorSupported$1() && opts.highlightCode;
     const defs = getDefs$1(shouldHighlight);
     const lines = rawLines.split(NEWLINE$3);
@@ -36889,7 +36889,7 @@ function parseWithCodeFrame$1(code2, parserOpts, syntacticPlaceholders) {
         const loc = err.loc;
         
         if (loc) {
-            err.message += '\n' + codeFrameColumns$3(code2, {
+            err.message += '\n' + codeFrameColumns$2(code2, {
                 start: loc,
             });
             err.code = 'BABEL_TEMPLATE_PARSE_ERROR';
@@ -47816,7 +47816,7 @@ function replaceWithSourceString$1(replacement) {
         const loc = err.loc;
         
         if (loc) {
-            err.message += ' - make sure this is an expression.\n' + codeFrameColumns$3(replacement, {
+            err.message += ' - make sure this is an expression.\n' + codeFrameColumns$2(replacement, {
                 start: {
                     line: loc.line,
                     column: loc.column + 1,
@@ -52964,12 +52964,12 @@ var callExpression$3 = {};
 
 const {exists: exists$c} = is$4;
 const {maybeParens: maybeParens$9} = maybeParens$e;
-const {isArray: isArray$e} = Array;
+const {isArray: isArray$c} = Array;
 
 const parseArgs = (path) => {
     const argsPath = path.get('arguments');
     
-    if (!isArray$e(argsPath))
+    if (!isArray$c(argsPath))
         return [];
     
     return argsPath;
@@ -60136,7 +60136,7 @@ function snakeCase(str) {
 
 const process = require$$0$3;
 const toSnakeCase = justSnakeCase;
-const {codeFrameColumns: codeFrameColumns$2} = bundle$1;
+const {codeFrameColumns: codeFrameColumns$1} = bundle$1;
 const {TYPES: TYPES$3} = types$19;
 
 const {stringify: stringify$7} = JSON;
@@ -60160,7 +60160,7 @@ debug$9.createDebug = (tokens) => (a) => {
 
 debug$9.createLog = ({newline = '\n', store = createStore$1()} = {}) => ({type, value}) => {
     if (LOG_TOKENS) {
-        console.log(codeFrameColumns$2(stringify$7({
+        console.log(codeFrameColumns$1(stringify$7({
             type,
             value,
         }), {}, {
@@ -60171,7 +60171,7 @@ debug$9.createLog = ({newline = '\n', store = createStore$1()} = {}) => ({type, 
     }
     
     if (LOG_ALL) {
-        console.log(codeFrameColumns$2(value, {}, {
+        console.log(codeFrameColumns$1(value, {}, {
             highlightCode: true,
         }));
         
@@ -60180,7 +60180,7 @@ debug$9.createLog = ({newline = '\n', store = createStore$1()} = {}) => ({type, 
     
     if (LOG) {
         if (value === newline) {
-            console.log(codeFrameColumns$2(store(), {}, {
+            console.log(codeFrameColumns$1(store(), {}, {
                 highlightCode: true,
             }));
             
@@ -60654,9 +60654,9 @@ var removeBlankLines$1 = function removeBlankLines(input) {
   return input.replace(blankLines, "");
 };
 
-var lib$2 = removeBlankLines$1;
+var lib$1 = removeBlankLines$1;
 
-const removeBlankLines = lib$2;
+const removeBlankLines = lib$1;
 
 const cut$1 = (a) => a.slice(0, a.indexOf('('));
 const createPrefix = (name) => {
@@ -60889,9 +60889,9 @@ babel$2.print = (ast, options) => {
 const putoutPrinter = printer;
 const babelPrinter = babel$2;
 
-const {isArray: isArray$d} = Array;
+const {isArray: isArray$b} = Array;
 
-const maybeArray$7 = (a) => isArray$d(a) ? a : [a, {}];
+const maybeArray$7 = (a) => isArray$b(a) ? a : [a, {}];
 
 var print$4 = (ast, options = {}) => {
     const [printer = 'putout', printerOptions] = maybeArray$7(options.printer);
@@ -61930,7 +61930,7 @@ var require_src = __commonJS({
 var index_exports = {};
 
 __export(index_exports, {
-    codeFrameColumns: () => codeFrameColumns$1,
+    codeFrameColumns: () => codeFrameColumns,
     generate: () => generate$5,
     parse: () => parse$6,
     parseExpression: () => parseExpression$1,
@@ -95418,7 +95418,7 @@ function getMarkerLines(loc, source, opts) {
     };
 }
 
-function codeFrameColumns$1(rawLines, loc, opts = {}) {
+function codeFrameColumns(rawLines, loc, opts = {}) {
     const shouldHighlight = opts.forceColor || isColorSupported() && opts.highlightCode;
     const defs = getDefs(shouldHighlight);
     const lines = rawLines.split(NEWLINE);
@@ -95805,7 +95805,7 @@ function parseWithCodeFrame(code2, parserOpts, syntacticPlaceholders) {
         const loc = err.loc;
         
         if (loc) {
-            err.message += '\n' + codeFrameColumns$1(code2, {
+            err.message += '\n' + codeFrameColumns(code2, {
                 start: loc,
             });
             err.code = 'BABEL_TEMPLATE_PARSE_ERROR';
@@ -106642,7 +106642,7 @@ function replaceWithSourceString(replacement) {
         const loc = err.loc;
         
         if (loc) {
-            err.message += ' - make sure this is an expression.\n' + codeFrameColumns$1(replacement, {
+            err.message += ' - make sure this is an expression.\n' + codeFrameColumns(replacement, {
                 start: {
                     line: loc.line,
                     column: loc.column + 1,
@@ -110645,7 +110645,7 @@ var empty = /*#__PURE__*/Object.freeze({
 	default: noop$3
 });
 
-var require$$1$2 = /*@__PURE__*/getAugmentedNamespace(empty);
+var require$$1$1 = /*@__PURE__*/getAugmentedNamespace(empty);
 
 // eslint-disable-next-line node/no-unsupported-features/es-syntax
 
@@ -110677,7 +110677,7 @@ var acornPrivateMethods = /*#__PURE__*/Object.freeze({
 	default: privateMethods
 });
 
-var require$$2 = /*@__PURE__*/getAugmentedNamespace(acornPrivateMethods);
+var require$$2$1 = /*@__PURE__*/getAugmentedNamespace(acornPrivateMethods);
 
 var acornStage3;
 var hasRequiredAcornStage3;
@@ -110688,9 +110688,9 @@ function requireAcornStage3 () {
 
 	acornStage3 = function(Parser) {
 	  return Parser.extend(
-	    require$$1$2,
-	    require$$1$2,
-	    require$$2
+	    require$$1$1,
+	    require$$1$1,
+	    require$$2$1
 	  )
 	};
 	return acornStage3;
@@ -110699,10 +110699,10 @@ function requireAcornStage3 () {
 const once$6 = onceExports;
 
 const initAcorn = once$6(() => {
-    const {Parser} = require$$1$2;
+    const {Parser} = require$$1$1;
     
     const stage3 = requireAcornStage3();
-    const typescript = require$$1$2.default;
+    const typescript = require$$1$1.default;
     
     return Parser.extend(typescript(), stage3);
 });
@@ -110819,7 +110819,7 @@ function getBabelLangExts({isTS, isFlow, isJSX}) {
 var espree$1 = {};
 
 const once$4 = onceExports;
-const initEspree = once$4(() => require$$1$2);
+const initEspree = once$4(() => require$$1$1);
 
 espree$1.parse = function espreeParse(source) {
     const {parse} = initEspree();
@@ -110840,7 +110840,7 @@ espree$1.parse = function espreeParse(source) {
 var esprima$1 = {};
 
 const once$3 = onceExports;
-const initEsprima = once$3(() => require$$1$2);
+const initEsprima = once$3(() => require$$1$1);
 
 esprima$1.parse = function esprimaParse(source) {
     const {parse} = initEsprima();
@@ -110857,7 +110857,7 @@ esprima$1.parse = function esprimaParse(source) {
 var tenko$1 = {};
 
 const once$2 = onceExports;
-const initTenko = once$2(() => require$$1$2);
+const initTenko = once$2(() => require$$1$1);
 
 tenko$1.parse = (source) => {
     const {Tenko} = initTenko();
@@ -110874,7 +110874,7 @@ tenko$1.parse = (source) => {
 var hermes$1 = {};
 
 const once$1 = onceExports;
-const initHermes = once$1(() => require$$1$2);
+const initHermes = once$1(() => require$$1$1);
 
 hermes$1.parse = function hermesParse(source) {
     const parser = initHermes();
@@ -110890,7 +110890,7 @@ hermes$1.parse = function hermesParse(source) {
     return parser.parse(source, options);
 };
 
-var tryCatch$7 = (fn, ...args) => {
+var tryCatch$6 = (fn, ...args) => {
     try {
         return [null, fn(...args)];
     } catch(e) {
@@ -110898,11 +110898,13 @@ var tryCatch$7 = (fn, ...args) => {
     }
 };
 
-const tryCatch$6 = tryCatch$7;
+var tryCatch$7 = tryCatch$6.default;
+
+const tryCatch$5 = tryCatch$6;
 
 var secondChance$1 = (fn, source, messages, args) => {
     const [a, ...others] = args;
-    const [errorA, resultA] = tryCatch$6(fn, source, a);
+    const [errorA, resultA] = tryCatch$5(fn, source, a);
     
     if (!errorA)
         return resultA;
@@ -110911,7 +110913,7 @@ var secondChance$1 = (fn, source, messages, args) => {
         throw errorA;
     
     for (const b of others) {
-        const [errorB, resultB] = tryCatch$6(fn, source, b);
+        const [errorB, resultB] = tryCatch$5(fn, source, b);
         
         if (!errorB)
             return resultB;
@@ -111002,10 +111004,10 @@ function customParse(source, {parser, printer, isTS, isJSX, isRecovery}) {
 
 var tryThrowWithReason$3 = {};
 
-const tryCatch$5 = tryCatch$7;
+const tryCatch$4 = tryCatch$6;
 
 tryThrowWithReason$3.tryThrowWithReason = (fn, ...args) => {
-    const [error, result] = tryCatch$5(fn, ...args);
+    const [error, result] = tryCatch$4(fn, ...args);
     
     if (error) {
         error.reason = 'parse';
@@ -111185,12 +111187,12 @@ var nanoMemoize = /*#__PURE__*/Object.freeze({
 	nanomemoize: $cf838c15c8b009ba$export$22f15dd4e5be7e52
 });
 
-var require$$1$1 = /*@__PURE__*/getAugmentedNamespace(nanoMemoize);
+var require$$1 = /*@__PURE__*/getAugmentedNamespace(nanoMemoize);
 
 (function (module) {
 
 	const {types, template} = bundle$1;
-	const {nanomemoize} = require$$1$1;
+	const {nanomemoize} = require$$1;
 	const plugins = plugins$1;
 	const options = options$1;
 
@@ -111282,16 +111284,14 @@ parser$5.parse = parse$4;
 parser$5.generate = generate$3;
 parser$5.template = template$9;
 
-var shebang = {};
-
-shebang.mergeShebang = (shebang, source) => {
+const mergeShebang$1 = (shebang, source) => {
     if (!shebang)
         return source;
     
     return `${shebang}\n${source}`;
 };
 
-shebang.cutShebang = (source) => {
+const cutShebang$1 = (source) => {
     if (source.indexOf('#'))
         return [source, ''];
     
@@ -111309,7 +111309,13 @@ shebang.cutShebang = (source) => {
     ];
 };
 
-var defaultOptions$4 = {};
+var shebang = /*#__PURE__*/Object.freeze({
+	__proto__: null,
+	cutShebang: cutShebang$1,
+	mergeShebang: mergeShebang$1
+});
+
+var require$$2 = /*@__PURE__*/getAugmentedNamespace(shebang);
 
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -111439,7 +111445,7 @@ function join$3() {
 
 // path.relative(from, to)
 // posix version
-function relative$1(from, to) {
+function relative(from, to) {
   from = resolve(from).substr(1);
   to = resolve(to).substr(1);
 
@@ -111520,7 +111526,7 @@ var _polyfillNode_path = {
   dirname: dirname$2,
   sep: sep,
   delimiter: delimiter,
-  relative: relative$1,
+  relative: relative,
   join: join$3,
   isAbsolute: isAbsolute,
   normalize: normalize,
@@ -111554,12 +111560,10 @@ var _polyfillNode_path$1 = /*#__PURE__*/Object.freeze({
 	isAbsolute: isAbsolute,
 	join: join$3,
 	normalize: normalize,
-	relative: relative$1,
+	relative: relative,
 	resolve: resolve,
 	sep: sep
 });
-
-var module$1 = {};
 
 var tryToCatch = async (fn, ...args) => {
     check$a(fn);
@@ -111578,15 +111582,26 @@ function check$a(fn) {
 
 var tryToCatch$1 = tryToCatch.default;
 
+var _module = {};
+
+const returns$1 = (a) => () => a;
+const noop$2 = () => {};
+
+const createRequire = (url, overrides = {}) => {
+    const {module = _module} = overrides;
+    const {createRequire = returns$1(noop$2)} = module;
+    
+    return createRequire(url);
+};
+
 // How in other way to mock import using mock require in CommonJS?
 const simpleImport = async (url) => {
     const result = await import(url);
     return result.default || result;
 };
 
-const {createRequire: createRequire$1} = module$1;
+const require$1 = createRequire(import.meta.url);
 
-const require$1 = createRequire$1(import.meta.url);
 const {assign: assign$3} = Object;
 const stub$2 = () => () => {};
 
@@ -111602,9 +111617,10 @@ const createAsyncLoader = (type, overrides = {}) => {
         if (name.startsWith('import:')) {
             const shortName = name.replace('import:', '');
             
-            return await cleverLoad([
-                require$1.resolve(shortName),
-            ], simpleImport$1);
+            return await cleverLoad([require$1.resolve(shortName)], {
+                simpleImport: simpleImport$1,
+                require: require$1,
+            });
         }
         
         const namesBase = [
@@ -111619,24 +111635,29 @@ const createAsyncLoader = (type, overrides = {}) => {
             ...namesFromPluginsDirs,
         ]));
         
-        return await cleverLoad(names, simpleImport$1);
+        return await cleverLoad(names, {
+            simpleImport: simpleImport$1,
+            require: require$1,
+        });
     };
 };
 
-async function cleverLoad(names, load) {
+async function cleverLoad(names, overrides) {
+    const {simpleImport, require} = overrides;
+    
     let e;
     let reporter;
     
     for (const name of names) {
-        [e, reporter] = await tryToCatch$1(load, name);
+        [e, reporter] = await tryToCatch$1(simpleImport, name);
         
         if (!e)
             return reporter;
         
         if (e.code === 'ERR_UNSUPPORTED_DIR_IMPORT') {
-            const fullName = require$1.resolve(name);
+            const fullName = require.resolve(name);
             
-            [e, reporter] = await tryToCatch$1(load, fullName);
+            [e, reporter] = await tryToCatch$1(simpleImport, fullName);
             
             if (!e)
                 return reporter;
@@ -111675,20 +111696,20 @@ function buildPluginsDirs(name) {
     ];
 }
 
-const isStr$4 = (a) => typeof a === 'string';
-const {isArray: isArray$c} = Array;
+const isStr$3 = (a) => typeof a === 'string';
+const {isArray: isArray$a} = Array;
 const {entries: entries$9} = Object;
 
 const parsePluginNames = (plugins) => {
     const result = [];
     
     for (const plugin of plugins) {
-        if (isStr$4(plugin)) {
+        if (isStr$3(plugin)) {
             result.push([plugin]);
             continue;
         }
         
-        if (isArray$c(plugin)) {
+        if (isArray$a(plugin)) {
             const [pluginName, fn] = plugin;
             result.push([pluginName, fn]);
             continue;
@@ -111700,9 +111721,9 @@ const parsePluginNames = (plugins) => {
     return result;
 };
 
-const {isArray: isArray$b} = Array;
+const {isArray: isArray$9} = Array;
 const isBool$2 = (a) => typeof a === 'boolean';
-const isStr$3 = (a) => typeof a === 'string';
+const isStr$2 = (a) => typeof a === 'string';
 const isObj = (a) => typeof a === 'object';
 const {entries: entries$8} = Object;
 const {stringify: stringify$6} = JSON;
@@ -111710,7 +111731,7 @@ const {stringify: stringify$6} = JSON;
 const notSupportedError = (a) => Error(`☝️ Rule format not supported ${a}: ${typeof a}`);
 const rulesUsedInsteadOfMatchError = (a) => Error(`☝️ Looks like you need to change "rules" to "match" for ${stringify$6(a)}`);
 const stateOptionError = ({rule, value}) => Error(`☝️ ${rule}: state option can be "on" or "off" only, when used as string, received: "${value}"`);
-const defaultOptions$3 = () => Object.create(null);
+const defaultOptions$4 = () => Object.create(null);
 
 const parseState = (rule, value) => {
     validateState(rule, value);
@@ -111732,13 +111753,13 @@ const parseRules = (rules) => {
     check$9(rules);
     
     for (const [rule, value] of entries$8(rules)) {
-        if (isStr$3(value)) {
+        if (isStr$2(value)) {
             result.push({
                 rule,
                 state: parseState(rule, value),
                 plugin,
                 msg,
-                options: defaultOptions$3(),
+                options: defaultOptions$4(),
             });
             continue;
         }
@@ -111749,12 +111770,12 @@ const parseRules = (rules) => {
                 state: value,
                 plugin,
                 msg,
-                options: defaultOptions$3(),
+                options: defaultOptions$4(),
             });
             continue;
         }
         
-        const looksLikeArray = isArray$b(value);
+        const looksLikeArray = isArray$9(value);
         const looksLikeNormalArray = looksLikeArray && value.length;
         
         if (looksLikeNormalArray) {
@@ -111832,11 +111853,11 @@ const enableNestedRules = (rules) => {
 };
 
 function check$9(rules) {
-    if (isArray$b(rules))
+    if (isArray$9(rules))
         throw Error(`☝️Looks like type of 'rules' passed to @putout/engine-loader is 'array', expected: 'object'.`);
 }
 
-const defaultOptions$2 = () => Object.create(null);
+const defaultOptions$3 = () => Object.create(null);
 
 const mergeRules = ([rule, plugin], rules) => {
     for (const currentRule of rules) {
@@ -111857,7 +111878,7 @@ const mergeRules = ([rule, plugin], rules) => {
         rule,
         plugin,
         msg: '',
-        options: defaultOptions$2(),
+        options: defaultOptions$3(),
     };
 };
 
@@ -111949,7 +111970,7 @@ const checkRule = (rule) => {
         throw Error(`☝️ Looks like plugin name type is not 'string', but: '${typeof rule}'`);
 };
 
-const validateRulesRelations$1 = (options) => {
+const validateRulesRelations = (options) => {
     check$8(options);
     
     const {pluginNames = [], rules = {}} = options;
@@ -111997,8 +112018,8 @@ var validatePlugin = ({plugin, rule}) => {
     throw Error(`☝️ Cannot determine type of plugin '${rule}'. Here is list of supported plugins: https://git.io/JqcMn`);
 };
 
-const {isArray: isArray$a} = Array;
-const maybeTuple = (a) => isArray$a(a) ? a : ['on', a];
+const {isArray: isArray$8} = Array;
+const maybeTuple = (a) => isArray$8(a) ? a : ['on', a];
 
 // Would be great to have ability to filter
 // disabled plugins and prevent them from loading
@@ -112128,8 +112149,7 @@ function parseRuleName(rule) {
     return rule;
 }
 
-const {createRequire} = module$1;
-const {isArray: isArray$9} = Array;
+const {isArray: isArray$7} = Array;
 
 const loadPlugins = (options) => {
     check$8(options);
@@ -112161,7 +112181,7 @@ const parseRule = (rule) => rule
     .replace('import:@putout/plugin-', '')
     .replace('@putout/plugin-', '');
 
-const maybeFromTuple = (a) => isArray$9(a) ? a[1] : a;
+const maybeFromTuple = (a) => isArray$7(a) ? a[1] : a;
 
 function loadAllPlugins({items, loadedRules}) {
     const plugins = [];
@@ -112220,75 +112240,6 @@ function loadOnePlugin({name, namespace}) {
     });
 }
 
-const isStr$2 = (a) => typeof a === 'string';
-const {isArray: isArray$8} = Array;
-
-const isOn = (a) => a === 'on';
-const isOff = (a) => a === 'off';
-
-var parseProcessorNames = (plugins) => {
-    const result = [];
-    
-    for (const plugin of plugins) {
-        if (isStr$2(plugin)) {
-            result.push([plugin]);
-            continue;
-        }
-        
-        if (isArray$8(plugin)) {
-            const [pluginName, fn] = plugin;
-            
-            if (isOff(fn))
-                continue;
-            
-            if (isOn(fn)) {
-                result.push([pluginName]);
-                continue;
-            }
-            
-            result.push([pluginName, fn]);
-            continue;
-        }
-    }
-    
-    return result;
-};
-
-const loadProcessorsAsync = async (options, simpleImport) => {
-    check$8(options);
-    
-    const {processors = []} = options;
-    const parsedProcessors = parseProcessorNames(processors);
-    
-    const loadProcessor = createAsyncLoader('processor', {
-        simpleImport,
-    });
-    
-    const list = [];
-    
-    for (const [name, fn] of parsedProcessors) {
-        if (fn) {
-            list.push(fn);
-            continue;
-        }
-        
-        list.push(loadProcessor(name));
-    }
-    
-    return await Promise.all(list);
-};
-
-var lib$1 = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	createAsyncLoader: createAsyncLoader,
-	loadPlugins: loadPlugins,
-	loadPluginsAsync: loadPluginsAsync,
-	loadProcessorsAsync: loadProcessorsAsync,
-	validateRulesRelations: validateRulesRelations$1
-});
-
-var require$$1 = /*@__PURE__*/getAugmentedNamespace(lib$1);
-
 var lib = {};
 
 var debug$7 = {};
@@ -112325,7 +112276,7 @@ debug$7.createDebug = (namespace) => {
     });
 };
 
-const tryCatch$4 = tryCatch$7;
+const tryCatch$3 = tryCatch$6;
 const {createDebug: createDebug$7} = debug$7;
 
 const {stringify: stringify$5} = JSON;
@@ -112351,7 +112302,7 @@ const chooseFixArgs = ({path, pathOptions, options}) => {
 };
 
 const tryToFix = (fix, {path, pathOptions, position, options}) => {
-    const [e] = tryCatch$4(fix, ...chooseFixArgs({
+    const [e] = tryCatch$3(fix, ...chooseFixArgs({
         path,
         pathOptions,
         options,
@@ -112427,8 +112378,8 @@ function validatePath(path) {
         throw Error(`☝️ Looks like 'push' called without a 'path' argument.`);
 }
 
-const {isArray: isArray$7} = Array;
-const maybeArray$6 = (a) => isArray$7(a) ? a : [a];
+const {isArray: isArray$6} = Array;
+const maybeArray$6 = (a) => isArray$6(a) ? a : [a];
 
 var maybeArray_1 = (a) => {
     if (!a)
@@ -112969,7 +112920,7 @@ const isBool$1 = (a, b) => {
 };
 
 const isEqualType$1 = (a, b) => a.type === b.type;
-const {isArray: isArray$6} = Array;
+const {isArray: isArray$5} = Array;
 
 is$2.isId = isId$2;
 is$2.isBool = isBool$1;
@@ -112992,7 +112943,7 @@ is$2.isAnyLiteral = (a, b) => {
 };
 
 is$2.isArgs = (a) => {
-    const b = !isArray$6(a) ? a : a[0];
+    const b = !isArray$5(a) ? a : a[0];
     
     return isIdentifier$4(b, {
         name: ARGS,
@@ -113022,12 +112973,12 @@ is$2.isEqualTypeParams = (a, b) => {
 };
 
 is$2.isLinkedArgs = (a) => {
-    const b = !isArray$6(a) ? a : a[0];
+    const b = !isArray$5(a) ? a : a[0];
     return isIdentifier$4(b) && LINKED_ARGS.test(b.name);
 };
 
 is$2.isJSXChildren = (a) => {
-    const b = !isArray$6(a) ? a : a[0];
+    const b = !isArray$5(a) ? a : a[0];
     
     return isJSXText$2(b, {
         value: JSX_CHILDREN,
@@ -113035,7 +112986,7 @@ is$2.isJSXChildren = (a) => {
 };
 
 is$2.isJSXAttributes = (a) => {
-    const b = !isArray$6(a) ? a : a[0];
+    const b = !isArray$5(a) ? a : a[0];
     
     if (!isJSXAttribute$1(b))
         return false;
@@ -113067,27 +113018,27 @@ is$2.isLinkedRegExp = (a, b) => {
 };
 
 is$2.isPath = (path) => Boolean(path.node);
-is$2.isArray = isArray$6;
+is$2.isArray = isArray$5;
 
 is$2.isObject = (a) => {
     if (!a)
         return false;
     
-    if (isArray$6(a))
+    if (isArray$5(a))
         return false;
     
     return typeof a === 'object';
 };
 
 is$2.isArrays = (a, b) => {
-    if (!isArray$6(a) || !isArray$6(b))
+    if (!isArray$5(a) || !isArray$5(b))
         return false;
     
     return a.length === b.length;
 };
 
 is$2.isImports = (a) => {
-    const b = !isArray$6(a) ? a : a[0];
+    const b = !isArray$5(a) ? a : a[0];
     
     if (!isImportDefaultSpecifier(b))
         return false;
@@ -113098,7 +113049,7 @@ is$2.isImports = (a) => {
 };
 
 is$2.isExports = (a) => {
-    const b = !isArray$6(a) ? a : a[0];
+    const b = !isArray$5(a) ? a : a[0];
     
     if (!isExportSpecifier(b))
         return false;
@@ -113411,7 +113362,7 @@ debug$4.createDebug = (namespace) => {
 const {createDebug: createDebug$5} = debug$4;
 const debug$3 = createDebug$5('putout:compare');
 
-const {isArray: isArray$5} = Array;
+const {isArray: isArray$4} = Array;
 const isObject$4 = (a) => a && typeof a === 'object';
 
 log$5.exports = (a, b) => {
@@ -113426,7 +113377,7 @@ log$5.exports = (a, b) => {
 
 log$5.exports._parseValue = parseValue;
 function parseValue(a) {
-    if (isArray$5(a) && a[0]) {
+    if (isArray$4(a) && a[0]) {
         const [{
             type,
             name,
@@ -113782,13 +113733,13 @@ const {extractExpression} = template$5;
 const addWaterMark = (a) => a;
 
 const {keys: keys$2} = Object;
-const {isArray: isArray$4} = Array;
-const noop$2 = () => {};
-const isEmptyArray = (a) => isArray$4(a) && !a.length;
+const {isArray: isArray$3} = Array;
+const noop$1 = () => {};
+const isEmptyArray = (a) => isArray$3(a) && !a.length;
 
 const compareType = (type) => (path) => path.type === type;
 const superPush = (array) => (a, b, c = {}) => array.push([a, b, c]);
-const maybeArray$4 = (a) => isArray$4(a) ? a : [a];
+const maybeArray$4 = (a) => isArray$3(a) ? a : [a];
 
 const findParent = (path, type) => {
     const newPathNode = path.findParent(compareType(type));
@@ -113818,7 +113769,7 @@ compare$5.getValues = getValues$1;
 compare$5.setValues = setValues$1;
 compare$5.getTemplateValues = getTemplateValues$1;
 
-function compare$4(path, template, options = {}, equal = noop$2) {
+function compare$4(path, template, options = {}, equal = noop$1) {
     const {findUp = true} = options;
     
     if (!path && !template)
@@ -113878,7 +113829,7 @@ compare$5.compareAll = (path, templateNodes, options) => {
 
 // @babel/template creates empty array directives
 // extra duplicate value
-const ignore$2 = [
+const ignore$1 = [
     'loc',
     'start',
     'end',
@@ -113911,7 +113862,7 @@ function superCompareIterate(node, template) {
             return false;
         
         for (const key of keys$2(template)) {
-            if (ignore$2.includes(key))
+            if (ignore$1.includes(key))
                 continue;
             
             const nodeValue = extractExpression(node[key]);
@@ -113931,7 +113882,7 @@ function superCompareIterate(node, template) {
     return true;
 }
 
-const tryCatch$3 = tryCatch$7;
+const tryCatch$2 = tryCatch$6;
 
 const {
     compareAny: compareAny$1,
@@ -114026,7 +113977,7 @@ const wrapWithCheck = ({rule, nodesInclude, nodesExclude, fn}) => (path) => {
     if (!isFn$2(fn))
         throw Error(`☝️ Looks like provided visitor is not a function: ${stringify$2(fn)}. More on using Traverser: https://git.io/JqcMn`);
     
-    const [e] = tryCatch$3(fn, path);
+    const [e] = tryCatch$2(fn, path);
     
     if (e) {
         e.rule = rule;
@@ -114522,7 +114473,7 @@ var require$$0$1 = /*@__PURE__*/getAugmentedNamespace(_polyfillNode_events);
 
 const {EventEmitter} = require$$0$1;
 
-progress.createProgress = () => {
+var createProgress$1 = progress.createProgress = () => {
     let pluginsCount = 0;
     let pluginsIndex = 0;
     
@@ -114576,10 +114527,10 @@ progress.createProgress = () => {
 
 var tryThrowWithReason$1 = {};
 
-const tryCatch$2 = tryCatch$7;
+const tryCatch$1 = tryCatch$6;
 
 tryThrowWithReason$1.tryThrowWithReason = (fn, ...args) => {
-    const [error, result] = tryCatch$2(fn, ...args);
+    const [error, result] = tryCatch$1(fn, ...args);
     
     if (error) {
         error.reason ??= 'traverse';
@@ -114676,7 +114627,7 @@ function check$4(fn) {
 }
 
 const {entries: entries$4} = Object;
-const {isArray: isArray$3} = Array;
+const {isArray: isArray$2} = Array;
 
 var findPath$1 = (parentPath) => {
     let current = {
@@ -114698,7 +114649,7 @@ function findKey(path, parent) {
     let value;
     
     for ([key, value] of entries$4(parent)) {
-        if (isArray$3(value)) {
+        if (isArray$2(value)) {
             const index = value.indexOf(node);
             
             if (index >= 0)
@@ -115102,13 +115053,13 @@ const TS_EXCLUDE = [
 ];
 
 declare$1.declare = (declarations) => ({
-    report: report$4,
+    report: report$3,
     include: include$1,
     fix: fix$3(declarations),
     filter: filter(declarations),
 });
 
-const report$4 = (path) => {
+const report$3 = (path) => {
     const {name} = path.node;
     const peaceOfName = cutName(name);
     
@@ -115281,16 +115232,16 @@ const fullstore$1 = fullstore$3;
 const driverStore = fullstore$1();
 
 const {assign} = Object;
-const noop$1 = () => {};
+const noop = () => {};
 const returns = (a) => () => a;
 
 const defaultFS = {
-    renameFile: noop$1,
-    removeFile: noop$1,
-    createDirectory: noop$1,
+    renameFile: noop,
+    removeFile: noop,
+    createDirectory: noop,
     readFileContent: returns(''),
-    writeFileContent: noop$1,
-    copyFile: noop$1,
+    writeFileContent: noop,
+    copyFile: noop,
 };
 
 const maybeFS$1 = assign({}, defaultFS);
@@ -115381,7 +115332,7 @@ const {
 } = require$$0;
 
 const {types: types$8} = bundle$1;
-const tryCatch$1 = tryCatch$7;
+const tryCatch = tryCatch$6;
 
 const {
     setLiteralValue: setLiteralValue$1,
@@ -115404,11 +115355,11 @@ const {
 } = types$8;
 
 const isString$1 = (a) => typeof a === 'string';
-const {isArray: isArray$2} = Array;
-const maybeArray = (a) => isArray$2(a) ? a : [a];
+const {isArray: isArray$1} = Array;
+const maybeArray = (a) => isArray$1(a) ? a : [a];
 
 const toBase64 = (content) => {
-    const [e, result] = tryCatch$1(btoa, content);
+    const [e, result] = tryCatch(btoa, content);
     
     if (e)
         return btoa(escape(content));
@@ -115420,7 +115371,7 @@ const fromBase64 = (content) => {
     if (content.includes(' '))
         return content;
     
-    const [e, decoded] = tryCatch$1(atob, content);
+    const [e, decoded] = tryCatch(atob, content);
     
     if (!e)
         return unescape(decoded);
@@ -115493,7 +115444,7 @@ function findFile$5(node, name, exclude = []) {
 }
 
 function checkName(name) {
-    if (!isString$1(name) && !isArray$2(name))
+    if (!isString$1(name) && !isArray$1(name))
         throw Error(`☝️ Looks like you forget to pass the 'name' of a file to 'findFile(filePath: Path|FilePath, name: string | string[]): FilePath'`);
 }
 
@@ -115974,7 +115925,7 @@ const {
     arrayExpression,
 } = types$6;
 
-const {isArray: isArray$1} = Array;
+const {isArray} = Array;
 const maybeAddSlash = (a) => a === '/' ? a : `${a}/`;
 
 convertFilesystemToSimpleFilesystem.report = () => `Convert Filesystem to Simple Filesystem`;
@@ -116004,7 +115955,7 @@ convertFilesystemToSimpleFilesystem.fix = (root, {files}) => {
     const list = [];
     
     for (const name of names) {
-        if (isArray$1(name)) {
+        if (isArray(name)) {
             list.push(arrayExpression([
                 stringLiteral$2(name[0]),
                 stringLiteral$2(name[1]),
@@ -116196,7 +116147,7 @@ const runFix = runFix$3;
 const mergeVisitors = mergeVisitors$1;
 const superFind = superFind$1;
 const template$2 = templateExports;
-const {createProgress: createProgress$1} = progress;
+const {createProgress} = progress;
 const {tryThrowWithReason} = tryThrowWithReason$1;
 
 const {include} = includer;
@@ -116208,7 +116159,7 @@ const {getPath, getPosition} = getPosition$2;
 const debug = createDebug('putout:runner:find');
 const isRemoved = (a) => a?.removed;
 
-lib.runPlugins = ({ast, shebang, fix, fixCount = 2, plugins, progress = createProgress$1(), traverse = defaultTraverse}) => {
+lib.runPlugins = ({ast, shebang, fix, fixCount = 2, plugins, progress = createProgress(), traverse = defaultTraverse}) => {
     let places = [];
     
     const merge = once(mergeVisitors);
@@ -116384,20 +116335,16 @@ function splitPlugins(plugins, {progress}) {
     };
 }
 
-const loader = require$$1;
-const runner = lib;
-const {createProgress} = progress;
-
-defaultOptions$4.defaultOptions = (opts = {}) => {
+const defaultOptions$1 = (opts = {}) => {
     const {
         parser = 'babel',
         printer = opts.printer || 'putout',
         fix = true,
         fixCount = 3,
-        loadPlugins = loader.loadPlugins,
-        loadPluginsAsync = loader.loadPluginsAsync,
-        runPlugins = runner.runPlugins,
-        progress = createProgress(),
+        loadPlugins: loadPlugins$1 = loadPlugins,
+        loadPluginsAsync: loadPluginsAsync$1 = loadPluginsAsync,
+        runPlugins = lib.runPlugins,
+        progress = createProgress$1(),
     } = opts;
     
     return {
@@ -116406,16 +116353,21 @@ defaultOptions$4.defaultOptions = (opts = {}) => {
         printer,
         fix,
         fixCount,
-        loadPlugins,
-        loadPluginsAsync,
+        loadPlugins: loadPlugins$1,
+        loadPluginsAsync: loadPluginsAsync$1,
         runPlugins,
         progress,
     };
 };
 
-var transform$5 = {};
+var defaultOptions$2 = /*#__PURE__*/Object.freeze({
+	__proto__: null,
+	defaultOptions: defaultOptions$1
+});
 
-var parseError$2 = (e, type = 'parser') => {
+var require$$3 = /*@__PURE__*/getAugmentedNamespace(defaultOptions$2);
+
+const parseError$1 = (e, type = 'parser') => {
     const {line, column} = e.loc || {
         line: 1,
         column: 1,
@@ -116436,13 +116388,6 @@ var parseError$2 = (e, type = 'parser') => {
 
 const cutBrackets = (a) => a.replace(/\s\(\d:\d+\)/, '');
 
-const tryCatch = tryCatch$7;
-
-const {validateRulesRelations} = require$$1;
-const {defaultOptions: defaultOptions$1} = defaultOptions$4;
-const {cutShebang: cutShebang$1} = shebang;
-const parseError$1 = parseError$2;
-
 const maybeParseError = (a) => !a ? [] : parseError$1(a, 'loader');
 
 // why we pass 'source' to 'transform()'?
@@ -116454,7 +116399,7 @@ const maybeParseError = (a) => !a ? [] : parseError$1(a, 'loader');
 // 27         column,¬
 // 28     };¬
 //
-transform$5.transform = (ast, source, opts) => {
+const transform$4 = (ast, source, opts) => {
     opts = defaultOptions$1(opts);
     
     const {
@@ -116470,7 +116415,7 @@ transform$5.transform = (ast, source, opts) => {
     
     const [, shebang] = cutShebang$1(source);
     
-    const [validationError] = tryCatch(validateRulesRelations, {
+    const [validationError] = tryCatch$7(validateRulesRelations, {
         rules,
         pluginNames,
     });
@@ -116496,7 +116441,7 @@ transform$5.transform = (ast, source, opts) => {
     ];
 };
 
-transform$5.transformAsync = async (ast, source, opts) => {
+const transformAsync$1 = async (ast, source, opts) => {
     opts = defaultOptions$1(opts);
     
     const {
@@ -116512,7 +116457,7 @@ transform$5.transformAsync = async (ast, source, opts) => {
     
     const [, shebang] = cutShebang$1(source);
     
-    const [validationError] = tryCatch(validateRulesRelations, {
+    const [validationError] = tryCatch$7(validateRulesRelations, {
         rules,
         pluginNames,
     });
@@ -116538,78 +116483,35 @@ transform$5.transformAsync = async (ast, source, opts) => {
     ];
 };
 
-var findPlaces$2 = {};
+var transform$5 = /*#__PURE__*/Object.freeze({
+	__proto__: null,
+	transform: transform$4,
+	transformAsync: transformAsync$1
+});
 
-const {transform: transform$4, transformAsync: transformAsync$1} = transform$5;
+var require$$4$1 = /*@__PURE__*/getAugmentedNamespace(transform$5);
 
-findPlaces$2.findPlaces = (ast, source, opts) => {
+const findPlaces$2 = (ast, source, opts) => {
     return transform$4(ast, source, {
         ...opts,
         fix: false,
     });
 };
 
-findPlaces$2.findPlacesAsync = async (ast, source, opts) => {
+const findPlacesAsync$1 = async (ast, source, opts) => {
     return await transformAsync$1(ast, source, {
         ...opts,
         fix: false,
     });
 };
 
-const {isArray} = Array;
-const noop = () => {};
+var findPlaces$3 = /*#__PURE__*/Object.freeze({
+	__proto__: null,
+	findPlaces: findPlaces$2,
+	findPlacesAsync: findPlacesAsync$1
+});
 
-var report$3 = () => {
-    let filesCount = 0;
-    let errorsCount = 0;
-    
-    return async (formatter, options) => {
-        const {
-            name,
-            rule,
-            source,
-            places,
-            index = 0,
-            count = 1,
-            trace = noop,
-            formatterOptions = {},
-        } = options;
-        
-        if (!isArray(places))
-            throw Error(`☝️ Looks like for 'places: Places[]' you passed the wrong type: '${typeof places}'`);
-        
-        if (places.length)
-            ++filesCount;
-        
-        errorsCount += places.length;
-        
-        trace('progress', {
-            rule,
-            name,
-            options: formatterOptions,
-            source,
-            places,
-            index,
-            count,
-            filesCount,
-            errorsCount,
-        });
-        
-        return await formatter({
-            rule,
-            name,
-            options: formatterOptions,
-            source,
-            places,
-            index,
-            count,
-            filesCount,
-            errorsCount,
-        });
-    };
-};
-
-report$3.default;
+var require$$5 = /*@__PURE__*/getAugmentedNamespace(findPlaces$3);
 
 var traverse$5 = {};
 
@@ -124220,15 +124122,12 @@ keyword.isTSKeyword = (name) => {
 
 var matchFiles = {};
 
-const {relative} = require$$0;
-const ignore$1 = require$$1$2;
-
 const isNegative = (a) => !a.indexOf('!');
 const positive = (a) => a.replace(/^!/, '');
 
-var ignores$2 = (dirOpt, resolvedName, options = {}) => {
+const ignores$1 = (dirOpt, resolvedName, options = {}) => {
     const relativeName = relative(dirOpt, resolvedName);
-    const ignorer = ignore$1();
+    const ignorer = noop$3();
     const ignoreList = mergeIgnores(options.ignore || []);
     
     ignorer.add(ignoreList);
@@ -124249,14 +124148,19 @@ function mergeIgnores(ignores) {
     return Array.from(noDuplicates);
 }
 
-ignores$2.default;
+var ignores$2 = /*#__PURE__*/Object.freeze({
+	__proto__: null,
+	ignores: ignores$1
+});
+
+var require$$4 = /*@__PURE__*/getAugmentedNamespace(ignores$2);
 
 const path = require$$0;
 
 const {parse: parse$2, print: print$1} = parser$5;
-const {transform: transform$1} = transform$5;
-const {findPlaces: findPlaces$1} = findPlaces$2;
-const ignores$1 = ignores$2;
+const {transform: transform$1} = require$$4$1;
+const {findPlaces: findPlaces$1} = require$$5;
+const {ignores} = require$$4;
 
 const {toJS, fromJS} = json;
 
@@ -124331,7 +124235,7 @@ const createScan = ({files, exclude, defaultFilename}) => (mainPath, {push, prog
                 filename: inputFilename,
             });
             
-            if (ignores$1(cwd, inputFilename, options))
+            if (ignores(cwd, inputFilename, options))
                 continue;
             
             allFiles.push({
@@ -124715,9 +124619,7 @@ function hasParens(path, printer = getPrinter(path)) {
     return /^(TS)?Parenthesized(Expression|Type)?$/.test(type);
 }
 
-const {codeFrameColumns} = bundle$1;
-
-var codeframe$1 = ({source, error, highlightCode = true}) => {
+const codeframe$1 = ({source, error, highlightCode = true}) => {
     const {message, loc} = error;
     
     if (!loc)
@@ -124727,13 +124629,18 @@ var codeframe$1 = ({source, error, highlightCode = true}) => {
         start: loc,
     };
     
-    return codeFrameColumns(source, location, {
+    return bundle$1.codeFrameColumns(source, location, {
         highlightCode,
         message,
     });
 };
 
-codeframe$1.default;
+var codeframe$2 = /*#__PURE__*/Object.freeze({
+	__proto__: null,
+	codeframe: codeframe$1
+});
+
+var require$$20 = /*@__PURE__*/getAugmentedNamespace(codeframe$2);
 
 const {traverse, types} = bundle$1;
 const {
@@ -124743,16 +124650,14 @@ const {
     template,
 } = parser$5;
 
-const {cutShebang, mergeShebang} = shebang;
-const {defaultOptions} = defaultOptions$4;
-const {transform, transformAsync} = transform$5;
+const {cutShebang, mergeShebang} = require$$2;
+const {defaultOptions} = require$$3;
+const {transform, transformAsync} = require$$4$1;
 
 const {
     findPlaces,
     findPlacesAsync,
-} = findPlaces$2;
-
-const isString = (a) => typeof a === 'string';
+} = require$$5;
 
 putout$1.exports = putout;
 var putout_2 = putout$1.exports.putout = putout;
@@ -124850,7 +124755,6 @@ var traverse_1 = putout$1.exports.traverse = traverse;
 var types_1 = putout$1.exports.types = types;
 var template_1 = putout$1.exports.template = template;
 var generate_1 = putout$1.exports.generate = generate;
-var initReport = putout$1.exports.initReport = report$3;
 
 var operator = putout$1.exports.operator = {
     ...operate,
@@ -124869,14 +124773,14 @@ var operator = putout$1.exports.operator = {
     ...parens,
 };
 
-var ignores = putout$1.exports.ignores = ignores$2;
-var codeframe = putout$1.exports.codeframe = codeframe$1;
+const {codeframe} = require$$20;
+const isString = (a) => typeof a === 'string';
+
+var codeframe_1 = putout$1.exports.codeframe = codeframe;
 
 function check(source) {
     if (!isString(source))
         throw Error(`☝️ Looks like 'source' has type '${typeof source}', expected: 'string'`);
 }
 
-var putoutExports = putout$1.exports;
-
-export { codeframe, putoutExports as default, findPlaces_1 as findPlaces, findPlacesAsync_1 as findPlacesAsync, generate_1 as generate, ignores, initReport, operator, parse_1 as parse, print_1 as print, putout_2 as putout, putoutAsync, template_1 as template, transform_1 as transform, transformAsync_1 as transformAsync, traverse_1 as traverse, types_1 as types };
+export { codeframe_1 as codeframe, putout_2 as default, findPlaces_1 as findPlaces, findPlacesAsync_1 as findPlacesAsync, generate_1 as generate, operator, parse_1 as parse, print_1 as print, putout_2 as putout, putoutAsync, template_1 as template, transform_1 as transform, transformAsync_1 as transformAsync, traverse_1 as traverse, types_1 as types };
