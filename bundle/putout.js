@@ -60103,7 +60103,7 @@ function objectPlugin(plugin, path, printer, semantics) {
 
 var debug$8 = {};
 
-var require$$0$3 = /*@__PURE__*/getAugmentedNamespace(_polyfillNode_process);
+var require$$0$4 = /*@__PURE__*/getAugmentedNamespace(_polyfillNode_process);
 
 var justSnakeCase = snakeCase;
 
@@ -60134,7 +60134,7 @@ function snakeCase(str) {
     .join('_');
 }
 
-const process = require$$0$3;
+const process = require$$0$4;
 const toSnakeCase = justSnakeCase;
 const {codeFrameColumns: codeFrameColumns$1} = bundle$1;
 const {TYPES: TYPES$3} = types$19;
@@ -60868,12 +60868,14 @@ babel$2.print = (ast, options) => {
         ...options,
     };
     
-    let {code} = generate$6(ast, {
-        ...source && {
+    let {code} = generate$6(
+        ast,
+        source && {
             experimental_preserveFormat: true,
             retainLines: true,
         },
-    }, source);
+        source,
+    );
     
     if (code[0] === '\n')
         code = code.trimStart();
@@ -110890,7 +110892,7 @@ hermes$1.parse = function hermesParse(source) {
     return parser.parse(source, options);
 };
 
-var tryCatch$6 = (fn, ...args) => {
+const tryCatch$8 = (fn, ...args) => {
     try {
         return [null, fn(...args)];
     } catch(e) {
@@ -110898,13 +110900,19 @@ var tryCatch$6 = (fn, ...args) => {
     }
 };
 
-var tryCatch$7 = tryCatch$6.default;
+var tryCatch$9 = /*#__PURE__*/Object.freeze({
+	__proto__: null,
+	default: tryCatch$8,
+	tryCatch: tryCatch$8
+});
 
-const tryCatch$5 = tryCatch$6;
+var require$$0$3 = /*@__PURE__*/getAugmentedNamespace(tryCatch$9);
+
+const tryCatch$7 = require$$0$3;
 
 var secondChance$1 = (fn, source, messages, args) => {
     const [a, ...others] = args;
-    const [errorA, resultA] = tryCatch$5(fn, source, a);
+    const [errorA, resultA] = tryCatch$7(fn, source, a);
     
     if (!errorA)
         return resultA;
@@ -110913,7 +110921,7 @@ var secondChance$1 = (fn, source, messages, args) => {
         throw errorA;
     
     for (const b of others) {
-        const [errorB, resultB] = tryCatch$5(fn, source, b);
+        const [errorB, resultB] = tryCatch$7(fn, source, b);
         
         if (!errorB)
             return resultB;
@@ -111004,10 +111012,10 @@ function customParse(source, {parser, printer, isTS, isJSX, isRecovery}) {
 
 var tryThrowWithReason$3 = {};
 
-const tryCatch$4 = tryCatch$6;
+const tryCatch$6 = require$$0$3;
 
 tryThrowWithReason$3.tryThrowWithReason = (fn, ...args) => {
-    const [error, result] = tryCatch$4(fn, ...args);
+    const [error, result] = tryCatch$6(fn, ...args);
     
     if (error) {
         error.reason = 'parse';
@@ -112535,7 +112543,15 @@ debug$6.createDebug = (namespace) => {
     });
 };
 
-const tryCatch$3 = tryCatch$6;
+var tryCatch$5 = (fn, ...args) => {
+    try {
+        return [null, fn(...args)];
+    } catch(e) {
+        return [e];
+    }
+};
+
+const tryCatch$4 = tryCatch$5;
 const {createDebug: createDebug$7} = debug$6;
 
 const {stringify: stringify$5} = JSON;
@@ -112561,7 +112577,7 @@ const chooseFixArgs = ({path, pathOptions, options}) => {
 };
 
 const tryToFix = (fix, {path, pathOptions, position, options}) => {
-    const [e] = tryCatch$3(fix, ...chooseFixArgs({
+    const [e] = tryCatch$4(fix, ...chooseFixArgs({
         path,
         pathOptions,
         options,
@@ -114141,7 +114157,7 @@ function superCompareIterate(node, template) {
     return true;
 }
 
-const tryCatch$2 = tryCatch$6;
+const tryCatch$3 = tryCatch$5;
 
 const {
     compareAny: compareAny$1,
@@ -114236,7 +114252,7 @@ const wrapWithCheck = ({rule, nodesInclude, nodesExclude, fn}) => (path) => {
     if (!isFn$2(fn))
         throw Error(`☝️ Looks like provided visitor is not a function: ${stringify$2(fn)}. More on using Traverser: https://git.io/JqcMn`);
     
-    const [e] = tryCatch$2(fn, path);
+    const [e] = tryCatch$3(fn, path);
     
     if (e) {
         e.rule = rule;
@@ -114786,10 +114802,10 @@ var createProgress$1 = progress.createProgress = () => {
 
 var tryThrowWithReason$1 = {};
 
-const tryCatch$1 = tryCatch$6;
+const tryCatch$2 = tryCatch$5;
 
 tryThrowWithReason$1.tryThrowWithReason = (fn, ...args) => {
-    const [error, result] = tryCatch$1(fn, ...args);
+    const [error, result] = tryCatch$2(fn, ...args);
     
     if (error) {
         error.reason ??= 'traverse';
@@ -115591,7 +115607,7 @@ const {
 } = require$$0;
 
 const {types: types$8} = bundle$1;
-const tryCatch = tryCatch$6;
+const tryCatch$1 = tryCatch$5;
 
 const {
     setLiteralValue: setLiteralValue$1,
@@ -115618,7 +115634,7 @@ const {isArray: isArray$1} = Array;
 const maybeArray = (a) => isArray$1(a) ? a : [a];
 
 const toBase64 = (content) => {
-    const [e, result] = tryCatch(btoa, content);
+    const [e, result] = tryCatch$1(btoa, content);
     
     if (e)
         return btoa(escape(content));
@@ -115630,7 +115646,7 @@ const fromBase64 = (content) => {
     if (content.includes(' '))
         return content;
     
-    const [e, decoded] = tryCatch(atob, content);
+    const [e, decoded] = tryCatch$1(atob, content);
     
     if (!e)
         return unescape(decoded);
@@ -116626,6 +116642,14 @@ var defaultOptions$2 = /*#__PURE__*/Object.freeze({
 
 var require$$3 = /*@__PURE__*/getAugmentedNamespace(defaultOptions$2);
 
+const tryCatch = (fn, ...args) => {
+    try {
+        return [null, fn(...args)];
+    } catch(e) {
+        return [e];
+    }
+};
+
 const parseError$1 = (e, type = 'parser') => {
     const {line, column} = e.loc || {
         line: 1,
@@ -116674,7 +116698,7 @@ const transform$4 = (ast, source, opts) => {
     
     const [, shebang] = cutShebang$1(source);
     
-    const [validationError] = tryCatch$7(validateRulesRelations, {
+    const [validationError] = tryCatch(validateRulesRelations, {
         rules,
         pluginNames,
     });
@@ -116716,7 +116740,7 @@ const transformAsync$1 = async (ast, source, opts) => {
     
     const [, shebang] = cutShebang$1(source);
     
-    const [validationError] = tryCatch$7(validateRulesRelations, {
+    const [validationError] = tryCatch(validateRulesRelations, {
         rules,
         pluginNames,
     });
