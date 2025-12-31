@@ -60103,7 +60103,7 @@ function objectPlugin(plugin, path, printer, semantics) {
 
 var debug$8 = {};
 
-var require$$0$4 = /*@__PURE__*/getAugmentedNamespace(_polyfillNode_process);
+var require$$0$7 = /*@__PURE__*/getAugmentedNamespace(_polyfillNode_process);
 
 var justSnakeCase = snakeCase;
 
@@ -60134,7 +60134,7 @@ function snakeCase(str) {
     .join('_');
 }
 
-const process = require$$0$4;
+const process = require$$0$7;
 const toSnakeCase = justSnakeCase;
 const {codeFrameColumns: codeFrameColumns$1} = bundle$1;
 const {TYPES: TYPES$3} = types$19;
@@ -110892,7 +110892,9 @@ hermes$1.parse = function hermesParse(source) {
     return parser.parse(source, options);
 };
 
-const tryCatch$8 = (fn, ...args) => {
+var tryCatch$l = {exports: {}};
+
+const tryCatch$j = (fn, ...args) => {
     try {
         return [null, fn(...args)];
     } catch(e) {
@@ -110900,19 +110902,26 @@ const tryCatch$8 = (fn, ...args) => {
     }
 };
 
-var tryCatch$9 = /*#__PURE__*/Object.freeze({
+var tryCatch$k = /*#__PURE__*/Object.freeze({
 	__proto__: null,
-	default: tryCatch$8,
-	tryCatch: tryCatch$8
+	default: tryCatch$j,
+	tryCatch: tryCatch$j
 });
 
-var require$$0$3 = /*@__PURE__*/getAugmentedNamespace(tryCatch$9);
+var require$$0$6 = /*@__PURE__*/getAugmentedNamespace(tryCatch$k);
 
-const tryCatch$7 = require$$0$3;
+const {tryCatch: tryCatch$i} = require$$0$6;
+
+tryCatch$l.exports = tryCatch$i;
+tryCatch$l.exports.tryCatch = tryCatch$i;
+
+var tryCatchExports$2 = tryCatch$l.exports;
+
+const tryCatch$h = tryCatchExports$2;
 
 var secondChance$1 = (fn, source, messages, args) => {
     const [a, ...others] = args;
-    const [errorA, resultA] = tryCatch$7(fn, source, a);
+    const [errorA, resultA] = tryCatch$h(fn, source, a);
     
     if (!errorA)
         return resultA;
@@ -110921,7 +110930,7 @@ var secondChance$1 = (fn, source, messages, args) => {
         throw errorA;
     
     for (const b of others) {
-        const [errorB, resultB] = tryCatch$7(fn, source, b);
+        const [errorB, resultB] = tryCatch$h(fn, source, b);
         
         if (!errorB)
             return resultB;
@@ -111012,10 +111021,10 @@ function customParse(source, {parser, printer, isTS, isJSX, isRecovery}) {
 
 var tryThrowWithReason$3 = {};
 
-const tryCatch$6 = require$$0$3;
+const tryCatch$g = tryCatchExports$2;
 
 tryThrowWithReason$3.tryThrowWithReason = (fn, ...args) => {
-    const [error, result] = tryCatch$6(fn, ...args);
+    const [error, result] = tryCatch$g(fn, ...args);
     
     if (error) {
         error.reason = 'parse';
@@ -112520,9 +112529,9 @@ var browser = /*#__PURE__*/Object.freeze({
 	namespaces: namespaces
 });
 
-var require$$0$2 = /*@__PURE__*/getAugmentedNamespace(browser);
+var require$$0$5 = /*@__PURE__*/getAugmentedNamespace(browser);
 
-const {createDebug: createDebug$8} = require$$0$2;
+const {createDebug: createDebug$8} = require$$0$5;
 
 debug$6.createDebug = (namespace) => {
     const log = createDebug$8(namespace, {
@@ -112543,7 +112552,9 @@ debug$6.createDebug = (namespace) => {
     });
 };
 
-var tryCatch$5 = (fn, ...args) => {
+var tryCatch$f = {exports: {}};
+
+const tryCatch$d = (fn, ...args) => {
     try {
         return [null, fn(...args)];
     } catch(e) {
@@ -112551,7 +112562,22 @@ var tryCatch$5 = (fn, ...args) => {
     }
 };
 
-const tryCatch$4 = tryCatch$5;
+var tryCatch$e = /*#__PURE__*/Object.freeze({
+	__proto__: null,
+	default: tryCatch$d,
+	tryCatch: tryCatch$d
+});
+
+var require$$0$4 = /*@__PURE__*/getAugmentedNamespace(tryCatch$e);
+
+const {tryCatch: tryCatch$c} = require$$0$4;
+
+tryCatch$f.exports = tryCatch$c;
+tryCatch$f.exports.tryCatch = tryCatch$c;
+
+var tryCatchExports$1 = tryCatch$f.exports;
+
+const tryCatch$b = tryCatchExports$1;
 const {createDebug: createDebug$7} = debug$6;
 
 const {stringify: stringify$5} = JSON;
@@ -112577,7 +112603,7 @@ const chooseFixArgs = ({path, pathOptions, options}) => {
 };
 
 const tryToFix = (fix, {path, pathOptions, position, options}) => {
-    const [e] = tryCatch$4(fix, ...chooseFixArgs({
+    const [e] = tryCatch$b(fix, ...chooseFixArgs({
         path,
         pathOptions,
         options,
@@ -113615,18 +113641,18 @@ var log$5 = {exports: {}};
 
 var debug$4 = {};
 
-const {createDebug: createDebug$6} = require$$0$2;
+const {createDebug: createDebug$6} = require$$0$5;
 
 debug$4.createDebug = (namespace) => {
     const log = createDebug$6(namespace);
     
     return new Proxy(log, {
         apply(target, thisArg, args) {
-            commonjsGlobal.__putout_debug?.(namespace, ...args);
+            globalThis.__putout_debug?.(namespace, ...args);
             return target(...args);
         },
         get(target, prop) {
-            if (commonjsGlobal.__putout_debug?.[prop])
+            if (globalThis.__putout_debug?.[prop])
                 return true;
             
             return target[prop];
@@ -114157,7 +114183,7 @@ function superCompareIterate(node, template) {
     return true;
 }
 
-const tryCatch$3 = tryCatch$5;
+const tryCatch$a = tryCatchExports$1;
 
 const {
     compareAny: compareAny$1,
@@ -114252,7 +114278,7 @@ const wrapWithCheck = ({rule, nodesInclude, nodesExclude, fn}) => (path) => {
     if (!isFn$2(fn))
         throw Error(`☝️ Looks like provided visitor is not a function: ${stringify$2(fn)}. More on using Traverser: https://git.io/JqcMn`);
     
-    const [e] = tryCatch$3(fn, path);
+    const [e] = tryCatch$a(fn, path);
     
     if (e) {
         e.rule = rule;
@@ -114744,9 +114770,9 @@ var _polyfillNode_events = /*#__PURE__*/Object.freeze({
 	default: EventEmitter$1
 });
 
-var require$$0$1 = /*@__PURE__*/getAugmentedNamespace(_polyfillNode_events);
+var require$$0$3 = /*@__PURE__*/getAugmentedNamespace(_polyfillNode_events);
 
-const {EventEmitter} = require$$0$1;
+const {EventEmitter} = require$$0$3;
 
 var createProgress$1 = progress.createProgress = () => {
     let pluginsCount = 0;
@@ -114802,10 +114828,10 @@ var createProgress$1 = progress.createProgress = () => {
 
 var tryThrowWithReason$1 = {};
 
-const tryCatch$2 = tryCatch$5;
+const tryCatch$9 = tryCatchExports$1;
 
 tryThrowWithReason$1.tryThrowWithReason = (fn, ...args) => {
-    const [error, result] = tryCatch$2(fn, ...args);
+    const [error, result] = tryCatch$9(fn, ...args);
     
     if (error) {
         error.reason ??= 'traverse';
@@ -115499,7 +115525,32 @@ var scanner = {};
 
 var filesystem = {};
 
-var require$$0 = /*@__PURE__*/getAugmentedNamespace(_polyfillNode_path$1);
+var require$$0$2 = /*@__PURE__*/getAugmentedNamespace(_polyfillNode_path$1);
+
+var tryCatch$8 = {exports: {}};
+
+const tryCatch$6 = (fn, ...args) => {
+    try {
+        return [null, fn(...args)];
+    } catch(e) {
+        return [e];
+    }
+};
+
+var tryCatch$7 = /*#__PURE__*/Object.freeze({
+	__proto__: null,
+	default: tryCatch$6,
+	tryCatch: tryCatch$6
+});
+
+var require$$0$1 = /*@__PURE__*/getAugmentedNamespace(tryCatch$7);
+
+const {tryCatch: tryCatch$5} = require$$0$1;
+
+tryCatch$8.exports = tryCatch$5;
+tryCatch$8.exports.tryCatch = tryCatch$5;
+
+var tryCatchExports = tryCatch$8.exports;
 
 var maybeFs = {};
 
@@ -115604,10 +115655,10 @@ const {
     join: join$2,
     basename: basename$1,
     dirname: dirname$1,
-} = require$$0;
+} = require$$0$2;
 
 const {types: types$8} = bundle$1;
-const tryCatch$1 = tryCatch$5;
+const tryCatch$4 = tryCatchExports;
 
 const {
     setLiteralValue: setLiteralValue$1,
@@ -115634,7 +115685,7 @@ const {isArray: isArray$1} = Array;
 const maybeArray = (a) => isArray$1(a) ? a : [a];
 
 const toBase64 = (content) => {
-    const [e, result] = tryCatch$1(btoa, content);
+    const [e, result] = tryCatch$4(btoa, content);
     
     if (e)
         return btoa(escape(content));
@@ -115646,7 +115697,7 @@ const fromBase64 = (content) => {
     if (content.includes(' '))
         return content;
     
-    const [e, decoded] = tryCatch$1(atob, content);
+    const [e, decoded] = tryCatch$4(atob, content);
     
     if (!e)
         return unescape(decoded);
@@ -116045,7 +116096,7 @@ filesystem.start = maybeFS.start;
 
 var convertSimpleFilesystemToFilesystem = {};
 
-const {basename, dirname} = require$$0;
+const {basename, dirname} = require$$0$2;
 const {types: types$7} = bundle$1;
 const {
     createDirectory,
@@ -116642,13 +116693,28 @@ var defaultOptions$2 = /*#__PURE__*/Object.freeze({
 
 var require$$3 = /*@__PURE__*/getAugmentedNamespace(defaultOptions$2);
 
-const tryCatch = (fn, ...args) => {
+var tryCatch$3 = {exports: {}};
+
+const tryCatch$1 = (fn, ...args) => {
     try {
         return [null, fn(...args)];
     } catch(e) {
         return [e];
     }
 };
+
+var tryCatch$2 = /*#__PURE__*/Object.freeze({
+	__proto__: null,
+	default: tryCatch$1,
+	tryCatch: tryCatch$1
+});
+
+var require$$0 = /*@__PURE__*/getAugmentedNamespace(tryCatch$2);
+
+const {tryCatch} = require$$0;
+
+tryCatch$3.exports = tryCatch;
+var tryCatch_2 = tryCatch$3.exports.tryCatch = tryCatch;
 
 const parseError$1 = (e, type = 'parser') => {
     const {line, column} = e.loc || {
@@ -116698,7 +116764,7 @@ const transform$4 = (ast, source, opts) => {
     
     const [, shebang] = cutShebang$1(source);
     
-    const [validationError] = tryCatch(validateRulesRelations, {
+    const [validationError] = tryCatch_2(validateRulesRelations, {
         rules,
         pluginNames,
     });
@@ -116740,7 +116806,7 @@ const transformAsync$1 = async (ast, source, opts) => {
     
     const [, shebang] = cutShebang$1(source);
     
-    const [validationError] = tryCatch(validateRulesRelations, {
+    const [validationError] = tryCatch_2(validateRulesRelations, {
         rules,
         pluginNames,
     });
@@ -124438,7 +124504,7 @@ var ignores$2 = /*#__PURE__*/Object.freeze({
 
 var require$$4 = /*@__PURE__*/getAugmentedNamespace(ignores$2);
 
-const path = require$$0;
+const path = require$$0$2;
 
 const {parse: parse$2, print: print$1} = parser$5;
 const {transform: transform$1} = require$$4$1;
@@ -124654,7 +124720,7 @@ function parseOptions(inputFilename, rawOptions) {
 
 var renameFiles = {};
 
-const {join} = require$$0;
+const {join} = require$$0$2;
 
 const {
     getParentDirectory,
