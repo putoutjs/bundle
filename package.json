@@ -5,7 +5,7 @@
   "author": "coderaiser <mnemonic.enemy@gmail.com> (https://github.com/coderaiser)",
   "description": "🐊Putout bundle suitable for Deno and Browsers",
   "homepage": "https://github.com/putoutjs/bundle",
-  "main": "bundle/putout.min.js",
+  "main": "bundle/putout.js",
   "exports": {
     ".": "./bundle/putout.min.js",
     "./dev": "./bundle/putout.js",
