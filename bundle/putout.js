@@ -61,7 +61,7 @@ var fullstore$1 = (value) => {
     };
 };
 
-var fullstore$2 = fullstore$1.default;
+var fullstore$2 = fullstore$1;
 
 var global$1 = (typeof global !== "undefined" ? global :
   typeof self !== "undefined" ? self :
@@ -113654,7 +113654,7 @@ function check$4(fn) {
         throw Error('fn should be a function!');
 }
 
-var wraptile$1 = wraptile.default;
+var wraptile$1 = wraptile;
 
 const {entries: entries$4} = Object;
 const {isArray: isArray$2} = Array;
@@ -121580,7 +121580,7 @@ var regexpTree_1 = regexpTree$2;
 
 var regexpTree = regexpTree_1;
 
-var regexpTree$1 = regexpTree.default;
+var regexpTree$1 = regexpTreeParser;
 
 const notSimpleChar = ({type, kind}) => type !== 'Char' || kind !== 'simple';
 
