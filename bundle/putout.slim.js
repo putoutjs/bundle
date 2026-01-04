@@ -122033,4 +122033,23 @@ const codeframe = ({source, error, highlightCode = true}) => {
     });
 };
 
+var exports$1 = /*#__PURE__*/Object.freeze({
+	__proto__: null,
+	codeframe: codeframe,
+	findPlaces: findPlaces$1,
+	findPlacesAsync: findPlacesAsync,
+	generate: generate,
+	operator: operator,
+	parse: parse$3,
+	print: print$1,
+	putoutAsync: putoutAsync,
+	template: template$6,
+	transform: transform$1,
+	transformAsync: transformAsync,
+	traverse: traverse3$1,
+	types: lib_exports$1
+});
+
+Object.assign(putout, exports$1);
+
 export { codeframe, putout as default, findPlaces$1 as findPlaces, findPlacesAsync, generate, operator, parse$3 as parse, print$1 as print, putout, putoutAsync, template$6 as template, transform$1 as transform, transformAsync, traverse3$1 as traverse, lib_exports$1 as types };
