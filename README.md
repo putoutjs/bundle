@@ -5,7 +5,7 @@
 
 🐊[**Putout**](https://github.com/coderaiser/putout) bundle to get things working in [**Deno**](https://deno.land) and **Browsers** using amazing [esm.sh](https://esm.sh).
 
-Usage
+Usage:
 
 ```js
 import {putout} from 'https://esm.sh/@putout/bundle';
