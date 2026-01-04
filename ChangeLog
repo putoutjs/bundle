@@ -1,3 +1,8 @@
+2026.01.04, v5.1.6
+
+fix:
+- f69e30f @putout/bundle: unminify
+
 2026.01.04, v5.1.5
 
 fix:
