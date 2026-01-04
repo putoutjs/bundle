@@ -44187,15 +44187,11 @@ function enable(namespaces$1) {
 }
 
 // ../babel-babel/node_modules/obug/dist/node.js
-var isatty = () => false;
-
 var colors = [];
 
 var inspectOpts = {};
 
-function useColors() {
-    return 'colors' in inspectOpts ? Boolean(inspectOpts.colors) : isatty(browser$1.stderr.fd);
-}
+function useColors() {}
 
 function formatArgs() {}
 

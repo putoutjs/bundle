@@ -44391,15 +44391,11 @@ function enable$2(namespaces$1) {
 }
 
 // ../babel-babel/node_modules/obug/dist/node.js
-var isatty = () => false;
-
 var colors$1 = [];
 
 var inspectOpts = {};
 
-function useColors() {
-    return 'colors' in inspectOpts ? Boolean(inspectOpts.colors) : isatty(browser$1$1.stderr.fd);
-}
+function useColors() {}
 
 function formatArgs$1() {}
 
