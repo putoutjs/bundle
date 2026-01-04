@@ -1,3 +1,9 @@
+2026.01.04, v5.1.0
+
+feature:
+- 67f7e7a @putout/bundle: putout v41.5.1
+- 9749a8f @putout/bundle: madrun v12.0.0
+
 2025.12.31, v5.0.10
 
 feature:

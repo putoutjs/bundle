@@ -1,3 +1,18 @@
+function _mergeNamespaces(n, m) {
+	m.forEach(function (e) {
+		e && typeof e !== 'string' && !Array.isArray(e) && Object.keys(e).forEach(function (k) {
+			if (k !== 'default' && !(k in n)) {
+				var d = Object.getOwnPropertyDescriptor(e, k);
+				Object.defineProperty(n, k, d.get ? d : {
+					enumerable: true,
+					get: function () { return e[k]; }
+				});
+			}
+		});
+	});
+	return Object.freeze(n);
+}
+
 var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
 function getAugmentedNamespace(n) {
@@ -29,2238 +44,24 @@ function getAugmentedNamespace(n) {
 	return a;
 }
 
-var putout$1 = {exports: {}};
-
-var global$1 = (typeof global !== "undefined" ? global :
-  typeof self !== "undefined" ? self :
-  typeof window !== "undefined" ? window : {});
-
-// shim for using process in browser
-// based off https://github.com/defunctzombie/node-process/blob/master/browser.js
-
-function defaultSetTimout() {
-    throw new Error('setTimeout has not been defined');
-}
-function defaultClearTimeout () {
-    throw new Error('clearTimeout has not been defined');
-}
-var cachedSetTimeout = defaultSetTimout;
-var cachedClearTimeout = defaultClearTimeout;
-if (typeof global$1.setTimeout === 'function') {
-    cachedSetTimeout = setTimeout;
-}
-if (typeof global$1.clearTimeout === 'function') {
-    cachedClearTimeout = clearTimeout;
-}
-
-function runTimeout(fun) {
-    if (cachedSetTimeout === setTimeout) {
-        //normal enviroments in sane situations
-        return setTimeout(fun, 0);
-    }
-    // if setTimeout wasn't available but was latter defined
-    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
-        cachedSetTimeout = setTimeout;
-        return setTimeout(fun, 0);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedSetTimeout(fun, 0);
-    } catch(e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
-            return cachedSetTimeout.call(null, fun, 0);
-        } catch(e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
-            return cachedSetTimeout.call(this, fun, 0);
-        }
-    }
-
-
-}
-function runClearTimeout(marker) {
-    if (cachedClearTimeout === clearTimeout) {
-        //normal enviroments in sane situations
-        return clearTimeout(marker);
-    }
-    // if clearTimeout wasn't available but was latter defined
-    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
-        cachedClearTimeout = clearTimeout;
-        return clearTimeout(marker);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedClearTimeout(marker);
-    } catch (e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
-            return cachedClearTimeout.call(null, marker);
-        } catch (e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
-            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
-            return cachedClearTimeout.call(this, marker);
-        }
-    }
-
-
-
-}
-var queue = [];
-var draining = false;
-var currentQueue;
-var queueIndex = -1;
-
-function cleanUpNextTick() {
-    if (!draining || !currentQueue) {
-        return;
-    }
-    draining = false;
-    if (currentQueue.length) {
-        queue = currentQueue.concat(queue);
-    } else {
-        queueIndex = -1;
-    }
-    if (queue.length) {
-        drainQueue();
-    }
-}
-
-function drainQueue() {
-    if (draining) {
-        return;
-    }
-    var timeout = runTimeout(cleanUpNextTick);
-    draining = true;
-
-    var len = queue.length;
-    while(len) {
-        currentQueue = queue;
-        queue = [];
-        while (++queueIndex < len) {
-            if (currentQueue) {
-                currentQueue[queueIndex].run();
-            }
-        }
-        queueIndex = -1;
-        len = queue.length;
-    }
-    currentQueue = null;
-    draining = false;
-    runClearTimeout(timeout);
-}
-function nextTick(fun) {
-    var args = new Array(arguments.length - 1);
-    if (arguments.length > 1) {
-        for (var i = 1; i < arguments.length; i++) {
-            args[i - 1] = arguments[i];
-        }
-    }
-    queue.push(new Item(fun, args));
-    if (queue.length === 1 && !draining) {
-        runTimeout(drainQueue);
-    }
-}
-// v8 likes predictible objects
-function Item(fun, array) {
-    this.fun = fun;
-    this.array = array;
-}
-Item.prototype.run = function () {
-    this.fun.apply(null, this.array);
-};
-var title = 'browser';
-var platform = 'browser';
-var browser$1 = true;
-var env = {};
-var argv = [];
-var version = ''; // empty string to avoid regexp issues
-var versions = {};
-var release = {};
-var config = {};
-
-function noop$8() {}
-
-var on = noop$8;
-var addListener = noop$8;
-var once$9 = noop$8;
-var off = noop$8;
-var removeListener = noop$8;
-var removeAllListeners = noop$8;
-var emit = noop$8;
-
-function binding(name) {
-    throw new Error('process.binding is not supported');
-}
-
-function cwd () { return '/' }
-function chdir (dir) {
-    throw new Error('process.chdir is not supported');
-}function umask() { return 0; }
-
-// from https://github.com/kumavis/browser-process-hrtime/blob/master/index.js
-var performance = global$1.performance || {};
-var performanceNow =
-  performance.now        ||
-  performance.mozNow     ||
-  performance.msNow      ||
-  performance.oNow       ||
-  performance.webkitNow  ||
-  function(){ return (new Date()).getTime() };
-
-// generate timestamp or delta
-// see http://nodejs.org/api/process.html#process_process_hrtime
-function hrtime(previousTimestamp){
-  var clocktime = performanceNow.call(performance)*1e-3;
-  var seconds = Math.floor(clocktime);
-  var nanoseconds = Math.floor((clocktime%1)*1e9);
-  if (previousTimestamp) {
-    seconds = seconds - previousTimestamp[0];
-    nanoseconds = nanoseconds - previousTimestamp[1];
-    if (nanoseconds<0) {
-      seconds--;
-      nanoseconds += 1e9;
-    }
-  }
-  return [seconds,nanoseconds]
-}
-
-var startTime = new Date();
-function uptime() {
-  var currentTime = new Date();
-  var dif = currentTime - startTime;
-  return dif / 1000;
-}
-
-var browser$1$1 = {
-  nextTick: nextTick,
-  title: title,
-  browser: browser$1,
-  env: env,
-  argv: argv,
-  version: version,
-  versions: versions,
-  on: on,
-  addListener: addListener,
-  once: once$9,
-  off: off,
-  removeListener: removeListener,
-  removeAllListeners: removeAllListeners,
-  emit: emit,
-  binding: binding,
-  cwd: cwd,
-  chdir: chdir,
-  umask: umask,
-  hrtime: hrtime,
-  platform: platform,
-  release: release,
-  config: config,
-  uptime: uptime
+var fullstore$1 = (value) => {
+    const data = {
+        value,
+    };
+    
+    return (...args) => {
+        const [value] = args;
+        
+        if (!args.length)
+            return data.value;
+        
+        data.value = value;
+        
+        return value;
+    };
 };
 
-var _polyfillNode_process = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	addListener: addListener,
-	argv: argv,
-	binding: binding,
-	browser: browser$1,
-	chdir: chdir,
-	config: config,
-	cwd: cwd,
-	default: browser$1$1,
-	emit: emit,
-	env: env,
-	hrtime: hrtime,
-	nextTick: nextTick,
-	off: off,
-	on: on,
-	once: once$9,
-	platform: platform,
-	release: release,
-	removeAllListeners: removeAllListeners,
-	removeListener: removeListener,
-	title: title,
-	umask: umask,
-	uptime: uptime,
-	version: version,
-	versions: versions
-});
-
-var lookup = [];
-var revLookup = [];
-var Arr = typeof Uint8Array !== 'undefined' ? Uint8Array : Array;
-var inited = false;
-function init$2 () {
-  inited = true;
-  var code = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
-  for (var i = 0, len = code.length; i < len; ++i) {
-    lookup[i] = code[i];
-    revLookup[code.charCodeAt(i)] = i;
-  }
-
-  revLookup['-'.charCodeAt(0)] = 62;
-  revLookup['_'.charCodeAt(0)] = 63;
-}
-
-function toByteArray (b64) {
-  if (!inited) {
-    init$2();
-  }
-  var i, j, l, tmp, placeHolders, arr;
-  var len = b64.length;
-
-  if (len % 4 > 0) {
-    throw new Error('Invalid string. Length must be a multiple of 4')
-  }
-
-  // the number of equal signs (place holders)
-  // if there are two placeholders, than the two characters before it
-  // represent one byte
-  // if there is only one, then the three characters before it represent 2 bytes
-  // this is just a cheap hack to not do indexOf twice
-  placeHolders = b64[len - 2] === '=' ? 2 : b64[len - 1] === '=' ? 1 : 0;
-
-  // base64 is 4/3 + up to two characters of the original data
-  arr = new Arr(len * 3 / 4 - placeHolders);
-
-  // if there are placeholders, only get up to the last complete 4 chars
-  l = placeHolders > 0 ? len - 4 : len;
-
-  var L = 0;
-
-  for (i = 0, j = 0; i < l; i += 4, j += 3) {
-    tmp = (revLookup[b64.charCodeAt(i)] << 18) | (revLookup[b64.charCodeAt(i + 1)] << 12) | (revLookup[b64.charCodeAt(i + 2)] << 6) | revLookup[b64.charCodeAt(i + 3)];
-    arr[L++] = (tmp >> 16) & 0xFF;
-    arr[L++] = (tmp >> 8) & 0xFF;
-    arr[L++] = tmp & 0xFF;
-  }
-
-  if (placeHolders === 2) {
-    tmp = (revLookup[b64.charCodeAt(i)] << 2) | (revLookup[b64.charCodeAt(i + 1)] >> 4);
-    arr[L++] = tmp & 0xFF;
-  } else if (placeHolders === 1) {
-    tmp = (revLookup[b64.charCodeAt(i)] << 10) | (revLookup[b64.charCodeAt(i + 1)] << 4) | (revLookup[b64.charCodeAt(i + 2)] >> 2);
-    arr[L++] = (tmp >> 8) & 0xFF;
-    arr[L++] = tmp & 0xFF;
-  }
-
-  return arr
-}
-
-function tripletToBase64 (num) {
-  return lookup[num >> 18 & 0x3F] + lookup[num >> 12 & 0x3F] + lookup[num >> 6 & 0x3F] + lookup[num & 0x3F]
-}
-
-function encodeChunk (uint8, start, end) {
-  var tmp;
-  var output = [];
-  for (var i = start; i < end; i += 3) {
-    tmp = (uint8[i] << 16) + (uint8[i + 1] << 8) + (uint8[i + 2]);
-    output.push(tripletToBase64(tmp));
-  }
-  return output.join('')
-}
-
-function fromByteArray (uint8) {
-  if (!inited) {
-    init$2();
-  }
-  var tmp;
-  var len = uint8.length;
-  var extraBytes = len % 3; // if we have 1 byte left, pad 2 bytes
-  var output = '';
-  var parts = [];
-  var maxChunkLength = 16383; // must be multiple of 3
-
-  // go through the array every three bytes, we'll deal with trailing stuff later
-  for (var i = 0, len2 = len - extraBytes; i < len2; i += maxChunkLength) {
-    parts.push(encodeChunk(uint8, i, (i + maxChunkLength) > len2 ? len2 : (i + maxChunkLength)));
-  }
-
-  // pad the end with zeros, but make sure to not forget the extra bytes
-  if (extraBytes === 1) {
-    tmp = uint8[len - 1];
-    output += lookup[tmp >> 2];
-    output += lookup[(tmp << 4) & 0x3F];
-    output += '==';
-  } else if (extraBytes === 2) {
-    tmp = (uint8[len - 2] << 8) + (uint8[len - 1]);
-    output += lookup[tmp >> 10];
-    output += lookup[(tmp >> 4) & 0x3F];
-    output += lookup[(tmp << 2) & 0x3F];
-    output += '=';
-  }
-
-  parts.push(output);
-
-  return parts.join('')
-}
-
-function read (buffer, offset, isLE, mLen, nBytes) {
-  var e, m;
-  var eLen = nBytes * 8 - mLen - 1;
-  var eMax = (1 << eLen) - 1;
-  var eBias = eMax >> 1;
-  var nBits = -7;
-  var i = isLE ? (nBytes - 1) : 0;
-  var d = isLE ? -1 : 1;
-  var s = buffer[offset + i];
-
-  i += d;
-
-  e = s & ((1 << (-nBits)) - 1);
-  s >>= (-nBits);
-  nBits += eLen;
-  for (; nBits > 0; e = e * 256 + buffer[offset + i], i += d, nBits -= 8) {}
-
-  m = e & ((1 << (-nBits)) - 1);
-  e >>= (-nBits);
-  nBits += mLen;
-  for (; nBits > 0; m = m * 256 + buffer[offset + i], i += d, nBits -= 8) {}
-
-  if (e === 0) {
-    e = 1 - eBias;
-  } else if (e === eMax) {
-    return m ? NaN : ((s ? -1 : 1) * Infinity)
-  } else {
-    m = m + Math.pow(2, mLen);
-    e = e - eBias;
-  }
-  return (s ? -1 : 1) * m * Math.pow(2, e - mLen)
-}
-
-function write (buffer, value, offset, isLE, mLen, nBytes) {
-  var e, m, c;
-  var eLen = nBytes * 8 - mLen - 1;
-  var eMax = (1 << eLen) - 1;
-  var eBias = eMax >> 1;
-  var rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0);
-  var i = isLE ? 0 : (nBytes - 1);
-  var d = isLE ? 1 : -1;
-  var s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0;
-
-  value = Math.abs(value);
-
-  if (isNaN(value) || value === Infinity) {
-    m = isNaN(value) ? 1 : 0;
-    e = eMax;
-  } else {
-    e = Math.floor(Math.log(value) / Math.LN2);
-    if (value * (c = Math.pow(2, -e)) < 1) {
-      e--;
-      c *= 2;
-    }
-    if (e + eBias >= 1) {
-      value += rt / c;
-    } else {
-      value += rt * Math.pow(2, 1 - eBias);
-    }
-    if (value * c >= 2) {
-      e++;
-      c /= 2;
-    }
-
-    if (e + eBias >= eMax) {
-      m = 0;
-      e = eMax;
-    } else if (e + eBias >= 1) {
-      m = (value * c - 1) * Math.pow(2, mLen);
-      e = e + eBias;
-    } else {
-      m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen);
-      e = 0;
-    }
-  }
-
-  for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8) {}
-
-  e = (e << mLen) | m;
-  eLen += mLen;
-  for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8) {}
-
-  buffer[offset + i - d] |= s * 128;
-}
-
-var toString = {}.toString;
-
-var isArray$d = Array.isArray || function (arr) {
-  return toString.call(arr) == '[object Array]';
-};
-
-/*!
- * The buffer module from node.js, for the browser.
- *
- * @author   Feross Aboukhadijeh <feross@feross.org> <http://feross.org>
- * @license  MIT
- */
-/* eslint-disable no-proto */
-
-
-var INSPECT_MAX_BYTES = 50;
-
-/**
- * If `Buffer.TYPED_ARRAY_SUPPORT`:
- *   === true    Use Uint8Array implementation (fastest)
- *   === false   Use Object implementation (most compatible, even IE6)
- *
- * Browsers that support typed arrays are IE 10+, Firefox 4+, Chrome 7+, Safari 5.1+,
- * Opera 11.6+, iOS 4.2+.
- *
- * Due to various browser bugs, sometimes the Object implementation will be used even
- * when the browser supports typed arrays.
- *
- * Note:
- *
- *   - Firefox 4-29 lacks support for adding new properties to `Uint8Array` instances,
- *     See: https://bugzilla.mozilla.org/show_bug.cgi?id=695438.
- *
- *   - Chrome 9-10 is missing the `TypedArray.prototype.subarray` function.
- *
- *   - IE10 has a broken `TypedArray.prototype.subarray` function which returns arrays of
- *     incorrect length in some situations.
-
- * We detect these buggy browsers and set `Buffer.TYPED_ARRAY_SUPPORT` to `false` so they
- * get the Object implementation, which is slower but behaves correctly.
- */
-Buffer.TYPED_ARRAY_SUPPORT = global$1.TYPED_ARRAY_SUPPORT !== undefined
-  ? global$1.TYPED_ARRAY_SUPPORT
-  : true;
-
-/*
- * Export kMaxLength after typed array support is determined.
- */
-kMaxLength();
-
-function kMaxLength () {
-  return Buffer.TYPED_ARRAY_SUPPORT
-    ? 0x7fffffff
-    : 0x3fffffff
-}
-
-function createBuffer (that, length) {
-  if (kMaxLength() < length) {
-    throw new RangeError('Invalid typed array length')
-  }
-  if (Buffer.TYPED_ARRAY_SUPPORT) {
-    // Return an augmented `Uint8Array` instance, for best performance
-    that = new Uint8Array(length);
-    that.__proto__ = Buffer.prototype;
-  } else {
-    // Fallback: Return an object instance of the Buffer class
-    if (that === null) {
-      that = new Buffer(length);
-    }
-    that.length = length;
-  }
-
-  return that
-}
-
-/**
- * The Buffer constructor returns instances of `Uint8Array` that have their
- * prototype changed to `Buffer.prototype`. Furthermore, `Buffer` is a subclass of
- * `Uint8Array`, so the returned instances will have all the node `Buffer` methods
- * and the `Uint8Array` methods. Square bracket notation works as expected -- it
- * returns a single octet.
- *
- * The `Uint8Array` prototype remains unmodified.
- */
-
-function Buffer (arg, encodingOrOffset, length) {
-  if (!Buffer.TYPED_ARRAY_SUPPORT && !(this instanceof Buffer)) {
-    return new Buffer(arg, encodingOrOffset, length)
-  }
-
-  // Common case.
-  if (typeof arg === 'number') {
-    if (typeof encodingOrOffset === 'string') {
-      throw new Error(
-        'If encoding is specified then the first argument must be a string'
-      )
-    }
-    return allocUnsafe(this, arg)
-  }
-  return from(this, arg, encodingOrOffset, length)
-}
-
-Buffer.poolSize = 8192; // not used by this implementation
-
-// TODO: Legacy, not needed anymore. Remove in next major version.
-Buffer._augment = function (arr) {
-  arr.__proto__ = Buffer.prototype;
-  return arr
-};
-
-function from (that, value, encodingOrOffset, length) {
-  if (typeof value === 'number') {
-    throw new TypeError('"value" argument must not be a number')
-  }
-
-  if (typeof ArrayBuffer !== 'undefined' && value instanceof ArrayBuffer) {
-    return fromArrayBuffer(that, value, encodingOrOffset, length)
-  }
-
-  if (typeof value === 'string') {
-    return fromString(that, value, encodingOrOffset)
-  }
-
-  return fromObject(that, value)
-}
-
-/**
- * Functionally equivalent to Buffer(arg, encoding) but throws a TypeError
- * if value is a number.
- * Buffer.from(str[, encoding])
- * Buffer.from(array)
- * Buffer.from(buffer)
- * Buffer.from(arrayBuffer[, byteOffset[, length]])
- **/
-Buffer.from = function (value, encodingOrOffset, length) {
-  return from(null, value, encodingOrOffset, length)
-};
-
-if (Buffer.TYPED_ARRAY_SUPPORT) {
-  Buffer.prototype.__proto__ = Uint8Array.prototype;
-  Buffer.__proto__ = Uint8Array;
-  if (typeof Symbol !== 'undefined' && Symbol.species &&
-      Buffer[Symbol.species] === Buffer) ;
-}
-
-function assertSize (size) {
-  if (typeof size !== 'number') {
-    throw new TypeError('"size" argument must be a number')
-  } else if (size < 0) {
-    throw new RangeError('"size" argument must not be negative')
-  }
-}
-
-function alloc (that, size, fill, encoding) {
-  assertSize(size);
-  if (size <= 0) {
-    return createBuffer(that, size)
-  }
-  if (fill !== undefined) {
-    // Only pay attention to encoding if it's a string. This
-    // prevents accidentally sending in a number that would
-    // be interpretted as a start offset.
-    return typeof encoding === 'string'
-      ? createBuffer(that, size).fill(fill, encoding)
-      : createBuffer(that, size).fill(fill)
-  }
-  return createBuffer(that, size)
-}
-
-/**
- * Creates a new filled Buffer instance.
- * alloc(size[, fill[, encoding]])
- **/
-Buffer.alloc = function (size, fill, encoding) {
-  return alloc(null, size, fill, encoding)
-};
-
-function allocUnsafe (that, size) {
-  assertSize(size);
-  that = createBuffer(that, size < 0 ? 0 : checked(size) | 0);
-  if (!Buffer.TYPED_ARRAY_SUPPORT) {
-    for (var i = 0; i < size; ++i) {
-      that[i] = 0;
-    }
-  }
-  return that
-}
-
-/**
- * Equivalent to Buffer(num), by default creates a non-zero-filled Buffer instance.
- * */
-Buffer.allocUnsafe = function (size) {
-  return allocUnsafe(null, size)
-};
-/**
- * Equivalent to SlowBuffer(num), by default creates a non-zero-filled Buffer instance.
- */
-Buffer.allocUnsafeSlow = function (size) {
-  return allocUnsafe(null, size)
-};
-
-function fromString (that, string, encoding) {
-  if (typeof encoding !== 'string' || encoding === '') {
-    encoding = 'utf8';
-  }
-
-  if (!Buffer.isEncoding(encoding)) {
-    throw new TypeError('"encoding" must be a valid string encoding')
-  }
-
-  var length = byteLength(string, encoding) | 0;
-  that = createBuffer(that, length);
-
-  var actual = that.write(string, encoding);
-
-  if (actual !== length) {
-    // Writing a hex string, for example, that contains invalid characters will
-    // cause everything after the first invalid character to be ignored. (e.g.
-    // 'abxxcd' will be treated as 'ab')
-    that = that.slice(0, actual);
-  }
-
-  return that
-}
-
-function fromArrayLike (that, array) {
-  var length = array.length < 0 ? 0 : checked(array.length) | 0;
-  that = createBuffer(that, length);
-  for (var i = 0; i < length; i += 1) {
-    that[i] = array[i] & 255;
-  }
-  return that
-}
-
-function fromArrayBuffer (that, array, byteOffset, length) {
-  array.byteLength; // this throws if `array` is not a valid ArrayBuffer
-
-  if (byteOffset < 0 || array.byteLength < byteOffset) {
-    throw new RangeError('\'offset\' is out of bounds')
-  }
-
-  if (array.byteLength < byteOffset + (length || 0)) {
-    throw new RangeError('\'length\' is out of bounds')
-  }
-
-  if (byteOffset === undefined && length === undefined) {
-    array = new Uint8Array(array);
-  } else if (length === undefined) {
-    array = new Uint8Array(array, byteOffset);
-  } else {
-    array = new Uint8Array(array, byteOffset, length);
-  }
-
-  if (Buffer.TYPED_ARRAY_SUPPORT) {
-    // Return an augmented `Uint8Array` instance, for best performance
-    that = array;
-    that.__proto__ = Buffer.prototype;
-  } else {
-    // Fallback: Return an object instance of the Buffer class
-    that = fromArrayLike(that, array);
-  }
-  return that
-}
-
-function fromObject (that, obj) {
-  if (internalIsBuffer(obj)) {
-    var len = checked(obj.length) | 0;
-    that = createBuffer(that, len);
-
-    if (that.length === 0) {
-      return that
-    }
-
-    obj.copy(that, 0, 0, len);
-    return that
-  }
-
-  if (obj) {
-    if ((typeof ArrayBuffer !== 'undefined' &&
-        obj.buffer instanceof ArrayBuffer) || 'length' in obj) {
-      if (typeof obj.length !== 'number' || isnan(obj.length)) {
-        return createBuffer(that, 0)
-      }
-      return fromArrayLike(that, obj)
-    }
-
-    if (obj.type === 'Buffer' && isArray$d(obj.data)) {
-      return fromArrayLike(that, obj.data)
-    }
-  }
-
-  throw new TypeError('First argument must be a string, Buffer, ArrayBuffer, Array, or array-like object.')
-}
-
-function checked (length) {
-  // Note: cannot use `length < kMaxLength()` here because that fails when
-  // length is NaN (which is otherwise coerced to zero.)
-  if (length >= kMaxLength()) {
-    throw new RangeError('Attempt to allocate Buffer larger than maximum ' +
-                         'size: 0x' + kMaxLength().toString(16) + ' bytes')
-  }
-  return length | 0
-}
-Buffer.isBuffer = isBuffer;
-function internalIsBuffer (b) {
-  return !!(b != null && b._isBuffer)
-}
-
-Buffer.compare = function compare (a, b) {
-  if (!internalIsBuffer(a) || !internalIsBuffer(b)) {
-    throw new TypeError('Arguments must be Buffers')
-  }
-
-  if (a === b) return 0
-
-  var x = a.length;
-  var y = b.length;
-
-  for (var i = 0, len = Math.min(x, y); i < len; ++i) {
-    if (a[i] !== b[i]) {
-      x = a[i];
-      y = b[i];
-      break
-    }
-  }
-
-  if (x < y) return -1
-  if (y < x) return 1
-  return 0
-};
-
-Buffer.isEncoding = function isEncoding (encoding) {
-  switch (String(encoding).toLowerCase()) {
-    case 'hex':
-    case 'utf8':
-    case 'utf-8':
-    case 'ascii':
-    case 'latin1':
-    case 'binary':
-    case 'base64':
-    case 'ucs2':
-    case 'ucs-2':
-    case 'utf16le':
-    case 'utf-16le':
-      return true
-    default:
-      return false
-  }
-};
-
-Buffer.concat = function concat (list, length) {
-  if (!isArray$d(list)) {
-    throw new TypeError('"list" argument must be an Array of Buffers')
-  }
-
-  if (list.length === 0) {
-    return Buffer.alloc(0)
-  }
-
-  var i;
-  if (length === undefined) {
-    length = 0;
-    for (i = 0; i < list.length; ++i) {
-      length += list[i].length;
-    }
-  }
-
-  var buffer = Buffer.allocUnsafe(length);
-  var pos = 0;
-  for (i = 0; i < list.length; ++i) {
-    var buf = list[i];
-    if (!internalIsBuffer(buf)) {
-      throw new TypeError('"list" argument must be an Array of Buffers')
-    }
-    buf.copy(buffer, pos);
-    pos += buf.length;
-  }
-  return buffer
-};
-
-function byteLength (string, encoding) {
-  if (internalIsBuffer(string)) {
-    return string.length
-  }
-  if (typeof ArrayBuffer !== 'undefined' && typeof ArrayBuffer.isView === 'function' &&
-      (ArrayBuffer.isView(string) || string instanceof ArrayBuffer)) {
-    return string.byteLength
-  }
-  if (typeof string !== 'string') {
-    string = '' + string;
-  }
-
-  var len = string.length;
-  if (len === 0) return 0
-
-  // Use a for loop to avoid recursion
-  var loweredCase = false;
-  for (;;) {
-    switch (encoding) {
-      case 'ascii':
-      case 'latin1':
-      case 'binary':
-        return len
-      case 'utf8':
-      case 'utf-8':
-      case undefined:
-        return utf8ToBytes(string).length
-      case 'ucs2':
-      case 'ucs-2':
-      case 'utf16le':
-      case 'utf-16le':
-        return len * 2
-      case 'hex':
-        return len >>> 1
-      case 'base64':
-        return base64ToBytes(string).length
-      default:
-        if (loweredCase) return utf8ToBytes(string).length // assume utf8
-        encoding = ('' + encoding).toLowerCase();
-        loweredCase = true;
-    }
-  }
-}
-Buffer.byteLength = byteLength;
-
-function slowToString (encoding, start, end) {
-  var loweredCase = false;
-
-  // No need to verify that "this.length <= MAX_UINT32" since it's a read-only
-  // property of a typed array.
-
-  // This behaves neither like String nor Uint8Array in that we set start/end
-  // to their upper/lower bounds if the value passed is out of range.
-  // undefined is handled specially as per ECMA-262 6th Edition,
-  // Section 13.3.3.7 Runtime Semantics: KeyedBindingInitialization.
-  if (start === undefined || start < 0) {
-    start = 0;
-  }
-  // Return early if start > this.length. Done here to prevent potential uint32
-  // coercion fail below.
-  if (start > this.length) {
-    return ''
-  }
-
-  if (end === undefined || end > this.length) {
-    end = this.length;
-  }
-
-  if (end <= 0) {
-    return ''
-  }
-
-  // Force coersion to uint32. This will also coerce falsey/NaN values to 0.
-  end >>>= 0;
-  start >>>= 0;
-
-  if (end <= start) {
-    return ''
-  }
-
-  if (!encoding) encoding = 'utf8';
-
-  while (true) {
-    switch (encoding) {
-      case 'hex':
-        return hexSlice(this, start, end)
-
-      case 'utf8':
-      case 'utf-8':
-        return utf8Slice(this, start, end)
-
-      case 'ascii':
-        return asciiSlice(this, start, end)
-
-      case 'latin1':
-      case 'binary':
-        return latin1Slice(this, start, end)
-
-      case 'base64':
-        return base64Slice(this, start, end)
-
-      case 'ucs2':
-      case 'ucs-2':
-      case 'utf16le':
-      case 'utf-16le':
-        return utf16leSlice(this, start, end)
-
-      default:
-        if (loweredCase) throw new TypeError('Unknown encoding: ' + encoding)
-        encoding = (encoding + '').toLowerCase();
-        loweredCase = true;
-    }
-  }
-}
-
-// The property is used by `Array.isArray` and `is-buffer` (in Safari 5-7) to detect
-// Buffer instances.
-Buffer.prototype._isBuffer = true;
-
-function swap (b, n, m) {
-  var i = b[n];
-  b[n] = b[m];
-  b[m] = i;
-}
-
-Buffer.prototype.swap16 = function swap16 () {
-  var len = this.length;
-  if (len % 2 !== 0) {
-    throw new RangeError('Buffer size must be a multiple of 16-bits')
-  }
-  for (var i = 0; i < len; i += 2) {
-    swap(this, i, i + 1);
-  }
-  return this
-};
-
-Buffer.prototype.swap32 = function swap32 () {
-  var len = this.length;
-  if (len % 4 !== 0) {
-    throw new RangeError('Buffer size must be a multiple of 32-bits')
-  }
-  for (var i = 0; i < len; i += 4) {
-    swap(this, i, i + 3);
-    swap(this, i + 1, i + 2);
-  }
-  return this
-};
-
-Buffer.prototype.swap64 = function swap64 () {
-  var len = this.length;
-  if (len % 8 !== 0) {
-    throw new RangeError('Buffer size must be a multiple of 64-bits')
-  }
-  for (var i = 0; i < len; i += 8) {
-    swap(this, i, i + 7);
-    swap(this, i + 1, i + 6);
-    swap(this, i + 2, i + 5);
-    swap(this, i + 3, i + 4);
-  }
-  return this
-};
-
-Buffer.prototype.toString = function toString () {
-  var length = this.length | 0;
-  if (length === 0) return ''
-  if (arguments.length === 0) return utf8Slice(this, 0, length)
-  return slowToString.apply(this, arguments)
-};
-
-Buffer.prototype.equals = function equals (b) {
-  if (!internalIsBuffer(b)) throw new TypeError('Argument must be a Buffer')
-  if (this === b) return true
-  return Buffer.compare(this, b) === 0
-};
-
-Buffer.prototype.inspect = function inspect () {
-  var str = '';
-  var max = INSPECT_MAX_BYTES;
-  if (this.length > 0) {
-    str = this.toString('hex', 0, max).match(/.{2}/g).join(' ');
-    if (this.length > max) str += ' ... ';
-  }
-  return '<Buffer ' + str + '>'
-};
-
-Buffer.prototype.compare = function compare (target, start, end, thisStart, thisEnd) {
-  if (!internalIsBuffer(target)) {
-    throw new TypeError('Argument must be a Buffer')
-  }
-
-  if (start === undefined) {
-    start = 0;
-  }
-  if (end === undefined) {
-    end = target ? target.length : 0;
-  }
-  if (thisStart === undefined) {
-    thisStart = 0;
-  }
-  if (thisEnd === undefined) {
-    thisEnd = this.length;
-  }
-
-  if (start < 0 || end > target.length || thisStart < 0 || thisEnd > this.length) {
-    throw new RangeError('out of range index')
-  }
-
-  if (thisStart >= thisEnd && start >= end) {
-    return 0
-  }
-  if (thisStart >= thisEnd) {
-    return -1
-  }
-  if (start >= end) {
-    return 1
-  }
-
-  start >>>= 0;
-  end >>>= 0;
-  thisStart >>>= 0;
-  thisEnd >>>= 0;
-
-  if (this === target) return 0
-
-  var x = thisEnd - thisStart;
-  var y = end - start;
-  var len = Math.min(x, y);
-
-  var thisCopy = this.slice(thisStart, thisEnd);
-  var targetCopy = target.slice(start, end);
-
-  for (var i = 0; i < len; ++i) {
-    if (thisCopy[i] !== targetCopy[i]) {
-      x = thisCopy[i];
-      y = targetCopy[i];
-      break
-    }
-  }
-
-  if (x < y) return -1
-  if (y < x) return 1
-  return 0
-};
-
-// Finds either the first index of `val` in `buffer` at offset >= `byteOffset`,
-// OR the last index of `val` in `buffer` at offset <= `byteOffset`.
-//
-// Arguments:
-// - buffer - a Buffer to search
-// - val - a string, Buffer, or number
-// - byteOffset - an index into `buffer`; will be clamped to an int32
-// - encoding - an optional encoding, relevant is val is a string
-// - dir - true for indexOf, false for lastIndexOf
-function bidirectionalIndexOf (buffer, val, byteOffset, encoding, dir) {
-  // Empty buffer means no match
-  if (buffer.length === 0) return -1
-
-  // Normalize byteOffset
-  if (typeof byteOffset === 'string') {
-    encoding = byteOffset;
-    byteOffset = 0;
-  } else if (byteOffset > 0x7fffffff) {
-    byteOffset = 0x7fffffff;
-  } else if (byteOffset < -2147483648) {
-    byteOffset = -2147483648;
-  }
-  byteOffset = +byteOffset;  // Coerce to Number.
-  if (isNaN(byteOffset)) {
-    // byteOffset: it it's undefined, null, NaN, "foo", etc, search whole buffer
-    byteOffset = dir ? 0 : (buffer.length - 1);
-  }
-
-  // Normalize byteOffset: negative offsets start from the end of the buffer
-  if (byteOffset < 0) byteOffset = buffer.length + byteOffset;
-  if (byteOffset >= buffer.length) {
-    if (dir) return -1
-    else byteOffset = buffer.length - 1;
-  } else if (byteOffset < 0) {
-    if (dir) byteOffset = 0;
-    else return -1
-  }
-
-  // Normalize val
-  if (typeof val === 'string') {
-    val = Buffer.from(val, encoding);
-  }
-
-  // Finally, search either indexOf (if dir is true) or lastIndexOf
-  if (internalIsBuffer(val)) {
-    // Special case: looking for empty string/buffer always fails
-    if (val.length === 0) {
-      return -1
-    }
-    return arrayIndexOf(buffer, val, byteOffset, encoding, dir)
-  } else if (typeof val === 'number') {
-    val = val & 0xFF; // Search for a byte value [0-255]
-    if (Buffer.TYPED_ARRAY_SUPPORT &&
-        typeof Uint8Array.prototype.indexOf === 'function') {
-      if (dir) {
-        return Uint8Array.prototype.indexOf.call(buffer, val, byteOffset)
-      } else {
-        return Uint8Array.prototype.lastIndexOf.call(buffer, val, byteOffset)
-      }
-    }
-    return arrayIndexOf(buffer, [ val ], byteOffset, encoding, dir)
-  }
-
-  throw new TypeError('val must be string, number or Buffer')
-}
-
-function arrayIndexOf (arr, val, byteOffset, encoding, dir) {
-  var indexSize = 1;
-  var arrLength = arr.length;
-  var valLength = val.length;
-
-  if (encoding !== undefined) {
-    encoding = String(encoding).toLowerCase();
-    if (encoding === 'ucs2' || encoding === 'ucs-2' ||
-        encoding === 'utf16le' || encoding === 'utf-16le') {
-      if (arr.length < 2 || val.length < 2) {
-        return -1
-      }
-      indexSize = 2;
-      arrLength /= 2;
-      valLength /= 2;
-      byteOffset /= 2;
-    }
-  }
-
-  function read (buf, i) {
-    if (indexSize === 1) {
-      return buf[i]
-    } else {
-      return buf.readUInt16BE(i * indexSize)
-    }
-  }
-
-  var i;
-  if (dir) {
-    var foundIndex = -1;
-    for (i = byteOffset; i < arrLength; i++) {
-      if (read(arr, i) === read(val, foundIndex === -1 ? 0 : i - foundIndex)) {
-        if (foundIndex === -1) foundIndex = i;
-        if (i - foundIndex + 1 === valLength) return foundIndex * indexSize
-      } else {
-        if (foundIndex !== -1) i -= i - foundIndex;
-        foundIndex = -1;
-      }
-    }
-  } else {
-    if (byteOffset + valLength > arrLength) byteOffset = arrLength - valLength;
-    for (i = byteOffset; i >= 0; i--) {
-      var found = true;
-      for (var j = 0; j < valLength; j++) {
-        if (read(arr, i + j) !== read(val, j)) {
-          found = false;
-          break
-        }
-      }
-      if (found) return i
-    }
-  }
-
-  return -1
-}
-
-Buffer.prototype.includes = function includes (val, byteOffset, encoding) {
-  return this.indexOf(val, byteOffset, encoding) !== -1
-};
-
-Buffer.prototype.indexOf = function indexOf (val, byteOffset, encoding) {
-  return bidirectionalIndexOf(this, val, byteOffset, encoding, true)
-};
-
-Buffer.prototype.lastIndexOf = function lastIndexOf (val, byteOffset, encoding) {
-  return bidirectionalIndexOf(this, val, byteOffset, encoding, false)
-};
-
-function hexWrite (buf, string, offset, length) {
-  offset = Number(offset) || 0;
-  var remaining = buf.length - offset;
-  if (!length) {
-    length = remaining;
-  } else {
-    length = Number(length);
-    if (length > remaining) {
-      length = remaining;
-    }
-  }
-
-  // must be an even number of digits
-  var strLen = string.length;
-  if (strLen % 2 !== 0) throw new TypeError('Invalid hex string')
-
-  if (length > strLen / 2) {
-    length = strLen / 2;
-  }
-  for (var i = 0; i < length; ++i) {
-    var parsed = parseInt(string.substr(i * 2, 2), 16);
-    if (isNaN(parsed)) return i
-    buf[offset + i] = parsed;
-  }
-  return i
-}
-
-function utf8Write (buf, string, offset, length) {
-  return blitBuffer(utf8ToBytes(string, buf.length - offset), buf, offset, length)
-}
-
-function asciiWrite (buf, string, offset, length) {
-  return blitBuffer(asciiToBytes(string), buf, offset, length)
-}
-
-function latin1Write (buf, string, offset, length) {
-  return asciiWrite(buf, string, offset, length)
-}
-
-function base64Write (buf, string, offset, length) {
-  return blitBuffer(base64ToBytes(string), buf, offset, length)
-}
-
-function ucs2Write (buf, string, offset, length) {
-  return blitBuffer(utf16leToBytes(string, buf.length - offset), buf, offset, length)
-}
-
-Buffer.prototype.write = function write (string, offset, length, encoding) {
-  // Buffer#write(string)
-  if (offset === undefined) {
-    encoding = 'utf8';
-    length = this.length;
-    offset = 0;
-  // Buffer#write(string, encoding)
-  } else if (length === undefined && typeof offset === 'string') {
-    encoding = offset;
-    length = this.length;
-    offset = 0;
-  // Buffer#write(string, offset[, length][, encoding])
-  } else if (isFinite(offset)) {
-    offset = offset | 0;
-    if (isFinite(length)) {
-      length = length | 0;
-      if (encoding === undefined) encoding = 'utf8';
-    } else {
-      encoding = length;
-      length = undefined;
-    }
-  // legacy write(string, encoding, offset, length) - remove in v0.13
-  } else {
-    throw new Error(
-      'Buffer.write(string, encoding, offset[, length]) is no longer supported'
-    )
-  }
-
-  var remaining = this.length - offset;
-  if (length === undefined || length > remaining) length = remaining;
-
-  if ((string.length > 0 && (length < 0 || offset < 0)) || offset > this.length) {
-    throw new RangeError('Attempt to write outside buffer bounds')
-  }
-
-  if (!encoding) encoding = 'utf8';
-
-  var loweredCase = false;
-  for (;;) {
-    switch (encoding) {
-      case 'hex':
-        return hexWrite(this, string, offset, length)
-
-      case 'utf8':
-      case 'utf-8':
-        return utf8Write(this, string, offset, length)
-
-      case 'ascii':
-        return asciiWrite(this, string, offset, length)
-
-      case 'latin1':
-      case 'binary':
-        return latin1Write(this, string, offset, length)
-
-      case 'base64':
-        // Warning: maxLength not taken into account in base64Write
-        return base64Write(this, string, offset, length)
-
-      case 'ucs2':
-      case 'ucs-2':
-      case 'utf16le':
-      case 'utf-16le':
-        return ucs2Write(this, string, offset, length)
-
-      default:
-        if (loweredCase) throw new TypeError('Unknown encoding: ' + encoding)
-        encoding = ('' + encoding).toLowerCase();
-        loweredCase = true;
-    }
-  }
-};
-
-Buffer.prototype.toJSON = function toJSON () {
-  return {
-    type: 'Buffer',
-    data: Array.prototype.slice.call(this._arr || this, 0)
-  }
-};
-
-function base64Slice (buf, start, end) {
-  if (start === 0 && end === buf.length) {
-    return fromByteArray(buf)
-  } else {
-    return fromByteArray(buf.slice(start, end))
-  }
-}
-
-function utf8Slice (buf, start, end) {
-  end = Math.min(buf.length, end);
-  var res = [];
-
-  var i = start;
-  while (i < end) {
-    var firstByte = buf[i];
-    var codePoint = null;
-    var bytesPerSequence = (firstByte > 0xEF) ? 4
-      : (firstByte > 0xDF) ? 3
-      : (firstByte > 0xBF) ? 2
-      : 1;
-
-    if (i + bytesPerSequence <= end) {
-      var secondByte, thirdByte, fourthByte, tempCodePoint;
-
-      switch (bytesPerSequence) {
-        case 1:
-          if (firstByte < 0x80) {
-            codePoint = firstByte;
-          }
-          break
-        case 2:
-          secondByte = buf[i + 1];
-          if ((secondByte & 0xC0) === 0x80) {
-            tempCodePoint = (firstByte & 0x1F) << 0x6 | (secondByte & 0x3F);
-            if (tempCodePoint > 0x7F) {
-              codePoint = tempCodePoint;
-            }
-          }
-          break
-        case 3:
-          secondByte = buf[i + 1];
-          thirdByte = buf[i + 2];
-          if ((secondByte & 0xC0) === 0x80 && (thirdByte & 0xC0) === 0x80) {
-            tempCodePoint = (firstByte & 0xF) << 0xC | (secondByte & 0x3F) << 0x6 | (thirdByte & 0x3F);
-            if (tempCodePoint > 0x7FF && (tempCodePoint < 0xD800 || tempCodePoint > 0xDFFF)) {
-              codePoint = tempCodePoint;
-            }
-          }
-          break
-        case 4:
-          secondByte = buf[i + 1];
-          thirdByte = buf[i + 2];
-          fourthByte = buf[i + 3];
-          if ((secondByte & 0xC0) === 0x80 && (thirdByte & 0xC0) === 0x80 && (fourthByte & 0xC0) === 0x80) {
-            tempCodePoint = (firstByte & 0xF) << 0x12 | (secondByte & 0x3F) << 0xC | (thirdByte & 0x3F) << 0x6 | (fourthByte & 0x3F);
-            if (tempCodePoint > 0xFFFF && tempCodePoint < 0x110000) {
-              codePoint = tempCodePoint;
-            }
-          }
-      }
-    }
-
-    if (codePoint === null) {
-      // we did not generate a valid codePoint so insert a
-      // replacement char (U+FFFD) and advance only 1 byte
-      codePoint = 0xFFFD;
-      bytesPerSequence = 1;
-    } else if (codePoint > 0xFFFF) {
-      // encode to utf16 (surrogate pair dance)
-      codePoint -= 0x10000;
-      res.push(codePoint >>> 10 & 0x3FF | 0xD800);
-      codePoint = 0xDC00 | codePoint & 0x3FF;
-    }
-
-    res.push(codePoint);
-    i += bytesPerSequence;
-  }
-
-  return decodeCodePointsArray(res)
-}
-
-// Based on http://stackoverflow.com/a/22747272/680742, the browser with
-// the lowest limit is Chrome, with 0x10000 args.
-// We go 1 magnitude less, for safety
-var MAX_ARGUMENTS_LENGTH = 0x1000;
-
-function decodeCodePointsArray (codePoints) {
-  var len = codePoints.length;
-  if (len <= MAX_ARGUMENTS_LENGTH) {
-    return String.fromCharCode.apply(String, codePoints) // avoid extra slice()
-  }
-
-  // Decode in chunks to avoid "call stack size exceeded".
-  var res = '';
-  var i = 0;
-  while (i < len) {
-    res += String.fromCharCode.apply(
-      String,
-      codePoints.slice(i, i += MAX_ARGUMENTS_LENGTH)
-    );
-  }
-  return res
-}
-
-function asciiSlice (buf, start, end) {
-  var ret = '';
-  end = Math.min(buf.length, end);
-
-  for (var i = start; i < end; ++i) {
-    ret += String.fromCharCode(buf[i] & 0x7F);
-  }
-  return ret
-}
-
-function latin1Slice (buf, start, end) {
-  var ret = '';
-  end = Math.min(buf.length, end);
-
-  for (var i = start; i < end; ++i) {
-    ret += String.fromCharCode(buf[i]);
-  }
-  return ret
-}
-
-function hexSlice (buf, start, end) {
-  var len = buf.length;
-
-  if (!start || start < 0) start = 0;
-  if (!end || end < 0 || end > len) end = len;
-
-  var out = '';
-  for (var i = start; i < end; ++i) {
-    out += toHex(buf[i]);
-  }
-  return out
-}
-
-function utf16leSlice (buf, start, end) {
-  var bytes = buf.slice(start, end);
-  var res = '';
-  for (var i = 0; i < bytes.length; i += 2) {
-    res += String.fromCharCode(bytes[i] + bytes[i + 1] * 256);
-  }
-  return res
-}
-
-Buffer.prototype.slice = function slice (start, end) {
-  var len = this.length;
-  start = ~~start;
-  end = end === undefined ? len : ~~end;
-
-  if (start < 0) {
-    start += len;
-    if (start < 0) start = 0;
-  } else if (start > len) {
-    start = len;
-  }
-
-  if (end < 0) {
-    end += len;
-    if (end < 0) end = 0;
-  } else if (end > len) {
-    end = len;
-  }
-
-  if (end < start) end = start;
-
-  var newBuf;
-  if (Buffer.TYPED_ARRAY_SUPPORT) {
-    newBuf = this.subarray(start, end);
-    newBuf.__proto__ = Buffer.prototype;
-  } else {
-    var sliceLen = end - start;
-    newBuf = new Buffer(sliceLen, undefined);
-    for (var i = 0; i < sliceLen; ++i) {
-      newBuf[i] = this[i + start];
-    }
-  }
-
-  return newBuf
-};
-
-/*
- * Need to make sure that buffer isn't trying to write out of bounds.
- */
-function checkOffset (offset, ext, length) {
-  if ((offset % 1) !== 0 || offset < 0) throw new RangeError('offset is not uint')
-  if (offset + ext > length) throw new RangeError('Trying to access beyond buffer length')
-}
-
-Buffer.prototype.readUIntLE = function readUIntLE (offset, byteLength, noAssert) {
-  offset = offset | 0;
-  byteLength = byteLength | 0;
-  if (!noAssert) checkOffset(offset, byteLength, this.length);
-
-  var val = this[offset];
-  var mul = 1;
-  var i = 0;
-  while (++i < byteLength && (mul *= 0x100)) {
-    val += this[offset + i] * mul;
-  }
-
-  return val
-};
-
-Buffer.prototype.readUIntBE = function readUIntBE (offset, byteLength, noAssert) {
-  offset = offset | 0;
-  byteLength = byteLength | 0;
-  if (!noAssert) {
-    checkOffset(offset, byteLength, this.length);
-  }
-
-  var val = this[offset + --byteLength];
-  var mul = 1;
-  while (byteLength > 0 && (mul *= 0x100)) {
-    val += this[offset + --byteLength] * mul;
-  }
-
-  return val
-};
-
-Buffer.prototype.readUInt8 = function readUInt8 (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 1, this.length);
-  return this[offset]
-};
-
-Buffer.prototype.readUInt16LE = function readUInt16LE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 2, this.length);
-  return this[offset] | (this[offset + 1] << 8)
-};
-
-Buffer.prototype.readUInt16BE = function readUInt16BE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 2, this.length);
-  return (this[offset] << 8) | this[offset + 1]
-};
-
-Buffer.prototype.readUInt32LE = function readUInt32LE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 4, this.length);
-
-  return ((this[offset]) |
-      (this[offset + 1] << 8) |
-      (this[offset + 2] << 16)) +
-      (this[offset + 3] * 0x1000000)
-};
-
-Buffer.prototype.readUInt32BE = function readUInt32BE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 4, this.length);
-
-  return (this[offset] * 0x1000000) +
-    ((this[offset + 1] << 16) |
-    (this[offset + 2] << 8) |
-    this[offset + 3])
-};
-
-Buffer.prototype.readIntLE = function readIntLE (offset, byteLength, noAssert) {
-  offset = offset | 0;
-  byteLength = byteLength | 0;
-  if (!noAssert) checkOffset(offset, byteLength, this.length);
-
-  var val = this[offset];
-  var mul = 1;
-  var i = 0;
-  while (++i < byteLength && (mul *= 0x100)) {
-    val += this[offset + i] * mul;
-  }
-  mul *= 0x80;
-
-  if (val >= mul) val -= Math.pow(2, 8 * byteLength);
-
-  return val
-};
-
-Buffer.prototype.readIntBE = function readIntBE (offset, byteLength, noAssert) {
-  offset = offset | 0;
-  byteLength = byteLength | 0;
-  if (!noAssert) checkOffset(offset, byteLength, this.length);
-
-  var i = byteLength;
-  var mul = 1;
-  var val = this[offset + --i];
-  while (i > 0 && (mul *= 0x100)) {
-    val += this[offset + --i] * mul;
-  }
-  mul *= 0x80;
-
-  if (val >= mul) val -= Math.pow(2, 8 * byteLength);
-
-  return val
-};
-
-Buffer.prototype.readInt8 = function readInt8 (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 1, this.length);
-  if (!(this[offset] & 0x80)) return (this[offset])
-  return ((0xff - this[offset] + 1) * -1)
-};
-
-Buffer.prototype.readInt16LE = function readInt16LE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 2, this.length);
-  var val = this[offset] | (this[offset + 1] << 8);
-  return (val & 0x8000) ? val | 0xFFFF0000 : val
-};
-
-Buffer.prototype.readInt16BE = function readInt16BE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 2, this.length);
-  var val = this[offset + 1] | (this[offset] << 8);
-  return (val & 0x8000) ? val | 0xFFFF0000 : val
-};
-
-Buffer.prototype.readInt32LE = function readInt32LE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 4, this.length);
-
-  return (this[offset]) |
-    (this[offset + 1] << 8) |
-    (this[offset + 2] << 16) |
-    (this[offset + 3] << 24)
-};
-
-Buffer.prototype.readInt32BE = function readInt32BE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 4, this.length);
-
-  return (this[offset] << 24) |
-    (this[offset + 1] << 16) |
-    (this[offset + 2] << 8) |
-    (this[offset + 3])
-};
-
-Buffer.prototype.readFloatLE = function readFloatLE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 4, this.length);
-  return read(this, offset, true, 23, 4)
-};
-
-Buffer.prototype.readFloatBE = function readFloatBE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 4, this.length);
-  return read(this, offset, false, 23, 4)
-};
-
-Buffer.prototype.readDoubleLE = function readDoubleLE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 8, this.length);
-  return read(this, offset, true, 52, 8)
-};
-
-Buffer.prototype.readDoubleBE = function readDoubleBE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 8, this.length);
-  return read(this, offset, false, 52, 8)
-};
-
-function checkInt (buf, value, offset, ext, max, min) {
-  if (!internalIsBuffer(buf)) throw new TypeError('"buffer" argument must be a Buffer instance')
-  if (value > max || value < min) throw new RangeError('"value" argument is out of bounds')
-  if (offset + ext > buf.length) throw new RangeError('Index out of range')
-}
-
-Buffer.prototype.writeUIntLE = function writeUIntLE (value, offset, byteLength, noAssert) {
-  value = +value;
-  offset = offset | 0;
-  byteLength = byteLength | 0;
-  if (!noAssert) {
-    var maxBytes = Math.pow(2, 8 * byteLength) - 1;
-    checkInt(this, value, offset, byteLength, maxBytes, 0);
-  }
-
-  var mul = 1;
-  var i = 0;
-  this[offset] = value & 0xFF;
-  while (++i < byteLength && (mul *= 0x100)) {
-    this[offset + i] = (value / mul) & 0xFF;
-  }
-
-  return offset + byteLength
-};
-
-Buffer.prototype.writeUIntBE = function writeUIntBE (value, offset, byteLength, noAssert) {
-  value = +value;
-  offset = offset | 0;
-  byteLength = byteLength | 0;
-  if (!noAssert) {
-    var maxBytes = Math.pow(2, 8 * byteLength) - 1;
-    checkInt(this, value, offset, byteLength, maxBytes, 0);
-  }
-
-  var i = byteLength - 1;
-  var mul = 1;
-  this[offset + i] = value & 0xFF;
-  while (--i >= 0 && (mul *= 0x100)) {
-    this[offset + i] = (value / mul) & 0xFF;
-  }
-
-  return offset + byteLength
-};
-
-Buffer.prototype.writeUInt8 = function writeUInt8 (value, offset, noAssert) {
-  value = +value;
-  offset = offset | 0;
-  if (!noAssert) checkInt(this, value, offset, 1, 0xff, 0);
-  if (!Buffer.TYPED_ARRAY_SUPPORT) value = Math.floor(value);
-  this[offset] = (value & 0xff);
-  return offset + 1
-};
-
-function objectWriteUInt16 (buf, value, offset, littleEndian) {
-  if (value < 0) value = 0xffff + value + 1;
-  for (var i = 0, j = Math.min(buf.length - offset, 2); i < j; ++i) {
-    buf[offset + i] = (value & (0xff << (8 * (littleEndian ? i : 1 - i)))) >>>
-      (littleEndian ? i : 1 - i) * 8;
-  }
-}
-
-Buffer.prototype.writeUInt16LE = function writeUInt16LE (value, offset, noAssert) {
-  value = +value;
-  offset = offset | 0;
-  if (!noAssert) checkInt(this, value, offset, 2, 0xffff, 0);
-  if (Buffer.TYPED_ARRAY_SUPPORT) {
-    this[offset] = (value & 0xff);
-    this[offset + 1] = (value >>> 8);
-  } else {
-    objectWriteUInt16(this, value, offset, true);
-  }
-  return offset + 2
-};
-
-Buffer.prototype.writeUInt16BE = function writeUInt16BE (value, offset, noAssert) {
-  value = +value;
-  offset = offset | 0;
-  if (!noAssert) checkInt(this, value, offset, 2, 0xffff, 0);
-  if (Buffer.TYPED_ARRAY_SUPPORT) {
-    this[offset] = (value >>> 8);
-    this[offset + 1] = (value & 0xff);
-  } else {
-    objectWriteUInt16(this, value, offset, false);
-  }
-  return offset + 2
-};
-
-function objectWriteUInt32 (buf, value, offset, littleEndian) {
-  if (value < 0) value = 0xffffffff + value + 1;
-  for (var i = 0, j = Math.min(buf.length - offset, 4); i < j; ++i) {
-    buf[offset + i] = (value >>> (littleEndian ? i : 3 - i) * 8) & 0xff;
-  }
-}
-
-Buffer.prototype.writeUInt32LE = function writeUInt32LE (value, offset, noAssert) {
-  value = +value;
-  offset = offset | 0;
-  if (!noAssert) checkInt(this, value, offset, 4, 0xffffffff, 0);
-  if (Buffer.TYPED_ARRAY_SUPPORT) {
-    this[offset + 3] = (value >>> 24);
-    this[offset + 2] = (value >>> 16);
-    this[offset + 1] = (value >>> 8);
-    this[offset] = (value & 0xff);
-  } else {
-    objectWriteUInt32(this, value, offset, true);
-  }
-  return offset + 4
-};
-
-Buffer.prototype.writeUInt32BE = function writeUInt32BE (value, offset, noAssert) {
-  value = +value;
-  offset = offset | 0;
-  if (!noAssert) checkInt(this, value, offset, 4, 0xffffffff, 0);
-  if (Buffer.TYPED_ARRAY_SUPPORT) {
-    this[offset] = (value >>> 24);
-    this[offset + 1] = (value >>> 16);
-    this[offset + 2] = (value >>> 8);
-    this[offset + 3] = (value & 0xff);
-  } else {
-    objectWriteUInt32(this, value, offset, false);
-  }
-  return offset + 4
-};
-
-Buffer.prototype.writeIntLE = function writeIntLE (value, offset, byteLength, noAssert) {
-  value = +value;
-  offset = offset | 0;
-  if (!noAssert) {
-    var limit = Math.pow(2, 8 * byteLength - 1);
-
-    checkInt(this, value, offset, byteLength, limit - 1, -limit);
-  }
-
-  var i = 0;
-  var mul = 1;
-  var sub = 0;
-  this[offset] = value & 0xFF;
-  while (++i < byteLength && (mul *= 0x100)) {
-    if (value < 0 && sub === 0 && this[offset + i - 1] !== 0) {
-      sub = 1;
-    }
-    this[offset + i] = ((value / mul) >> 0) - sub & 0xFF;
-  }
-
-  return offset + byteLength
-};
-
-Buffer.prototype.writeIntBE = function writeIntBE (value, offset, byteLength, noAssert) {
-  value = +value;
-  offset = offset | 0;
-  if (!noAssert) {
-    var limit = Math.pow(2, 8 * byteLength - 1);
-
-    checkInt(this, value, offset, byteLength, limit - 1, -limit);
-  }
-
-  var i = byteLength - 1;
-  var mul = 1;
-  var sub = 0;
-  this[offset + i] = value & 0xFF;
-  while (--i >= 0 && (mul *= 0x100)) {
-    if (value < 0 && sub === 0 && this[offset + i + 1] !== 0) {
-      sub = 1;
-    }
-    this[offset + i] = ((value / mul) >> 0) - sub & 0xFF;
-  }
-
-  return offset + byteLength
-};
-
-Buffer.prototype.writeInt8 = function writeInt8 (value, offset, noAssert) {
-  value = +value;
-  offset = offset | 0;
-  if (!noAssert) checkInt(this, value, offset, 1, 0x7f, -128);
-  if (!Buffer.TYPED_ARRAY_SUPPORT) value = Math.floor(value);
-  if (value < 0) value = 0xff + value + 1;
-  this[offset] = (value & 0xff);
-  return offset + 1
-};
-
-Buffer.prototype.writeInt16LE = function writeInt16LE (value, offset, noAssert) {
-  value = +value;
-  offset = offset | 0;
-  if (!noAssert) checkInt(this, value, offset, 2, 0x7fff, -32768);
-  if (Buffer.TYPED_ARRAY_SUPPORT) {
-    this[offset] = (value & 0xff);
-    this[offset + 1] = (value >>> 8);
-  } else {
-    objectWriteUInt16(this, value, offset, true);
-  }
-  return offset + 2
-};
-
-Buffer.prototype.writeInt16BE = function writeInt16BE (value, offset, noAssert) {
-  value = +value;
-  offset = offset | 0;
-  if (!noAssert) checkInt(this, value, offset, 2, 0x7fff, -32768);
-  if (Buffer.TYPED_ARRAY_SUPPORT) {
-    this[offset] = (value >>> 8);
-    this[offset + 1] = (value & 0xff);
-  } else {
-    objectWriteUInt16(this, value, offset, false);
-  }
-  return offset + 2
-};
-
-Buffer.prototype.writeInt32LE = function writeInt32LE (value, offset, noAssert) {
-  value = +value;
-  offset = offset | 0;
-  if (!noAssert) checkInt(this, value, offset, 4, 0x7fffffff, -2147483648);
-  if (Buffer.TYPED_ARRAY_SUPPORT) {
-    this[offset] = (value & 0xff);
-    this[offset + 1] = (value >>> 8);
-    this[offset + 2] = (value >>> 16);
-    this[offset + 3] = (value >>> 24);
-  } else {
-    objectWriteUInt32(this, value, offset, true);
-  }
-  return offset + 4
-};
-
-Buffer.prototype.writeInt32BE = function writeInt32BE (value, offset, noAssert) {
-  value = +value;
-  offset = offset | 0;
-  if (!noAssert) checkInt(this, value, offset, 4, 0x7fffffff, -2147483648);
-  if (value < 0) value = 0xffffffff + value + 1;
-  if (Buffer.TYPED_ARRAY_SUPPORT) {
-    this[offset] = (value >>> 24);
-    this[offset + 1] = (value >>> 16);
-    this[offset + 2] = (value >>> 8);
-    this[offset + 3] = (value & 0xff);
-  } else {
-    objectWriteUInt32(this, value, offset, false);
-  }
-  return offset + 4
-};
-
-function checkIEEE754 (buf, value, offset, ext, max, min) {
-  if (offset + ext > buf.length) throw new RangeError('Index out of range')
-  if (offset < 0) throw new RangeError('Index out of range')
-}
-
-function writeFloat (buf, value, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    checkIEEE754(buf, value, offset, 4);
-  }
-  write(buf, value, offset, littleEndian, 23, 4);
-  return offset + 4
-}
-
-Buffer.prototype.writeFloatLE = function writeFloatLE (value, offset, noAssert) {
-  return writeFloat(this, value, offset, true, noAssert)
-};
-
-Buffer.prototype.writeFloatBE = function writeFloatBE (value, offset, noAssert) {
-  return writeFloat(this, value, offset, false, noAssert)
-};
-
-function writeDouble (buf, value, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    checkIEEE754(buf, value, offset, 8);
-  }
-  write(buf, value, offset, littleEndian, 52, 8);
-  return offset + 8
-}
-
-Buffer.prototype.writeDoubleLE = function writeDoubleLE (value, offset, noAssert) {
-  return writeDouble(this, value, offset, true, noAssert)
-};
-
-Buffer.prototype.writeDoubleBE = function writeDoubleBE (value, offset, noAssert) {
-  return writeDouble(this, value, offset, false, noAssert)
-};
-
-// copy(targetBuffer, targetStart=0, sourceStart=0, sourceEnd=buffer.length)
-Buffer.prototype.copy = function copy (target, targetStart, start, end) {
-  if (!start) start = 0;
-  if (!end && end !== 0) end = this.length;
-  if (targetStart >= target.length) targetStart = target.length;
-  if (!targetStart) targetStart = 0;
-  if (end > 0 && end < start) end = start;
-
-  // Copy 0 bytes; we're done
-  if (end === start) return 0
-  if (target.length === 0 || this.length === 0) return 0
-
-  // Fatal error conditions
-  if (targetStart < 0) {
-    throw new RangeError('targetStart out of bounds')
-  }
-  if (start < 0 || start >= this.length) throw new RangeError('sourceStart out of bounds')
-  if (end < 0) throw new RangeError('sourceEnd out of bounds')
-
-  // Are we oob?
-  if (end > this.length) end = this.length;
-  if (target.length - targetStart < end - start) {
-    end = target.length - targetStart + start;
-  }
-
-  var len = end - start;
-  var i;
-
-  if (this === target && start < targetStart && targetStart < end) {
-    // descending copy from end
-    for (i = len - 1; i >= 0; --i) {
-      target[i + targetStart] = this[i + start];
-    }
-  } else if (len < 1000 || !Buffer.TYPED_ARRAY_SUPPORT) {
-    // ascending copy from start
-    for (i = 0; i < len; ++i) {
-      target[i + targetStart] = this[i + start];
-    }
-  } else {
-    Uint8Array.prototype.set.call(
-      target,
-      this.subarray(start, start + len),
-      targetStart
-    );
-  }
-
-  return len
-};
-
-// Usage:
-//    buffer.fill(number[, offset[, end]])
-//    buffer.fill(buffer[, offset[, end]])
-//    buffer.fill(string[, offset[, end]][, encoding])
-Buffer.prototype.fill = function fill (val, start, end, encoding) {
-  // Handle string cases:
-  if (typeof val === 'string') {
-    if (typeof start === 'string') {
-      encoding = start;
-      start = 0;
-      end = this.length;
-    } else if (typeof end === 'string') {
-      encoding = end;
-      end = this.length;
-    }
-    if (val.length === 1) {
-      var code = val.charCodeAt(0);
-      if (code < 256) {
-        val = code;
-      }
-    }
-    if (encoding !== undefined && typeof encoding !== 'string') {
-      throw new TypeError('encoding must be a string')
-    }
-    if (typeof encoding === 'string' && !Buffer.isEncoding(encoding)) {
-      throw new TypeError('Unknown encoding: ' + encoding)
-    }
-  } else if (typeof val === 'number') {
-    val = val & 255;
-  }
-
-  // Invalid ranges are not set to a default, so can range check early.
-  if (start < 0 || this.length < start || this.length < end) {
-    throw new RangeError('Out of range index')
-  }
-
-  if (end <= start) {
-    return this
-  }
-
-  start = start >>> 0;
-  end = end === undefined ? this.length : end >>> 0;
-
-  if (!val) val = 0;
-
-  var i;
-  if (typeof val === 'number') {
-    for (i = start; i < end; ++i) {
-      this[i] = val;
-    }
-  } else {
-    var bytes = internalIsBuffer(val)
-      ? val
-      : utf8ToBytes(new Buffer(val, encoding).toString());
-    var len = bytes.length;
-    for (i = 0; i < end - start; ++i) {
-      this[i + start] = bytes[i % len];
-    }
-  }
-
-  return this
-};
-
-// HELPER FUNCTIONS
-// ================
-
-var INVALID_BASE64_RE = /[^+\/0-9A-Za-z-_]/g;
-
-function base64clean (str) {
-  // Node strips out invalid characters like \n and \t from the string, base64-js does not
-  str = stringtrim(str).replace(INVALID_BASE64_RE, '');
-  // Node converts strings with length < 2 to ''
-  if (str.length < 2) return ''
-  // Node allows for non-padded base64 strings (missing trailing ===), base64-js does not
-  while (str.length % 4 !== 0) {
-    str = str + '=';
-  }
-  return str
-}
-
-function stringtrim (str) {
-  if (str.trim) return str.trim()
-  return str.replace(/^\s+|\s+$/g, '')
-}
-
-function toHex (n) {
-  if (n < 16) return '0' + n.toString(16)
-  return n.toString(16)
-}
-
-function utf8ToBytes (string, units) {
-  units = units || Infinity;
-  var codePoint;
-  var length = string.length;
-  var leadSurrogate = null;
-  var bytes = [];
-
-  for (var i = 0; i < length; ++i) {
-    codePoint = string.charCodeAt(i);
-
-    // is surrogate component
-    if (codePoint > 0xD7FF && codePoint < 0xE000) {
-      // last char was a lead
-      if (!leadSurrogate) {
-        // no lead yet
-        if (codePoint > 0xDBFF) {
-          // unexpected trail
-          if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD);
-          continue
-        } else if (i + 1 === length) {
-          // unpaired lead
-          if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD);
-          continue
-        }
-
-        // valid lead
-        leadSurrogate = codePoint;
-
-        continue
-      }
-
-      // 2 leads in a row
-      if (codePoint < 0xDC00) {
-        if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD);
-        leadSurrogate = codePoint;
-        continue
-      }
-
-      // valid surrogate pair
-      codePoint = (leadSurrogate - 0xD800 << 10 | codePoint - 0xDC00) + 0x10000;
-    } else if (leadSurrogate) {
-      // valid bmp char, but last char was a lead
-      if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD);
-    }
-
-    leadSurrogate = null;
-
-    // encode utf8
-    if (codePoint < 0x80) {
-      if ((units -= 1) < 0) break
-      bytes.push(codePoint);
-    } else if (codePoint < 0x800) {
-      if ((units -= 2) < 0) break
-      bytes.push(
-        codePoint >> 0x6 | 0xC0,
-        codePoint & 0x3F | 0x80
-      );
-    } else if (codePoint < 0x10000) {
-      if ((units -= 3) < 0) break
-      bytes.push(
-        codePoint >> 0xC | 0xE0,
-        codePoint >> 0x6 & 0x3F | 0x80,
-        codePoint & 0x3F | 0x80
-      );
-    } else if (codePoint < 0x110000) {
-      if ((units -= 4) < 0) break
-      bytes.push(
-        codePoint >> 0x12 | 0xF0,
-        codePoint >> 0xC & 0x3F | 0x80,
-        codePoint >> 0x6 & 0x3F | 0x80,
-        codePoint & 0x3F | 0x80
-      );
-    } else {
-      throw new Error('Invalid code point')
-    }
-  }
-
-  return bytes
-}
-
-function asciiToBytes (str) {
-  var byteArray = [];
-  for (var i = 0; i < str.length; ++i) {
-    // Node's code seems to be doing this and not & 0x7F..
-    byteArray.push(str.charCodeAt(i) & 0xFF);
-  }
-  return byteArray
-}
-
-function utf16leToBytes (str, units) {
-  var c, hi, lo;
-  var byteArray = [];
-  for (var i = 0; i < str.length; ++i) {
-    if ((units -= 2) < 0) break
-
-    c = str.charCodeAt(i);
-    hi = c >> 8;
-    lo = c % 256;
-    byteArray.push(lo);
-    byteArray.push(hi);
-  }
-
-  return byteArray
-}
-
-
-function base64ToBytes (str) {
-  return toByteArray(base64clean(str))
-}
-
-function blitBuffer (src, dst, offset, length) {
-  for (var i = 0; i < length; ++i) {
-    if ((i + offset >= dst.length) || (i >= src.length)) break
-    dst[i + offset] = src[i];
-  }
-  return i
-}
-
-function isnan (val) {
-  return val !== val // eslint-disable-line no-self-compare
-}
-
-
-// the following is from is-buffer, also by Feross Aboukhadijeh and with same lisence
-// The _isBuffer check is for Safari 5-7 support, because it's missing
-// Object.prototype.constructor. Remove this eventually
-function isBuffer(obj) {
-  return obj != null && (!!obj._isBuffer || isFastBuffer(obj) || isSlowBuffer(obj))
-}
-
-function isFastBuffer (obj) {
-  return !!obj.constructor && typeof obj.constructor.isBuffer === 'function' && obj.constructor.isBuffer(obj)
-}
-
-// For Node v0.10 support. Remove this eventually.
-function isSlowBuffer (obj) {
-  return typeof obj.readFloatLE === 'function' && typeof obj.slice === 'function' && isFastBuffer(obj.slice(0, 0))
-}
+var fullstore$2 = fullstore$1.default;
 
 var __create$1 = Object.create;
 var __defProp$1 = Object.defineProperty;
@@ -2268,12 +69,6 @@ var __getOwnPropDesc$1 = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames$1 = Object.getOwnPropertyNames;
 var __getProtoOf$1 = Object.getPrototypeOf;
 var __hasOwnProp$1 = Object.prototype.hasOwnProperty;
-var __defNormalProp$1 = (obj, key, value) => key in obj ? __defProp$1(obj, key, {
-    enumerable: true,
-    configurable: true,
-    writable: true,
-    value,
-}) : obj[key] = value;
 
 var __commonJS$1 = (cb, mod) => function __require() {
     return (mod || (0, cb[__getOwnPropNames$1(cb)[0]])((mod = {
@@ -2310,15 +105,10 @@ __defProp$1(target, 'default', {
     enumerable: true,
 }) , mod));
 
-var __toCommonJS$1 = (mod) => __copyProps$1(__defProp$1({}, '__esModule', {
-    value: true,
-}), mod);
-var __publicField$1 = (obj, key, value) => __defNormalProp$1(obj, typeof key !== 'symbol' ? key + '' : key, value);
-
 // ../babel-babel/node_modules/picocolors/picocolors.js
 var require_picocolors$1 = __commonJS$1({
-    '../babel-babel/node_modules/picocolors/picocolors.js'(exports2, module2) {
-        var p = browser$1$1 || {};
+    '../babel-babel/node_modules/picocolors/picocolors.js'(exports$1, module) {
+        var p = process || {};
         var argv = p.argv || [];
         var env = p.env || {};
         var isColorSupported2 = !(!!env.NO_COLOR || argv.includes('--no-color'))
@@ -2395,14 +185,14 @@ var require_picocolors$1 = __commonJS$1({
             };
         };
         
-        module2.exports = createColors2();
-        module2.exports.createColors = createColors2;
+        module.exports = createColors2();
+        module.exports.createColors = createColors2;
     },
 });
 
 // ../babel-babel/node_modules/jsesc/jsesc.js
 var require_jsesc$1 = __commonJS$1({
-    '../babel-babel/node_modules/jsesc/jsesc.js'(exports2, module2) {
+    '../babel-babel/node_modules/jsesc/jsesc.js'(exports$1, module) {
         
         var object = {};
         var hasOwnProperty = object.hasOwnProperty;
@@ -2744,24 +534,10 @@ var require_jsesc$1 = __commonJS$1({
         };
         
         jsesc2.version = '3.0.2';
-        module2.exports = jsesc2;
+        module.exports = jsesc2;
     },
 });
 
-// lib/index.mjs
-var index_exports$1 = {};
-
-__export$1(index_exports$1, {
-    codeFrameColumns: () => codeFrameColumns$2,
-    generate: () => generate$7,
-    parse: () => parse$7,
-    parseExpression: () => parseExpression$2,
-    template: () => index$2,
-    tokTypes: () => tokTypes$1,
-    traverse: () => traverse3$1,
-    types: () => lib_exports$1,
-});
-var bundle$1 = __toCommonJS$1(index_exports$1);
 // ../babel-babel/packages/babel-types/lib/index.js
 var lib_exports$1 = {};
 
@@ -2777,7 +553,7 @@ __export$1(lib_exports$1, {
     ArrowFunctionExpression: () => ArrowFunctionExpression$2,
     AssignmentExpression: () => AssignmentExpression$3,
     AssignmentPattern: () => AssignmentPattern$2,
-    AwaitExpression: () => AwaitExpression$1,
+    AwaitExpression: () => AwaitExpression$2,
     BINARY_OPERATORS: () => BINARY_OPERATORS$1,
     BINARY_TYPES: () => BINARY_TYPES$1,
     BLOCKPARENT_TYPES: () => BLOCKPARENT_TYPES$1,
@@ -2786,11 +562,11 @@ __export$1(lib_exports$1, {
     BOOLEAN_NUMBER_BINARY_OPERATORS: () => BOOLEAN_NUMBER_BINARY_OPERATORS$1,
     BOOLEAN_UNARY_OPERATORS: () => BOOLEAN_UNARY_OPERATORS$1,
     BUILDER_KEYS: () => BUILDER_KEYS$1,
-    BigIntLiteral: () => BigIntLiteral$1,
+    BigIntLiteral: () => BigIntLiteral$2,
     BinaryExpression: () => BinaryExpression$2,
     BindExpression: () => BindExpression$1,
     BlockStatement: () => BlockStatement$2,
-    BooleanLiteral: () => BooleanLiteral$1,
+    BooleanLiteral: () => BooleanLiteral$2,
     BooleanLiteralTypeAnnotation: () => BooleanLiteralTypeAnnotation$1,
     BooleanTypeAnnotation: () => BooleanTypeAnnotation$1,
     BreakStatement: () => BreakStatement$2,
@@ -2799,14 +575,14 @@ __export$1(lib_exports$1, {
     COMPARISON_BINARY_OPERATORS: () => COMPARISON_BINARY_OPERATORS$1,
     COMPLETIONSTATEMENT_TYPES: () => COMPLETIONSTATEMENT_TYPES$1,
     CONDITIONAL_TYPES: () => CONDITIONAL_TYPES$1,
-    CallExpression: () => CallExpression$3,
-    CatchClause: () => CatchClause$1,
+    CallExpression: () => CallExpression$2,
+    CatchClause: () => CatchClause$2,
     ClassAccessorProperty: () => ClassAccessorProperty$2,
     ClassBody: () => ClassBody$1,
     ClassDeclaration: () => ClassDeclaration$2,
     ClassExpression: () => ClassExpression$2,
     ClassImplements: () => ClassImplements$1,
-    ClassMethod: () => ClassMethod$3,
+    ClassMethod: () => ClassMethod$2,
     ClassPrivateMethod: () => ClassPrivateMethod$2,
     ClassPrivateProperty: () => ClassPrivateProperty$2,
     ClassProperty: () => ClassProperty$2,
@@ -2828,7 +604,7 @@ __export$1(lib_exports$1, {
     DeclareVariable: () => DeclareVariable$1,
     DeclaredPredicate: () => DeclaredPredicate$1,
     Decorator: () => Decorator$2,
-    Directive: () => Directive$1,
+    Directive: () => Directive$2,
     DirectiveLiteral: () => DirectiveLiteral$2,
     DoExpression: () => DoExpression$2,
     DoWhileStatement: () => DoWhileStatement$2,
@@ -2852,8 +628,8 @@ __export$1(lib_exports$1, {
     ExistsTypeAnnotation: () => ExistsTypeAnnotation$1,
     ExportAllDeclaration: () => ExportAllDeclaration$2,
     ExportDefaultDeclaration: () => ExportDefaultDeclaration$2,
-    ExportDefaultSpecifier: () => ExportDefaultSpecifier$1,
-    ExportNamedDeclaration: () => ExportNamedDeclaration$1,
+    ExportDefaultSpecifier: () => ExportDefaultSpecifier$2,
+    ExportNamedDeclaration: () => ExportNamedDeclaration$2,
     ExportNamespaceSpecifier: () => ExportNamespaceSpecifier$2,
     ExportSpecifier: () => ExportSpecifier$2,
     ExpressionStatement: () => ExpressionStatement$2,
@@ -2885,8 +661,8 @@ __export$1(lib_exports$1, {
     Identifier: () => Identifier$3,
     IfStatement: () => IfStatement$2,
     Import: () => Import$1,
-    ImportAttribute: () => ImportAttribute$1,
-    ImportDeclaration: () => ImportDeclaration$1,
+    ImportAttribute: () => ImportAttribute$2,
+    ImportDeclaration: () => ImportDeclaration$2,
     ImportDefaultSpecifier: () => ImportDefaultSpecifier$1,
     ImportExpression: () => ImportExpression$2,
     ImportNamespaceSpecifier: () => ImportNamespaceSpecifier$1,
@@ -2896,21 +672,21 @@ __export$1(lib_exports$1, {
     InterfaceDeclaration: () => InterfaceDeclaration$1,
     InterfaceExtends: () => InterfaceExtends$1,
     InterfaceTypeAnnotation: () => InterfaceTypeAnnotation$1,
-    InterpreterDirective: () => InterpreterDirective$1,
+    InterpreterDirective: () => InterpreterDirective$2,
     IntersectionTypeAnnotation: () => IntersectionTypeAnnotation$1,
     JSXAttribute: () => JSXAttribute$2,
-    JSXClosingElement: () => JSXClosingElement$1,
-    JSXClosingFragment: () => JSXClosingFragment$1,
+    JSXClosingElement: () => JSXClosingElement$2,
+    JSXClosingFragment: () => JSXClosingFragment$2,
     JSXElement: () => JSXElement$2,
-    JSXEmptyExpression: () => JSXEmptyExpression$1,
-    JSXExpressionContainer: () => JSXExpressionContainer$1,
-    JSXFragment: () => JSXFragment$1,
-    JSXIdentifier: () => JSXIdentifier$1,
-    JSXMemberExpression: () => JSXMemberExpression$1,
+    JSXEmptyExpression: () => JSXEmptyExpression$2,
+    JSXExpressionContainer: () => JSXExpressionContainer$2,
+    JSXFragment: () => JSXFragment$2,
+    JSXIdentifier: () => JSXIdentifier$2,
+    JSXMemberExpression: () => JSXMemberExpression$2,
     JSXNamespacedName: () => JSXNamespacedName$1,
     JSXOpeningElement: () => JSXOpeningElement$2,
-    JSXOpeningFragment: () => JSXOpeningFragment$1,
-    JSXSpreadAttribute: () => JSXSpreadAttribute$1,
+    JSXOpeningFragment: () => JSXOpeningFragment$2,
+    JSXSpreadAttribute: () => JSXSpreadAttribute$2,
     JSXSpreadChild: () => JSXSpreadChild$1,
     JSXText: () => JSXText$2,
     JSX_TYPES: () => JSX_TYPES$1,
@@ -2924,8 +700,8 @@ __export$1(lib_exports$1, {
     MISCELLANEOUS_TYPES: () => MISCELLANEOUS_TYPES$1,
     MODULEDECLARATION_TYPES: () => MODULEDECLARATION_TYPES$1,
     MODULESPECIFIER_TYPES: () => MODULESPECIFIER_TYPES$1,
-    MemberExpression: () => MemberExpression$1,
-    MetaProperty: () => MetaProperty$1,
+    MemberExpression: () => MemberExpression$2,
+    MetaProperty: () => MetaProperty$2,
     MixedTypeAnnotation: () => MixedTypeAnnotation$1,
     ModuleExpression: () => ModuleExpression$1,
     NODE_FIELDS: () => NODE_FIELDS$1$1,
@@ -2934,12 +710,12 @@ __export$1(lib_exports$1, {
     NUMBER_BINARY_OPERATORS: () => NUMBER_BINARY_OPERATORS$1,
     NUMBER_UNARY_OPERATORS: () => NUMBER_UNARY_OPERATORS$1,
     NewExpression: () => NewExpression$2,
-    NullLiteral: () => NullLiteral$1,
+    NullLiteral: () => NullLiteral$2,
     NullLiteralTypeAnnotation: () => NullLiteralTypeAnnotation$1,
     NullableTypeAnnotation: () => NullableTypeAnnotation$2,
     NumberLiteralTypeAnnotation: () => NumberLiteralTypeAnnotation$1,
     NumberTypeAnnotation: () => NumberTypeAnnotation$1,
-    NumericLiteral: () => NumericLiteral$1,
+    NumericLiteral: () => NumericLiteral$2,
     OBJECTMEMBER_TYPES: () => OBJECTMEMBER_TYPES$1,
     ObjectExpression: () => ObjectExpression$3,
     ObjectMethod: () => ObjectMethod$2,
@@ -2954,7 +730,7 @@ __export$1(lib_exports$1, {
     OpaqueType: () => OpaqueType$1,
     OptionalCallExpression: () => OptionalCallExpression$2,
     OptionalIndexedAccessType: () => OptionalIndexedAccessType$2,
-    OptionalMemberExpression: () => OptionalMemberExpression$2,
+    OptionalMemberExpression: () => OptionalMemberExpression$3,
     PATTERNLIKE_TYPES: () => PATTERNLIKE_TYPES$1,
     PATTERN_TYPES: () => PATTERN_TYPES$1,
     PLACEHOLDERS: () => PLACEHOLDERS$1,
@@ -2971,7 +747,7 @@ __export$1(lib_exports$1, {
     PrivateName: () => PrivateName$2,
     Program: () => Program$2,
     QualifiedTypeIdentifier: () => QualifiedTypeIdentifier$1,
-    RegExpLiteral: () => RegExpLiteral$1,
+    RegExpLiteral: () => RegExpLiteral$2,
     RestElement: () => RestElement$2,
     ReturnStatement: () => ReturnStatement$2,
     SCOPABLE_TYPES: () => SCOPABLE_TYPES$1,
@@ -2985,19 +761,19 @@ __export$1(lib_exports$1, {
     StringLiteral: () => StringLiteral$2,
     StringLiteralTypeAnnotation: () => StringLiteralTypeAnnotation$1,
     StringTypeAnnotation: () => StringTypeAnnotation$1,
-    Super: () => Super$1,
+    Super: () => Super$2,
     SwitchCase: () => SwitchCase$1,
     SwitchStatement: () => SwitchStatement$2,
     SymbolTypeAnnotation: () => SymbolTypeAnnotation$1,
     TERMINATORLESS_TYPES: () => TERMINATORLESS_TYPES$1,
-    TSAnyKeyword: () => TSAnyKeyword$1,
-    TSArrayType: () => TSArrayType$1,
+    TSAnyKeyword: () => TSAnyKeyword$2,
+    TSArrayType: () => TSArrayType$2,
     TSAsExpression: () => TSAsExpression$2,
     TSBASETYPE_TYPES: () => TSBASETYPE_TYPES$1,
-    TSBigIntKeyword: () => TSBigIntKeyword$1,
-    TSBooleanKeyword: () => TSBooleanKeyword$1,
+    TSBigIntKeyword: () => TSBigIntKeyword$2,
+    TSBooleanKeyword: () => TSBooleanKeyword$2,
     TSCallSignatureDeclaration: () => TSCallSignatureDeclaration$2,
-    TSClassImplements: () => TSClassImplements$1,
+    TSClassImplements: () => TSClassImplements$2,
     TSConditionalType: () => TSConditionalType$3,
     TSConstructSignatureDeclaration: () => TSConstructSignatureDeclaration$2,
     TSConstructorType: () => TSConstructorType$2,
@@ -3008,70 +784,70 @@ __export$1(lib_exports$1, {
     TSEnumDeclaration: () => TSEnumDeclaration$2,
     TSEnumMember: () => TSEnumMember$2,
     TSExportAssignment: () => TSExportAssignment$2,
-    TSExternalModuleReference: () => TSExternalModuleReference$1,
+    TSExternalModuleReference: () => TSExternalModuleReference$2,
     TSFunctionType: () => TSFunctionType$3,
-    TSImportEqualsDeclaration: () => TSImportEqualsDeclaration$1,
+    TSImportEqualsDeclaration: () => TSImportEqualsDeclaration$2,
     TSImportType: () => TSImportType$2,
-    TSIndexSignature: () => TSIndexSignature$1,
-    TSIndexedAccessType: () => TSIndexedAccessType$1,
+    TSIndexSignature: () => TSIndexSignature$2,
+    TSIndexedAccessType: () => TSIndexedAccessType$2,
     TSInferType: () => TSInferType$3,
-    TSInstantiationExpression: () => TSInstantiationExpression$2,
+    TSInstantiationExpression: () => TSInstantiationExpression$3,
     TSInterfaceBody: () => TSInterfaceBody$2,
     TSInterfaceDeclaration: () => TSInterfaceDeclaration$2,
-    TSInterfaceHeritage: () => TSInterfaceHeritage$1,
+    TSInterfaceHeritage: () => TSInterfaceHeritage$2,
     TSIntersectionType: () => TSIntersectionType$3,
     TSIntrinsicKeyword: () => TSIntrinsicKeyword$1,
-    TSLiteralType: () => TSLiteralType$1,
+    TSLiteralType: () => TSLiteralType$2,
     TSMappedType: () => TSMappedType$2,
     TSMethodSignature: () => TSMethodSignature$2,
     TSModuleBlock: () => TSModuleBlock$2,
     TSModuleDeclaration: () => TSModuleDeclaration$2,
     TSNamedTupleMember: () => TSNamedTupleMember$2,
     TSNamespaceExportDeclaration: () => TSNamespaceExportDeclaration$1,
-    TSNeverKeyword: () => TSNeverKeyword$1,
-    TSNonNullExpression: () => TSNonNullExpression$1,
-    TSNullKeyword: () => TSNullKeyword$1,
-    TSNumberKeyword: () => TSNumberKeyword$1,
-    TSObjectKeyword: () => TSObjectKeyword$1,
+    TSNeverKeyword: () => TSNeverKeyword$2,
+    TSNonNullExpression: () => TSNonNullExpression$2,
+    TSNullKeyword: () => TSNullKeyword$2,
+    TSNumberKeyword: () => TSNumberKeyword$2,
+    TSObjectKeyword: () => TSObjectKeyword$2,
     TSOptionalType: () => TSOptionalType$2,
     TSParameterProperty: () => TSParameterProperty$2,
     TSParenthesizedType: () => TSParenthesizedType$2,
     TSPropertySignature: () => TSPropertySignature$2,
-    TSQualifiedName: () => TSQualifiedName$1,
-    TSRestType: () => TSRestType$1,
-    TSSatisfiesExpression: () => TSSatisfiesExpression$1,
-    TSStringKeyword: () => TSStringKeyword$1,
-    TSSymbolKeyword: () => TSSymbolKeyword$1,
+    TSQualifiedName: () => TSQualifiedName$2,
+    TSRestType: () => TSRestType$2,
+    TSSatisfiesExpression: () => TSSatisfiesExpression$2,
+    TSStringKeyword: () => TSStringKeyword$2,
+    TSSymbolKeyword: () => TSSymbolKeyword$2,
     TSTYPEELEMENT_TYPES: () => TSTYPEELEMENT_TYPES$1,
     TSTYPE_TYPES: () => TSTYPE_TYPES$1,
     TSTemplateLiteralType: () => TSTemplateLiteralType$2,
-    TSThisType: () => TSThisType$1,
+    TSThisType: () => TSThisType$2,
     TSTupleType: () => TSTupleType$2,
     TSTypeAliasDeclaration: () => TSTypeAliasDeclaration$2,
-    TSTypeAnnotation: () => TSTypeAnnotation$1,
-    TSTypeAssertion: () => TSTypeAssertion$1,
+    TSTypeAnnotation: () => TSTypeAnnotation$2,
+    TSTypeAssertion: () => TSTypeAssertion$2,
     TSTypeLiteral: () => TSTypeLiteral$2,
-    TSTypeOperator: () => TSTypeOperator$2,
+    TSTypeOperator: () => TSTypeOperator$3,
     TSTypeParameter: () => TSTypeParameter$2,
     TSTypeParameterDeclaration: () => TSTypeParameterDeclaration$2,
-    TSTypeParameterInstantiation: () => TSTypeParameterInstantiation$1,
-    TSTypePredicate: () => TSTypePredicate$1,
+    TSTypeParameterInstantiation: () => TSTypeParameterInstantiation$2,
+    TSTypePredicate: () => TSTypePredicate$2,
     TSTypeQuery: () => TSTypeQuery$2,
     TSTypeReference: () => TSTypeReference$2,
-    TSUndefinedKeyword: () => TSUndefinedKeyword$1,
+    TSUndefinedKeyword: () => TSUndefinedKeyword$2,
     TSUnionType: () => TSUnionType$3,
-    TSUnknownKeyword: () => TSUnknownKeyword$1,
-    TSVoidKeyword: () => TSVoidKeyword$1,
-    TYPES: () => TYPES$5,
+    TSUnknownKeyword: () => TSUnknownKeyword$2,
+    TSVoidKeyword: () => TSVoidKeyword$2,
+    TYPES: () => TYPES$4,
     TYPESCRIPT_TYPES: () => TYPESCRIPT_TYPES$1,
     TaggedTemplateExpression: () => TaggedTemplateExpression$2,
     TemplateElement: () => TemplateElement$1,
     TemplateLiteral: () => TemplateLiteral$2,
-    ThisExpression: () => ThisExpression$1,
+    ThisExpression: () => ThisExpression$2,
     ThisTypeAnnotation: () => ThisTypeAnnotation$1,
-    ThrowStatement: () => ThrowStatement$1,
+    ThrowStatement: () => ThrowStatement$2,
     TopicReference: () => TopicReference$1,
-    TryStatement: () => TryStatement$1,
+    TryStatement: () => TryStatement$2,
     TupleTypeAnnotation: () => TupleTypeAnnotation$1,
     TypeAlias: () => TypeAlias$1,
     TypeAnnotation: () => TypeAnnotation$1,
@@ -3084,9 +860,9 @@ __export$1(lib_exports$1, {
     UNARY_OPERATORS: () => UNARY_OPERATORS$1,
     UPDATE_OPERATORS: () => UPDATE_OPERATORS$1,
     USERWHITESPACABLE_TYPES: () => USERWHITESPACABLE_TYPES$1,
-    UnaryExpression: () => UnaryExpression$1,
+    UnaryExpression: () => UnaryExpression$2,
     UnionTypeAnnotation: () => UnionTypeAnnotation$2,
-    UpdateExpression: () => UpdateExpression$2,
+    UpdateExpression: () => UpdateExpression$3,
     V8IntrinsicIdentifier: () => V8IntrinsicIdentifier$1,
     VISITOR_KEYS: () => VISITOR_KEYS$6,
     VariableDeclaration: () => VariableDeclaration$2,
@@ -3097,17 +873,17 @@ __export$1(lib_exports$1, {
     WHILE_TYPES: () => WHILE_TYPES$1,
     WhileStatement: () => WhileStatement$2,
     WithStatement: () => WithStatement$2,
-    YieldExpression: () => YieldExpression$2,
+    YieldExpression: () => YieldExpression$3,
     __internal__deprecationWarning: () => deprecationWarning$1,
     addComment: () => addComment$1,
     addComments: () => addComments$1,
     anyTypeAnnotation: () => anyTypeAnnotation$2,
     appendToMemberExpression: () => appendToMemberExpression$1,
     argumentPlaceholder: () => argumentPlaceholder$1,
-    arrayExpression: () => arrayExpression$5,
-    arrayPattern: () => arrayPattern$2,
+    arrayExpression: () => arrayExpression$4,
+    arrayPattern: () => arrayPattern$1,
     arrayTypeAnnotation: () => arrayTypeAnnotation$1,
-    arrowFunctionExpression: () => arrowFunctionExpression$4,
+    arrowFunctionExpression: () => arrowFunctionExpression$3,
     assertAccessor: () => assertAccessor$1,
     assertAnyTypeAnnotation: () => assertAnyTypeAnnotation$1,
     assertArgumentPlaceholder: () => assertArgumentPlaceholder$1,
@@ -3414,42 +1190,42 @@ __export$1(lib_exports$1, {
     assertWhileStatement: () => assertWhileStatement$1,
     assertWithStatement: () => assertWithStatement$1,
     assertYieldExpression: () => assertYieldExpression$1,
-    assignmentExpression: () => assignmentExpression$5,
-    assignmentPattern: () => assignmentPattern$2,
+    assignmentExpression: () => assignmentExpression$4,
+    assignmentPattern: () => assignmentPattern$1,
     awaitExpression: () => awaitExpression$1,
     bigIntLiteral: () => bigIntLiteral$1,
-    binaryExpression: () => binaryExpression$2,
+    binaryExpression: () => binaryExpression$1,
     bindExpression: () => bindExpression$1,
-    blockStatement: () => blockStatement$5,
+    blockStatement: () => blockStatement$4,
     booleanLiteral: () => booleanLiteral$1,
     booleanLiteralTypeAnnotation: () => booleanLiteralTypeAnnotation$1,
     booleanTypeAnnotation: () => booleanTypeAnnotation$1,
-    breakStatement: () => breakStatement$2,
+    breakStatement: () => breakStatement$1,
     buildMatchMemberExpression: () => buildMatchMemberExpression$1,
     buildUndefinedNode: () => buildUndefinedNode$2,
-    callExpression: () => callExpression$4,
+    callExpression: () => callExpression$3,
     catchClause: () => catchClause$1,
     classAccessorProperty: () => classAccessorProperty$1,
     classBody: () => classBody$1,
     classDeclaration: () => classDeclaration$1,
     classExpression: () => classExpression$1,
     classImplements: () => classImplements$1,
-    classMethod: () => classMethod$3,
+    classMethod: () => classMethod$2,
     classPrivateMethod: () => classPrivateMethod$2,
     classPrivateProperty: () => classPrivateProperty$1,
-    classProperty: () => classProperty$2,
-    clone: () => clone$3,
+    classProperty: () => classProperty$1,
+    clone: () => clone$1,
     cloneDeep: () => cloneDeep$1,
     cloneDeepWithoutLoc: () => cloneDeepWithoutLoc$1,
     cloneNode: () => cloneNode$4,
     cloneWithoutLoc: () => cloneWithoutLoc$1,
-    conditionalExpression: () => conditionalExpression$3,
-    continueStatement: () => continueStatement$2,
+    conditionalExpression: () => conditionalExpression$2,
+    continueStatement: () => continueStatement$1,
     createFlowUnionType: () => createFlowUnionType$1,
     createTSUnionType: () => createTSUnionType$1,
     createTypeAnnotationBasedOnTypeof: () => createTypeAnnotationBasedOnTypeof$1,
     createUnionTypeAnnotation: () => createFlowUnionType$1,
-    debuggerStatement: () => debuggerStatement$2,
+    debuggerStatement: () => debuggerStatement$1,
     declareClass: () => declareClass$1,
     declareExportAllDeclaration: () => declareExportAllDeclaration$1,
     declareExportDeclaration: () => declareExportDeclaration$1,
@@ -3461,12 +1237,12 @@ __export$1(lib_exports$1, {
     declareTypeAlias: () => declareTypeAlias$1,
     declareVariable: () => declareVariable$1,
     declaredPredicate: () => declaredPredicate$1,
-    decorator: () => decorator$2,
+    decorator: () => decorator$1,
     directive: () => directive$2,
-    directiveLiteral: () => directiveLiteral$3,
+    directiveLiteral: () => directiveLiteral$2,
     doExpression: () => doExpression$1,
-    doWhileStatement: () => doWhileStatement$2,
-    emptyStatement: () => emptyStatement$2,
+    doWhileStatement: () => doWhileStatement$1,
+    emptyStatement: () => emptyStatement$1,
     emptyTypeAnnotation: () => emptyTypeAnnotation$1,
     ensureBlock: () => ensureBlock$1,
     enumBooleanBody: () => enumBooleanBody$1,
@@ -3479,19 +1255,19 @@ __export$1(lib_exports$1, {
     enumStringMember: () => enumStringMember$1,
     enumSymbolBody: () => enumSymbolBody$1,
     existsTypeAnnotation: () => existsTypeAnnotation$1,
-    exportAllDeclaration: () => exportAllDeclaration$2,
-    exportDefaultDeclaration: () => exportDefaultDeclaration$2,
+    exportAllDeclaration: () => exportAllDeclaration$1,
+    exportDefaultDeclaration: () => exportDefaultDeclaration$1,
     exportDefaultSpecifier: () => exportDefaultSpecifier$1,
     exportNamedDeclaration: () => exportNamedDeclaration$1,
     exportNamespaceSpecifier: () => exportNamespaceSpecifier$1,
     exportSpecifier: () => exportSpecifier$1,
-    expressionStatement: () => expressionStatement$9,
+    expressionStatement: () => expressionStatement$8,
     file: () => file$2,
-    forInStatement: () => forInStatement$2,
-    forOfStatement: () => forOfStatement$2,
-    forStatement: () => forStatement$2,
-    functionDeclaration: () => functionDeclaration$2,
-    functionExpression: () => functionExpression$2,
+    forInStatement: () => forInStatement$1,
+    forOfStatement: () => forOfStatement$1,
+    forStatement: () => forStatement$1,
+    functionDeclaration: () => functionDeclaration$1,
+    functionExpression: () => functionExpression$1,
     functionTypeAnnotation: () => functionTypeAnnotation$1,
     functionTypeParam: () => functionTypeParam$1,
     genericTypeAnnotation: () => genericTypeAnnotation$1,
@@ -3499,13 +1275,13 @@ __export$1(lib_exports$1, {
     getBindingIdentifiers: () => getBindingIdentifiers$3,
     getFunctionName: () => getFunctionName$1,
     getOuterBindingIdentifiers: () => getOuterBindingIdentifiers$1,
-    identifier: () => identifier$5,
-    ifStatement: () => ifStatement$2,
+    identifier: () => identifier$4,
+    ifStatement: () => ifStatement$1,
     import: () => _import$1,
-    importAttribute: () => importAttribute$2,
-    importDeclaration: () => importDeclaration$2,
+    importAttribute: () => importAttribute$1,
+    importDeclaration: () => importDeclaration$1,
     importDefaultSpecifier: () => importDefaultSpecifier$1,
-    importExpression: () => importExpression$2,
+    importExpression: () => importExpression$1,
     importNamespaceSpecifier: () => importNamespaceSpecifier$1,
     importSpecifier: () => importSpecifier$1,
     indexedAccessType: () => indexedAccessType$1,
@@ -3520,7 +1296,7 @@ __export$1(lib_exports$1, {
     interfaceTypeAnnotation: () => interfaceTypeAnnotation$1,
     interpreterDirective: () => interpreterDirective$1,
     intersectionTypeAnnotation: () => intersectionTypeAnnotation$1,
-    is: () => is$5,
+    is: () => is$4,
     isAccessor: () => isAccessor$1,
     isAnyTypeAnnotation: () => isAnyTypeAnnotation$1,
     isArgumentPlaceholder: () => isArgumentPlaceholder$1,
@@ -3528,7 +1304,7 @@ __export$1(lib_exports$1, {
     isArrayPattern: () => isArrayPattern$1,
     isArrayTypeAnnotation: () => isArrayTypeAnnotation$1,
     isArrowFunctionExpression: () => isArrowFunctionExpression$4,
-    isAssignmentExpression: () => isAssignmentExpression$4,
+    isAssignmentExpression: () => isAssignmentExpression$5,
     isAssignmentPattern: () => isAssignmentPattern$4,
     isAwaitExpression: () => isAwaitExpression$2,
     isBigIntLiteral: () => isBigIntLiteral$1,
@@ -3544,7 +1320,7 @@ __export$1(lib_exports$1, {
     isBooleanLiteralTypeAnnotation: () => isBooleanLiteralTypeAnnotation$1,
     isBooleanTypeAnnotation: () => isBooleanTypeAnnotation$1,
     isBreakStatement: () => isBreakStatement$1,
-    isCallExpression: () => isCallExpression$c,
+    isCallExpression: () => isCallExpression$d,
     isCatchClause: () => isCatchClause$1,
     isClass: () => isClass$1,
     isClassAccessorProperty: () => isClassAccessorProperty$1,
@@ -3595,12 +1371,12 @@ __export$1(lib_exports$1, {
     isExportAllDeclaration: () => isExportAllDeclaration$1,
     isExportDeclaration: () => isExportDeclaration$6,
     isExportDefaultDeclaration: () => isExportDefaultDeclaration$2,
-    isExportDefaultSpecifier: () => isExportDefaultSpecifier$1,
+    isExportDefaultSpecifier: () => isExportDefaultSpecifier$2,
     isExportNamedDeclaration: () => isExportNamedDeclaration$5,
     isExportNamespaceSpecifier: () => isExportNamespaceSpecifier$2,
     isExportSpecifier: () => isExportSpecifier$2,
     isExpression: () => isExpression$5,
-    isExpressionStatement: () => isExpressionStatement$9,
+    isExpressionStatement: () => isExpressionStatement$b,
     isExpressionWrapper: () => isExpressionWrapper$1,
     isFile: () => isFile$3,
     isFlow: () => isFlow$1,
@@ -3661,7 +1437,7 @@ __export$1(lib_exports$1, {
     isLiteral: () => isLiteral$5,
     isLogicalExpression: () => isLogicalExpression$2,
     isLoop: () => isLoop$1,
-    isMemberExpression: () => isMemberExpression$c,
+    isMemberExpression: () => isMemberExpression$d,
     isMetaProperty: () => isMetaProperty$1,
     isMethod: () => isMethod$1,
     isMiscellaneous: () => isMiscellaneous$1,
@@ -3748,7 +1524,7 @@ __export$1(lib_exports$1, {
     isTSEnumDeclaration: () => isTSEnumDeclaration$1,
     isTSEnumMember: () => isTSEnumMember$1,
     isTSExportAssignment: () => isTSExportAssignment$1,
-    isTSExternalModuleReference: () => isTSExternalModuleReference$1,
+    isTSExternalModuleReference: () => isTSExternalModuleReference$2,
     isTSFunctionType: () => isTSFunctionType$1,
     isTSImportEqualsDeclaration: () => isTSImportEqualsDeclaration$1,
     isTSImportType: () => isTSImportType$1,
@@ -3839,29 +1615,29 @@ __export$1(lib_exports$1, {
     isWhileStatement: () => isWhileStatement$1,
     isWithStatement: () => isWithStatement$1,
     isYieldExpression: () => isYieldExpression$1,
-    jsxAttribute: () => jsxAttribute$3,
+    jsxAttribute: () => jsxAttribute$2,
     jsxClosingElement: () => jsxClosingElement$1,
     jsxClosingFragment: () => jsxClosingFragment$1,
-    jsxElement: () => jsxElement$2,
+    jsxElement: () => jsxElement$1,
     jsxEmptyExpression: () => jsxEmptyExpression$1,
     jsxExpressionContainer: () => jsxExpressionContainer$1,
-    jsxFragment: () => jsxFragment$2,
+    jsxFragment: () => jsxFragment$1,
     jsxIdentifier: () => jsxIdentifier$2,
     jsxMemberExpression: () => jsxMemberExpression$1,
     jsxNamespacedName: () => jsxNamespacedName$1,
-    jsxOpeningElement: () => jsxOpeningElement$2,
+    jsxOpeningElement: () => jsxOpeningElement$1,
     jsxOpeningFragment: () => jsxOpeningFragment$1,
     jsxSpreadAttribute: () => jsxSpreadAttribute$1,
     jsxSpreadChild: () => jsxSpreadChild$1,
-    jsxText: () => jsxText$2,
-    labeledStatement: () => labeledStatement$2,
-    logicalExpression: () => logicalExpression$2,
+    jsxText: () => jsxText$1,
+    labeledStatement: () => labeledStatement$1,
+    logicalExpression: () => logicalExpression$1,
     matchesPattern: () => matchesPattern$3,
     memberExpression: () => memberExpression$1,
     metaProperty: () => metaProperty$1,
     mixedTypeAnnotation: () => mixedTypeAnnotation$1,
     moduleExpression: () => moduleExpression$1,
-    newExpression: () => newExpression$2,
+    newExpression: () => newExpression$1,
     nullLiteral: () => nullLiteral$1,
     nullLiteralTypeAnnotation: () => nullLiteralTypeAnnotation$1,
     nullableTypeAnnotation: () => nullableTypeAnnotation$1,
@@ -3869,10 +1645,10 @@ __export$1(lib_exports$1, {
     numberLiteralTypeAnnotation: () => numberLiteralTypeAnnotation$1,
     numberTypeAnnotation: () => numberTypeAnnotation$2,
     numericLiteral: () => numericLiteral$2,
-    objectExpression: () => objectExpression$4,
-    objectMethod: () => objectMethod$3,
-    objectPattern: () => objectPattern$3,
-    objectProperty: () => objectProperty$5,
+    objectExpression: () => objectExpression$3,
+    objectMethod: () => objectMethod$2,
+    objectPattern: () => objectPattern$2,
+    objectProperty: () => objectProperty$4,
     objectTypeAnnotation: () => objectTypeAnnotation$1,
     objectTypeCallProperty: () => objectTypeCallProperty$1,
     objectTypeIndexer: () => objectTypeIndexer$1,
@@ -3883,14 +1659,14 @@ __export$1(lib_exports$1, {
     optionalCallExpression: () => optionalCallExpression$1,
     optionalIndexedAccessType: () => optionalIndexedAccessType$1,
     optionalMemberExpression: () => optionalMemberExpression$1,
-    parenthesizedExpression: () => parenthesizedExpression$4,
+    parenthesizedExpression: () => parenthesizedExpression$3,
     pipelineBareFunction: () => pipelineBareFunction$1,
     pipelinePrimaryTopicReference: () => pipelinePrimaryTopicReference$1,
     pipelineTopicExpression: () => pipelineTopicExpression$1,
     placeholder: () => placeholder$1,
     prependToMemberExpression: () => prependToMemberExpression$1,
     privateName: () => privateName$2,
-    program: () => program$4,
+    program: () => program$3,
     qualifiedTypeIdentifier: () => qualifiedTypeIdentifier$1,
     react: () => react$1,
     regExpLiteral: () => regExpLiteral$1,
@@ -3899,24 +1675,24 @@ __export$1(lib_exports$1, {
     removeProperties: () => removeProperties$1,
     removePropertiesDeep: () => removePropertiesDeep$1,
     removeTypeDuplicates: () => removeTypeDuplicates$1$1,
-    restElement: () => restElement$2,
+    restElement: () => restElement$1,
     restProperty: () => RestProperty$1,
-    returnStatement: () => returnStatement$3,
-    sequenceExpression: () => sequenceExpression$4,
+    returnStatement: () => returnStatement$2,
+    sequenceExpression: () => sequenceExpression$3,
     shallowEqual: () => shallowEqual$1,
-    spreadElement: () => spreadElement$2,
+    spreadElement: () => spreadElement$1,
     spreadProperty: () => SpreadProperty$1,
-    staticBlock: () => staticBlock$2,
-    stringLiteral: () => stringLiteral$7,
+    staticBlock: () => staticBlock$1,
+    stringLiteral: () => stringLiteral$6,
     stringLiteralTypeAnnotation: () => stringLiteralTypeAnnotation$1,
     stringTypeAnnotation: () => stringTypeAnnotation$2,
     super: () => _super$1,
     switchCase: () => switchCase$1,
-    switchStatement: () => switchStatement$2,
+    switchStatement: () => switchStatement$1,
     symbolTypeAnnotation: () => symbolTypeAnnotation$1,
-    taggedTemplateExpression: () => taggedTemplateExpression$2,
+    taggedTemplateExpression: () => taggedTemplateExpression$1,
     templateElement: () => templateElement$2,
-    templateLiteral: () => templateLiteral$2,
+    templateLiteral: () => templateLiteral$1,
     thisExpression: () => thisExpression$2,
     thisTypeAnnotation: () => thisTypeAnnotation$1,
     throwStatement: () => throwStatement$1,
@@ -3928,75 +1704,75 @@ __export$1(lib_exports$1, {
     toKeyAlias: () => toKeyAlias$1,
     toStatement: () => toStatement$2,
     topicReference: () => topicReference$1,
-    traverse: () => traverse$b,
+    traverse: () => traverse$7,
     traverseFast: () => traverseFast$1,
     tryStatement: () => tryStatement$1,
     tsAnyKeyword: () => tsAnyKeyword$1,
     tsArrayType: () => tsArrayType$1,
-    tsAsExpression: () => tsAsExpression$2,
+    tsAsExpression: () => tsAsExpression$1,
     tsBigIntKeyword: () => tsBigIntKeyword$1,
     tsBooleanKeyword: () => tsBooleanKeyword$1,
-    tsCallSignatureDeclaration: () => tsCallSignatureDeclaration$2,
+    tsCallSignatureDeclaration: () => tsCallSignatureDeclaration$1,
     tsClassImplements: () => tsClassImplements$1,
-    tsConditionalType: () => tsConditionalType$2,
-    tsConstructSignatureDeclaration: () => tsConstructSignatureDeclaration$2,
-    tsConstructorType: () => tsConstructorType$2,
-    tsDeclareFunction: () => tsDeclareFunction$2,
-    tsDeclareMethod: () => tsDeclareMethod$2,
+    tsConditionalType: () => tsConditionalType$1,
+    tsConstructSignatureDeclaration: () => tsConstructSignatureDeclaration$1,
+    tsConstructorType: () => tsConstructorType$1,
+    tsDeclareFunction: () => tsDeclareFunction$1,
+    tsDeclareMethod: () => tsDeclareMethod$1,
     tsEnumBody: () => tsEnumBody$1,
-    tsEnumDeclaration: () => tsEnumDeclaration$2,
-    tsEnumMember: () => tsEnumMember$2,
-    tsExportAssignment: () => tsExportAssignment$2,
+    tsEnumDeclaration: () => tsEnumDeclaration$1,
+    tsEnumMember: () => tsEnumMember$1,
+    tsExportAssignment: () => tsExportAssignment$1,
     tsExternalModuleReference: () => tsExternalModuleReference$1,
-    tsFunctionType: () => tsFunctionType$2,
+    tsFunctionType: () => tsFunctionType$1,
     tsImportEqualsDeclaration: () => tsImportEqualsDeclaration$1,
-    tsImportType: () => tsImportType$2,
+    tsImportType: () => tsImportType$1,
     tsIndexSignature: () => tsIndexSignature$1,
     tsIndexedAccessType: () => tsIndexedAccessType$1,
-    tsInferType: () => tsInferType$2,
+    tsInferType: () => tsInferType$1,
     tsInstantiationExpression: () => tsInstantiationExpression$1,
-    tsInterfaceBody: () => tsInterfaceBody$2,
-    tsInterfaceDeclaration: () => tsInterfaceDeclaration$2,
+    tsInterfaceBody: () => tsInterfaceBody$1,
+    tsInterfaceDeclaration: () => tsInterfaceDeclaration$1,
     tsInterfaceHeritage: () => tsInterfaceHeritage$1,
-    tsIntersectionType: () => tsIntersectionType$2,
+    tsIntersectionType: () => tsIntersectionType$1,
     tsIntrinsicKeyword: () => tsIntrinsicKeyword$1,
     tsLiteralType: () => tsLiteralType$1,
-    tsMappedType: () => tsMappedType$2,
-    tsMethodSignature: () => tsMethodSignature$2,
+    tsMappedType: () => tsMappedType$1,
+    tsMethodSignature: () => tsMethodSignature$1,
     tsModuleBlock: () => tsModuleBlock$1,
-    tsModuleDeclaration: () => tsModuleDeclaration$2,
-    tsNamedTupleMember: () => tsNamedTupleMember$2,
+    tsModuleDeclaration: () => tsModuleDeclaration$1,
+    tsNamedTupleMember: () => tsNamedTupleMember$1,
     tsNamespaceExportDeclaration: () => tsNamespaceExportDeclaration$1,
     tsNeverKeyword: () => tsNeverKeyword$1,
     tsNonNullExpression: () => tsNonNullExpression$1,
     tsNullKeyword: () => tsNullKeyword$1,
     tsNumberKeyword: () => tsNumberKeyword$1,
     tsObjectKeyword: () => tsObjectKeyword$1,
-    tsOptionalType: () => tsOptionalType$2,
-    tsParameterProperty: () => tsParameterProperty$2,
-    tsParenthesizedType: () => tsParenthesizedType$4,
-    tsPropertySignature: () => tsPropertySignature$2,
+    tsOptionalType: () => tsOptionalType$1,
+    tsParameterProperty: () => tsParameterProperty$1,
+    tsParenthesizedType: () => tsParenthesizedType$3,
+    tsPropertySignature: () => tsPropertySignature$1,
     tsQualifiedName: () => tsQualifiedName$1,
     tsRestType: () => tsRestType$1,
     tsSatisfiesExpression: () => tsSatisfiesExpression$1,
     tsStringKeyword: () => tsStringKeyword$1,
     tsSymbolKeyword: () => tsSymbolKeyword$1,
-    tsTemplateLiteralType: () => tsTemplateLiteralType$2,
+    tsTemplateLiteralType: () => tsTemplateLiteralType$1,
     tsThisType: () => tsThisType$1,
-    tsTupleType: () => tsTupleType$2,
-    tsTypeAliasDeclaration: () => tsTypeAliasDeclaration$2,
+    tsTupleType: () => tsTupleType$1,
+    tsTypeAliasDeclaration: () => tsTypeAliasDeclaration$1,
     tsTypeAnnotation: () => tsTypeAnnotation$1,
     tsTypeAssertion: () => tsTypeAssertion$1,
-    tsTypeLiteral: () => tsTypeLiteral$2,
+    tsTypeLiteral: () => tsTypeLiteral$1,
     tsTypeOperator: () => tsTypeOperator$1,
-    tsTypeParameter: () => tsTypeParameter$2,
-    tsTypeParameterDeclaration: () => tsTypeParameterDeclaration$2,
+    tsTypeParameter: () => tsTypeParameter$1,
+    tsTypeParameterDeclaration: () => tsTypeParameterDeclaration$1,
     tsTypeParameterInstantiation: () => tsTypeParameterInstantiation$1,
     tsTypePredicate: () => tsTypePredicate$1,
-    tsTypeQuery: () => tsTypeQuery$2,
-    tsTypeReference: () => tsTypeReference$2,
+    tsTypeQuery: () => tsTypeQuery$1,
+    tsTypeReference: () => tsTypeReference$1,
     tsUndefinedKeyword: () => tsUndefinedKeyword$1,
-    tsUnionType: () => tsUnionType$2,
+    tsUnionType: () => tsUnionType$1,
     tsUnknownKeyword: () => tsUnknownKeyword$1,
     tsVoidKeyword: () => tsVoidKeyword$1,
     tupleTypeAnnotation: () => tupleTypeAnnotation$1,
@@ -4013,13 +1789,13 @@ __export$1(lib_exports$1, {
     v8IntrinsicIdentifier: () => v8IntrinsicIdentifier$1,
     validate: () => validate$1$2,
     valueToNode: () => valueToNode$1,
-    variableDeclaration: () => variableDeclaration$3,
+    variableDeclaration: () => variableDeclaration$2,
     variableDeclarator: () => variableDeclarator$2,
     variance: () => variance$1,
-    voidPattern: () => voidPattern$2,
+    voidPattern: () => voidPattern$1,
     voidTypeAnnotation: () => voidTypeAnnotation$3,
-    whileStatement: () => whileStatement$2,
-    withStatement: () => withStatement$2,
+    whileStatement: () => whileStatement$1,
+    withStatement: () => withStatement$1,
     yieldExpression: () => yieldExpression$1,
 });
 
@@ -5137,7 +2913,7 @@ function isStrictReservedWord$1(word, inModule) {
     return isReservedWord$1(word, inModule) || reservedWordsStrictSet$1.has(word);
 }
 
-function isKeyword$1(word) {
+function isKeyword$2(word) {
     return keywords$2.has(word);
 }
 
@@ -5514,7 +3290,7 @@ function isArrayExpression$b(node, opts) {
     return opts == null || shallowEqual$1(node, opts);
 }
 
-function isAssignmentExpression$4(node, opts) {
+function isAssignmentExpression$5(node, opts) {
     if (!node)
         return false;
     
@@ -5584,7 +3360,7 @@ function isBreakStatement$1(node, opts) {
     return opts == null || shallowEqual$1(node, opts);
 }
 
-function isCallExpression$c(node, opts) {
+function isCallExpression$d(node, opts) {
     if (!node)
         return false;
     
@@ -5654,7 +3430,7 @@ function isEmptyStatement$1(node, opts) {
     return opts == null || shallowEqual$1(node, opts);
 }
 
-function isExpressionStatement$9(node, opts) {
+function isExpressionStatement$b(node, opts) {
     if (!node)
         return false;
     
@@ -5804,7 +3580,7 @@ function isLogicalExpression$2(node, opts) {
     return opts == null || shallowEqual$1(node, opts);
 }
 
-function isMemberExpression$c(node, opts) {
+function isMemberExpression$d(node, opts) {
     if (!node)
         return false;
     
@@ -7254,7 +5030,7 @@ function isDoExpression$1(node, opts) {
     return opts == null || shallowEqual$1(node, opts);
 }
 
-function isExportDefaultSpecifier$1(node, opts) {
+function isExportDefaultSpecifier$2(node, opts) {
     if (!node)
         return false;
     
@@ -7924,7 +5700,7 @@ function isTSImportEqualsDeclaration$1(node, opts) {
     return opts == null || shallowEqual$1(node, opts);
 }
 
-function isTSExternalModuleReference$1(node, opts) {
+function isTSExternalModuleReference$2(node, opts) {
     if (!node)
         return false;
     
@@ -9357,7 +7133,7 @@ function isModuleDeclaration$1(node, opts) {
 }
 
 function isMemberExpressionLike$1(node) {
-    return isMemberExpression$c(node) || isMetaProperty$1(node);
+    return isMemberExpression$d(node) || isMetaProperty$1(node);
 }
 
 function matchesPattern$3(member, match, allowPartial) {
@@ -9448,7 +7224,7 @@ function isPlaceholderType$1(placeholderType, targetType) {
     return false;
 }
 
-function is$5(type, node, opts) {
+function is$4(type, node, opts) {
     if (!node)
         return false;
     
@@ -9474,7 +7250,7 @@ function isValidIdentifier$1(name, reserved = true) {
         return false;
     
     if (reserved) {
-        if (isKeyword$1(name) || isStrictReservedWord$1(name, true)) {
+        if (isKeyword$2(name) || isStrictReservedWord$1(name, true)) {
             return false;
         }
     }
@@ -9602,14 +7378,14 @@ function getType$2(val) {
     }
 }
 
-function validate$2$2(validate4) {
+function validate$2$1(validate4) {
     return {
         validate: validate4,
     };
 }
 
 function validateType$1(...typeNames) {
-    return validate$2$2(assertNodeType$1(...typeNames));
+    return validate$2$1(assertNodeType$1(...typeNames));
 }
 
 function validateOptional$1(validate4) {
@@ -9627,7 +7403,7 @@ function validateOptionalType$1(...typeNames) {
 }
 
 function arrayOf$1(elementType) {
-    return chain$5(assertValueType$1('array'), assertEach$1(elementType));
+    return chain$3(assertValueType$1('array'), assertEach$1(elementType));
 }
 
 function arrayOfType$1(...typeNames) {
@@ -9635,7 +7411,7 @@ function arrayOfType$1(...typeNames) {
 }
 
 function validateArrayOfType$1(...typeNames) {
-    return validate$2$2(arrayOfType$1(...typeNames));
+    return validate$2$1(arrayOfType$1(...typeNames));
 }
 
 function assertEach$1(callback) {
@@ -9694,7 +7470,7 @@ function assertNodeType$1(...types2) {
             
             if (valType === 'Placeholder') {
                 for (const type of types2) {
-                    if (is$5(type, val)) {
+                    if (is$4(type, val)) {
                         validateChild$1(node, key, val);
                         return;
                     }
@@ -9715,7 +7491,7 @@ function assertNodeOrValueType$1(...types2) {
         const primitiveType = getType$2(val);
         
         for (const type of types2) {
-            if (primitiveType === type || is$5(type, val)) {
+            if (primitiveType === type || is$4(type, val)) {
                 validateChild$1(node, key, val);
                 return;
             }
@@ -9805,7 +7581,7 @@ function assertOptionalChainStart$1() {
     return validate4;
 }
 
-function chain$5(...fns) {
+function chain$3(...fns) {
     function validate4(...args) {
         for (const fn of fns) {
             fn(...args);
@@ -9837,7 +7613,7 @@ var validFieldKeys$1 = /* @__PURE__ */new Set([
     'deprecated',
     'validate',
 ]);
-var store$2 = {};
+var store$1 = {};
 
 function defineAliasedType$1(...aliases) {
     return (type, opts = {}) => {
@@ -9845,9 +7621,9 @@ function defineAliasedType$1(...aliases) {
         
         if (!defined) {
             if (opts.inherits)
-                defined = store$2[opts.inherits].aliases?.slice();
+                defined = store$1[opts.inherits].aliases?.slice();
             
-            defined ?? (defined = []);
+            defined ??= [];
             opts.aliases = defined;
         }
         
@@ -9858,7 +7634,7 @@ function defineAliasedType$1(...aliases) {
 }
 
 function defineType$5$1(type, opts = {}) {
-    const inherits3 = opts.inherits && store$2[opts.inherits] || {};
+    const inherits3 = opts.inherits && store$1[opts.inherits] || {};
     let fields = opts.fields;
     
     if (!fields) {
@@ -9947,7 +7723,7 @@ function defineType$5$1(type, opts = {}) {
         NODE_UNION_SHAPES__PRIVATE$1[type] = opts.unionShape;
     }
     
-    store$2[type] = opts;
+    store$1[type] = opts;
 }
 
 var utils$2 = /* @__PURE__ */Object.freeze({
@@ -9970,10 +7746,10 @@ var utils$2 = /* @__PURE__ */Object.freeze({
     assertOptionalChainStart: assertOptionalChainStart$1,
     assertShape: assertShape$1,
     assertValueType: assertValueType$1,
-    chain: chain$5,
+    chain: chain$3,
     default: defineType$5$1,
     defineAliasedType: defineAliasedType$1,
-    validate: validate$2$2,
+    validate: validate$2$1,
     validateArrayOfType: validateArrayOfType$1,
     validateOptional: validateOptional$1,
     validateOptionalType: validateOptionalType$1,
@@ -10023,7 +7799,7 @@ defineType$4$1('AssignmentExpression', {
                 const pattern = assertOneOf$1('=');
                 
                 return function(node, key, val) {
-                    const validator = is$5('Pattern', node.left) ? pattern : identifier4;
+                    const validator = is$4('Pattern', node.left) ? pattern : identifier4;
                     validator(node, key, val);
                 };
             })(), {
@@ -10384,7 +8160,7 @@ defineType$4$1('FunctionDeclaration', {
         const identifier4 = assertNodeType$1('Identifier');
         
         return function(parent, key, node) {
-            if (!is$5('ExportDefaultDeclaration', parent)) {
+            if (!is$4('ExportDefaultDeclaration', parent)) {
                 identifier4(node, 'id', node.id);
             }
         };
@@ -10444,7 +8220,7 @@ defineType$4$1('Identifier', {
     fields: {
         ...patternLikeCommon$1(),
         name: {
-            validate: chain$5(assertValueType$1('string'), Object.assign(function(node, key, val) {
+            validate: chain$3(assertValueType$1('string'), Object.assign(function(node, key, val) {
                 if (!isValidIdentifier$1(val, false)) {
                     throw new TypeError(`"${val}" is not a valid identifier name`);
                 }
@@ -10466,31 +8242,31 @@ defineType$4$1('Identifier', {
         };
         
         if (parentKey === 'property') {
-            if (is$5('MemberExpression', parent, nonComp))
+            if (is$4('MemberExpression', parent, nonComp))
                 return;
             
-            if (is$5('OptionalMemberExpression', parent, nonComp))
+            if (is$4('OptionalMemberExpression', parent, nonComp))
                 return;
         } else if (parentKey === 'key') {
-            if (is$5('Property', parent, nonComp))
+            if (is$4('Property', parent, nonComp))
                 return;
             
-            if (is$5('Method', parent, nonComp))
+            if (is$4('Method', parent, nonComp))
                 return;
         } else if (parentKey === 'exported') {
-            if (is$5('ExportSpecifier', parent))
+            if (is$4('ExportSpecifier', parent))
                 return;
         } else if (parentKey === 'imported') {
-            if (is$5('ImportSpecifier', parent, {imported: node}))
+            if (is$4('ImportSpecifier', parent, {imported: node}))
                 return;
         } else if (parentKey === 'meta') {
-            if (is$5('MetaProperty', parent, {meta: node}))
+            if (is$4('MetaProperty', parent, {meta: node}))
                 return;
         }
 
 
         
-        if ((isKeyword$1(node.name) || isReservedWord$1(node.name, false)) && node.name !== 'this') {
+        if ((isKeyword$2(node.name) || isReservedWord$1(node.name, false)) && node.name !== 'this') {
             throw new TypeError(`"${node.name}" is not a valid identifier`);
         }
     },
@@ -10546,7 +8322,7 @@ defineType$4$1('NumericLiteral', {
     deprecatedAlias: 'NumberLiteral',
     fields: {
         value: {
-            validate: chain$5(assertValueType$1('number'), Object.assign(function(node, key, val) {
+            validate: chain$3(assertValueType$1('number'), Object.assign(function(node, key, val) {
                 if (1 / val < 0 || !Number.isFinite(val)) {
                     const error = new Error(`NumericLiterals must be non-negative finite numbers. You can use t.valueToNode(${val}) instead.`);
                     
@@ -10601,7 +8377,7 @@ defineType$4$1('RegExpLiteral', {
             validate: assertValueType$1('string'),
         },
         flags: {
-            validate: chain$5(assertValueType$1('string'), Object.assign(function(node, key, val) {
+            validate: chain$3(assertValueType$1('string'), Object.assign(function(node, key, val) {
                 const invalid = /[^dgimsuvy]/.exec(val);
                 
                 if (invalid) {
@@ -10855,7 +8631,7 @@ defineType$4$1('ObjectProperty', {
             validate: assertNodeType$1('Expression', 'PatternLike'),
         },
         shorthand: {
-            validate: chain$5(assertValueType$1('boolean'), Object.assign(function(node, key, shorthand) {
+            validate: chain$3(assertValueType$1('boolean'), Object.assign(function(node, key, shorthand) {
                 if (!shorthand)
                     return;
                 
@@ -10863,7 +8639,7 @@ defineType$4$1('ObjectProperty', {
                     throw new TypeError('Property shorthand of ObjectProperty cannot be true if computed is true');
                 }
                 
-                if (!is$5('Identifier', node.key)) {
+                if (!is$4('Identifier', node.key)) {
                     throw new TypeError('Property shorthand of ObjectProperty cannot be true if key is not an Identifier');
                 }
             }, {
@@ -10891,7 +8667,7 @@ defineType$4$1('ObjectProperty', {
         const expression2 = assertNodeType$1('Expression');
         
         return function(parent, key, node) {
-            const validator = is$5('ObjectPattern', parent) ? pattern : expression2;
+            const validator = is$4('ObjectPattern', parent) ? pattern : expression2;
             validator(node, 'value', node.value);
         };
     })(),
@@ -10999,7 +8775,7 @@ defineType$4$1('TryStatement', {
     aliases: ['Statement'],
     fields: {
         block: {
-            validate: chain$5(assertNodeType$1('BlockStatement'), Object.assign(function(node) {
+            validate: chain$3(assertNodeType$1('BlockStatement'), Object.assign(function(node) {
                 if (!node.handler && !node.finalizer) {
                     throw new TypeError('TryStatement expects either a handler or finalizer, or both');
                 }
@@ -11079,7 +8855,7 @@ defineType$4$1('VariableDeclaration', {
         return function(parent, key, node) {
             const {kind, declarations} = node;
             
-            const parentIsForX = is$5('ForXStatement', parent, {
+            const parentIsForX = is$4('ForXStatement', parent, {
                 left: node,
             });
             
@@ -11187,7 +8963,7 @@ defineType$4$1('ArrayPattern', {
     fields: {
         ...patternLikeCommon$1(),
         elements: {
-            validate: chain$5(assertValueType$1('array'), assertEach$1(assertNodeOrValueType$1('null', 'PatternLike'))),
+            validate: chain$3(assertValueType$1('array'), assertEach$1(assertNodeOrValueType$1('null', 'PatternLike'))),
         },
     },
 });
@@ -11342,7 +9118,7 @@ defineType$4$1('ClassDeclaration', {
         const identifier4 = assertNodeType$1('Identifier');
         
         return function(parent, key, node) {
-            if (!is$5('ExportDefaultDeclaration', parent)) {
+            if (!is$4('ExportDefaultDeclaration', parent)) {
                 identifier4(node, 'id', node.id);
             }
         };
@@ -11410,7 +9186,7 @@ defineType$4$1('ExportNamedDeclaration', {
     fields: {
         declaration: {
             optional: true,
-            validate: chain$5(assertNodeType$1('Declaration'), Object.assign(function(node, key, val) {
+            validate: chain$3(assertNodeType$1('Declaration'), Object.assign(function(node, key, val) {
                 if (val && node.specifiers.length) {
                     throw new TypeError('Only declaration or specifiers is allowed on ExportNamedDeclaration');
                 }
@@ -11491,7 +9267,7 @@ defineType$4$1('ForOfStatement', {
                 const lval = assertNodeType$1('Identifier', 'MemberExpression', 'ArrayPattern', 'ObjectPattern', 'TSAsExpression', 'TSSatisfiesExpression', 'TSTypeAssertion', 'TSNonNullExpression');
                 
                 return Object.assign(function(node, key, val) {
-                    if (is$5('VariableDeclaration', val)) {
+                    if (is$4('VariableDeclaration', val)) {
                         declaration(node, key, val);
                     } else {
                         lval(node, key, val);
@@ -11611,7 +9387,7 @@ defineType$4$1('MetaProperty', {
     aliases: ['Expression'],
     fields: {
         meta: {
-            validate: chain$5(assertNodeType$1('Identifier'), Object.assign(function(node, key, val) {
+            validate: chain$3(assertNodeType$1('Identifier'), Object.assign(function(node, key, val) {
                 let property;
                 
                 switch(val.name) {
@@ -11628,7 +9404,7 @@ defineType$4$1('MetaProperty', {
                     break;
                 }
                 
-                if (!is$5('Identifier', node.property, {name: property})) {
+                if (!is$4('Identifier', node.property, {name: property})) {
                     throw new TypeError('Unrecognised MetaProperty');
                 }
             }, {
@@ -11663,7 +9439,7 @@ var classMethodOrPropertyCommon$1 = () => ({
         optional: true,
     },
     key: {
-        validate: chain$5((function() {
+        validate: chain$3((function() {
             const normal = assertNodeType$1('Identifier', 'StringLiteral', 'NumericLiteral', 'BigIntLiteral');
             const computed = assertNodeType$1('Expression');
             
@@ -11684,7 +9460,7 @@ var classMethodOrDeclareMethodCommon$1 = () => ({
         default: 'method',
     },
     access: {
-        validate: chain$5(assertValueType$1('string'), assertOneOf$1('public', 'private', 'protected')),
+        validate: chain$3(assertValueType$1('string'), assertOneOf$1('public', 'private', 'protected')),
         optional: true,
     },
     decorators: {
@@ -11782,7 +9558,7 @@ defineType$4$1('TemplateElement', {
     builder: ['value', 'tail'],
     fields: {
         value: {
-            validate: chain$5(assertShape$1({
+            validate: chain$3(assertShape$1({
                 raw: {
                     validate: assertValueType$1('string'),
                 },
@@ -11829,7 +9605,7 @@ defineType$4$1('TemplateLiteral', {
     fields: {
         quasis: validateArrayOfType$1('TemplateElement'),
         expressions: {
-            validate: chain$5(assertValueType$1('array'), assertEach$1(assertNodeType$1('Expression', 'TSType')), function(node, key, val) {
+            validate: chain$3(assertValueType$1('array'), assertEach$1(assertNodeType$1('Expression', 'TSType')), function(node, key, val) {
                 if (node.quasis.length !== val.length + 1) {
                     throw new TypeError(`Number of ${node.type} quasis should be exactly one more than the number of expressions.
 Expected ${val.length + 1} quasis but got ${node.quasis.length}`);
@@ -11844,7 +9620,7 @@ defineType$4$1('YieldExpression', {
     aliases: ['Expression', 'Terminatorless'],
     fields: {
         delegate: {
-            validate: chain$5(assertValueType$1('boolean'), Object.assign(function(node, key, val) {
+            validate: chain$3(assertValueType$1('boolean'), Object.assign(function(node, key, val) {
                 if (val && !node.argument) {
                     throw new TypeError('Property delegate of YieldExpression cannot be true if there is no argument');
                 }
@@ -11926,7 +9702,7 @@ defineType$4$1('OptionalMemberExpression', {
             default: false,
         },
         optional: {
-            validate: chain$5(assertValueType$1('boolean'), assertOptionalChainStart$1()),
+            validate: chain$3(assertValueType$1('boolean'), assertOptionalChainStart$1()),
         },
     },
 });
@@ -11948,7 +9724,7 @@ defineType$4$1('OptionalCallExpression', {
         },
         arguments: validateArrayOfType$1('Expression', 'SpreadElement', 'ArgumentPlaceholder'),
         optional: {
-            validate: chain$5(assertValueType$1('boolean'), assertOptionalChainStart$1()),
+            validate: chain$3(assertValueType$1('boolean'), assertOptionalChainStart$1()),
         },
         typeArguments: {
             validate: assertNodeType$1('TypeParameterInstantiation', 'TSTypeParameterInstantiation'),
@@ -12026,7 +9802,7 @@ defineType$4$1('ClassAccessorProperty', {
     fields: {
         ...classMethodOrPropertyCommon$1(),
         key: {
-            validate: chain$5((function() {
+            validate: chain$3((function() {
                 const normal = assertNodeType$1('Identifier', 'StringLiteral', 'NumericLiteral', 'BigIntLiteral', 'PrivateName');
                 const computed = assertNodeType$1('Expression');
                 
@@ -12246,7 +10022,7 @@ defineType$3$1('BooleanLiteralTypeAnnotation', {
     builder: ['value'],
     aliases: ['FlowType'],
     fields: {
-        value: validate$2$2(assertValueType$1('boolean')),
+        value: validate$2$1(assertValueType$1('boolean')),
     },
 });
 defineType$3$1('NullLiteralTypeAnnotation', {
@@ -12450,7 +10226,7 @@ defineType$3$1('IntersectionTypeAnnotation', {
     visitor: ['types'],
     aliases: ['FlowType'],
     fields: {
-        types: validate$2$2(arrayOfType$1('FlowType')),
+        types: validate$2$1(arrayOfType$1('FlowType')),
     },
 });
 defineType$3$1('MixedTypeAnnotation', {
@@ -12470,7 +10246,7 @@ defineType$3$1('NumberLiteralTypeAnnotation', {
     builder: ['value'],
     aliases: ['FlowType'],
     fields: {
-        value: validate$2$2(assertValueType$1('number')),
+        value: validate$2$1(assertValueType$1('number')),
     },
 });
 defineType$3$1('NumberTypeAnnotation', {
@@ -12492,7 +10268,7 @@ defineType$3$1('ObjectTypeAnnotation', {
         'exact',
     ],
     fields: {
-        properties: validate$2$2(arrayOfType$1('ObjectTypeProperty', 'ObjectTypeSpreadProperty')),
+        properties: validate$2$1(arrayOfType$1('ObjectTypeProperty', 'ObjectTypeSpreadProperty')),
         indexers: {
             validate: arrayOfType$1('ObjectTypeIndexer'),
             optional: false,
@@ -12528,9 +10304,9 @@ defineType$3$1('ObjectTypeInternalSlot', {
     fields: {
         id: validateType$1('Identifier'),
         value: validateType$1('FlowType'),
-        optional: validate$2$2(assertValueType$1('boolean')),
-        static: validate$2$2(assertValueType$1('boolean')),
-        method: validate$2$2(assertValueType$1('boolean')),
+        optional: validate$2$1(assertValueType$1('boolean')),
+        static: validate$2$1(assertValueType$1('boolean')),
+        method: validate$2$1(assertValueType$1('boolean')),
     },
 });
 defineType$3$1('ObjectTypeCallProperty', {
@@ -12538,7 +10314,7 @@ defineType$3$1('ObjectTypeCallProperty', {
     aliases: ['UserWhitespacable'],
     fields: {
         value: validateType$1('FlowType'),
-        static: validate$2$2(assertValueType$1('boolean')),
+        static: validate$2$1(assertValueType$1('boolean')),
     },
 });
 defineType$3$1('ObjectTypeIndexer', {
@@ -12559,7 +10335,7 @@ defineType$3$1('ObjectTypeIndexer', {
         id: validateOptionalType$1('Identifier'),
         key: validateType$1('FlowType'),
         value: validateType$1('FlowType'),
-        static: validate$2$2(assertValueType$1('boolean')),
+        static: validate$2$1(assertValueType$1('boolean')),
         variance: validateOptionalType$1('Variance'),
     },
 });
@@ -12573,12 +10349,12 @@ defineType$3$1('ObjectTypeProperty', {
     fields: {
         key: validateType$1('Identifier', 'StringLiteral'),
         value: validateType$1('FlowType'),
-        kind: validate$2$2(assertOneOf$1('init', 'get', 'set')),
-        static: validate$2$2(assertValueType$1('boolean')),
-        proto: validate$2$2(assertValueType$1('boolean')),
-        optional: validate$2$2(assertValueType$1('boolean')),
+        kind: validate$2$1(assertOneOf$1('init', 'get', 'set')),
+        static: validate$2$1(assertValueType$1('boolean')),
+        proto: validate$2$1(assertValueType$1('boolean')),
+        optional: validate$2$1(assertValueType$1('boolean')),
         variance: validateOptionalType$1('Variance'),
-        method: validate$2$2(assertValueType$1('boolean')),
+        method: validate$2$1(assertValueType$1('boolean')),
     },
 });
 defineType$3$1('ObjectTypeSpreadProperty', {
@@ -12619,7 +10395,7 @@ defineType$3$1('StringLiteralTypeAnnotation', {
     builder: ['value'],
     aliases: ['FlowType'],
     fields: {
-        value: validate$2$2(assertValueType$1('string')),
+        value: validate$2$1(assertValueType$1('string')),
     },
 });
 defineType$3$1('StringTypeAnnotation', {
@@ -12635,7 +10411,7 @@ defineType$3$1('TupleTypeAnnotation', {
     visitor: ['types'],
     aliases: ['FlowType'],
     fields: {
-        types: validate$2$2(arrayOfType$1('FlowType')),
+        types: validate$2$1(arrayOfType$1('FlowType')),
     },
 });
 defineType$3$1('TypeofTypeAnnotation', {
@@ -12683,7 +10459,7 @@ defineType$3$1('TypeParameter', {
         'variance',
     ],
     fields: {
-        name: validate$2$2(assertValueType$1('string')),
+        name: validate$2$1(assertValueType$1('string')),
         bound: validateOptionalType$1('TypeAnnotation'),
         default: validateOptionalType$1('FlowType'),
         variance: validateOptionalType$1('Variance'),
@@ -12692,26 +10468,26 @@ defineType$3$1('TypeParameter', {
 defineType$3$1('TypeParameterDeclaration', {
     visitor: ['params'],
     fields: {
-        params: validate$2$2(arrayOfType$1('TypeParameter')),
+        params: validate$2$1(arrayOfType$1('TypeParameter')),
     },
 });
 defineType$3$1('TypeParameterInstantiation', {
     visitor: ['params'],
     fields: {
-        params: validate$2$2(arrayOfType$1('FlowType')),
+        params: validate$2$1(arrayOfType$1('FlowType')),
     },
 });
 defineType$3$1('UnionTypeAnnotation', {
     visitor: ['types'],
     aliases: ['FlowType'],
     fields: {
-        types: validate$2$2(arrayOfType$1('FlowType')),
+        types: validate$2$1(arrayOfType$1('FlowType')),
     },
 });
 defineType$3$1('Variance', {
     builder: ['kind'],
     fields: {
-        kind: validate$2$2(assertOneOf$1('minus', 'plus')),
+        kind: validate$2$1(assertOneOf$1('minus', 'plus')),
     },
 });
 defineType$3$1('VoidTypeAnnotation', {
@@ -12729,27 +10505,27 @@ defineType$3$1('EnumBooleanBody', {
     aliases: ['EnumBody'],
     visitor: ['members'],
     fields: {
-        explicitType: validate$2$2(assertValueType$1('boolean')),
+        explicitType: validate$2$1(assertValueType$1('boolean')),
         members: validateArrayOfType$1('EnumBooleanMember'),
-        hasUnknownMembers: validate$2$2(assertValueType$1('boolean')),
+        hasUnknownMembers: validate$2$1(assertValueType$1('boolean')),
     },
 });
 defineType$3$1('EnumNumberBody', {
     aliases: ['EnumBody'],
     visitor: ['members'],
     fields: {
-        explicitType: validate$2$2(assertValueType$1('boolean')),
+        explicitType: validate$2$1(assertValueType$1('boolean')),
         members: validateArrayOfType$1('EnumNumberMember'),
-        hasUnknownMembers: validate$2$2(assertValueType$1('boolean')),
+        hasUnknownMembers: validate$2$1(assertValueType$1('boolean')),
     },
 });
 defineType$3$1('EnumStringBody', {
     aliases: ['EnumBody'],
     visitor: ['members'],
     fields: {
-        explicitType: validate$2$2(assertValueType$1('boolean')),
+        explicitType: validate$2$1(assertValueType$1('boolean')),
         members: validateArrayOfType$1('EnumStringMember', 'EnumDefaultedMember'),
-        hasUnknownMembers: validate$2$2(assertValueType$1('boolean')),
+        hasUnknownMembers: validate$2$1(assertValueType$1('boolean')),
     },
 });
 defineType$3$1('EnumSymbolBody', {
@@ -12757,7 +10533,7 @@ defineType$3$1('EnumSymbolBody', {
     visitor: ['members'],
     fields: {
         members: validateArrayOfType$1('EnumDefaultedMember'),
-        hasUnknownMembers: validate$2$2(assertValueType$1('boolean')),
+        hasUnknownMembers: validate$2$1(assertValueType$1('boolean')),
     },
 });
 defineType$3$1('EnumBooleanMember', {
@@ -12806,7 +10582,7 @@ defineType$3$1('OptionalIndexedAccessType', {
     fields: {
         objectType: validateType$1('FlowType'),
         indexType: validateType$1('FlowType'),
-        optional: validate$2$2(assertValueType$1('boolean')),
+        optional: validate$2$1(assertValueType$1('boolean')),
     },
 });
 var defineType$2$1 = defineAliasedType$1('JSX');
@@ -13479,7 +11255,7 @@ defineType$6('TSTemplateLiteralType', {
     fields: {
         quasis: validateArrayOfType$1('TemplateElement'),
         types: {
-            validate: chain$5(assertValueType$1('array'), assertEach$1(assertNodeType$1('TSType')), function(node, key, val) {
+            validate: chain$3(assertValueType$1('array'), assertEach$1(assertNodeType$1('TSType')), function(node, key, val) {
                 if (node.quasis.length !== val.length + 1) {
                     throw new TypeError(`Number of ${node.type} quasis should be exactly one more than the number of types.
 Expected ${val.length + 1} quasis but got ${node.quasis.length}`);
@@ -13499,7 +11275,7 @@ defineType$6('TSLiteralType', {
                 const literal = assertNodeType$1('NumericLiteral', 'StringLiteral', 'BooleanLiteral', 'BigIntLiteral', 'TemplateLiteral');
                 
                 const validator = function validator2(parent, key, node) {
-                    if (is$5('UnaryExpression', node)) {
+                    if (is$4('UnaryExpression', node)) {
                         unaryOperator(node, 'operator', node.operator);
                         unaryExpression3(node, 'argument', node.argument);
                     } else {
@@ -13798,7 +11574,7 @@ for (const {types: types2, set} of allExpandedTypes$1) {
     }
 }
 
-var TYPES$5 = [].concat(Object.keys(VISITOR_KEYS$6), Object.keys(FLIPPED_ALIAS_KEYS$2), Object.keys(DEPRECATED_KEYS$1));
+var TYPES$4 = [].concat(Object.keys(VISITOR_KEYS$6), Object.keys(FLIPPED_ALIAS_KEYS$2), Object.keys(DEPRECATED_KEYS$1));
 
 function validate$1$2(node, key, val) {
     if (!node)
@@ -13860,22 +11636,22 @@ var _validate$1 = /* @__PURE__ */Object.freeze({
     validateInternal: validateInternal$1,
 });
 
-var {validateInternal: validate$5} = _validate$1;
+var {validateInternal: validate$4} = _validate$1;
 
 var {NODE_FIELDS: NODE_FIELDS$2} = utils$2;
 
-function arrayExpression$5(elements) {
+function arrayExpression$4(elements) {
     const node = {
         type: 'ArrayExpression',
         elements,
     };
     
     const defs = NODE_FIELDS$2.ArrayExpression;
-    validate$5(defs.elements, node, 'elements', elements, 1);
+    validate$4(defs.elements, node, 'elements', elements, 1);
     return node;
 }
 
-function assignmentExpression$5(operator, left, right) {
+function assignmentExpression$4(operator, left, right) {
     const node = {
         type: 'AssignmentExpression',
         operator,
@@ -13884,13 +11660,13 @@ function assignmentExpression$5(operator, left, right) {
     };
     
     const defs = NODE_FIELDS$2.AssignmentExpression;
-    validate$5(defs.operator, node, 'operator', operator);
-    validate$5(defs.left, node, 'left', left, 1);
-    validate$5(defs.right, node, 'right', right, 1);
+    validate$4(defs.operator, node, 'operator', operator);
+    validate$4(defs.left, node, 'left', left, 1);
+    validate$4(defs.right, node, 'right', right, 1);
     return node;
 }
 
-function binaryExpression$2(operator, left, right) {
+function binaryExpression$1(operator, left, right) {
     const node = {
         type: 'BinaryExpression',
         operator,
@@ -13899,9 +11675,9 @@ function binaryExpression$2(operator, left, right) {
     };
     
     const defs = NODE_FIELDS$2.BinaryExpression;
-    validate$5(defs.operator, node, 'operator', operator);
-    validate$5(defs.left, node, 'left', left, 1);
-    validate$5(defs.right, node, 'right', right, 1);
+    validate$4(defs.operator, node, 'operator', operator);
+    validate$4(defs.left, node, 'left', left, 1);
+    validate$4(defs.right, node, 'right', right, 1);
     return node;
 }
 
@@ -13912,7 +11688,7 @@ function interpreterDirective$1(value) {
     };
     
     const defs = NODE_FIELDS$2.InterpreterDirective;
-    validate$5(defs.value, node, 'value', value);
+    validate$4(defs.value, node, 'value', value);
     return node;
 }
 
@@ -13923,22 +11699,22 @@ function directive$2(value) {
     };
     
     const defs = NODE_FIELDS$2.Directive;
-    validate$5(defs.value, node, 'value', value, 1);
+    validate$4(defs.value, node, 'value', value, 1);
     return node;
 }
 
-function directiveLiteral$3(value) {
+function directiveLiteral$2(value) {
     const node = {
         type: 'DirectiveLiteral',
         value,
     };
     
     const defs = NODE_FIELDS$2.DirectiveLiteral;
-    validate$5(defs.value, node, 'value', value);
+    validate$4(defs.value, node, 'value', value);
     return node;
 }
 
-function blockStatement$5(body, directives = []) {
+function blockStatement$4(body, directives = []) {
     const node = {
         type: 'BlockStatement',
         body,
@@ -13946,23 +11722,23 @@ function blockStatement$5(body, directives = []) {
     };
     
     const defs = NODE_FIELDS$2.BlockStatement;
-    validate$5(defs.body, node, 'body', body, 1);
-    validate$5(defs.directives, node, 'directives', directives, 1);
+    validate$4(defs.body, node, 'body', body, 1);
+    validate$4(defs.directives, node, 'directives', directives, 1);
     return node;
 }
 
-function breakStatement$2(label = null) {
+function breakStatement$1(label = null) {
     const node = {
         type: 'BreakStatement',
         label,
     };
     
     const defs = NODE_FIELDS$2.BreakStatement;
-    validate$5(defs.label, node, 'label', label, 1);
+    validate$4(defs.label, node, 'label', label, 1);
     return node;
 }
 
-function callExpression$4(callee, _arguments) {
+function callExpression$3(callee, _arguments) {
     const node = {
         type: 'CallExpression',
         callee,
@@ -13970,8 +11746,8 @@ function callExpression$4(callee, _arguments) {
     };
     
     const defs = NODE_FIELDS$2.CallExpression;
-    validate$5(defs.callee, node, 'callee', callee, 1);
-    validate$5(defs.arguments, node, 'arguments', _arguments, 1);
+    validate$4(defs.callee, node, 'callee', callee, 1);
+    validate$4(defs.arguments, node, 'arguments', _arguments, 1);
     return node;
 }
 
@@ -13983,12 +11759,12 @@ function catchClause$1(param = null, body) {
     };
     
     const defs = NODE_FIELDS$2.CatchClause;
-    validate$5(defs.param, node, 'param', param, 1);
-    validate$5(defs.body, node, 'body', body, 1);
+    validate$4(defs.param, node, 'param', param, 1);
+    validate$4(defs.body, node, 'body', body, 1);
     return node;
 }
 
-function conditionalExpression$3(test, consequent, alternate) {
+function conditionalExpression$2(test, consequent, alternate) {
     const node = {
         type: 'ConditionalExpression',
         test,
@@ -13997,30 +11773,30 @@ function conditionalExpression$3(test, consequent, alternate) {
     };
     
     const defs = NODE_FIELDS$2.ConditionalExpression;
-    validate$5(defs.test, node, 'test', test, 1);
-    validate$5(defs.consequent, node, 'consequent', consequent, 1);
-    validate$5(defs.alternate, node, 'alternate', alternate, 1);
+    validate$4(defs.test, node, 'test', test, 1);
+    validate$4(defs.consequent, node, 'consequent', consequent, 1);
+    validate$4(defs.alternate, node, 'alternate', alternate, 1);
     return node;
 }
 
-function continueStatement$2(label = null) {
+function continueStatement$1(label = null) {
     const node = {
         type: 'ContinueStatement',
         label,
     };
     
     const defs = NODE_FIELDS$2.ContinueStatement;
-    validate$5(defs.label, node, 'label', label, 1);
+    validate$4(defs.label, node, 'label', label, 1);
     return node;
 }
 
-function debuggerStatement$2() {
+function debuggerStatement$1() {
     return {
         type: 'DebuggerStatement',
     };
 }
 
-function doWhileStatement$2(test, body) {
+function doWhileStatement$1(test, body) {
     const node = {
         type: 'DoWhileStatement',
         test,
@@ -14028,25 +11804,25 @@ function doWhileStatement$2(test, body) {
     };
     
     const defs = NODE_FIELDS$2.DoWhileStatement;
-    validate$5(defs.test, node, 'test', test, 1);
-    validate$5(defs.body, node, 'body', body, 1);
+    validate$4(defs.test, node, 'test', test, 1);
+    validate$4(defs.body, node, 'body', body, 1);
     return node;
 }
 
-function emptyStatement$2() {
+function emptyStatement$1() {
     return {
         type: 'EmptyStatement',
     };
 }
 
-function expressionStatement$9(expression2) {
+function expressionStatement$8(expression2) {
     const node = {
         type: 'ExpressionStatement',
         expression: expression2,
     };
     
     const defs = NODE_FIELDS$2.ExpressionStatement;
-    validate$5(defs.expression, node, 'expression', expression2, 1);
+    validate$4(defs.expression, node, 'expression', expression2, 1);
     return node;
 }
 
@@ -14059,13 +11835,13 @@ function file$2(program3, comments = null, tokens = null) {
     };
     
     const defs = NODE_FIELDS$2.File;
-    validate$5(defs.program, node, 'program', program3, 1);
-    validate$5(defs.comments, node, 'comments', comments, 1);
-    validate$5(defs.tokens, node, 'tokens', tokens);
+    validate$4(defs.program, node, 'program', program3, 1);
+    validate$4(defs.comments, node, 'comments', comments, 1);
+    validate$4(defs.tokens, node, 'tokens', tokens);
     return node;
 }
 
-function forInStatement$2(left, right, body) {
+function forInStatement$1(left, right, body) {
     const node = {
         type: 'ForInStatement',
         left,
@@ -14074,13 +11850,13 @@ function forInStatement$2(left, right, body) {
     };
     
     const defs = NODE_FIELDS$2.ForInStatement;
-    validate$5(defs.left, node, 'left', left, 1);
-    validate$5(defs.right, node, 'right', right, 1);
-    validate$5(defs.body, node, 'body', body, 1);
+    validate$4(defs.left, node, 'left', left, 1);
+    validate$4(defs.right, node, 'right', right, 1);
+    validate$4(defs.body, node, 'body', body, 1);
     return node;
 }
 
-function forStatement$2(init = null, test = null, update = null, body) {
+function forStatement$1(init = null, test = null, update = null, body) {
     const node = {
         type: 'ForStatement',
         init,
@@ -14090,14 +11866,14 @@ function forStatement$2(init = null, test = null, update = null, body) {
     };
     
     const defs = NODE_FIELDS$2.ForStatement;
-    validate$5(defs.init, node, 'init', init, 1);
-    validate$5(defs.test, node, 'test', test, 1);
-    validate$5(defs.update, node, 'update', update, 1);
-    validate$5(defs.body, node, 'body', body, 1);
+    validate$4(defs.init, node, 'init', init, 1);
+    validate$4(defs.test, node, 'test', test, 1);
+    validate$4(defs.update, node, 'update', update, 1);
+    validate$4(defs.body, node, 'body', body, 1);
     return node;
 }
 
-function functionDeclaration$2(id = null, params, body, generator = false, async = false) {
+function functionDeclaration$1(id = null, params, body, generator = false, async = false) {
     const node = {
         type: 'FunctionDeclaration',
         id,
@@ -14108,15 +11884,15 @@ function functionDeclaration$2(id = null, params, body, generator = false, async
     };
     
     const defs = NODE_FIELDS$2.FunctionDeclaration;
-    validate$5(defs.id, node, 'id', id, 1);
-    validate$5(defs.params, node, 'params', params, 1);
-    validate$5(defs.body, node, 'body', body, 1);
-    validate$5(defs.generator, node, 'generator', generator);
-    validate$5(defs.async, node, 'async', async);
+    validate$4(defs.id, node, 'id', id, 1);
+    validate$4(defs.params, node, 'params', params, 1);
+    validate$4(defs.body, node, 'body', body, 1);
+    validate$4(defs.generator, node, 'generator', generator);
+    validate$4(defs.async, node, 'async', async);
     return node;
 }
 
-function functionExpression$2(id = null, params, body, generator = false, async = false) {
+function functionExpression$1(id = null, params, body, generator = false, async = false) {
     const node = {
         type: 'FunctionExpression',
         id,
@@ -14127,26 +11903,26 @@ function functionExpression$2(id = null, params, body, generator = false, async 
     };
     
     const defs = NODE_FIELDS$2.FunctionExpression;
-    validate$5(defs.id, node, 'id', id, 1);
-    validate$5(defs.params, node, 'params', params, 1);
-    validate$5(defs.body, node, 'body', body, 1);
-    validate$5(defs.generator, node, 'generator', generator);
-    validate$5(defs.async, node, 'async', async);
+    validate$4(defs.id, node, 'id', id, 1);
+    validate$4(defs.params, node, 'params', params, 1);
+    validate$4(defs.body, node, 'body', body, 1);
+    validate$4(defs.generator, node, 'generator', generator);
+    validate$4(defs.async, node, 'async', async);
     return node;
 }
 
-function identifier$5(name) {
+function identifier$4(name) {
     const node = {
         type: 'Identifier',
         name,
     };
     
     const defs = NODE_FIELDS$2.Identifier;
-    validate$5(defs.name, node, 'name', name);
+    validate$4(defs.name, node, 'name', name);
     return node;
 }
 
-function ifStatement$2(test, consequent, alternate = null) {
+function ifStatement$1(test, consequent, alternate = null) {
     const node = {
         type: 'IfStatement',
         test,
@@ -14155,13 +11931,13 @@ function ifStatement$2(test, consequent, alternate = null) {
     };
     
     const defs = NODE_FIELDS$2.IfStatement;
-    validate$5(defs.test, node, 'test', test, 1);
-    validate$5(defs.consequent, node, 'consequent', consequent, 1);
-    validate$5(defs.alternate, node, 'alternate', alternate, 1);
+    validate$4(defs.test, node, 'test', test, 1);
+    validate$4(defs.consequent, node, 'consequent', consequent, 1);
+    validate$4(defs.alternate, node, 'alternate', alternate, 1);
     return node;
 }
 
-function labeledStatement$2(label, body) {
+function labeledStatement$1(label, body) {
     const node = {
         type: 'LabeledStatement',
         label,
@@ -14169,19 +11945,19 @@ function labeledStatement$2(label, body) {
     };
     
     const defs = NODE_FIELDS$2.LabeledStatement;
-    validate$5(defs.label, node, 'label', label, 1);
-    validate$5(defs.body, node, 'body', body, 1);
+    validate$4(defs.label, node, 'label', label, 1);
+    validate$4(defs.body, node, 'body', body, 1);
     return node;
 }
 
-function stringLiteral$7(value) {
+function stringLiteral$6(value) {
     const node = {
         type: 'StringLiteral',
         value,
     };
     
     const defs = NODE_FIELDS$2.StringLiteral;
-    validate$5(defs.value, node, 'value', value);
+    validate$4(defs.value, node, 'value', value);
     return node;
 }
 
@@ -14192,7 +11968,7 @@ function numericLiteral$2(value) {
     };
     
     const defs = NODE_FIELDS$2.NumericLiteral;
-    validate$5(defs.value, node, 'value', value);
+    validate$4(defs.value, node, 'value', value);
     return node;
 }
 
@@ -14209,7 +11985,7 @@ function booleanLiteral$1(value) {
     };
     
     const defs = NODE_FIELDS$2.BooleanLiteral;
-    validate$5(defs.value, node, 'value', value);
+    validate$4(defs.value, node, 'value', value);
     return node;
 }
 
@@ -14221,12 +11997,12 @@ function regExpLiteral$1(pattern, flags = '') {
     };
     
     const defs = NODE_FIELDS$2.RegExpLiteral;
-    validate$5(defs.pattern, node, 'pattern', pattern);
-    validate$5(defs.flags, node, 'flags', flags);
+    validate$4(defs.pattern, node, 'pattern', pattern);
+    validate$4(defs.flags, node, 'flags', flags);
     return node;
 }
 
-function logicalExpression$2(operator, left, right) {
+function logicalExpression$1(operator, left, right) {
     const node = {
         type: 'LogicalExpression',
         operator,
@@ -14235,9 +12011,9 @@ function logicalExpression$2(operator, left, right) {
     };
     
     const defs = NODE_FIELDS$2.LogicalExpression;
-    validate$5(defs.operator, node, 'operator', operator);
-    validate$5(defs.left, node, 'left', left, 1);
-    validate$5(defs.right, node, 'right', right, 1);
+    validate$4(defs.operator, node, 'operator', operator);
+    validate$4(defs.left, node, 'left', left, 1);
+    validate$4(defs.right, node, 'right', right, 1);
     return node;
 }
 
@@ -14250,13 +12026,13 @@ function memberExpression$1(object, property, computed = false) {
     };
     
     const defs = NODE_FIELDS$2.MemberExpression;
-    validate$5(defs.object, node, 'object', object, 1);
-    validate$5(defs.property, node, 'property', property, 1);
-    validate$5(defs.computed, node, 'computed', computed);
+    validate$4(defs.object, node, 'object', object, 1);
+    validate$4(defs.property, node, 'property', property, 1);
+    validate$4(defs.computed, node, 'computed', computed);
     return node;
 }
 
-function newExpression$2(callee, _arguments) {
+function newExpression$1(callee, _arguments) {
     const node = {
         type: 'NewExpression',
         callee,
@@ -14264,12 +12040,12 @@ function newExpression$2(callee, _arguments) {
     };
     
     const defs = NODE_FIELDS$2.NewExpression;
-    validate$5(defs.callee, node, 'callee', callee, 1);
-    validate$5(defs.arguments, node, 'arguments', _arguments, 1);
+    validate$4(defs.callee, node, 'callee', callee, 1);
+    validate$4(defs.arguments, node, 'arguments', _arguments, 1);
     return node;
 }
 
-function program$4(body, directives = [], sourceType = 'script', interpreter = null) {
+function program$3(body, directives = [], sourceType = 'script', interpreter = null) {
     const node = {
         type: 'Program',
         body,
@@ -14279,25 +12055,25 @@ function program$4(body, directives = [], sourceType = 'script', interpreter = n
     };
     
     const defs = NODE_FIELDS$2.Program;
-    validate$5(defs.body, node, 'body', body, 1);
-    validate$5(defs.directives, node, 'directives', directives, 1);
-    validate$5(defs.sourceType, node, 'sourceType', sourceType);
-    validate$5(defs.interpreter, node, 'interpreter', interpreter, 1);
+    validate$4(defs.body, node, 'body', body, 1);
+    validate$4(defs.directives, node, 'directives', directives, 1);
+    validate$4(defs.sourceType, node, 'sourceType', sourceType);
+    validate$4(defs.interpreter, node, 'interpreter', interpreter, 1);
     return node;
 }
 
-function objectExpression$4(properties) {
+function objectExpression$3(properties) {
     const node = {
         type: 'ObjectExpression',
         properties,
     };
     
     const defs = NODE_FIELDS$2.ObjectExpression;
-    validate$5(defs.properties, node, 'properties', properties, 1);
+    validate$4(defs.properties, node, 'properties', properties, 1);
     return node;
 }
 
-function objectMethod$3(kind, key, params, body, computed = false, generator = false, async = false) {
+function objectMethod$2(kind, key, params, body, computed = false, generator = false, async = false) {
     const node = {
         type: 'ObjectMethod',
         kind,
@@ -14310,17 +12086,17 @@ function objectMethod$3(kind, key, params, body, computed = false, generator = f
     };
     
     const defs = NODE_FIELDS$2.ObjectMethod;
-    validate$5(defs.kind, node, 'kind', kind);
-    validate$5(defs.key, node, 'key', key, 1);
-    validate$5(defs.params, node, 'params', params, 1);
-    validate$5(defs.body, node, 'body', body, 1);
-    validate$5(defs.computed, node, 'computed', computed);
-    validate$5(defs.generator, node, 'generator', generator);
-    validate$5(defs.async, node, 'async', async);
+    validate$4(defs.kind, node, 'kind', kind);
+    validate$4(defs.key, node, 'key', key, 1);
+    validate$4(defs.params, node, 'params', params, 1);
+    validate$4(defs.body, node, 'body', body, 1);
+    validate$4(defs.computed, node, 'computed', computed);
+    validate$4(defs.generator, node, 'generator', generator);
+    validate$4(defs.async, node, 'async', async);
     return node;
 }
 
-function objectProperty$5(key, value, computed = false, shorthand = false) {
+function objectProperty$4(key, value, computed = false, shorthand = false) {
     const node = {
         type: 'ObjectProperty',
         key,
@@ -14330,54 +12106,54 @@ function objectProperty$5(key, value, computed = false, shorthand = false) {
     };
     
     const defs = NODE_FIELDS$2.ObjectProperty;
-    validate$5(defs.key, node, 'key', key, 1);
-    validate$5(defs.value, node, 'value', value, 1);
-    validate$5(defs.computed, node, 'computed', computed);
-    validate$5(defs.shorthand, node, 'shorthand', shorthand);
+    validate$4(defs.key, node, 'key', key, 1);
+    validate$4(defs.value, node, 'value', value, 1);
+    validate$4(defs.computed, node, 'computed', computed);
+    validate$4(defs.shorthand, node, 'shorthand', shorthand);
     return node;
 }
 
-function restElement$2(argument) {
+function restElement$1(argument) {
     const node = {
         type: 'RestElement',
         argument,
     };
     
     const defs = NODE_FIELDS$2.RestElement;
-    validate$5(defs.argument, node, 'argument', argument, 1);
+    validate$4(defs.argument, node, 'argument', argument, 1);
     return node;
 }
 
-function returnStatement$3(argument = null) {
+function returnStatement$2(argument = null) {
     const node = {
         type: 'ReturnStatement',
         argument,
     };
     
     const defs = NODE_FIELDS$2.ReturnStatement;
-    validate$5(defs.argument, node, 'argument', argument, 1);
+    validate$4(defs.argument, node, 'argument', argument, 1);
     return node;
 }
 
-function sequenceExpression$4(expressions) {
+function sequenceExpression$3(expressions) {
     const node = {
         type: 'SequenceExpression',
         expressions,
     };
     
     const defs = NODE_FIELDS$2.SequenceExpression;
-    validate$5(defs.expressions, node, 'expressions', expressions, 1);
+    validate$4(defs.expressions, node, 'expressions', expressions, 1);
     return node;
 }
 
-function parenthesizedExpression$4(expression2) {
+function parenthesizedExpression$3(expression2) {
     const node = {
         type: 'ParenthesizedExpression',
         expression: expression2,
     };
     
     const defs = NODE_FIELDS$2.ParenthesizedExpression;
-    validate$5(defs.expression, node, 'expression', expression2, 1);
+    validate$4(defs.expression, node, 'expression', expression2, 1);
     return node;
 }
 
@@ -14389,12 +12165,12 @@ function switchCase$1(test = null, consequent) {
     };
     
     const defs = NODE_FIELDS$2.SwitchCase;
-    validate$5(defs.test, node, 'test', test, 1);
-    validate$5(defs.consequent, node, 'consequent', consequent, 1);
+    validate$4(defs.test, node, 'test', test, 1);
+    validate$4(defs.consequent, node, 'consequent', consequent, 1);
     return node;
 }
 
-function switchStatement$2(discriminant, cases) {
+function switchStatement$1(discriminant, cases) {
     const node = {
         type: 'SwitchStatement',
         discriminant,
@@ -14402,8 +12178,8 @@ function switchStatement$2(discriminant, cases) {
     };
     
     const defs = NODE_FIELDS$2.SwitchStatement;
-    validate$5(defs.discriminant, node, 'discriminant', discriminant, 1);
-    validate$5(defs.cases, node, 'cases', cases, 1);
+    validate$4(defs.discriminant, node, 'discriminant', discriminant, 1);
+    validate$4(defs.cases, node, 'cases', cases, 1);
     return node;
 }
 
@@ -14420,7 +12196,7 @@ function throwStatement$1(argument) {
     };
     
     const defs = NODE_FIELDS$2.ThrowStatement;
-    validate$5(defs.argument, node, 'argument', argument, 1);
+    validate$4(defs.argument, node, 'argument', argument, 1);
     return node;
 }
 
@@ -14433,9 +12209,9 @@ function tryStatement$1(block, handler = null, finalizer = null) {
     };
     
     const defs = NODE_FIELDS$2.TryStatement;
-    validate$5(defs.block, node, 'block', block, 1);
-    validate$5(defs.handler, node, 'handler', handler, 1);
-    validate$5(defs.finalizer, node, 'finalizer', finalizer, 1);
+    validate$4(defs.block, node, 'block', block, 1);
+    validate$4(defs.handler, node, 'handler', handler, 1);
+    validate$4(defs.finalizer, node, 'finalizer', finalizer, 1);
     return node;
 }
 
@@ -14448,9 +12224,9 @@ function unaryExpression$3(operator, argument, prefix2 = true) {
     };
     
     const defs = NODE_FIELDS$2.UnaryExpression;
-    validate$5(defs.operator, node, 'operator', operator);
-    validate$5(defs.argument, node, 'argument', argument, 1);
-    validate$5(defs.prefix, node, 'prefix', prefix2);
+    validate$4(defs.operator, node, 'operator', operator);
+    validate$4(defs.argument, node, 'argument', argument, 1);
+    validate$4(defs.prefix, node, 'prefix', prefix2);
     return node;
 }
 
@@ -14463,13 +12239,13 @@ function updateExpression$1(operator, argument, prefix2 = false) {
     };
     
     const defs = NODE_FIELDS$2.UpdateExpression;
-    validate$5(defs.operator, node, 'operator', operator);
-    validate$5(defs.argument, node, 'argument', argument, 1);
-    validate$5(defs.prefix, node, 'prefix', prefix2);
+    validate$4(defs.operator, node, 'operator', operator);
+    validate$4(defs.argument, node, 'argument', argument, 1);
+    validate$4(defs.prefix, node, 'prefix', prefix2);
     return node;
 }
 
-function variableDeclaration$3(kind, declarations) {
+function variableDeclaration$2(kind, declarations) {
     const node = {
         type: 'VariableDeclaration',
         kind,
@@ -14477,8 +12253,8 @@ function variableDeclaration$3(kind, declarations) {
     };
     
     const defs = NODE_FIELDS$2.VariableDeclaration;
-    validate$5(defs.kind, node, 'kind', kind);
-    validate$5(defs.declarations, node, 'declarations', declarations, 1);
+    validate$4(defs.kind, node, 'kind', kind);
+    validate$4(defs.declarations, node, 'declarations', declarations, 1);
     return node;
 }
 
@@ -14490,12 +12266,12 @@ function variableDeclarator$2(id, init = null) {
     };
     
     const defs = NODE_FIELDS$2.VariableDeclarator;
-    validate$5(defs.id, node, 'id', id, 1);
-    validate$5(defs.init, node, 'init', init, 1);
+    validate$4(defs.id, node, 'id', id, 1);
+    validate$4(defs.init, node, 'init', init, 1);
     return node;
 }
 
-function whileStatement$2(test, body) {
+function whileStatement$1(test, body) {
     const node = {
         type: 'WhileStatement',
         test,
@@ -14503,12 +12279,12 @@ function whileStatement$2(test, body) {
     };
     
     const defs = NODE_FIELDS$2.WhileStatement;
-    validate$5(defs.test, node, 'test', test, 1);
-    validate$5(defs.body, node, 'body', body, 1);
+    validate$4(defs.test, node, 'test', test, 1);
+    validate$4(defs.body, node, 'body', body, 1);
     return node;
 }
 
-function withStatement$2(object, body) {
+function withStatement$1(object, body) {
     const node = {
         type: 'WithStatement',
         object,
@@ -14516,12 +12292,12 @@ function withStatement$2(object, body) {
     };
     
     const defs = NODE_FIELDS$2.WithStatement;
-    validate$5(defs.object, node, 'object', object, 1);
-    validate$5(defs.body, node, 'body', body, 1);
+    validate$4(defs.object, node, 'object', object, 1);
+    validate$4(defs.body, node, 'body', body, 1);
     return node;
 }
 
-function assignmentPattern$2(left, right) {
+function assignmentPattern$1(left, right) {
     const node = {
         type: 'AssignmentPattern',
         left,
@@ -14529,23 +12305,23 @@ function assignmentPattern$2(left, right) {
     };
     
     const defs = NODE_FIELDS$2.AssignmentPattern;
-    validate$5(defs.left, node, 'left', left, 1);
-    validate$5(defs.right, node, 'right', right, 1);
+    validate$4(defs.left, node, 'left', left, 1);
+    validate$4(defs.right, node, 'right', right, 1);
     return node;
 }
 
-function arrayPattern$2(elements) {
+function arrayPattern$1(elements) {
     const node = {
         type: 'ArrayPattern',
         elements,
     };
     
     const defs = NODE_FIELDS$2.ArrayPattern;
-    validate$5(defs.elements, node, 'elements', elements, 1);
+    validate$4(defs.elements, node, 'elements', elements, 1);
     return node;
 }
 
-function arrowFunctionExpression$4(params, body, async = false) {
+function arrowFunctionExpression$3(params, body, async = false) {
     const node = {
         type: 'ArrowFunctionExpression',
         params,
@@ -14555,9 +12331,9 @@ function arrowFunctionExpression$4(params, body, async = false) {
     };
     
     const defs = NODE_FIELDS$2.ArrowFunctionExpression;
-    validate$5(defs.params, node, 'params', params, 1);
-    validate$5(defs.body, node, 'body', body, 1);
-    validate$5(defs.async, node, 'async', async);
+    validate$4(defs.params, node, 'params', params, 1);
+    validate$4(defs.body, node, 'body', body, 1);
+    validate$4(defs.async, node, 'async', async);
     return node;
 }
 
@@ -14568,7 +12344,7 @@ function classBody$1(body) {
     };
     
     const defs = NODE_FIELDS$2.ClassBody;
-    validate$5(defs.body, node, 'body', body, 1);
+    validate$4(defs.body, node, 'body', body, 1);
     return node;
 }
 
@@ -14582,10 +12358,10 @@ function classExpression$1(id = null, superClass = null, body, decorators = null
     };
     
     const defs = NODE_FIELDS$2.ClassExpression;
-    validate$5(defs.id, node, 'id', id, 1);
-    validate$5(defs.superClass, node, 'superClass', superClass, 1);
-    validate$5(defs.body, node, 'body', body, 1);
-    validate$5(defs.decorators, node, 'decorators', decorators, 1);
+    validate$4(defs.id, node, 'id', id, 1);
+    validate$4(defs.superClass, node, 'superClass', superClass, 1);
+    validate$4(defs.body, node, 'body', body, 1);
+    validate$4(defs.decorators, node, 'decorators', decorators, 1);
     return node;
 }
 
@@ -14599,14 +12375,14 @@ function classDeclaration$1(id = null, superClass = null, body, decorators = nul
     };
     
     const defs = NODE_FIELDS$2.ClassDeclaration;
-    validate$5(defs.id, node, 'id', id, 1);
-    validate$5(defs.superClass, node, 'superClass', superClass, 1);
-    validate$5(defs.body, node, 'body', body, 1);
-    validate$5(defs.decorators, node, 'decorators', decorators, 1);
+    validate$4(defs.id, node, 'id', id, 1);
+    validate$4(defs.superClass, node, 'superClass', superClass, 1);
+    validate$4(defs.body, node, 'body', body, 1);
+    validate$4(defs.decorators, node, 'decorators', decorators, 1);
     return node;
 }
 
-function exportAllDeclaration$2(source) {
+function exportAllDeclaration$1(source) {
     const node = {
         type: 'ExportAllDeclaration',
         source,
@@ -14614,18 +12390,18 @@ function exportAllDeclaration$2(source) {
     };
     
     const defs = NODE_FIELDS$2.ExportAllDeclaration;
-    validate$5(defs.source, node, 'source', source, 1);
+    validate$4(defs.source, node, 'source', source, 1);
     return node;
 }
 
-function exportDefaultDeclaration$2(declaration) {
+function exportDefaultDeclaration$1(declaration) {
     const node = {
         type: 'ExportDefaultDeclaration',
         declaration,
     };
     
     const defs = NODE_FIELDS$2.ExportDefaultDeclaration;
-    validate$5(defs.declaration, node, 'declaration', declaration, 1);
+    validate$4(defs.declaration, node, 'declaration', declaration, 1);
     return node;
 }
 
@@ -14638,9 +12414,9 @@ function exportNamedDeclaration$1(declaration = null, specifiers = [], source = 
     };
     
     const defs = NODE_FIELDS$2.ExportNamedDeclaration;
-    validate$5(defs.declaration, node, 'declaration', declaration, 1);
-    validate$5(defs.specifiers, node, 'specifiers', specifiers, 1);
-    validate$5(defs.source, node, 'source', source, 1);
+    validate$4(defs.declaration, node, 'declaration', declaration, 1);
+    validate$4(defs.specifiers, node, 'specifiers', specifiers, 1);
+    validate$4(defs.source, node, 'source', source, 1);
     return node;
 }
 
@@ -14652,12 +12428,12 @@ function exportSpecifier$1(local, exported) {
     };
     
     const defs = NODE_FIELDS$2.ExportSpecifier;
-    validate$5(defs.local, node, 'local', local, 1);
-    validate$5(defs.exported, node, 'exported', exported, 1);
+    validate$4(defs.local, node, 'local', local, 1);
+    validate$4(defs.exported, node, 'exported', exported, 1);
     return node;
 }
 
-function forOfStatement$2(left, right, body, _await = false) {
+function forOfStatement$1(left, right, body, _await = false) {
     const node = {
         type: 'ForOfStatement',
         left,
@@ -14667,14 +12443,14 @@ function forOfStatement$2(left, right, body, _await = false) {
     };
     
     const defs = NODE_FIELDS$2.ForOfStatement;
-    validate$5(defs.left, node, 'left', left, 1);
-    validate$5(defs.right, node, 'right', right, 1);
-    validate$5(defs.body, node, 'body', body, 1);
-    validate$5(defs.await, node, 'await', _await);
+    validate$4(defs.left, node, 'left', left, 1);
+    validate$4(defs.right, node, 'right', right, 1);
+    validate$4(defs.body, node, 'body', body, 1);
+    validate$4(defs.await, node, 'await', _await);
     return node;
 }
 
-function importDeclaration$2(specifiers, source) {
+function importDeclaration$1(specifiers, source) {
     const node = {
         type: 'ImportDeclaration',
         specifiers,
@@ -14682,8 +12458,8 @@ function importDeclaration$2(specifiers, source) {
     };
     
     const defs = NODE_FIELDS$2.ImportDeclaration;
-    validate$5(defs.specifiers, node, 'specifiers', specifiers, 1);
-    validate$5(defs.source, node, 'source', source, 1);
+    validate$4(defs.specifiers, node, 'specifiers', specifiers, 1);
+    validate$4(defs.source, node, 'source', source, 1);
     return node;
 }
 
@@ -14694,7 +12470,7 @@ function importDefaultSpecifier$1(local) {
     };
     
     const defs = NODE_FIELDS$2.ImportDefaultSpecifier;
-    validate$5(defs.local, node, 'local', local, 1);
+    validate$4(defs.local, node, 'local', local, 1);
     return node;
 }
 
@@ -14705,7 +12481,7 @@ function importNamespaceSpecifier$1(local) {
     };
     
     const defs = NODE_FIELDS$2.ImportNamespaceSpecifier;
-    validate$5(defs.local, node, 'local', local, 1);
+    validate$4(defs.local, node, 'local', local, 1);
     return node;
 }
 
@@ -14717,12 +12493,12 @@ function importSpecifier$1(local, imported) {
     };
     
     const defs = NODE_FIELDS$2.ImportSpecifier;
-    validate$5(defs.local, node, 'local', local, 1);
-    validate$5(defs.imported, node, 'imported', imported, 1);
+    validate$4(defs.local, node, 'local', local, 1);
+    validate$4(defs.imported, node, 'imported', imported, 1);
     return node;
 }
 
-function importExpression$2(source, options = null) {
+function importExpression$1(source, options = null) {
     const node = {
         type: 'ImportExpression',
         source,
@@ -14730,8 +12506,8 @@ function importExpression$2(source, options = null) {
     };
     
     const defs = NODE_FIELDS$2.ImportExpression;
-    validate$5(defs.source, node, 'source', source, 1);
-    validate$5(defs.options, node, 'options', options, 1);
+    validate$4(defs.source, node, 'source', source, 1);
+    validate$4(defs.options, node, 'options', options, 1);
     return node;
 }
 
@@ -14743,12 +12519,12 @@ function metaProperty$1(meta, property) {
     };
     
     const defs = NODE_FIELDS$2.MetaProperty;
-    validate$5(defs.meta, node, 'meta', meta, 1);
-    validate$5(defs.property, node, 'property', property, 1);
+    validate$4(defs.meta, node, 'meta', meta, 1);
+    validate$4(defs.property, node, 'property', property, 1);
     return node;
 }
 
-function classMethod$3(kind = 'method', key, params, body, computed = false, _static = false, generator = false, async = false) {
+function classMethod$2(kind = 'method', key, params, body, computed = false, _static = false, generator = false, async = false) {
     const node = {
         type: 'ClassMethod',
         kind,
@@ -14762,36 +12538,36 @@ function classMethod$3(kind = 'method', key, params, body, computed = false, _st
     };
     
     const defs = NODE_FIELDS$2.ClassMethod;
-    validate$5(defs.kind, node, 'kind', kind);
-    validate$5(defs.key, node, 'key', key, 1);
-    validate$5(defs.params, node, 'params', params, 1);
-    validate$5(defs.body, node, 'body', body, 1);
-    validate$5(defs.computed, node, 'computed', computed);
-    validate$5(defs.static, node, 'static', _static);
-    validate$5(defs.generator, node, 'generator', generator);
-    validate$5(defs.async, node, 'async', async);
+    validate$4(defs.kind, node, 'kind', kind);
+    validate$4(defs.key, node, 'key', key, 1);
+    validate$4(defs.params, node, 'params', params, 1);
+    validate$4(defs.body, node, 'body', body, 1);
+    validate$4(defs.computed, node, 'computed', computed);
+    validate$4(defs.static, node, 'static', _static);
+    validate$4(defs.generator, node, 'generator', generator);
+    validate$4(defs.async, node, 'async', async);
     return node;
 }
 
-function objectPattern$3(properties) {
+function objectPattern$2(properties) {
     const node = {
         type: 'ObjectPattern',
         properties,
     };
     
     const defs = NODE_FIELDS$2.ObjectPattern;
-    validate$5(defs.properties, node, 'properties', properties, 1);
+    validate$4(defs.properties, node, 'properties', properties, 1);
     return node;
 }
 
-function spreadElement$2(argument) {
+function spreadElement$1(argument) {
     const node = {
         type: 'SpreadElement',
         argument,
     };
     
     const defs = NODE_FIELDS$2.SpreadElement;
-    validate$5(defs.argument, node, 'argument', argument, 1);
+    validate$4(defs.argument, node, 'argument', argument, 1);
     return node;
 }
 
@@ -14801,7 +12577,7 @@ function _super$1() {
     };
 }
 
-function taggedTemplateExpression$2(tag, quasi) {
+function taggedTemplateExpression$1(tag, quasi) {
     const node = {
         type: 'TaggedTemplateExpression',
         tag,
@@ -14809,8 +12585,8 @@ function taggedTemplateExpression$2(tag, quasi) {
     };
     
     const defs = NODE_FIELDS$2.TaggedTemplateExpression;
-    validate$5(defs.tag, node, 'tag', tag, 1);
-    validate$5(defs.quasi, node, 'quasi', quasi, 1);
+    validate$4(defs.tag, node, 'tag', tag, 1);
+    validate$4(defs.quasi, node, 'quasi', quasi, 1);
     return node;
 }
 
@@ -14822,12 +12598,12 @@ function templateElement$2(value, tail = false) {
     };
     
     const defs = NODE_FIELDS$2.TemplateElement;
-    validate$5(defs.value, node, 'value', value);
-    validate$5(defs.tail, node, 'tail', tail);
+    validate$4(defs.value, node, 'value', value);
+    validate$4(defs.tail, node, 'tail', tail);
     return node;
 }
 
-function templateLiteral$2(quasis, expressions) {
+function templateLiteral$1(quasis, expressions) {
     const node = {
         type: 'TemplateLiteral',
         quasis,
@@ -14835,8 +12611,8 @@ function templateLiteral$2(quasis, expressions) {
     };
     
     const defs = NODE_FIELDS$2.TemplateLiteral;
-    validate$5(defs.quasis, node, 'quasis', quasis, 1);
-    validate$5(defs.expressions, node, 'expressions', expressions, 1);
+    validate$4(defs.quasis, node, 'quasis', quasis, 1);
+    validate$4(defs.expressions, node, 'expressions', expressions, 1);
     return node;
 }
 
@@ -14848,8 +12624,8 @@ function yieldExpression$1(argument = null, delegate = false) {
     };
     
     const defs = NODE_FIELDS$2.YieldExpression;
-    validate$5(defs.argument, node, 'argument', argument, 1);
-    validate$5(defs.delegate, node, 'delegate', delegate);
+    validate$4(defs.argument, node, 'argument', argument, 1);
+    validate$4(defs.delegate, node, 'delegate', delegate);
     return node;
 }
 
@@ -14860,7 +12636,7 @@ function awaitExpression$1(argument) {
     };
     
     const defs = NODE_FIELDS$2.AwaitExpression;
-    validate$5(defs.argument, node, 'argument', argument, 1);
+    validate$4(defs.argument, node, 'argument', argument, 1);
     return node;
 }
 
@@ -14877,7 +12653,7 @@ function bigIntLiteral$1(value) {
     };
     
     const defs = NODE_FIELDS$2.BigIntLiteral;
-    validate$5(defs.value, node, 'value', value);
+    validate$4(defs.value, node, 'value', value);
     return node;
 }
 
@@ -14888,7 +12664,7 @@ function exportNamespaceSpecifier$1(exported) {
     };
     
     const defs = NODE_FIELDS$2.ExportNamespaceSpecifier;
-    validate$5(defs.exported, node, 'exported', exported, 1);
+    validate$4(defs.exported, node, 'exported', exported, 1);
     return node;
 }
 
@@ -14902,10 +12678,10 @@ function optionalMemberExpression$1(object, property, computed = false, optional
     };
     
     const defs = NODE_FIELDS$2.OptionalMemberExpression;
-    validate$5(defs.object, node, 'object', object, 1);
-    validate$5(defs.property, node, 'property', property, 1);
-    validate$5(defs.computed, node, 'computed', computed);
-    validate$5(defs.optional, node, 'optional', optional);
+    validate$4(defs.object, node, 'object', object, 1);
+    validate$4(defs.property, node, 'property', property, 1);
+    validate$4(defs.computed, node, 'computed', computed);
+    validate$4(defs.optional, node, 'optional', optional);
     return node;
 }
 
@@ -14918,13 +12694,13 @@ function optionalCallExpression$1(callee, _arguments, optional) {
     };
     
     const defs = NODE_FIELDS$2.OptionalCallExpression;
-    validate$5(defs.callee, node, 'callee', callee, 1);
-    validate$5(defs.arguments, node, 'arguments', _arguments, 1);
-    validate$5(defs.optional, node, 'optional', optional);
+    validate$4(defs.callee, node, 'callee', callee, 1);
+    validate$4(defs.arguments, node, 'arguments', _arguments, 1);
+    validate$4(defs.optional, node, 'optional', optional);
     return node;
 }
 
-function classProperty$2(key, value = null, typeAnnotation2 = null, decorators = null, computed = false, _static = false) {
+function classProperty$1(key, value = null, typeAnnotation2 = null, decorators = null, computed = false, _static = false) {
     const node = {
         type: 'ClassProperty',
         key,
@@ -14936,12 +12712,12 @@ function classProperty$2(key, value = null, typeAnnotation2 = null, decorators =
     };
     
     const defs = NODE_FIELDS$2.ClassProperty;
-    validate$5(defs.key, node, 'key', key, 1);
-    validate$5(defs.value, node, 'value', value, 1);
-    validate$5(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
-    validate$5(defs.decorators, node, 'decorators', decorators, 1);
-    validate$5(defs.computed, node, 'computed', computed);
-    validate$5(defs.static, node, 'static', _static);
+    validate$4(defs.key, node, 'key', key, 1);
+    validate$4(defs.value, node, 'value', value, 1);
+    validate$4(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
+    validate$4(defs.decorators, node, 'decorators', decorators, 1);
+    validate$4(defs.computed, node, 'computed', computed);
+    validate$4(defs.static, node, 'static', _static);
     return node;
 }
 
@@ -14957,12 +12733,12 @@ function classAccessorProperty$1(key, value = null, typeAnnotation2 = null, deco
     };
     
     const defs = NODE_FIELDS$2.ClassAccessorProperty;
-    validate$5(defs.key, node, 'key', key, 1);
-    validate$5(defs.value, node, 'value', value, 1);
-    validate$5(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
-    validate$5(defs.decorators, node, 'decorators', decorators, 1);
-    validate$5(defs.computed, node, 'computed', computed);
-    validate$5(defs.static, node, 'static', _static);
+    validate$4(defs.key, node, 'key', key, 1);
+    validate$4(defs.value, node, 'value', value, 1);
+    validate$4(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
+    validate$4(defs.decorators, node, 'decorators', decorators, 1);
+    validate$4(defs.computed, node, 'computed', computed);
+    validate$4(defs.static, node, 'static', _static);
     return node;
 }
 
@@ -14976,10 +12752,10 @@ function classPrivateProperty$1(key, value = null, decorators = null, _static = 
     };
     
     const defs = NODE_FIELDS$2.ClassPrivateProperty;
-    validate$5(defs.key, node, 'key', key, 1);
-    validate$5(defs.value, node, 'value', value, 1);
-    validate$5(defs.decorators, node, 'decorators', decorators, 1);
-    validate$5(defs.static, node, 'static', _static);
+    validate$4(defs.key, node, 'key', key, 1);
+    validate$4(defs.value, node, 'value', value, 1);
+    validate$4(defs.decorators, node, 'decorators', decorators, 1);
+    validate$4(defs.static, node, 'static', _static);
     return node;
 }
 
@@ -14994,11 +12770,11 @@ function classPrivateMethod$2(kind = 'method', key, params, body, _static = fals
     };
     
     const defs = NODE_FIELDS$2.ClassPrivateMethod;
-    validate$5(defs.kind, node, 'kind', kind);
-    validate$5(defs.key, node, 'key', key, 1);
-    validate$5(defs.params, node, 'params', params, 1);
-    validate$5(defs.body, node, 'body', body, 1);
-    validate$5(defs.static, node, 'static', _static);
+    validate$4(defs.kind, node, 'kind', kind);
+    validate$4(defs.key, node, 'key', key, 1);
+    validate$4(defs.params, node, 'params', params, 1);
+    validate$4(defs.body, node, 'body', body, 1);
+    validate$4(defs.static, node, 'static', _static);
     return node;
 }
 
@@ -15009,22 +12785,22 @@ function privateName$2(id) {
     };
     
     const defs = NODE_FIELDS$2.PrivateName;
-    validate$5(defs.id, node, 'id', id, 1);
+    validate$4(defs.id, node, 'id', id, 1);
     return node;
 }
 
-function staticBlock$2(body) {
+function staticBlock$1(body) {
     const node = {
         type: 'StaticBlock',
         body,
     };
     
     const defs = NODE_FIELDS$2.StaticBlock;
-    validate$5(defs.body, node, 'body', body, 1);
+    validate$4(defs.body, node, 'body', body, 1);
     return node;
 }
 
-function importAttribute$2(key, value) {
+function importAttribute$1(key, value) {
     const node = {
         type: 'ImportAttribute',
         key,
@@ -15032,8 +12808,8 @@ function importAttribute$2(key, value) {
     };
     
     const defs = NODE_FIELDS$2.ImportAttribute;
-    validate$5(defs.key, node, 'key', key, 1);
-    validate$5(defs.value, node, 'value', value, 1);
+    validate$4(defs.key, node, 'key', key, 1);
+    validate$4(defs.value, node, 'value', value, 1);
     return node;
 }
 
@@ -15050,7 +12826,7 @@ function arrayTypeAnnotation$1(elementType) {
     };
     
     const defs = NODE_FIELDS$2.ArrayTypeAnnotation;
-    validate$5(defs.elementType, node, 'elementType', elementType, 1);
+    validate$4(defs.elementType, node, 'elementType', elementType, 1);
     return node;
 }
 
@@ -15067,7 +12843,7 @@ function booleanLiteralTypeAnnotation$1(value) {
     };
     
     const defs = NODE_FIELDS$2.BooleanLiteralTypeAnnotation;
-    validate$5(defs.value, node, 'value', value);
+    validate$4(defs.value, node, 'value', value);
     return node;
 }
 
@@ -15085,8 +12861,8 @@ function classImplements$1(id, typeParameters = null) {
     };
     
     const defs = NODE_FIELDS$2.ClassImplements;
-    validate$5(defs.id, node, 'id', id, 1);
-    validate$5(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
+    validate$4(defs.id, node, 'id', id, 1);
+    validate$4(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
     return node;
 }
 
@@ -15100,10 +12876,10 @@ function declareClass$1(id, typeParameters = null, _extends = null, body) {
     };
     
     const defs = NODE_FIELDS$2.DeclareClass;
-    validate$5(defs.id, node, 'id', id, 1);
-    validate$5(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
-    validate$5(defs.extends, node, 'extends', _extends, 1);
-    validate$5(defs.body, node, 'body', body, 1);
+    validate$4(defs.id, node, 'id', id, 1);
+    validate$4(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
+    validate$4(defs.extends, node, 'extends', _extends, 1);
+    validate$4(defs.body, node, 'body', body, 1);
     return node;
 }
 
@@ -15114,7 +12890,7 @@ function declareFunction$1(id) {
     };
     
     const defs = NODE_FIELDS$2.DeclareFunction;
-    validate$5(defs.id, node, 'id', id, 1);
+    validate$4(defs.id, node, 'id', id, 1);
     return node;
 }
 
@@ -15128,10 +12904,10 @@ function declareInterface$1(id, typeParameters = null, _extends = null, body) {
     };
     
     const defs = NODE_FIELDS$2.DeclareInterface;
-    validate$5(defs.id, node, 'id', id, 1);
-    validate$5(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
-    validate$5(defs.extends, node, 'extends', _extends, 1);
-    validate$5(defs.body, node, 'body', body, 1);
+    validate$4(defs.id, node, 'id', id, 1);
+    validate$4(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
+    validate$4(defs.extends, node, 'extends', _extends, 1);
+    validate$4(defs.body, node, 'body', body, 1);
     return node;
 }
 
@@ -15144,9 +12920,9 @@ function declareModule$1(id, body, kind = null) {
     };
     
     const defs = NODE_FIELDS$2.DeclareModule;
-    validate$5(defs.id, node, 'id', id, 1);
-    validate$5(defs.body, node, 'body', body, 1);
-    validate$5(defs.kind, node, 'kind', kind);
+    validate$4(defs.id, node, 'id', id, 1);
+    validate$4(defs.body, node, 'body', body, 1);
+    validate$4(defs.kind, node, 'kind', kind);
     return node;
 }
 
@@ -15157,7 +12933,7 @@ function declareModuleExports$1(typeAnnotation2) {
     };
     
     const defs = NODE_FIELDS$2.DeclareModuleExports;
-    validate$5(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
+    validate$4(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
     return node;
 }
 
@@ -15170,9 +12946,9 @@ function declareTypeAlias$1(id, typeParameters = null, right) {
     };
     
     const defs = NODE_FIELDS$2.DeclareTypeAlias;
-    validate$5(defs.id, node, 'id', id, 1);
-    validate$5(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
-    validate$5(defs.right, node, 'right', right, 1);
+    validate$4(defs.id, node, 'id', id, 1);
+    validate$4(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
+    validate$4(defs.right, node, 'right', right, 1);
     return node;
 }
 
@@ -15185,9 +12961,9 @@ function declareOpaqueType$1(id, typeParameters = null, supertype = null) {
     };
     
     const defs = NODE_FIELDS$2.DeclareOpaqueType;
-    validate$5(defs.id, node, 'id', id, 1);
-    validate$5(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
-    validate$5(defs.supertype, node, 'supertype', supertype, 1);
+    validate$4(defs.id, node, 'id', id, 1);
+    validate$4(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
+    validate$4(defs.supertype, node, 'supertype', supertype, 1);
     return node;
 }
 
@@ -15198,7 +12974,7 @@ function declareVariable$1(id) {
     };
     
     const defs = NODE_FIELDS$2.DeclareVariable;
-    validate$5(defs.id, node, 'id', id, 1);
+    validate$4(defs.id, node, 'id', id, 1);
     return node;
 }
 
@@ -15212,10 +12988,10 @@ function declareExportDeclaration$1(declaration = null, specifiers = null, sourc
     };
     
     const defs = NODE_FIELDS$2.DeclareExportDeclaration;
-    validate$5(defs.declaration, node, 'declaration', declaration, 1);
-    validate$5(defs.specifiers, node, 'specifiers', specifiers, 1);
-    validate$5(defs.source, node, 'source', source, 1);
-    validate$5(defs.attributes, node, 'attributes', attributes, 1);
+    validate$4(defs.declaration, node, 'declaration', declaration, 1);
+    validate$4(defs.specifiers, node, 'specifiers', specifiers, 1);
+    validate$4(defs.source, node, 'source', source, 1);
+    validate$4(defs.attributes, node, 'attributes', attributes, 1);
     return node;
 }
 
@@ -15227,8 +13003,8 @@ function declareExportAllDeclaration$1(source, attributes = null) {
     };
     
     const defs = NODE_FIELDS$2.DeclareExportAllDeclaration;
-    validate$5(defs.source, node, 'source', source, 1);
-    validate$5(defs.attributes, node, 'attributes', attributes, 1);
+    validate$4(defs.source, node, 'source', source, 1);
+    validate$4(defs.attributes, node, 'attributes', attributes, 1);
     return node;
 }
 
@@ -15239,7 +13015,7 @@ function declaredPredicate$1(value) {
     };
     
     const defs = NODE_FIELDS$2.DeclaredPredicate;
-    validate$5(defs.value, node, 'value', value, 1);
+    validate$4(defs.value, node, 'value', value, 1);
     return node;
 }
 
@@ -15259,10 +13035,10 @@ function functionTypeAnnotation$1(typeParameters = null, params, rest = null, re
     };
     
     const defs = NODE_FIELDS$2.FunctionTypeAnnotation;
-    validate$5(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
-    validate$5(defs.params, node, 'params', params, 1);
-    validate$5(defs.rest, node, 'rest', rest, 1);
-    validate$5(defs.returnType, node, 'returnType', returnType, 1);
+    validate$4(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
+    validate$4(defs.params, node, 'params', params, 1);
+    validate$4(defs.rest, node, 'rest', rest, 1);
+    validate$4(defs.returnType, node, 'returnType', returnType, 1);
     return node;
 }
 
@@ -15274,8 +13050,8 @@ function functionTypeParam$1(name = null, typeAnnotation2) {
     };
     
     const defs = NODE_FIELDS$2.FunctionTypeParam;
-    validate$5(defs.name, node, 'name', name, 1);
-    validate$5(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
+    validate$4(defs.name, node, 'name', name, 1);
+    validate$4(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
     return node;
 }
 
@@ -15287,8 +13063,8 @@ function genericTypeAnnotation$1(id, typeParameters = null) {
     };
     
     const defs = NODE_FIELDS$2.GenericTypeAnnotation;
-    validate$5(defs.id, node, 'id', id, 1);
-    validate$5(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
+    validate$4(defs.id, node, 'id', id, 1);
+    validate$4(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
     return node;
 }
 
@@ -15306,8 +13082,8 @@ function interfaceExtends$1(id, typeParameters = null) {
     };
     
     const defs = NODE_FIELDS$2.InterfaceExtends;
-    validate$5(defs.id, node, 'id', id, 1);
-    validate$5(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
+    validate$4(defs.id, node, 'id', id, 1);
+    validate$4(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
     return node;
 }
 
@@ -15321,10 +13097,10 @@ function interfaceDeclaration$1(id, typeParameters = null, _extends = null, body
     };
     
     const defs = NODE_FIELDS$2.InterfaceDeclaration;
-    validate$5(defs.id, node, 'id', id, 1);
-    validate$5(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
-    validate$5(defs.extends, node, 'extends', _extends, 1);
-    validate$5(defs.body, node, 'body', body, 1);
+    validate$4(defs.id, node, 'id', id, 1);
+    validate$4(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
+    validate$4(defs.extends, node, 'extends', _extends, 1);
+    validate$4(defs.body, node, 'body', body, 1);
     return node;
 }
 
@@ -15336,8 +13112,8 @@ function interfaceTypeAnnotation$1(_extends = null, body) {
     };
     
     const defs = NODE_FIELDS$2.InterfaceTypeAnnotation;
-    validate$5(defs.extends, node, 'extends', _extends, 1);
-    validate$5(defs.body, node, 'body', body, 1);
+    validate$4(defs.extends, node, 'extends', _extends, 1);
+    validate$4(defs.body, node, 'body', body, 1);
     return node;
 }
 
@@ -15348,7 +13124,7 @@ function intersectionTypeAnnotation$1(types2) {
     };
     
     const defs = NODE_FIELDS$2.IntersectionTypeAnnotation;
-    validate$5(defs.types, node, 'types', types2, 1);
+    validate$4(defs.types, node, 'types', types2, 1);
     return node;
 }
 
@@ -15371,7 +13147,7 @@ function nullableTypeAnnotation$1(typeAnnotation2) {
     };
     
     const defs = NODE_FIELDS$2.NullableTypeAnnotation;
-    validate$5(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
+    validate$4(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
     return node;
 }
 
@@ -15382,7 +13158,7 @@ function numberLiteralTypeAnnotation$1(value) {
     };
     
     const defs = NODE_FIELDS$2.NumberLiteralTypeAnnotation;
-    validate$5(defs.value, node, 'value', value);
+    validate$4(defs.value, node, 'value', value);
     return node;
 }
 
@@ -15403,11 +13179,11 @@ function objectTypeAnnotation$1(properties, indexers = [], callProperties = [], 
     };
     
     const defs = NODE_FIELDS$2.ObjectTypeAnnotation;
-    validate$5(defs.properties, node, 'properties', properties, 1);
-    validate$5(defs.indexers, node, 'indexers', indexers, 1);
-    validate$5(defs.callProperties, node, 'callProperties', callProperties, 1);
-    validate$5(defs.internalSlots, node, 'internalSlots', internalSlots, 1);
-    validate$5(defs.exact, node, 'exact', exact);
+    validate$4(defs.properties, node, 'properties', properties, 1);
+    validate$4(defs.indexers, node, 'indexers', indexers, 1);
+    validate$4(defs.callProperties, node, 'callProperties', callProperties, 1);
+    validate$4(defs.internalSlots, node, 'internalSlots', internalSlots, 1);
+    validate$4(defs.exact, node, 'exact', exact);
     return node;
 }
 
@@ -15422,11 +13198,11 @@ function objectTypeInternalSlot$1(id, value, optional, _static, method) {
     };
     
     const defs = NODE_FIELDS$2.ObjectTypeInternalSlot;
-    validate$5(defs.id, node, 'id', id, 1);
-    validate$5(defs.value, node, 'value', value, 1);
-    validate$5(defs.optional, node, 'optional', optional);
-    validate$5(defs.static, node, 'static', _static);
-    validate$5(defs.method, node, 'method', method);
+    validate$4(defs.id, node, 'id', id, 1);
+    validate$4(defs.value, node, 'value', value, 1);
+    validate$4(defs.optional, node, 'optional', optional);
+    validate$4(defs.static, node, 'static', _static);
+    validate$4(defs.method, node, 'method', method);
     return node;
 }
 
@@ -15438,7 +13214,7 @@ function objectTypeCallProperty$1(value) {
     };
     
     const defs = NODE_FIELDS$2.ObjectTypeCallProperty;
-    validate$5(defs.value, node, 'value', value, 1);
+    validate$4(defs.value, node, 'value', value, 1);
     return node;
 }
 
@@ -15453,10 +13229,10 @@ function objectTypeIndexer$1(id = null, key, value, variance2 = null) {
     };
     
     const defs = NODE_FIELDS$2.ObjectTypeIndexer;
-    validate$5(defs.id, node, 'id', id, 1);
-    validate$5(defs.key, node, 'key', key, 1);
-    validate$5(defs.value, node, 'value', value, 1);
-    validate$5(defs.variance, node, 'variance', variance2, 1);
+    validate$4(defs.id, node, 'id', id, 1);
+    validate$4(defs.key, node, 'key', key, 1);
+    validate$4(defs.value, node, 'value', value, 1);
+    validate$4(defs.variance, node, 'variance', variance2, 1);
     return node;
 }
 
@@ -15474,9 +13250,9 @@ function objectTypeProperty$1(key, value, variance2 = null) {
     };
     
     const defs = NODE_FIELDS$2.ObjectTypeProperty;
-    validate$5(defs.key, node, 'key', key, 1);
-    validate$5(defs.value, node, 'value', value, 1);
-    validate$5(defs.variance, node, 'variance', variance2, 1);
+    validate$4(defs.key, node, 'key', key, 1);
+    validate$4(defs.value, node, 'value', value, 1);
+    validate$4(defs.variance, node, 'variance', variance2, 1);
     return node;
 }
 
@@ -15487,7 +13263,7 @@ function objectTypeSpreadProperty$1(argument) {
     };
     
     const defs = NODE_FIELDS$2.ObjectTypeSpreadProperty;
-    validate$5(defs.argument, node, 'argument', argument, 1);
+    validate$4(defs.argument, node, 'argument', argument, 1);
     return node;
 }
 
@@ -15501,10 +13277,10 @@ function opaqueType$1(id, typeParameters = null, supertype = null, impltype) {
     };
     
     const defs = NODE_FIELDS$2.OpaqueType;
-    validate$5(defs.id, node, 'id', id, 1);
-    validate$5(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
-    validate$5(defs.supertype, node, 'supertype', supertype, 1);
-    validate$5(defs.impltype, node, 'impltype', impltype, 1);
+    validate$4(defs.id, node, 'id', id, 1);
+    validate$4(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
+    validate$4(defs.supertype, node, 'supertype', supertype, 1);
+    validate$4(defs.impltype, node, 'impltype', impltype, 1);
     return node;
 }
 
@@ -15516,8 +13292,8 @@ function qualifiedTypeIdentifier$1(id, qualification) {
     };
     
     const defs = NODE_FIELDS$2.QualifiedTypeIdentifier;
-    validate$5(defs.id, node, 'id', id, 1);
-    validate$5(defs.qualification, node, 'qualification', qualification, 1);
+    validate$4(defs.id, node, 'id', id, 1);
+    validate$4(defs.qualification, node, 'qualification', qualification, 1);
     return node;
 }
 
@@ -15528,7 +13304,7 @@ function stringLiteralTypeAnnotation$1(value) {
     };
     
     const defs = NODE_FIELDS$2.StringLiteralTypeAnnotation;
-    validate$5(defs.value, node, 'value', value);
+    validate$4(defs.value, node, 'value', value);
     return node;
 }
 
@@ -15557,7 +13333,7 @@ function tupleTypeAnnotation$1(types2) {
     };
     
     const defs = NODE_FIELDS$2.TupleTypeAnnotation;
-    validate$5(defs.types, node, 'types', types2, 1);
+    validate$4(defs.types, node, 'types', types2, 1);
     return node;
 }
 
@@ -15568,7 +13344,7 @@ function typeofTypeAnnotation$1(argument) {
     };
     
     const defs = NODE_FIELDS$2.TypeofTypeAnnotation;
-    validate$5(defs.argument, node, 'argument', argument, 1);
+    validate$4(defs.argument, node, 'argument', argument, 1);
     return node;
 }
 
@@ -15581,9 +13357,9 @@ function typeAlias$1(id, typeParameters = null, right) {
     };
     
     const defs = NODE_FIELDS$2.TypeAlias;
-    validate$5(defs.id, node, 'id', id, 1);
-    validate$5(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
-    validate$5(defs.right, node, 'right', right, 1);
+    validate$4(defs.id, node, 'id', id, 1);
+    validate$4(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
+    validate$4(defs.right, node, 'right', right, 1);
     return node;
 }
 
@@ -15594,7 +13370,7 @@ function typeAnnotation$1(typeAnnotation2) {
     };
     
     const defs = NODE_FIELDS$2.TypeAnnotation;
-    validate$5(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
+    validate$4(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
     return node;
 }
 
@@ -15606,8 +13382,8 @@ function typeCastExpression$1(expression2, typeAnnotation2) {
     };
     
     const defs = NODE_FIELDS$2.TypeCastExpression;
-    validate$5(defs.expression, node, 'expression', expression2, 1);
-    validate$5(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
+    validate$4(defs.expression, node, 'expression', expression2, 1);
+    validate$4(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
     return node;
 }
 
@@ -15621,9 +13397,9 @@ function typeParameter$1(bound = null, _default = null, variance2 = null) {
     };
     
     const defs = NODE_FIELDS$2.TypeParameter;
-    validate$5(defs.bound, node, 'bound', bound, 1);
-    validate$5(defs.default, node, 'default', _default, 1);
-    validate$5(defs.variance, node, 'variance', variance2, 1);
+    validate$4(defs.bound, node, 'bound', bound, 1);
+    validate$4(defs.default, node, 'default', _default, 1);
+    validate$4(defs.variance, node, 'variance', variance2, 1);
     return node;
 }
 
@@ -15634,7 +13410,7 @@ function typeParameterDeclaration$1(params) {
     };
     
     const defs = NODE_FIELDS$2.TypeParameterDeclaration;
-    validate$5(defs.params, node, 'params', params, 1);
+    validate$4(defs.params, node, 'params', params, 1);
     return node;
 }
 
@@ -15645,7 +13421,7 @@ function typeParameterInstantiation$1(params) {
     };
     
     const defs = NODE_FIELDS$2.TypeParameterInstantiation;
-    validate$5(defs.params, node, 'params', params, 1);
+    validate$4(defs.params, node, 'params', params, 1);
     return node;
 }
 
@@ -15656,7 +13432,7 @@ function unionTypeAnnotation$1(types2) {
     };
     
     const defs = NODE_FIELDS$2.UnionTypeAnnotation;
-    validate$5(defs.types, node, 'types', types2, 1);
+    validate$4(defs.types, node, 'types', types2, 1);
     return node;
 }
 
@@ -15667,7 +13443,7 @@ function variance$1(kind) {
     };
     
     const defs = NODE_FIELDS$2.Variance;
-    validate$5(defs.kind, node, 'kind', kind);
+    validate$4(defs.kind, node, 'kind', kind);
     return node;
 }
 
@@ -15685,8 +13461,8 @@ function enumDeclaration$1(id, body) {
     };
     
     const defs = NODE_FIELDS$2.EnumDeclaration;
-    validate$5(defs.id, node, 'id', id, 1);
-    validate$5(defs.body, node, 'body', body, 1);
+    validate$4(defs.id, node, 'id', id, 1);
+    validate$4(defs.body, node, 'body', body, 1);
     return node;
 }
 
@@ -15699,7 +13475,7 @@ function enumBooleanBody$1(members) {
     };
     
     const defs = NODE_FIELDS$2.EnumBooleanBody;
-    validate$5(defs.members, node, 'members', members, 1);
+    validate$4(defs.members, node, 'members', members, 1);
     return node;
 }
 
@@ -15712,7 +13488,7 @@ function enumNumberBody$1(members) {
     };
     
     const defs = NODE_FIELDS$2.EnumNumberBody;
-    validate$5(defs.members, node, 'members', members, 1);
+    validate$4(defs.members, node, 'members', members, 1);
     return node;
 }
 
@@ -15725,7 +13501,7 @@ function enumStringBody$1(members) {
     };
     
     const defs = NODE_FIELDS$2.EnumStringBody;
-    validate$5(defs.members, node, 'members', members, 1);
+    validate$4(defs.members, node, 'members', members, 1);
     return node;
 }
 
@@ -15737,7 +13513,7 @@ function enumSymbolBody$1(members) {
     };
     
     const defs = NODE_FIELDS$2.EnumSymbolBody;
-    validate$5(defs.members, node, 'members', members, 1);
+    validate$4(defs.members, node, 'members', members, 1);
     return node;
 }
 
@@ -15749,7 +13525,7 @@ function enumBooleanMember$1(id) {
     };
     
     const defs = NODE_FIELDS$2.EnumBooleanMember;
-    validate$5(defs.id, node, 'id', id, 1);
+    validate$4(defs.id, node, 'id', id, 1);
     return node;
 }
 
@@ -15761,8 +13537,8 @@ function enumNumberMember$1(id, init) {
     };
     
     const defs = NODE_FIELDS$2.EnumNumberMember;
-    validate$5(defs.id, node, 'id', id, 1);
-    validate$5(defs.init, node, 'init', init, 1);
+    validate$4(defs.id, node, 'id', id, 1);
+    validate$4(defs.init, node, 'init', init, 1);
     return node;
 }
 
@@ -15774,8 +13550,8 @@ function enumStringMember$1(id, init) {
     };
     
     const defs = NODE_FIELDS$2.EnumStringMember;
-    validate$5(defs.id, node, 'id', id, 1);
-    validate$5(defs.init, node, 'init', init, 1);
+    validate$4(defs.id, node, 'id', id, 1);
+    validate$4(defs.init, node, 'init', init, 1);
     return node;
 }
 
@@ -15786,7 +13562,7 @@ function enumDefaultedMember$1(id) {
     };
     
     const defs = NODE_FIELDS$2.EnumDefaultedMember;
-    validate$5(defs.id, node, 'id', id, 1);
+    validate$4(defs.id, node, 'id', id, 1);
     return node;
 }
 
@@ -15798,8 +13574,8 @@ function indexedAccessType$1(objectType, indexType) {
     };
     
     const defs = NODE_FIELDS$2.IndexedAccessType;
-    validate$5(defs.objectType, node, 'objectType', objectType, 1);
-    validate$5(defs.indexType, node, 'indexType', indexType, 1);
+    validate$4(defs.objectType, node, 'objectType', objectType, 1);
+    validate$4(defs.indexType, node, 'indexType', indexType, 1);
     return node;
 }
 
@@ -15812,12 +13588,12 @@ function optionalIndexedAccessType$1(objectType, indexType) {
     };
     
     const defs = NODE_FIELDS$2.OptionalIndexedAccessType;
-    validate$5(defs.objectType, node, 'objectType', objectType, 1);
-    validate$5(defs.indexType, node, 'indexType', indexType, 1);
+    validate$4(defs.objectType, node, 'objectType', objectType, 1);
+    validate$4(defs.indexType, node, 'indexType', indexType, 1);
     return node;
 }
 
-function jsxAttribute$3(name, value = null) {
+function jsxAttribute$2(name, value = null) {
     const node = {
         type: 'JSXAttribute',
         name,
@@ -15825,8 +13601,8 @@ function jsxAttribute$3(name, value = null) {
     };
     
     const defs = NODE_FIELDS$2.JSXAttribute;
-    validate$5(defs.name, node, 'name', name, 1);
-    validate$5(defs.value, node, 'value', value, 1);
+    validate$4(defs.name, node, 'name', name, 1);
+    validate$4(defs.value, node, 'value', value, 1);
     return node;
 }
 
@@ -15837,11 +13613,11 @@ function jsxClosingElement$1(name) {
     };
     
     const defs = NODE_FIELDS$2.JSXClosingElement;
-    validate$5(defs.name, node, 'name', name, 1);
+    validate$4(defs.name, node, 'name', name, 1);
     return node;
 }
 
-function jsxElement$2(openingElement, closingElement = null, children) {
+function jsxElement$1(openingElement, closingElement = null, children) {
     const node = {
         type: 'JSXElement',
         openingElement,
@@ -15850,9 +13626,9 @@ function jsxElement$2(openingElement, closingElement = null, children) {
     };
     
     const defs = NODE_FIELDS$2.JSXElement;
-    validate$5(defs.openingElement, node, 'openingElement', openingElement, 1);
-    validate$5(defs.closingElement, node, 'closingElement', closingElement, 1);
-    validate$5(defs.children, node, 'children', children, 1);
+    validate$4(defs.openingElement, node, 'openingElement', openingElement, 1);
+    validate$4(defs.closingElement, node, 'closingElement', closingElement, 1);
+    validate$4(defs.children, node, 'children', children, 1);
     return node;
 }
 
@@ -15869,7 +13645,7 @@ function jsxExpressionContainer$1(expression2) {
     };
     
     const defs = NODE_FIELDS$2.JSXExpressionContainer;
-    validate$5(defs.expression, node, 'expression', expression2, 1);
+    validate$4(defs.expression, node, 'expression', expression2, 1);
     return node;
 }
 
@@ -15880,7 +13656,7 @@ function jsxSpreadChild$1(expression2) {
     };
     
     const defs = NODE_FIELDS$2.JSXSpreadChild;
-    validate$5(defs.expression, node, 'expression', expression2, 1);
+    validate$4(defs.expression, node, 'expression', expression2, 1);
     return node;
 }
 
@@ -15891,7 +13667,7 @@ function jsxIdentifier$2(name) {
     };
     
     const defs = NODE_FIELDS$2.JSXIdentifier;
-    validate$5(defs.name, node, 'name', name);
+    validate$4(defs.name, node, 'name', name);
     return node;
 }
 
@@ -15903,8 +13679,8 @@ function jsxMemberExpression$1(object, property) {
     };
     
     const defs = NODE_FIELDS$2.JSXMemberExpression;
-    validate$5(defs.object, node, 'object', object, 1);
-    validate$5(defs.property, node, 'property', property, 1);
+    validate$4(defs.object, node, 'object', object, 1);
+    validate$4(defs.property, node, 'property', property, 1);
     return node;
 }
 
@@ -15916,12 +13692,12 @@ function jsxNamespacedName$1(namespace, name) {
     };
     
     const defs = NODE_FIELDS$2.JSXNamespacedName;
-    validate$5(defs.namespace, node, 'namespace', namespace, 1);
-    validate$5(defs.name, node, 'name', name, 1);
+    validate$4(defs.namespace, node, 'namespace', namespace, 1);
+    validate$4(defs.name, node, 'name', name, 1);
     return node;
 }
 
-function jsxOpeningElement$2(name, attributes, selfClosing = false) {
+function jsxOpeningElement$1(name, attributes, selfClosing = false) {
     const node = {
         type: 'JSXOpeningElement',
         name,
@@ -15930,9 +13706,9 @@ function jsxOpeningElement$2(name, attributes, selfClosing = false) {
     };
     
     const defs = NODE_FIELDS$2.JSXOpeningElement;
-    validate$5(defs.name, node, 'name', name, 1);
-    validate$5(defs.attributes, node, 'attributes', attributes, 1);
-    validate$5(defs.selfClosing, node, 'selfClosing', selfClosing);
+    validate$4(defs.name, node, 'name', name, 1);
+    validate$4(defs.attributes, node, 'attributes', attributes, 1);
+    validate$4(defs.selfClosing, node, 'selfClosing', selfClosing);
     return node;
 }
 
@@ -15943,22 +13719,22 @@ function jsxSpreadAttribute$1(argument) {
     };
     
     const defs = NODE_FIELDS$2.JSXSpreadAttribute;
-    validate$5(defs.argument, node, 'argument', argument, 1);
+    validate$4(defs.argument, node, 'argument', argument, 1);
     return node;
 }
 
-function jsxText$2(value) {
+function jsxText$1(value) {
     const node = {
         type: 'JSXText',
         value,
     };
     
     const defs = NODE_FIELDS$2.JSXText;
-    validate$5(defs.value, node, 'value', value);
+    validate$4(defs.value, node, 'value', value);
     return node;
 }
 
-function jsxFragment$2(openingFragment, closingFragment, children) {
+function jsxFragment$1(openingFragment, closingFragment, children) {
     const node = {
         type: 'JSXFragment',
         openingFragment,
@@ -15967,9 +13743,9 @@ function jsxFragment$2(openingFragment, closingFragment, children) {
     };
     
     const defs = NODE_FIELDS$2.JSXFragment;
-    validate$5(defs.openingFragment, node, 'openingFragment', openingFragment, 1);
-    validate$5(defs.closingFragment, node, 'closingFragment', closingFragment, 1);
-    validate$5(defs.children, node, 'children', children, 1);
+    validate$4(defs.openingFragment, node, 'openingFragment', openingFragment, 1);
+    validate$4(defs.closingFragment, node, 'closingFragment', closingFragment, 1);
+    validate$4(defs.children, node, 'children', children, 1);
     return node;
 }
 
@@ -15993,8 +13769,8 @@ function placeholder$1(expectedNode, name) {
     };
     
     const defs = NODE_FIELDS$2.Placeholder;
-    validate$5(defs.expectedNode, node, 'expectedNode', expectedNode);
-    validate$5(defs.name, node, 'name', name, 1);
+    validate$4(defs.expectedNode, node, 'expectedNode', expectedNode);
+    validate$4(defs.name, node, 'name', name, 1);
     return node;
 }
 
@@ -16005,7 +13781,7 @@ function v8IntrinsicIdentifier$1(name) {
     };
     
     const defs = NODE_FIELDS$2.V8IntrinsicIdentifier;
-    validate$5(defs.name, node, 'name', name);
+    validate$4(defs.name, node, 'name', name);
     return node;
 }
 
@@ -16023,19 +13799,19 @@ function bindExpression$1(object, callee) {
     };
     
     const defs = NODE_FIELDS$2.BindExpression;
-    validate$5(defs.object, node, 'object', object, 1);
-    validate$5(defs.callee, node, 'callee', callee, 1);
+    validate$4(defs.object, node, 'object', object, 1);
+    validate$4(defs.callee, node, 'callee', callee, 1);
     return node;
 }
 
-function decorator$2(expression2) {
+function decorator$1(expression2) {
     const node = {
         type: 'Decorator',
         expression: expression2,
     };
     
     const defs = NODE_FIELDS$2.Decorator;
-    validate$5(defs.expression, node, 'expression', expression2, 1);
+    validate$4(defs.expression, node, 'expression', expression2, 1);
     return node;
 }
 
@@ -16047,8 +13823,8 @@ function doExpression$1(body, async = false) {
     };
     
     const defs = NODE_FIELDS$2.DoExpression;
-    validate$5(defs.body, node, 'body', body, 1);
-    validate$5(defs.async, node, 'async', async);
+    validate$4(defs.body, node, 'body', body, 1);
+    validate$4(defs.async, node, 'async', async);
     return node;
 }
 
@@ -16059,7 +13835,7 @@ function exportDefaultSpecifier$1(exported) {
     };
     
     const defs = NODE_FIELDS$2.ExportDefaultSpecifier;
-    validate$5(defs.exported, node, 'exported', exported, 1);
+    validate$4(defs.exported, node, 'exported', exported, 1);
     return node;
 }
 
@@ -16070,7 +13846,7 @@ function moduleExpression$1(body) {
     };
     
     const defs = NODE_FIELDS$2.ModuleExpression;
-    validate$5(defs.body, node, 'body', body, 1);
+    validate$4(defs.body, node, 'body', body, 1);
     return node;
 }
 
@@ -16087,7 +13863,7 @@ function pipelineTopicExpression$1(expression2) {
     };
     
     const defs = NODE_FIELDS$2.PipelineTopicExpression;
-    validate$5(defs.expression, node, 'expression', expression2, 1);
+    validate$4(defs.expression, node, 'expression', expression2, 1);
     return node;
 }
 
@@ -16098,7 +13874,7 @@ function pipelineBareFunction$1(callee) {
     };
     
     const defs = NODE_FIELDS$2.PipelineBareFunction;
-    validate$5(defs.callee, node, 'callee', callee, 1);
+    validate$4(defs.callee, node, 'callee', callee, 1);
     return node;
 }
 
@@ -16108,24 +13884,24 @@ function pipelinePrimaryTopicReference$1() {
     };
 }
 
-function voidPattern$2() {
+function voidPattern$1() {
     return {
         type: 'VoidPattern',
     };
 }
 
-function tsParameterProperty$2(parameter) {
+function tsParameterProperty$1(parameter) {
     const node = {
         type: 'TSParameterProperty',
         parameter,
     };
     
     const defs = NODE_FIELDS$2.TSParameterProperty;
-    validate$5(defs.parameter, node, 'parameter', parameter, 1);
+    validate$4(defs.parameter, node, 'parameter', parameter, 1);
     return node;
 }
 
-function tsDeclareFunction$2(id = null, typeParameters = null, params, returnType = null) {
+function tsDeclareFunction$1(id = null, typeParameters = null, params, returnType = null) {
     const node = {
         type: 'TSDeclareFunction',
         id,
@@ -16135,14 +13911,14 @@ function tsDeclareFunction$2(id = null, typeParameters = null, params, returnTyp
     };
     
     const defs = NODE_FIELDS$2.TSDeclareFunction;
-    validate$5(defs.id, node, 'id', id, 1);
-    validate$5(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
-    validate$5(defs.params, node, 'params', params, 1);
-    validate$5(defs.returnType, node, 'returnType', returnType, 1);
+    validate$4(defs.id, node, 'id', id, 1);
+    validate$4(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
+    validate$4(defs.params, node, 'params', params, 1);
+    validate$4(defs.returnType, node, 'returnType', returnType, 1);
     return node;
 }
 
-function tsDeclareMethod$2(decorators = null, key, typeParameters = null, params, returnType = null) {
+function tsDeclareMethod$1(decorators = null, key, typeParameters = null, params, returnType = null) {
     const node = {
         type: 'TSDeclareMethod',
         decorators,
@@ -16153,11 +13929,11 @@ function tsDeclareMethod$2(decorators = null, key, typeParameters = null, params
     };
     
     const defs = NODE_FIELDS$2.TSDeclareMethod;
-    validate$5(defs.decorators, node, 'decorators', decorators, 1);
-    validate$5(defs.key, node, 'key', key, 1);
-    validate$5(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
-    validate$5(defs.params, node, 'params', params, 1);
-    validate$5(defs.returnType, node, 'returnType', returnType, 1);
+    validate$4(defs.decorators, node, 'decorators', decorators, 1);
+    validate$4(defs.key, node, 'key', key, 1);
+    validate$4(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
+    validate$4(defs.params, node, 'params', params, 1);
+    validate$4(defs.returnType, node, 'returnType', returnType, 1);
     return node;
 }
 
@@ -16169,12 +13945,12 @@ function tsQualifiedName$1(left, right) {
     };
     
     const defs = NODE_FIELDS$2.TSQualifiedName;
-    validate$5(defs.left, node, 'left', left, 1);
-    validate$5(defs.right, node, 'right', right, 1);
+    validate$4(defs.left, node, 'left', left, 1);
+    validate$4(defs.right, node, 'right', right, 1);
     return node;
 }
 
-function tsCallSignatureDeclaration$2(typeParameters = null, params, returnType = null) {
+function tsCallSignatureDeclaration$1(typeParameters = null, params, returnType = null) {
     const node = {
         type: 'TSCallSignatureDeclaration',
         typeParameters,
@@ -16183,13 +13959,13 @@ function tsCallSignatureDeclaration$2(typeParameters = null, params, returnType 
     };
     
     const defs = NODE_FIELDS$2.TSCallSignatureDeclaration;
-    validate$5(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
-    validate$5(defs.params, node, 'params', params, 1);
-    validate$5(defs.returnType, node, 'returnType', returnType, 1);
+    validate$4(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
+    validate$4(defs.params, node, 'params', params, 1);
+    validate$4(defs.returnType, node, 'returnType', returnType, 1);
     return node;
 }
 
-function tsConstructSignatureDeclaration$2(typeParameters = null, params, returnType = null) {
+function tsConstructSignatureDeclaration$1(typeParameters = null, params, returnType = null) {
     const node = {
         type: 'TSConstructSignatureDeclaration',
         typeParameters,
@@ -16198,13 +13974,13 @@ function tsConstructSignatureDeclaration$2(typeParameters = null, params, return
     };
     
     const defs = NODE_FIELDS$2.TSConstructSignatureDeclaration;
-    validate$5(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
-    validate$5(defs.params, node, 'params', params, 1);
-    validate$5(defs.returnType, node, 'returnType', returnType, 1);
+    validate$4(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
+    validate$4(defs.params, node, 'params', params, 1);
+    validate$4(defs.returnType, node, 'returnType', returnType, 1);
     return node;
 }
 
-function tsPropertySignature$2(key, typeAnnotation2 = null) {
+function tsPropertySignature$1(key, typeAnnotation2 = null) {
     const node = {
         type: 'TSPropertySignature',
         key,
@@ -16212,12 +13988,12 @@ function tsPropertySignature$2(key, typeAnnotation2 = null) {
     };
     
     const defs = NODE_FIELDS$2.TSPropertySignature;
-    validate$5(defs.key, node, 'key', key, 1);
-    validate$5(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
+    validate$4(defs.key, node, 'key', key, 1);
+    validate$4(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
     return node;
 }
 
-function tsMethodSignature$2(key, typeParameters = null, params, returnType = null) {
+function tsMethodSignature$1(key, typeParameters = null, params, returnType = null) {
     const node = {
         type: 'TSMethodSignature',
         key,
@@ -16228,10 +14004,10 @@ function tsMethodSignature$2(key, typeParameters = null, params, returnType = nu
     };
     
     const defs = NODE_FIELDS$2.TSMethodSignature;
-    validate$5(defs.key, node, 'key', key, 1);
-    validate$5(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
-    validate$5(defs.params, node, 'params', params, 1);
-    validate$5(defs.returnType, node, 'returnType', returnType, 1);
+    validate$4(defs.key, node, 'key', key, 1);
+    validate$4(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
+    validate$4(defs.params, node, 'params', params, 1);
+    validate$4(defs.returnType, node, 'returnType', returnType, 1);
     return node;
 }
 
@@ -16243,8 +14019,8 @@ function tsIndexSignature$1(parameters, typeAnnotation2 = null) {
     };
     
     const defs = NODE_FIELDS$2.TSIndexSignature;
-    validate$5(defs.parameters, node, 'parameters', parameters, 1);
-    validate$5(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
+    validate$4(defs.parameters, node, 'parameters', parameters, 1);
+    validate$4(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
     return node;
 }
 
@@ -16332,7 +14108,7 @@ function tsThisType$1() {
     };
 }
 
-function tsFunctionType$2(typeParameters = null, params, returnType = null) {
+function tsFunctionType$1(typeParameters = null, params, returnType = null) {
     const node = {
         type: 'TSFunctionType',
         typeParameters,
@@ -16341,13 +14117,13 @@ function tsFunctionType$2(typeParameters = null, params, returnType = null) {
     };
     
     const defs = NODE_FIELDS$2.TSFunctionType;
-    validate$5(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
-    validate$5(defs.params, node, 'params', params, 1);
-    validate$5(defs.returnType, node, 'returnType', returnType, 1);
+    validate$4(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
+    validate$4(defs.params, node, 'params', params, 1);
+    validate$4(defs.returnType, node, 'returnType', returnType, 1);
     return node;
 }
 
-function tsConstructorType$2(typeParameters = null, params, returnType = null) {
+function tsConstructorType$1(typeParameters = null, params, returnType = null) {
     const node = {
         type: 'TSConstructorType',
         typeParameters,
@@ -16356,13 +14132,13 @@ function tsConstructorType$2(typeParameters = null, params, returnType = null) {
     };
     
     const defs = NODE_FIELDS$2.TSConstructorType;
-    validate$5(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
-    validate$5(defs.params, node, 'params', params, 1);
-    validate$5(defs.returnType, node, 'returnType', returnType, 1);
+    validate$4(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
+    validate$4(defs.params, node, 'params', params, 1);
+    validate$4(defs.returnType, node, 'returnType', returnType, 1);
     return node;
 }
 
-function tsTypeReference$2(typeName, typeArguments = null) {
+function tsTypeReference$1(typeName, typeArguments = null) {
     const node = {
         type: 'TSTypeReference',
         typeName,
@@ -16370,8 +14146,8 @@ function tsTypeReference$2(typeName, typeArguments = null) {
     };
     
     const defs = NODE_FIELDS$2.TSTypeReference;
-    validate$5(defs.typeName, node, 'typeName', typeName, 1);
-    validate$5(defs.typeArguments, node, 'typeArguments', typeArguments, 1);
+    validate$4(defs.typeName, node, 'typeName', typeName, 1);
+    validate$4(defs.typeArguments, node, 'typeArguments', typeArguments, 1);
     return node;
 }
 
@@ -16384,13 +14160,13 @@ function tsTypePredicate$1(parameterName, typeAnnotation2 = null, asserts = null
     };
     
     const defs = NODE_FIELDS$2.TSTypePredicate;
-    validate$5(defs.parameterName, node, 'parameterName', parameterName, 1);
-    validate$5(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
-    validate$5(defs.asserts, node, 'asserts', asserts);
+    validate$4(defs.parameterName, node, 'parameterName', parameterName, 1);
+    validate$4(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
+    validate$4(defs.asserts, node, 'asserts', asserts);
     return node;
 }
 
-function tsTypeQuery$2(exprName, typeArguments = null) {
+function tsTypeQuery$1(exprName, typeArguments = null) {
     const node = {
         type: 'TSTypeQuery',
         exprName,
@@ -16398,19 +14174,19 @@ function tsTypeQuery$2(exprName, typeArguments = null) {
     };
     
     const defs = NODE_FIELDS$2.TSTypeQuery;
-    validate$5(defs.exprName, node, 'exprName', exprName, 1);
-    validate$5(defs.typeArguments, node, 'typeArguments', typeArguments, 1);
+    validate$4(defs.exprName, node, 'exprName', exprName, 1);
+    validate$4(defs.typeArguments, node, 'typeArguments', typeArguments, 1);
     return node;
 }
 
-function tsTypeLiteral$2(members) {
+function tsTypeLiteral$1(members) {
     const node = {
         type: 'TSTypeLiteral',
         members,
     };
     
     const defs = NODE_FIELDS$2.TSTypeLiteral;
-    validate$5(defs.members, node, 'members', members, 1);
+    validate$4(defs.members, node, 'members', members, 1);
     return node;
 }
 
@@ -16421,29 +14197,29 @@ function tsArrayType$1(elementType) {
     };
     
     const defs = NODE_FIELDS$2.TSArrayType;
-    validate$5(defs.elementType, node, 'elementType', elementType, 1);
+    validate$4(defs.elementType, node, 'elementType', elementType, 1);
     return node;
 }
 
-function tsTupleType$2(elementTypes) {
+function tsTupleType$1(elementTypes) {
     const node = {
         type: 'TSTupleType',
         elementTypes,
     };
     
     const defs = NODE_FIELDS$2.TSTupleType;
-    validate$5(defs.elementTypes, node, 'elementTypes', elementTypes, 1);
+    validate$4(defs.elementTypes, node, 'elementTypes', elementTypes, 1);
     return node;
 }
 
-function tsOptionalType$2(typeAnnotation2) {
+function tsOptionalType$1(typeAnnotation2) {
     const node = {
         type: 'TSOptionalType',
         typeAnnotation: typeAnnotation2,
     };
     
     const defs = NODE_FIELDS$2.TSOptionalType;
-    validate$5(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
+    validate$4(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
     return node;
 }
 
@@ -16454,11 +14230,11 @@ function tsRestType$1(typeAnnotation2) {
     };
     
     const defs = NODE_FIELDS$2.TSRestType;
-    validate$5(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
+    validate$4(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
     return node;
 }
 
-function tsNamedTupleMember$2(label, elementType, optional = false) {
+function tsNamedTupleMember$1(label, elementType, optional = false) {
     const node = {
         type: 'TSNamedTupleMember',
         label,
@@ -16467,35 +14243,35 @@ function tsNamedTupleMember$2(label, elementType, optional = false) {
     };
     
     const defs = NODE_FIELDS$2.TSNamedTupleMember;
-    validate$5(defs.label, node, 'label', label, 1);
-    validate$5(defs.elementType, node, 'elementType', elementType, 1);
-    validate$5(defs.optional, node, 'optional', optional);
+    validate$4(defs.label, node, 'label', label, 1);
+    validate$4(defs.elementType, node, 'elementType', elementType, 1);
+    validate$4(defs.optional, node, 'optional', optional);
     return node;
 }
 
-function tsUnionType$2(types2) {
+function tsUnionType$1(types2) {
     const node = {
         type: 'TSUnionType',
         types: types2,
     };
     
     const defs = NODE_FIELDS$2.TSUnionType;
-    validate$5(defs.types, node, 'types', types2, 1);
+    validate$4(defs.types, node, 'types', types2, 1);
     return node;
 }
 
-function tsIntersectionType$2(types2) {
+function tsIntersectionType$1(types2) {
     const node = {
         type: 'TSIntersectionType',
         types: types2,
     };
     
     const defs = NODE_FIELDS$2.TSIntersectionType;
-    validate$5(defs.types, node, 'types', types2, 1);
+    validate$4(defs.types, node, 'types', types2, 1);
     return node;
 }
 
-function tsConditionalType$2(checkType, extendsType, trueType, falseType) {
+function tsConditionalType$1(checkType, extendsType, trueType, falseType) {
     const node = {
         type: 'TSConditionalType',
         checkType,
@@ -16505,32 +14281,32 @@ function tsConditionalType$2(checkType, extendsType, trueType, falseType) {
     };
     
     const defs = NODE_FIELDS$2.TSConditionalType;
-    validate$5(defs.checkType, node, 'checkType', checkType, 1);
-    validate$5(defs.extendsType, node, 'extendsType', extendsType, 1);
-    validate$5(defs.trueType, node, 'trueType', trueType, 1);
-    validate$5(defs.falseType, node, 'falseType', falseType, 1);
+    validate$4(defs.checkType, node, 'checkType', checkType, 1);
+    validate$4(defs.extendsType, node, 'extendsType', extendsType, 1);
+    validate$4(defs.trueType, node, 'trueType', trueType, 1);
+    validate$4(defs.falseType, node, 'falseType', falseType, 1);
     return node;
 }
 
-function tsInferType$2(typeParameter2) {
+function tsInferType$1(typeParameter2) {
     const node = {
         type: 'TSInferType',
         typeParameter: typeParameter2,
     };
     
     const defs = NODE_FIELDS$2.TSInferType;
-    validate$5(defs.typeParameter, node, 'typeParameter', typeParameter2, 1);
+    validate$4(defs.typeParameter, node, 'typeParameter', typeParameter2, 1);
     return node;
 }
 
-function tsParenthesizedType$4(typeAnnotation2) {
+function tsParenthesizedType$3(typeAnnotation2) {
     const node = {
         type: 'TSParenthesizedType',
         typeAnnotation: typeAnnotation2,
     };
     
     const defs = NODE_FIELDS$2.TSParenthesizedType;
-    validate$5(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
+    validate$4(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
     return node;
 }
 
@@ -16542,8 +14318,8 @@ function tsTypeOperator$1(typeAnnotation2, operator) {
     };
     
     const defs = NODE_FIELDS$2.TSTypeOperator;
-    validate$5(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
-    validate$5(defs.operator, node, 'operator', operator);
+    validate$4(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
+    validate$4(defs.operator, node, 'operator', operator);
     return node;
 }
 
@@ -16555,12 +14331,12 @@ function tsIndexedAccessType$1(objectType, indexType) {
     };
     
     const defs = NODE_FIELDS$2.TSIndexedAccessType;
-    validate$5(defs.objectType, node, 'objectType', objectType, 1);
-    validate$5(defs.indexType, node, 'indexType', indexType, 1);
+    validate$4(defs.objectType, node, 'objectType', objectType, 1);
+    validate$4(defs.indexType, node, 'indexType', indexType, 1);
     return node;
 }
 
-function tsMappedType$2(key, constraint, nameType = null, typeAnnotation2 = null) {
+function tsMappedType$1(key, constraint, nameType = null, typeAnnotation2 = null) {
     const node = {
         type: 'TSMappedType',
         key,
@@ -16570,14 +14346,14 @@ function tsMappedType$2(key, constraint, nameType = null, typeAnnotation2 = null
     };
     
     const defs = NODE_FIELDS$2.TSMappedType;
-    validate$5(defs.key, node, 'key', key, 1);
-    validate$5(defs.constraint, node, 'constraint', constraint, 1);
-    validate$5(defs.nameType, node, 'nameType', nameType, 1);
-    validate$5(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
+    validate$4(defs.key, node, 'key', key, 1);
+    validate$4(defs.constraint, node, 'constraint', constraint, 1);
+    validate$4(defs.nameType, node, 'nameType', nameType, 1);
+    validate$4(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
     return node;
 }
 
-function tsTemplateLiteralType$2(quasis, types2) {
+function tsTemplateLiteralType$1(quasis, types2) {
     const node = {
         type: 'TSTemplateLiteralType',
         quasis,
@@ -16585,8 +14361,8 @@ function tsTemplateLiteralType$2(quasis, types2) {
     };
     
     const defs = NODE_FIELDS$2.TSTemplateLiteralType;
-    validate$5(defs.quasis, node, 'quasis', quasis, 1);
-    validate$5(defs.types, node, 'types', types2, 1);
+    validate$4(defs.quasis, node, 'quasis', quasis, 1);
+    validate$4(defs.types, node, 'types', types2, 1);
     return node;
 }
 
@@ -16597,7 +14373,7 @@ function tsLiteralType$1(literal) {
     };
     
     const defs = NODE_FIELDS$2.TSLiteralType;
-    validate$5(defs.literal, node, 'literal', literal, 1);
+    validate$4(defs.literal, node, 'literal', literal, 1);
     return node;
 }
 
@@ -16609,8 +14385,8 @@ function tsClassImplements$1(expression2, typeArguments = null) {
     };
     
     const defs = NODE_FIELDS$2.TSClassImplements;
-    validate$5(defs.expression, node, 'expression', expression2, 1);
-    validate$5(defs.typeArguments, node, 'typeArguments', typeArguments, 1);
+    validate$4(defs.expression, node, 'expression', expression2, 1);
+    validate$4(defs.typeArguments, node, 'typeArguments', typeArguments, 1);
     return node;
 }
 
@@ -16622,12 +14398,12 @@ function tsInterfaceHeritage$1(expression2, typeArguments = null) {
     };
     
     const defs = NODE_FIELDS$2.TSInterfaceHeritage;
-    validate$5(defs.expression, node, 'expression', expression2, 1);
-    validate$5(defs.typeArguments, node, 'typeArguments', typeArguments, 1);
+    validate$4(defs.expression, node, 'expression', expression2, 1);
+    validate$4(defs.typeArguments, node, 'typeArguments', typeArguments, 1);
     return node;
 }
 
-function tsInterfaceDeclaration$2(id, typeParameters = null, _extends = null, body) {
+function tsInterfaceDeclaration$1(id, typeParameters = null, _extends = null, body) {
     const node = {
         type: 'TSInterfaceDeclaration',
         id,
@@ -16637,25 +14413,25 @@ function tsInterfaceDeclaration$2(id, typeParameters = null, _extends = null, bo
     };
     
     const defs = NODE_FIELDS$2.TSInterfaceDeclaration;
-    validate$5(defs.id, node, 'id', id, 1);
-    validate$5(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
-    validate$5(defs.extends, node, 'extends', _extends, 1);
-    validate$5(defs.body, node, 'body', body, 1);
+    validate$4(defs.id, node, 'id', id, 1);
+    validate$4(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
+    validate$4(defs.extends, node, 'extends', _extends, 1);
+    validate$4(defs.body, node, 'body', body, 1);
     return node;
 }
 
-function tsInterfaceBody$2(body) {
+function tsInterfaceBody$1(body) {
     const node = {
         type: 'TSInterfaceBody',
         body,
     };
     
     const defs = NODE_FIELDS$2.TSInterfaceBody;
-    validate$5(defs.body, node, 'body', body, 1);
+    validate$4(defs.body, node, 'body', body, 1);
     return node;
 }
 
-function tsTypeAliasDeclaration$2(id, typeParameters = null, typeAnnotation2) {
+function tsTypeAliasDeclaration$1(id, typeParameters = null, typeAnnotation2) {
     const node = {
         type: 'TSTypeAliasDeclaration',
         id,
@@ -16664,9 +14440,9 @@ function tsTypeAliasDeclaration$2(id, typeParameters = null, typeAnnotation2) {
     };
     
     const defs = NODE_FIELDS$2.TSTypeAliasDeclaration;
-    validate$5(defs.id, node, 'id', id, 1);
-    validate$5(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
-    validate$5(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
+    validate$4(defs.id, node, 'id', id, 1);
+    validate$4(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
+    validate$4(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
     return node;
 }
 
@@ -16678,12 +14454,12 @@ function tsInstantiationExpression$1(expression2, typeArguments = null) {
     };
     
     const defs = NODE_FIELDS$2.TSInstantiationExpression;
-    validate$5(defs.expression, node, 'expression', expression2, 1);
-    validate$5(defs.typeArguments, node, 'typeArguments', typeArguments, 1);
+    validate$4(defs.expression, node, 'expression', expression2, 1);
+    validate$4(defs.typeArguments, node, 'typeArguments', typeArguments, 1);
     return node;
 }
 
-function tsAsExpression$2(expression2, typeAnnotation2) {
+function tsAsExpression$1(expression2, typeAnnotation2) {
     const node = {
         type: 'TSAsExpression',
         expression: expression2,
@@ -16691,8 +14467,8 @@ function tsAsExpression$2(expression2, typeAnnotation2) {
     };
     
     const defs = NODE_FIELDS$2.TSAsExpression;
-    validate$5(defs.expression, node, 'expression', expression2, 1);
-    validate$5(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
+    validate$4(defs.expression, node, 'expression', expression2, 1);
+    validate$4(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
     return node;
 }
 
@@ -16704,8 +14480,8 @@ function tsSatisfiesExpression$1(expression2, typeAnnotation2) {
     };
     
     const defs = NODE_FIELDS$2.TSSatisfiesExpression;
-    validate$5(defs.expression, node, 'expression', expression2, 1);
-    validate$5(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
+    validate$4(defs.expression, node, 'expression', expression2, 1);
+    validate$4(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
     return node;
 }
 
@@ -16717,8 +14493,8 @@ function tsTypeAssertion$1(typeAnnotation2, expression2) {
     };
     
     const defs = NODE_FIELDS$2.TSTypeAssertion;
-    validate$5(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
-    validate$5(defs.expression, node, 'expression', expression2, 1);
+    validate$4(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
+    validate$4(defs.expression, node, 'expression', expression2, 1);
     return node;
 }
 
@@ -16729,11 +14505,11 @@ function tsEnumBody$1(members) {
     };
     
     const defs = NODE_FIELDS$2.TSEnumBody;
-    validate$5(defs.members, node, 'members', members, 1);
+    validate$4(defs.members, node, 'members', members, 1);
     return node;
 }
 
-function tsEnumDeclaration$2(id, body) {
+function tsEnumDeclaration$1(id, body) {
     const node = {
         type: 'TSEnumDeclaration',
         id,
@@ -16741,12 +14517,12 @@ function tsEnumDeclaration$2(id, body) {
     };
     
     const defs = NODE_FIELDS$2.TSEnumDeclaration;
-    validate$5(defs.id, node, 'id', id, 1);
-    validate$5(defs.body, node, 'body', body, 1);
+    validate$4(defs.id, node, 'id', id, 1);
+    validate$4(defs.body, node, 'body', body, 1);
     return node;
 }
 
-function tsEnumMember$2(id, initializer = null) {
+function tsEnumMember$1(id, initializer = null) {
     const node = {
         type: 'TSEnumMember',
         id,
@@ -16754,12 +14530,12 @@ function tsEnumMember$2(id, initializer = null) {
     };
     
     const defs = NODE_FIELDS$2.TSEnumMember;
-    validate$5(defs.id, node, 'id', id, 1);
-    validate$5(defs.initializer, node, 'initializer', initializer, 1);
+    validate$4(defs.id, node, 'id', id, 1);
+    validate$4(defs.initializer, node, 'initializer', initializer, 1);
     return node;
 }
 
-function tsModuleDeclaration$2(id, body) {
+function tsModuleDeclaration$1(id, body) {
     const node = {
         type: 'TSModuleDeclaration',
         id,
@@ -16768,8 +14544,8 @@ function tsModuleDeclaration$2(id, body) {
     };
     
     const defs = NODE_FIELDS$2.TSModuleDeclaration;
-    validate$5(defs.id, node, 'id', id, 1);
-    validate$5(defs.body, node, 'body', body, 1);
+    validate$4(defs.id, node, 'id', id, 1);
+    validate$4(defs.body, node, 'body', body, 1);
     return node;
 }
 
@@ -16780,11 +14556,11 @@ function tsModuleBlock$1(body) {
     };
     
     const defs = NODE_FIELDS$2.TSModuleBlock;
-    validate$5(defs.body, node, 'body', body, 1);
+    validate$4(defs.body, node, 'body', body, 1);
     return node;
 }
 
-function tsImportType$2(source, qualifier = null, typeArguments = null) {
+function tsImportType$1(source, qualifier = null, typeArguments = null) {
     const node = {
         type: 'TSImportType',
         source,
@@ -16793,9 +14569,9 @@ function tsImportType$2(source, qualifier = null, typeArguments = null) {
     };
     
     const defs = NODE_FIELDS$2.TSImportType;
-    validate$5(defs.source, node, 'source', source, 1);
-    validate$5(defs.qualifier, node, 'qualifier', qualifier, 1);
-    validate$5(defs.typeArguments, node, 'typeArguments', typeArguments, 1);
+    validate$4(defs.source, node, 'source', source, 1);
+    validate$4(defs.qualifier, node, 'qualifier', qualifier, 1);
+    validate$4(defs.typeArguments, node, 'typeArguments', typeArguments, 1);
     return node;
 }
 
@@ -16807,8 +14583,8 @@ function tsImportEqualsDeclaration$1(id, moduleReference) {
     };
     
     const defs = NODE_FIELDS$2.TSImportEqualsDeclaration;
-    validate$5(defs.id, node, 'id', id, 1);
-    validate$5(defs.moduleReference, node, 'moduleReference', moduleReference, 1);
+    validate$4(defs.id, node, 'id', id, 1);
+    validate$4(defs.moduleReference, node, 'moduleReference', moduleReference, 1);
     return node;
 }
 
@@ -16819,7 +14595,7 @@ function tsExternalModuleReference$1(expression2) {
     };
     
     const defs = NODE_FIELDS$2.TSExternalModuleReference;
-    validate$5(defs.expression, node, 'expression', expression2, 1);
+    validate$4(defs.expression, node, 'expression', expression2, 1);
     return node;
 }
 
@@ -16830,18 +14606,18 @@ function tsNonNullExpression$1(expression2) {
     };
     
     const defs = NODE_FIELDS$2.TSNonNullExpression;
-    validate$5(defs.expression, node, 'expression', expression2, 1);
+    validate$4(defs.expression, node, 'expression', expression2, 1);
     return node;
 }
 
-function tsExportAssignment$2(expression2) {
+function tsExportAssignment$1(expression2) {
     const node = {
         type: 'TSExportAssignment',
         expression: expression2,
     };
     
     const defs = NODE_FIELDS$2.TSExportAssignment;
-    validate$5(defs.expression, node, 'expression', expression2, 1);
+    validate$4(defs.expression, node, 'expression', expression2, 1);
     return node;
 }
 
@@ -16852,7 +14628,7 @@ function tsNamespaceExportDeclaration$1(id) {
     };
     
     const defs = NODE_FIELDS$2.TSNamespaceExportDeclaration;
-    validate$5(defs.id, node, 'id', id, 1);
+    validate$4(defs.id, node, 'id', id, 1);
     return node;
 }
 
@@ -16863,7 +14639,7 @@ function tsTypeAnnotation$1(typeAnnotation2) {
     };
     
     const defs = NODE_FIELDS$2.TSTypeAnnotation;
-    validate$5(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
+    validate$4(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
     return node;
 }
 
@@ -16874,22 +14650,22 @@ function tsTypeParameterInstantiation$1(params) {
     };
     
     const defs = NODE_FIELDS$2.TSTypeParameterInstantiation;
-    validate$5(defs.params, node, 'params', params, 1);
+    validate$4(defs.params, node, 'params', params, 1);
     return node;
 }
 
-function tsTypeParameterDeclaration$2(params) {
+function tsTypeParameterDeclaration$1(params) {
     const node = {
         type: 'TSTypeParameterDeclaration',
         params,
     };
     
     const defs = NODE_FIELDS$2.TSTypeParameterDeclaration;
-    validate$5(defs.params, node, 'params', params, 1);
+    validate$4(defs.params, node, 'params', params, 1);
     return node;
 }
 
-function tsTypeParameter$2(constraint = null, _default = null, name) {
+function tsTypeParameter$1(constraint = null, _default = null, name) {
     const node = {
         type: 'TSTypeParameter',
         constraint,
@@ -16898,9 +14674,9 @@ function tsTypeParameter$2(constraint = null, _default = null, name) {
     };
     
     const defs = NODE_FIELDS$2.TSTypeParameter;
-    validate$5(defs.constraint, node, 'constraint', constraint, 1);
-    validate$5(defs.default, node, 'default', _default, 1);
-    validate$5(defs.name, node, 'name', name, 1);
+    validate$4(defs.constraint, node, 'constraint', constraint, 1);
+    validate$4(defs.default, node, 'default', _default, 1);
+    validate$4(defs.name, node, 'name', name, 1);
     return node;
 }
 
@@ -16916,47 +14692,47 @@ function RegexLiteral$1(pattern, flags = '') {
 
 function RestProperty$1(argument) {
     deprecationWarning$1('RestProperty', 'RestElement', 'The node type ');
-    return restElement$2(argument);
+    return restElement$1(argument);
 }
 
 function SpreadProperty$1(argument) {
     deprecationWarning$1('SpreadProperty', 'SpreadElement', 'The node type ');
-    return spreadElement$2(argument);
+    return spreadElement$1(argument);
 }
 
 var b$1 = /* @__PURE__ */Object.freeze({
     __proto__: null,
     anyTypeAnnotation: anyTypeAnnotation$2,
     argumentPlaceholder: argumentPlaceholder$1,
-    arrayExpression: arrayExpression$5,
-    arrayPattern: arrayPattern$2,
+    arrayExpression: arrayExpression$4,
+    arrayPattern: arrayPattern$1,
     arrayTypeAnnotation: arrayTypeAnnotation$1,
-    arrowFunctionExpression: arrowFunctionExpression$4,
-    assignmentExpression: assignmentExpression$5,
-    assignmentPattern: assignmentPattern$2,
+    arrowFunctionExpression: arrowFunctionExpression$3,
+    assignmentExpression: assignmentExpression$4,
+    assignmentPattern: assignmentPattern$1,
     awaitExpression: awaitExpression$1,
     bigIntLiteral: bigIntLiteral$1,
-    binaryExpression: binaryExpression$2,
+    binaryExpression: binaryExpression$1,
     bindExpression: bindExpression$1,
-    blockStatement: blockStatement$5,
+    blockStatement: blockStatement$4,
     booleanLiteral: booleanLiteral$1,
     booleanLiteralTypeAnnotation: booleanLiteralTypeAnnotation$1,
     booleanTypeAnnotation: booleanTypeAnnotation$1,
-    breakStatement: breakStatement$2,
-    callExpression: callExpression$4,
+    breakStatement: breakStatement$1,
+    callExpression: callExpression$3,
     catchClause: catchClause$1,
     classAccessorProperty: classAccessorProperty$1,
     classBody: classBody$1,
     classDeclaration: classDeclaration$1,
     classExpression: classExpression$1,
     classImplements: classImplements$1,
-    classMethod: classMethod$3,
+    classMethod: classMethod$2,
     classPrivateMethod: classPrivateMethod$2,
     classPrivateProperty: classPrivateProperty$1,
-    classProperty: classProperty$2,
-    conditionalExpression: conditionalExpression$3,
-    continueStatement: continueStatement$2,
-    debuggerStatement: debuggerStatement$2,
+    classProperty: classProperty$1,
+    conditionalExpression: conditionalExpression$2,
+    continueStatement: continueStatement$1,
+    debuggerStatement: debuggerStatement$1,
     declareClass: declareClass$1,
     declareExportAllDeclaration: declareExportAllDeclaration$1,
     declareExportDeclaration: declareExportDeclaration$1,
@@ -16968,12 +14744,12 @@ var b$1 = /* @__PURE__ */Object.freeze({
     declareTypeAlias: declareTypeAlias$1,
     declareVariable: declareVariable$1,
     declaredPredicate: declaredPredicate$1,
-    decorator: decorator$2,
+    decorator: decorator$1,
     directive: directive$2,
-    directiveLiteral: directiveLiteral$3,
+    directiveLiteral: directiveLiteral$2,
     doExpression: doExpression$1,
-    doWhileStatement: doWhileStatement$2,
-    emptyStatement: emptyStatement$2,
+    doWhileStatement: doWhileStatement$1,
+    emptyStatement: emptyStatement$1,
     emptyTypeAnnotation: emptyTypeAnnotation$1,
     enumBooleanBody: enumBooleanBody$1,
     enumBooleanMember: enumBooleanMember$1,
@@ -16985,29 +14761,29 @@ var b$1 = /* @__PURE__ */Object.freeze({
     enumStringMember: enumStringMember$1,
     enumSymbolBody: enumSymbolBody$1,
     existsTypeAnnotation: existsTypeAnnotation$1,
-    exportAllDeclaration: exportAllDeclaration$2,
-    exportDefaultDeclaration: exportDefaultDeclaration$2,
+    exportAllDeclaration: exportAllDeclaration$1,
+    exportDefaultDeclaration: exportDefaultDeclaration$1,
     exportDefaultSpecifier: exportDefaultSpecifier$1,
     exportNamedDeclaration: exportNamedDeclaration$1,
     exportNamespaceSpecifier: exportNamespaceSpecifier$1,
     exportSpecifier: exportSpecifier$1,
-    expressionStatement: expressionStatement$9,
+    expressionStatement: expressionStatement$8,
     file: file$2,
-    forInStatement: forInStatement$2,
-    forOfStatement: forOfStatement$2,
-    forStatement: forStatement$2,
-    functionDeclaration: functionDeclaration$2,
-    functionExpression: functionExpression$2,
+    forInStatement: forInStatement$1,
+    forOfStatement: forOfStatement$1,
+    forStatement: forStatement$1,
+    functionDeclaration: functionDeclaration$1,
+    functionExpression: functionExpression$1,
     functionTypeAnnotation: functionTypeAnnotation$1,
     functionTypeParam: functionTypeParam$1,
     genericTypeAnnotation: genericTypeAnnotation$1,
-    identifier: identifier$5,
-    ifStatement: ifStatement$2,
+    identifier: identifier$4,
+    ifStatement: ifStatement$1,
     import: _import$1,
-    importAttribute: importAttribute$2,
-    importDeclaration: importDeclaration$2,
+    importAttribute: importAttribute$1,
+    importDeclaration: importDeclaration$1,
     importDefaultSpecifier: importDefaultSpecifier$1,
-    importExpression: importExpression$2,
+    importExpression: importExpression$1,
     importNamespaceSpecifier: importNamespaceSpecifier$1,
     importSpecifier: importSpecifier$1,
     indexedAccessType: indexedAccessType$1,
@@ -17017,28 +14793,28 @@ var b$1 = /* @__PURE__ */Object.freeze({
     interfaceTypeAnnotation: interfaceTypeAnnotation$1,
     interpreterDirective: interpreterDirective$1,
     intersectionTypeAnnotation: intersectionTypeAnnotation$1,
-    jsxAttribute: jsxAttribute$3,
+    jsxAttribute: jsxAttribute$2,
     jsxClosingElement: jsxClosingElement$1,
     jsxClosingFragment: jsxClosingFragment$1,
-    jsxElement: jsxElement$2,
+    jsxElement: jsxElement$1,
     jsxEmptyExpression: jsxEmptyExpression$1,
     jsxExpressionContainer: jsxExpressionContainer$1,
-    jsxFragment: jsxFragment$2,
+    jsxFragment: jsxFragment$1,
     jsxIdentifier: jsxIdentifier$2,
     jsxMemberExpression: jsxMemberExpression$1,
     jsxNamespacedName: jsxNamespacedName$1,
-    jsxOpeningElement: jsxOpeningElement$2,
+    jsxOpeningElement: jsxOpeningElement$1,
     jsxOpeningFragment: jsxOpeningFragment$1,
     jsxSpreadAttribute: jsxSpreadAttribute$1,
     jsxSpreadChild: jsxSpreadChild$1,
-    jsxText: jsxText$2,
-    labeledStatement: labeledStatement$2,
-    logicalExpression: logicalExpression$2,
+    jsxText: jsxText$1,
+    labeledStatement: labeledStatement$1,
+    logicalExpression: logicalExpression$1,
     memberExpression: memberExpression$1,
     metaProperty: metaProperty$1,
     mixedTypeAnnotation: mixedTypeAnnotation$1,
     moduleExpression: moduleExpression$1,
-    newExpression: newExpression$2,
+    newExpression: newExpression$1,
     nullLiteral: nullLiteral$1,
     nullLiteralTypeAnnotation: nullLiteralTypeAnnotation$1,
     nullableTypeAnnotation: nullableTypeAnnotation$1,
@@ -17046,10 +14822,10 @@ var b$1 = /* @__PURE__ */Object.freeze({
     numberLiteralTypeAnnotation: numberLiteralTypeAnnotation$1,
     numberTypeAnnotation: numberTypeAnnotation$2,
     numericLiteral: numericLiteral$2,
-    objectExpression: objectExpression$4,
-    objectMethod: objectMethod$3,
-    objectPattern: objectPattern$3,
-    objectProperty: objectProperty$5,
+    objectExpression: objectExpression$3,
+    objectMethod: objectMethod$2,
+    objectPattern: objectPattern$2,
+    objectProperty: objectProperty$4,
     objectTypeAnnotation: objectTypeAnnotation$1,
     objectTypeCallProperty: objectTypeCallProperty$1,
     objectTypeIndexer: objectTypeIndexer$1,
@@ -17060,33 +14836,33 @@ var b$1 = /* @__PURE__ */Object.freeze({
     optionalCallExpression: optionalCallExpression$1,
     optionalIndexedAccessType: optionalIndexedAccessType$1,
     optionalMemberExpression: optionalMemberExpression$1,
-    parenthesizedExpression: parenthesizedExpression$4,
+    parenthesizedExpression: parenthesizedExpression$3,
     pipelineBareFunction: pipelineBareFunction$1,
     pipelinePrimaryTopicReference: pipelinePrimaryTopicReference$1,
     pipelineTopicExpression: pipelineTopicExpression$1,
     placeholder: placeholder$1,
     privateName: privateName$2,
-    program: program$4,
+    program: program$3,
     qualifiedTypeIdentifier: qualifiedTypeIdentifier$1,
     regExpLiteral: regExpLiteral$1,
     regexLiteral: RegexLiteral$1,
-    restElement: restElement$2,
+    restElement: restElement$1,
     restProperty: RestProperty$1,
-    returnStatement: returnStatement$3,
-    sequenceExpression: sequenceExpression$4,
-    spreadElement: spreadElement$2,
+    returnStatement: returnStatement$2,
+    sequenceExpression: sequenceExpression$3,
+    spreadElement: spreadElement$1,
     spreadProperty: SpreadProperty$1,
-    staticBlock: staticBlock$2,
-    stringLiteral: stringLiteral$7,
+    staticBlock: staticBlock$1,
+    stringLiteral: stringLiteral$6,
     stringLiteralTypeAnnotation: stringLiteralTypeAnnotation$1,
     stringTypeAnnotation: stringTypeAnnotation$2,
     super: _super$1,
     switchCase: switchCase$1,
-    switchStatement: switchStatement$2,
+    switchStatement: switchStatement$1,
     symbolTypeAnnotation: symbolTypeAnnotation$1,
-    taggedTemplateExpression: taggedTemplateExpression$2,
+    taggedTemplateExpression: taggedTemplateExpression$1,
     templateElement: templateElement$2,
-    templateLiteral: templateLiteral$2,
+    templateLiteral: templateLiteral$1,
     thisExpression: thisExpression$2,
     thisTypeAnnotation: thisTypeAnnotation$1,
     throwStatement: throwStatement$1,
@@ -17094,70 +14870,70 @@ var b$1 = /* @__PURE__ */Object.freeze({
     tryStatement: tryStatement$1,
     tsAnyKeyword: tsAnyKeyword$1,
     tsArrayType: tsArrayType$1,
-    tsAsExpression: tsAsExpression$2,
+    tsAsExpression: tsAsExpression$1,
     tsBigIntKeyword: tsBigIntKeyword$1,
     tsBooleanKeyword: tsBooleanKeyword$1,
-    tsCallSignatureDeclaration: tsCallSignatureDeclaration$2,
+    tsCallSignatureDeclaration: tsCallSignatureDeclaration$1,
     tsClassImplements: tsClassImplements$1,
-    tsConditionalType: tsConditionalType$2,
-    tsConstructSignatureDeclaration: tsConstructSignatureDeclaration$2,
-    tsConstructorType: tsConstructorType$2,
-    tsDeclareFunction: tsDeclareFunction$2,
-    tsDeclareMethod: tsDeclareMethod$2,
+    tsConditionalType: tsConditionalType$1,
+    tsConstructSignatureDeclaration: tsConstructSignatureDeclaration$1,
+    tsConstructorType: tsConstructorType$1,
+    tsDeclareFunction: tsDeclareFunction$1,
+    tsDeclareMethod: tsDeclareMethod$1,
     tsEnumBody: tsEnumBody$1,
-    tsEnumDeclaration: tsEnumDeclaration$2,
-    tsEnumMember: tsEnumMember$2,
-    tsExportAssignment: tsExportAssignment$2,
+    tsEnumDeclaration: tsEnumDeclaration$1,
+    tsEnumMember: tsEnumMember$1,
+    tsExportAssignment: tsExportAssignment$1,
     tsExternalModuleReference: tsExternalModuleReference$1,
-    tsFunctionType: tsFunctionType$2,
+    tsFunctionType: tsFunctionType$1,
     tsImportEqualsDeclaration: tsImportEqualsDeclaration$1,
-    tsImportType: tsImportType$2,
+    tsImportType: tsImportType$1,
     tsIndexSignature: tsIndexSignature$1,
     tsIndexedAccessType: tsIndexedAccessType$1,
-    tsInferType: tsInferType$2,
+    tsInferType: tsInferType$1,
     tsInstantiationExpression: tsInstantiationExpression$1,
-    tsInterfaceBody: tsInterfaceBody$2,
-    tsInterfaceDeclaration: tsInterfaceDeclaration$2,
+    tsInterfaceBody: tsInterfaceBody$1,
+    tsInterfaceDeclaration: tsInterfaceDeclaration$1,
     tsInterfaceHeritage: tsInterfaceHeritage$1,
-    tsIntersectionType: tsIntersectionType$2,
+    tsIntersectionType: tsIntersectionType$1,
     tsIntrinsicKeyword: tsIntrinsicKeyword$1,
     tsLiteralType: tsLiteralType$1,
-    tsMappedType: tsMappedType$2,
-    tsMethodSignature: tsMethodSignature$2,
+    tsMappedType: tsMappedType$1,
+    tsMethodSignature: tsMethodSignature$1,
     tsModuleBlock: tsModuleBlock$1,
-    tsModuleDeclaration: tsModuleDeclaration$2,
-    tsNamedTupleMember: tsNamedTupleMember$2,
+    tsModuleDeclaration: tsModuleDeclaration$1,
+    tsNamedTupleMember: tsNamedTupleMember$1,
     tsNamespaceExportDeclaration: tsNamespaceExportDeclaration$1,
     tsNeverKeyword: tsNeverKeyword$1,
     tsNonNullExpression: tsNonNullExpression$1,
     tsNullKeyword: tsNullKeyword$1,
     tsNumberKeyword: tsNumberKeyword$1,
     tsObjectKeyword: tsObjectKeyword$1,
-    tsOptionalType: tsOptionalType$2,
-    tsParameterProperty: tsParameterProperty$2,
-    tsParenthesizedType: tsParenthesizedType$4,
-    tsPropertySignature: tsPropertySignature$2,
+    tsOptionalType: tsOptionalType$1,
+    tsParameterProperty: tsParameterProperty$1,
+    tsParenthesizedType: tsParenthesizedType$3,
+    tsPropertySignature: tsPropertySignature$1,
     tsQualifiedName: tsQualifiedName$1,
     tsRestType: tsRestType$1,
     tsSatisfiesExpression: tsSatisfiesExpression$1,
     tsStringKeyword: tsStringKeyword$1,
     tsSymbolKeyword: tsSymbolKeyword$1,
-    tsTemplateLiteralType: tsTemplateLiteralType$2,
+    tsTemplateLiteralType: tsTemplateLiteralType$1,
     tsThisType: tsThisType$1,
-    tsTupleType: tsTupleType$2,
-    tsTypeAliasDeclaration: tsTypeAliasDeclaration$2,
+    tsTupleType: tsTupleType$1,
+    tsTypeAliasDeclaration: tsTypeAliasDeclaration$1,
     tsTypeAnnotation: tsTypeAnnotation$1,
     tsTypeAssertion: tsTypeAssertion$1,
-    tsTypeLiteral: tsTypeLiteral$2,
+    tsTypeLiteral: tsTypeLiteral$1,
     tsTypeOperator: tsTypeOperator$1,
-    tsTypeParameter: tsTypeParameter$2,
-    tsTypeParameterDeclaration: tsTypeParameterDeclaration$2,
+    tsTypeParameter: tsTypeParameter$1,
+    tsTypeParameterDeclaration: tsTypeParameterDeclaration$1,
     tsTypeParameterInstantiation: tsTypeParameterInstantiation$1,
     tsTypePredicate: tsTypePredicate$1,
-    tsTypeQuery: tsTypeQuery$2,
-    tsTypeReference: tsTypeReference$2,
+    tsTypeQuery: tsTypeQuery$1,
+    tsTypeReference: tsTypeReference$1,
     tsUndefinedKeyword: tsUndefinedKeyword$1,
-    tsUnionType: tsUnionType$2,
+    tsUnionType: tsUnionType$1,
     tsUnknownKeyword: tsUnknownKeyword$1,
     tsVoidKeyword: tsVoidKeyword$1,
     tupleTypeAnnotation: tupleTypeAnnotation$1,
@@ -17172,13 +14948,13 @@ var b$1 = /* @__PURE__ */Object.freeze({
     unionTypeAnnotation: unionTypeAnnotation$1,
     updateExpression: updateExpression$1,
     v8IntrinsicIdentifier: v8IntrinsicIdentifier$1,
-    variableDeclaration: variableDeclaration$3,
+    variableDeclaration: variableDeclaration$2,
     variableDeclarator: variableDeclarator$2,
     variance: variance$1,
-    voidPattern: voidPattern$2,
+    voidPattern: voidPattern$1,
     voidTypeAnnotation: voidTypeAnnotation$3,
-    whileStatement: whileStatement$2,
-    withStatement: withStatement$2,
+    whileStatement: whileStatement$1,
+    withStatement: withStatement$1,
     yieldExpression: yieldExpression$1,
 });
 
@@ -17192,13 +14968,13 @@ function alias$1(lowercase) {
 var ArrayExpression$2 = alias$1('arrayExpression');
 var AssignmentExpression$3 = alias$1('assignmentExpression');
 var BinaryExpression$2 = alias$1('binaryExpression');
-var InterpreterDirective$1 = alias$1('interpreterDirective');
-var Directive$1 = alias$1('directive');
+var InterpreterDirective$2 = alias$1('interpreterDirective');
+var Directive$2 = alias$1('directive');
 var DirectiveLiteral$2 = alias$1('directiveLiteral');
 var BlockStatement$2 = alias$1('blockStatement');
 var BreakStatement$2 = alias$1('breakStatement');
-var CallExpression$3 = alias$1('callExpression');
-var CatchClause$1 = alias$1('catchClause');
+var CallExpression$2 = alias$1('callExpression');
+var CatchClause$2 = alias$1('catchClause');
 var ConditionalExpression$3 = alias$1('conditionalExpression');
 var ContinueStatement$2 = alias$1('continueStatement');
 var DebuggerStatement$2 = alias$1('debuggerStatement');
@@ -17214,12 +14990,12 @@ var Identifier$3 = alias$1('identifier');
 var IfStatement$2 = alias$1('ifStatement');
 var LabeledStatement$2 = alias$1('labeledStatement');
 var StringLiteral$2 = alias$1('stringLiteral');
-var NumericLiteral$1 = alias$1('numericLiteral');
-var NullLiteral$1 = alias$1('nullLiteral');
-var BooleanLiteral$1 = alias$1('booleanLiteral');
-var RegExpLiteral$1 = alias$1('regExpLiteral');
+var NumericLiteral$2 = alias$1('numericLiteral');
+var NullLiteral$2 = alias$1('nullLiteral');
+var BooleanLiteral$2 = alias$1('booleanLiteral');
+var RegExpLiteral$2 = alias$1('regExpLiteral');
 var LogicalExpression$2 = alias$1('logicalExpression');
-var MemberExpression$1 = alias$1('memberExpression');
+var MemberExpression$2 = alias$1('memberExpression');
 var NewExpression$2 = alias$1('newExpression');
 var Program$2 = alias$1('program');
 var ObjectExpression$3 = alias$1('objectExpression');
@@ -17231,11 +15007,11 @@ var SequenceExpression$3 = alias$1('sequenceExpression');
 var ParenthesizedExpression$2 = alias$1('parenthesizedExpression');
 var SwitchCase$1 = alias$1('switchCase');
 var SwitchStatement$2 = alias$1('switchStatement');
-var ThisExpression$1 = alias$1('thisExpression');
-var ThrowStatement$1 = alias$1('throwStatement');
-var TryStatement$1 = alias$1('tryStatement');
-var UnaryExpression$1 = alias$1('unaryExpression');
-var UpdateExpression$2 = alias$1('updateExpression');
+var ThisExpression$2 = alias$1('thisExpression');
+var ThrowStatement$2 = alias$1('throwStatement');
+var TryStatement$2 = alias$1('tryStatement');
+var UnaryExpression$2 = alias$1('unaryExpression');
+var UpdateExpression$3 = alias$1('updateExpression');
 var VariableDeclaration$2 = alias$1('variableDeclaration');
 var VariableDeclarator$1 = alias$1('variableDeclarator');
 var WhileStatement$2 = alias$1('whileStatement');
@@ -17248,28 +15024,28 @@ var ClassExpression$2 = alias$1('classExpression');
 var ClassDeclaration$2 = alias$1('classDeclaration');
 var ExportAllDeclaration$2 = alias$1('exportAllDeclaration');
 var ExportDefaultDeclaration$2 = alias$1('exportDefaultDeclaration');
-var ExportNamedDeclaration$1 = alias$1('exportNamedDeclaration');
+var ExportNamedDeclaration$2 = alias$1('exportNamedDeclaration');
 var ExportSpecifier$2 = alias$1('exportSpecifier');
 var ForOfStatement$2 = alias$1('forOfStatement');
-var ImportDeclaration$1 = alias$1('importDeclaration');
+var ImportDeclaration$2 = alias$1('importDeclaration');
 var ImportDefaultSpecifier$1 = alias$1('importDefaultSpecifier');
 var ImportNamespaceSpecifier$1 = alias$1('importNamespaceSpecifier');
 var ImportSpecifier$1 = alias$1('importSpecifier');
 var ImportExpression$2 = alias$1('importExpression');
-var MetaProperty$1 = alias$1('metaProperty');
-var ClassMethod$3 = alias$1('classMethod');
+var MetaProperty$2 = alias$1('metaProperty');
+var ClassMethod$2 = alias$1('classMethod');
 var ObjectPattern$2 = alias$1('objectPattern');
 var SpreadElement$2 = alias$1('spreadElement');
-var Super$1 = alias$1('super');
+var Super$2 = alias$1('super');
 var TaggedTemplateExpression$2 = alias$1('taggedTemplateExpression');
 var TemplateElement$1 = alias$1('templateElement');
 var TemplateLiteral$2 = alias$1('templateLiteral');
-var YieldExpression$2 = alias$1('yieldExpression');
-var AwaitExpression$1 = alias$1('awaitExpression');
+var YieldExpression$3 = alias$1('yieldExpression');
+var AwaitExpression$2 = alias$1('awaitExpression');
 var Import$1 = alias$1('import');
-var BigIntLiteral$1 = alias$1('bigIntLiteral');
+var BigIntLiteral$2 = alias$1('bigIntLiteral');
 var ExportNamespaceSpecifier$2 = alias$1('exportNamespaceSpecifier');
-var OptionalMemberExpression$2 = alias$1('optionalMemberExpression');
+var OptionalMemberExpression$3 = alias$1('optionalMemberExpression');
 var OptionalCallExpression$2 = alias$1('optionalCallExpression');
 var ClassProperty$2 = alias$1('classProperty');
 var ClassAccessorProperty$2 = alias$1('classAccessorProperty');
@@ -17277,7 +15053,7 @@ var ClassPrivateProperty$2 = alias$1('classPrivateProperty');
 var ClassPrivateMethod$2 = alias$1('classPrivateMethod');
 var PrivateName$2 = alias$1('privateName');
 var StaticBlock$2 = alias$1('staticBlock');
-var ImportAttribute$1 = alias$1('importAttribute');
+var ImportAttribute$2 = alias$1('importAttribute');
 var AnyTypeAnnotation$1 = alias$1('anyTypeAnnotation');
 var ArrayTypeAnnotation$1 = alias$1('arrayTypeAnnotation');
 var BooleanTypeAnnotation$1 = alias$1('booleanTypeAnnotation');
@@ -17344,27 +15120,27 @@ var EnumDefaultedMember$1 = alias$1('enumDefaultedMember');
 var IndexedAccessType$1 = alias$1('indexedAccessType');
 var OptionalIndexedAccessType$2 = alias$1('optionalIndexedAccessType');
 var JSXAttribute$2 = alias$1('jsxAttribute');
-var JSXClosingElement$1 = alias$1('jsxClosingElement');
+var JSXClosingElement$2 = alias$1('jsxClosingElement');
 var JSXElement$2 = alias$1('jsxElement');
-var JSXEmptyExpression$1 = alias$1('jsxEmptyExpression');
-var JSXExpressionContainer$1 = alias$1('jsxExpressionContainer');
+var JSXEmptyExpression$2 = alias$1('jsxEmptyExpression');
+var JSXExpressionContainer$2 = alias$1('jsxExpressionContainer');
 var JSXSpreadChild$1 = alias$1('jsxSpreadChild');
-var JSXIdentifier$1 = alias$1('jsxIdentifier');
-var JSXMemberExpression$1 = alias$1('jsxMemberExpression');
+var JSXIdentifier$2 = alias$1('jsxIdentifier');
+var JSXMemberExpression$2 = alias$1('jsxMemberExpression');
 var JSXNamespacedName$1 = alias$1('jsxNamespacedName');
 var JSXOpeningElement$2 = alias$1('jsxOpeningElement');
-var JSXSpreadAttribute$1 = alias$1('jsxSpreadAttribute');
+var JSXSpreadAttribute$2 = alias$1('jsxSpreadAttribute');
 var JSXText$2 = alias$1('jsxText');
-var JSXFragment$1 = alias$1('jsxFragment');
-var JSXOpeningFragment$1 = alias$1('jsxOpeningFragment');
-var JSXClosingFragment$1 = alias$1('jsxClosingFragment');
+var JSXFragment$2 = alias$1('jsxFragment');
+var JSXOpeningFragment$2 = alias$1('jsxOpeningFragment');
+var JSXClosingFragment$2 = alias$1('jsxClosingFragment');
 var Placeholder$1 = alias$1('placeholder');
 var V8IntrinsicIdentifier$1 = alias$1('v8IntrinsicIdentifier');
 var ArgumentPlaceholder$1 = alias$1('argumentPlaceholder');
 var BindExpression$1 = alias$1('bindExpression');
 var Decorator$2 = alias$1('decorator');
 var DoExpression$2 = alias$1('doExpression');
-var ExportDefaultSpecifier$1 = alias$1('exportDefaultSpecifier');
+var ExportDefaultSpecifier$2 = alias$1('exportDefaultSpecifier');
 var ModuleExpression$1 = alias$1('moduleExpression');
 var TopicReference$1 = alias$1('topicReference');
 var PipelineTopicExpression$1 = alias$1('pipelineTopicExpression');
@@ -17374,69 +15150,69 @@ var VoidPattern$2 = alias$1('voidPattern');
 var TSParameterProperty$2 = alias$1('tsParameterProperty');
 var TSDeclareFunction$2 = alias$1('tsDeclareFunction');
 var TSDeclareMethod$2 = alias$1('tsDeclareMethod');
-var TSQualifiedName$1 = alias$1('tsQualifiedName');
+var TSQualifiedName$2 = alias$1('tsQualifiedName');
 var TSCallSignatureDeclaration$2 = alias$1('tsCallSignatureDeclaration');
 var TSConstructSignatureDeclaration$2 = alias$1('tsConstructSignatureDeclaration');
 var TSPropertySignature$2 = alias$1('tsPropertySignature');
 var TSMethodSignature$2 = alias$1('tsMethodSignature');
-var TSIndexSignature$1 = alias$1('tsIndexSignature');
-var TSAnyKeyword$1 = alias$1('tsAnyKeyword');
-var TSBooleanKeyword$1 = alias$1('tsBooleanKeyword');
-var TSBigIntKeyword$1 = alias$1('tsBigIntKeyword');
+var TSIndexSignature$2 = alias$1('tsIndexSignature');
+var TSAnyKeyword$2 = alias$1('tsAnyKeyword');
+var TSBooleanKeyword$2 = alias$1('tsBooleanKeyword');
+var TSBigIntKeyword$2 = alias$1('tsBigIntKeyword');
 var TSIntrinsicKeyword$1 = alias$1('tsIntrinsicKeyword');
-var TSNeverKeyword$1 = alias$1('tsNeverKeyword');
-var TSNullKeyword$1 = alias$1('tsNullKeyword');
-var TSNumberKeyword$1 = alias$1('tsNumberKeyword');
-var TSObjectKeyword$1 = alias$1('tsObjectKeyword');
-var TSStringKeyword$1 = alias$1('tsStringKeyword');
-var TSSymbolKeyword$1 = alias$1('tsSymbolKeyword');
-var TSUndefinedKeyword$1 = alias$1('tsUndefinedKeyword');
-var TSUnknownKeyword$1 = alias$1('tsUnknownKeyword');
-var TSVoidKeyword$1 = alias$1('tsVoidKeyword');
-var TSThisType$1 = alias$1('tsThisType');
+var TSNeverKeyword$2 = alias$1('tsNeverKeyword');
+var TSNullKeyword$2 = alias$1('tsNullKeyword');
+var TSNumberKeyword$2 = alias$1('tsNumberKeyword');
+var TSObjectKeyword$2 = alias$1('tsObjectKeyword');
+var TSStringKeyword$2 = alias$1('tsStringKeyword');
+var TSSymbolKeyword$2 = alias$1('tsSymbolKeyword');
+var TSUndefinedKeyword$2 = alias$1('tsUndefinedKeyword');
+var TSUnknownKeyword$2 = alias$1('tsUnknownKeyword');
+var TSVoidKeyword$2 = alias$1('tsVoidKeyword');
+var TSThisType$2 = alias$1('tsThisType');
 var TSFunctionType$3 = alias$1('tsFunctionType');
 var TSConstructorType$2 = alias$1('tsConstructorType');
 var TSTypeReference$2 = alias$1('tsTypeReference');
-var TSTypePredicate$1 = alias$1('tsTypePredicate');
+var TSTypePredicate$2 = alias$1('tsTypePredicate');
 var TSTypeQuery$2 = alias$1('tsTypeQuery');
 var TSTypeLiteral$2 = alias$1('tsTypeLiteral');
-var TSArrayType$1 = alias$1('tsArrayType');
+var TSArrayType$2 = alias$1('tsArrayType');
 var TSTupleType$2 = alias$1('tsTupleType');
 var TSOptionalType$2 = alias$1('tsOptionalType');
-var TSRestType$1 = alias$1('tsRestType');
+var TSRestType$2 = alias$1('tsRestType');
 var TSNamedTupleMember$2 = alias$1('tsNamedTupleMember');
 var TSUnionType$3 = alias$1('tsUnionType');
 var TSIntersectionType$3 = alias$1('tsIntersectionType');
 var TSConditionalType$3 = alias$1('tsConditionalType');
 var TSInferType$3 = alias$1('tsInferType');
 var TSParenthesizedType$2 = alias$1('tsParenthesizedType');
-var TSTypeOperator$2 = alias$1('tsTypeOperator');
-var TSIndexedAccessType$1 = alias$1('tsIndexedAccessType');
+var TSTypeOperator$3 = alias$1('tsTypeOperator');
+var TSIndexedAccessType$2 = alias$1('tsIndexedAccessType');
 var TSMappedType$2 = alias$1('tsMappedType');
 var TSTemplateLiteralType$2 = alias$1('tsTemplateLiteralType');
-var TSLiteralType$1 = alias$1('tsLiteralType');
-var TSClassImplements$1 = alias$1('tsClassImplements');
-var TSInterfaceHeritage$1 = alias$1('tsInterfaceHeritage');
+var TSLiteralType$2 = alias$1('tsLiteralType');
+var TSClassImplements$2 = alias$1('tsClassImplements');
+var TSInterfaceHeritage$2 = alias$1('tsInterfaceHeritage');
 var TSInterfaceDeclaration$2 = alias$1('tsInterfaceDeclaration');
 var TSInterfaceBody$2 = alias$1('tsInterfaceBody');
 var TSTypeAliasDeclaration$2 = alias$1('tsTypeAliasDeclaration');
-var TSInstantiationExpression$2 = alias$1('tsInstantiationExpression');
+var TSInstantiationExpression$3 = alias$1('tsInstantiationExpression');
 var TSAsExpression$2 = alias$1('tsAsExpression');
-var TSSatisfiesExpression$1 = alias$1('tsSatisfiesExpression');
-var TSTypeAssertion$1 = alias$1('tsTypeAssertion');
+var TSSatisfiesExpression$2 = alias$1('tsSatisfiesExpression');
+var TSTypeAssertion$2 = alias$1('tsTypeAssertion');
 var TSEnumBody$1 = alias$1('tsEnumBody');
 var TSEnumDeclaration$2 = alias$1('tsEnumDeclaration');
 var TSEnumMember$2 = alias$1('tsEnumMember');
 var TSModuleDeclaration$2 = alias$1('tsModuleDeclaration');
 var TSModuleBlock$2 = alias$1('tsModuleBlock');
 var TSImportType$2 = alias$1('tsImportType');
-var TSImportEqualsDeclaration$1 = alias$1('tsImportEqualsDeclaration');
-var TSExternalModuleReference$1 = alias$1('tsExternalModuleReference');
-var TSNonNullExpression$1 = alias$1('tsNonNullExpression');
+var TSImportEqualsDeclaration$2 = alias$1('tsImportEqualsDeclaration');
+var TSExternalModuleReference$2 = alias$1('tsExternalModuleReference');
+var TSNonNullExpression$2 = alias$1('tsNonNullExpression');
 var TSExportAssignment$2 = alias$1('tsExportAssignment');
 var TSNamespaceExportDeclaration$1 = alias$1('tsNamespaceExportDeclaration');
-var TSTypeAnnotation$1 = alias$1('tsTypeAnnotation');
-var TSTypeParameterInstantiation$1 = alias$1('tsTypeParameterInstantiation');
+var TSTypeAnnotation$2 = alias$1('tsTypeAnnotation');
+var TSTypeParameterInstantiation$2 = alias$1('tsTypeParameterInstantiation');
 var TSTypeParameterDeclaration$2 = alias$1('tsTypeParameterDeclaration');
 var TSTypeParameter$2 = alias$1('tsTypeParameter');
 
@@ -17477,7 +15253,7 @@ function cleanJSXElementLiteralChild$1(child, args) {
     }
     
     if (str)
-        args.push(inherits$1(stringLiteral$7(str), child));
+        args.push(inherits$1(stringLiteral$6(str), child));
 }
 
 function buildChildren$1(node) {
@@ -17515,7 +15291,7 @@ function assertNode$1(node) {
 }
 
 function assert$1(type, node, opts) {
-    if (!is$5(type, node, opts)) {
+    if (!is$4(type, node, opts)) {
         throw new Error(`Expected type "${type}" with option ${JSON.stringify(opts)}, but instead got "${node.type}".`);
     }
 }
@@ -18760,13 +16536,13 @@ function createTypeAnnotationBasedOnTypeof$1(type) {
         return booleanTypeAnnotation$1();
     
     case 'function':
-        return genericTypeAnnotation$1(identifier$5('Function'));
+        return genericTypeAnnotation$1(identifier$4('Function'));
     
     case 'object':
-        return genericTypeAnnotation$1(identifier$5('Object'));
+        return genericTypeAnnotation$1(identifier$4('Object'));
     
     case 'symbol':
-        return genericTypeAnnotation$1(identifier$5('Symbol'));
+        return genericTypeAnnotation$1(identifier$4('Symbol'));
     
     case 'bigint':
         return anyTypeAnnotation$2();
@@ -18945,7 +16721,7 @@ function createTSUnionType$1(typeAnnotations) {
     if (flattened.length === 1) {
         return flattened[0];
     } else {
-        return tsUnionType$2(flattened);
+        return tsUnionType$1(flattened);
     }
 }
 
@@ -19074,7 +16850,7 @@ function maybeCloneComments$1(comments, deep, withoutLoc, commentsCache) {
     });
 }
 
-function clone$3(node) {
+function clone$1(node) {
     return cloneNode$4(node, false);
 }
 
@@ -19214,16 +16990,16 @@ function toBlock$1(node, parent) {
     } else {
         if (!isStatement$a(node)) {
             if (isFunction$9(parent)) {
-                node = returnStatement$3(node);
+                node = returnStatement$2(node);
             } else {
-                node = expressionStatement$9(node);
+                node = expressionStatement$8(node);
             }
         }
         
         blockNodes = [node];
     }
     
-    return blockStatement$5(blockNodes);
+    return blockStatement$4(blockNodes);
 }
 
 function ensureBlock$1(node, key = 'body') {
@@ -19264,13 +17040,13 @@ function toBindingIdentifierName$1(name) {
 
 function toComputedKey$1(node, key = node.key || node.property) {
     if (!node.computed && isIdentifier$j(key))
-        key = stringLiteral$7(key.name);
+        key = stringLiteral$6(key.name);
     
     return key;
 }
 
 function toExpression$5(node) {
-    if (isExpressionStatement$9(node)) {
+    if (isExpressionStatement$b(node)) {
         node = node.expression;
     }
     
@@ -19424,8 +17200,8 @@ function toStatement$2(node, ignore) {
     } else if (isFunction$9(node)) {
         mustHaveId = true;
         newType = 'FunctionDeclaration';
-    } else if (isAssignmentExpression$4(node)) {
-        return expressionStatement$9(node);
+    } else if (isAssignmentExpression$5(node)) {
+        return expressionStatement$8(node);
     }
     
     if (mustHaveId && !node.id) {
@@ -19462,7 +17238,7 @@ function isPlainObject$1(value) {
 
 function valueToNode$1(value) {
     if (value === void 0) {
-        return identifier$5('undefined');
+        return identifier$4('undefined');
     }
     
     if (value === true || value === false) {
@@ -19474,7 +17250,7 @@ function valueToNode$1(value) {
     }
     
     if (typeof value === 'string') {
-        return stringLiteral$7(value);
+        return stringLiteral$6(value);
     }
     
     if (typeof value === 'number') {
@@ -19491,7 +17267,7 @@ function valueToNode$1(value) {
                 numerator = numericLiteral$2(1);
             }
             
-            result = binaryExpression$2('/', numerator, numericLiteral$2(0));
+            result = binaryExpression$1('/', numerator, numericLiteral$2(0));
         }
         
         if (value < 0 || Object.is(value, -0)) {
@@ -19517,7 +17293,7 @@ function valueToNode$1(value) {
     }
     
     if (Array.isArray(value)) {
-        return arrayExpression$5(value.map(valueToNode$1));
+        return arrayExpression$4(value.map(valueToNode$1));
     }
     
     if (isPlainObject$1(value)) {
@@ -19529,18 +17305,18 @@ function valueToNode$1(value) {
             if (isValidIdentifier$1(key)) {
                 if (key === '__proto__') {
                     computed = true;
-                    nodeKey = stringLiteral$7(key);
+                    nodeKey = stringLiteral$6(key);
                 } else {
-                    nodeKey = identifier$5(key);
+                    nodeKey = identifier$4(key);
                 }
             } else {
-                nodeKey = stringLiteral$7(key);
+                nodeKey = stringLiteral$6(key);
             }
             
-            props.push(objectProperty$5(nodeKey, valueToNode$1(value[key]), computed));
+            props.push(objectProperty$4(nodeKey, valueToNode$1(value[key]), computed));
         }
         
-        return objectExpression$4(props);
+        return objectExpression$3(props);
     }
     
     throw new Error('don\'t know how to turn this value into a node');
@@ -19649,7 +17425,7 @@ function getBindingIdentifiers$3(node, duplicates, outerOnly, newBindingsOnly) {
         if (!id)
             continue;
         
-        if (newBindingsOnly && (isAssignmentExpression$4(id) || isUnaryExpression$2(id) || isUpdateExpression$1(id))) {
+        if (newBindingsOnly && (isAssignmentExpression$5(id) || isUnaryExpression$2(id) || isUpdateExpression$1(id))) {
             continue;
         }
         
@@ -19802,7 +17578,7 @@ function getFunctionName$1(node, parent) {
             prefix2 = 'set ';
     } else if (isVariableDeclarator$5(parent, {init: node})) {
         id = parent.id;
-    } else if (isAssignmentExpression$4(parent, {operator: '=', right: node})) {
+    } else if (isAssignmentExpression$5(parent, {operator: '=', right: node})) {
         id = parent.left;
     }
 
@@ -19821,7 +17597,7 @@ function getFunctionName$1(node, parent) {
     };
 }
 
-function traverse$b(node, handlers, state) {
+function traverse$7(node, handlers, state) {
     if (typeof handlers === 'function') {
         handlers = {
             enter: handlers,
@@ -20167,10 +17943,10 @@ var react$1 = {
 
 // ../babel-babel/packages/babel-parser/lib/index.js
 var Position$1 = class Position {
+    line;
+    column;
+    index;
     constructor(line, col, index2) {
-        __publicField$1(this, 'line');
-        __publicField$1(this, 'column');
-        __publicField$1(this, 'index');
         this.line = line;
         this.column = col;
         this.index = index2;
@@ -20178,11 +17954,11 @@ var Position$1 = class Position {
 };
 
 var SourceLocation$1 = class SourceLocation {
+    start;
+    end;
+    filename;
+    identifierName;
     constructor(start, end) {
-        __publicField$1(this, 'start');
-        __publicField$1(this, 'end');
-        __publicField$1(this, 'filename');
-        __publicField$1(this, 'identifierName');
         this.start = start;
         this.end = end;
     }
@@ -21068,17 +18844,17 @@ var prefix$2 = true;
 var postfix$1 = true;
 
 var ExportedTokenType$1 = class ExportedTokenType {
+    label;
+    keyword;
+    beforeExpr;
+    startsExpr;
+    rightAssociative;
+    isLoop;
+    isAssign;
+    prefix;
+    postfix;
+    binop;
     constructor(label, conf = {}) {
-        __publicField$1(this, 'label');
-        __publicField$1(this, 'keyword');
-        __publicField$1(this, 'beforeExpr');
-        __publicField$1(this, 'startsExpr');
-        __publicField$1(this, 'rightAssociative');
-        __publicField$1(this, 'isLoop');
-        __publicField$1(this, 'isAssign');
-        __publicField$1(this, 'prefix');
-        __publicField$1(this, 'postfix');
-        __publicField$1(this, 'binop');
         this.label = label;
         this.keyword = conf.keyword;
         this.beforeExpr = !!conf.beforeExpr;
@@ -21597,14 +19373,15 @@ function getExportedToken$1(token) {
 
 var TokContext$1 = class TokContext {
     constructor(token, preserveSpace) {
-        __publicField$1(this, 'token');
-        __publicField$1(this, 'preserveSpace');
         this.token = token;
         this.preserveSpace = !!preserveSpace;
     }
+    
+    token;
+    preserveSpace;
 };
 
-var types$1a = {
+var types$r = {
     brace: new TokContext$1('{'),
     j_oTag: new TokContext$1('<tag'),
     j_cTag: new TokContext$1('</tag'),
@@ -22767,20 +20544,20 @@ function canBeReservedWord$1(word) {
 }
 
 var Scope$2 = class Scope {
+    flags = 0;
+    names =     /* @__PURE__ */new Map();
+    firstLexicalName = '';
     constructor(flags) {
-        __publicField$1(this, 'flags', 0);
-        __publicField$1(this, 'names',         /* @__PURE__ */new Map());
-        __publicField$1(this, 'firstLexicalName', '');
         this.flags = flags;
     }
 };
 
 var ScopeHandler$1 = class ScopeHandler {
+    parser;
+    scopeStack = [];
+    inModule;
+    undefinedExports =     /* @__PURE__ */new Map();
     constructor(parser, inModule) {
-        __publicField$1(this, 'parser');
-        __publicField$1(this, 'scopeStack', []);
-        __publicField$1(this, 'inModule');
-        __publicField$1(this, 'undefinedExports',         /* @__PURE__ */new Map());
         this.parser = parser;
         this.inModule = inModule;
     }
@@ -23310,7 +21087,7 @@ function getQualifiedJSXName$1(object) {
     throw new Error('Node had unexpected type: ' + object.type);
 }
 
-var jsx$4 = (superClass) => class JSXParserMixin extends superClass {
+var jsx$2 = (superClass) => class JSXParserMixin extends superClass {
     jsxReadToken() {
         let out = '';
         let chunkStart = this.state.pos;
@@ -23518,9 +21295,9 @@ var jsx$4 = (superClass) => class JSXParserMixin extends superClass {
         switch(this.state.type) {
         case 2:
             node = this.startNode();
-            this.setContext(types$1a.brace);
+            this.setContext(types$r.brace);
             this.next();
-            node = this.jsxParseExpressionContainer(node, types$1a.j_oTag);
+            node = this.jsxParseExpressionContainer(node, types$r.j_oTag);
             
             if (node.expression.type === 'JSXEmptyExpression') {
                 this.raise(JsxErrors$1.AttributeIsEmpty, node);
@@ -23545,7 +21322,7 @@ var jsx$4 = (superClass) => class JSXParserMixin extends superClass {
     jsxParseSpreadChild(node) {
         this.next();
         node.expression = this.parseExpression();
-        this.setContext(types$1a.j_expr);
+        this.setContext(types$r.j_expr);
         this.state.canStartJSXElement = true;
         this.expect(4);
         return this.finishNode(node, 'JSXSpreadChild');
@@ -23574,11 +21351,11 @@ var jsx$4 = (superClass) => class JSXParserMixin extends superClass {
         const node = this.startNode();
         
         if (this.match(2)) {
-            this.setContext(types$1a.brace);
+            this.setContext(types$r.brace);
             this.next();
             this.expect(17);
             node.argument = this.parseMaybeAssignAllowIn();
-            this.setContext(types$1a.j_oTag);
+            this.setContext(types$r.j_oTag);
             this.state.canStartJSXElement = true;
             this.expect(4);
             return this.finishNode(node, 'JSXSpreadAttribute');
@@ -23652,13 +21429,13 @@ var jsx$4 = (superClass) => class JSXParserMixin extends superClass {
                 
                 case 2: {
                     const node2 = this.startNode();
-                    this.setContext(types$1a.brace);
+                    this.setContext(types$r.brace);
                     this.next();
                     
                     if (this.match(17)) {
                         children.push(this.jsxParseSpreadChild(node2));
                     } else {
-                        children.push(this.jsxParseExpressionContainer(node2, types$1a.j_expr));
+                        children.push(this.jsxParseExpressionContainer(node2, types$r.j_expr));
                     }
                     
                     break;
@@ -23734,12 +21511,12 @@ var jsx$4 = (superClass) => class JSXParserMixin extends superClass {
     getTokenFromCode(code2) {
         const context = this.curContext();
         
-        if (context === types$1a.j_expr) {
+        if (context === types$r.j_expr) {
             this.jsxReadToken();
             return;
         }
         
-        if (context === types$1a.j_oTag || context === types$1a.j_cTag) {
+        if (context === types$r.j_oTag || context === types$r.j_cTag) {
             if (isIdentifierStart2$1(code2)) {
                 this.jsxReadWord();
                 return;
@@ -23751,7 +21528,7 @@ var jsx$4 = (superClass) => class JSXParserMixin extends superClass {
                 return;
             }
             
-            if ((code2 === 34 || code2 === 39) && context === types$1a.j_oTag) {
+            if ((code2 === 34 || code2 === 39) && context === types$r.j_oTag) {
                 this.jsxReadString(code2);
                 return;
             }
@@ -23770,18 +21547,18 @@ var jsx$4 = (superClass) => class JSXParserMixin extends superClass {
         const {context, type} = this.state;
         
         if (type === 52 && prevType === 138) {
-            context.splice(-2, 2, types$1a.j_cTag);
+            context.splice(-2, 2, types$r.j_cTag);
             this.state.canStartJSXElement = false;
         } else if (type === 138) {
-            context.push(types$1a.j_oTag);
+            context.push(types$r.j_oTag);
         } else if (type === 139) {
             const out = context[context.length - 1];
             
-            if (out === types$1a.j_oTag && prevType === 52 || out === types$1a.j_cTag) {
+            if (out === types$r.j_oTag && prevType === 52 || out === types$r.j_cTag) {
                 context.pop();
-                this.state.canStartJSXElement = context[context.length - 1] === types$1a.j_expr;
+                this.state.canStartJSXElement = context[context.length - 1] === types$r.j_expr;
             } else {
-                this.setContext(types$1a.j_expr);
+                this.setContext(types$r.j_expr);
                 this.state.canStartJSXElement = true;
             }
         } else {
@@ -23792,18 +21569,11 @@ var jsx$4 = (superClass) => class JSXParserMixin extends superClass {
 };
 
 var TypeScriptScope$1 = class TypeScriptScope extends Scope$2 {
-    constructor() {
-        super(...arguments);
-        __publicField$1(this, 'tsNames',         /* @__PURE__ */new Map());
-    }
+    tsNames =     /* @__PURE__ */new Map();
 };
 
 var TypeScriptScopeHandler$1 = class TypeScriptScopeHandler extends ScopeHandler$1 {
-    constructor() {
-        super(...arguments);
-        __publicField$1(this, 'importsStack', []);
-    }
-    
+    importsStack = [];
     createScope(flags) {
         this.importsStack.push(        /* @__PURE__ */new Set());
         return new TypeScriptScope$1(flags);
@@ -23944,10 +21714,7 @@ var TypeScriptScopeHandler$1 = class TypeScriptScopeHandler extends ScopeHandler
 };
 
 var ProductionParameterHandler$1 = class ProductionParameterHandler {
-    constructor() {
-        __publicField$1(this, 'stacks', []);
-    }
-    
+    stacks = [];
     enter(flags) {
         this.stacks.push(flags);
     }
@@ -23982,11 +21749,8 @@ function functionFlags$1(isAsync, isGenerator) {
 }
 
 var BaseParser$1 = class BaseParser {
-    constructor() {
-        __publicField$1(this, 'sawUnambiguousESM', false);
-        __publicField$1(this, 'ambiguousScriptDifferentAst', false);
-    }
-    
+    sawUnambiguousESM = false;
+    ambiguousScriptDifferentAst = false;
     sourceToOffsetPos(sourcePos) {
         return sourcePos + this.startIndex;
     }
@@ -24233,37 +21997,7 @@ var CommentsParser$1 = class CommentsParser extends BaseParser$1 {
 };
 
 var State$3 = class _State {
-    constructor() {
-        __publicField$1(this, 'flags', 1024);
-        __publicField$1(this, 'startIndex');
-        __publicField$1(this, 'curLine');
-        __publicField$1(this, 'lineStart');
-        __publicField$1(this, 'startLoc');
-        __publicField$1(this, 'endLoc');
-        __publicField$1(this, 'errors', []);
-        __publicField$1(this, 'potentialArrowAt', -1);
-        __publicField$1(this, 'noArrowAt', []);
-        __publicField$1(this, 'noArrowParamsConversionAt', []);
-        __publicField$1(this, 'topicContext', {
-            maxNumOfResolvableTopics: 0,
-            maxTopicIndex: null,
-        });
-        __publicField$1(this, 'labels', []);
-        __publicField$1(this, 'commentsLen', 0);
-        __publicField$1(this, 'commentStack', []);
-        __publicField$1(this, 'pos', 0);
-        __publicField$1(this, 'type', 135);
-        __publicField$1(this, 'value', null);
-        __publicField$1(this, 'start', 0);
-        __publicField$1(this, 'end', 0);
-        __publicField$1(this, 'lastTokEndLoc', null);
-        __publicField$1(this, 'lastTokStartLoc', null);
-        __publicField$1(this, 'context', [types$1a.brace]);
-        __publicField$1(this, 'firstInvalidTemplateEscapePos', null);
-        __publicField$1(this, 'strictErrors',         /* @__PURE__ */new Map());
-        __publicField$1(this, 'tokensLength', 0);
-    }
-    
+    flags = 1024;
     get strict() {
         return (this.flags & 1) > 0;
     }
@@ -24275,6 +22009,11 @@ var State$3 = class _State {
             this.flags &= -2;
     }
     
+    startIndex;
+    curLine;
+    lineStart;
+    startLoc;
+    endLoc;
     init({strictMode, sourceType, startIndex, startLine, startColumn}) {
         this.strict = strictMode === false ? false : strictMode === true ? true : sourceType === 'module';
         this.startIndex = startIndex;
@@ -24284,6 +22023,10 @@ var State$3 = class _State {
         this.endLoc = new Position$1(startLine, startColumn, startIndex);
     }
     
+    errors = [];
+    potentialArrowAt = -1;
+    noArrowAt = [];
+    noArrowParamsConversionAt = [];
     get maybeInArrowParameters() {
         return (this.flags & 2) > 0;
     }
@@ -24361,6 +22104,10 @@ var State$3 = class _State {
             this.flags &= -129;
     }
     
+    topicContext = {
+        maxNumOfResolvableTopics: 0,
+        maxTopicIndex: null,
+    };
     get soloAwait() {
         return (this.flags & 256) > 0;
     }
@@ -24383,6 +22130,17 @@ var State$3 = class _State {
             this.flags &= -513;
     }
     
+    labels = [];
+    commentsLen = 0;
+    commentStack = [];
+    pos = 0;
+    type = 135;
+    value = null;
+    start = 0;
+    end = 0;
+    lastTokEndLoc = null;
+    lastTokStartLoc = null;
+    context = [types$r.brace];
     get canStartJSXElement() {
         return (this.flags & 1024) > 0;
     }
@@ -24405,6 +22163,7 @@ var State$3 = class _State {
             this.flags &= -2049;
     }
     
+    firstInvalidTemplateEscapePos = null;
     get hasTopLevelAwait() {
         return (this.flags & 4096) > 0;
     }
@@ -24416,6 +22175,8 @@ var State$3 = class _State {
             this.flags &= -4097;
     }
     
+    strictErrors =     /* @__PURE__ */new Map();
+    tokensLength = 0;
     curPosition() {
         return new Position$1(this.curLine, this.pos - this.lineStart, this.pos + this.startIndex);
     }
@@ -24834,44 +22595,10 @@ var Token$1 = class Token {
 };
 
 var Tokenizer$1 = class Tokenizer extends CommentsParser$1 {
+    isLookahead;
+    tokens = [];
     constructor(options, input) {
         super();
-        __publicField$1(this, 'isLookahead');
-        __publicField$1(this, 'tokens', []);
-        __publicField$1(this, 'errorHandlers_readInt', {
-            invalidDigit: (pos, lineStart, curLine, radix) => {
-                if (!(this.optionFlags & 2048))
-                    return false;
-                
-                this.raise(Errors$1.InvalidDigit, buildPosition$1(pos, lineStart, curLine), {
-                    radix,
-                });
-                return true;
-            },
-            numericSeparatorInEscapeSequence: this.errorBuilder(Errors$1.NumericSeparatorInEscapeSequence),
-            unexpectedNumericSeparator: this.errorBuilder(Errors$1.UnexpectedNumericSeparator),
-        });
-        __publicField$1(this, 'errorHandlers_readCodePoint', {
-            ...this.errorHandlers_readInt,
-            invalidEscapeSequence: this.errorBuilder(Errors$1.InvalidEscapeSequence),
-            invalidCodePoint: this.errorBuilder(Errors$1.InvalidCodePoint),
-        });
-        __publicField$1(this, 'errorHandlers_readStringContents_string', {
-            ...this.errorHandlers_readCodePoint,
-            strictNumericEscape: (pos, lineStart, curLine) => {
-                this.recordStrictModeErrors(Errors$1.StrictNumericEscape, buildPosition$1(pos, lineStart, curLine));
-            },
-            unterminated: (pos, lineStart, curLine) => {
-                throw this.raise(Errors$1.UnterminatedString, buildPosition$1(pos - 1, lineStart, curLine));
-            },
-        });
-        __publicField$1(this, 'errorHandlers_readStringContents_template', {
-            ...this.errorHandlers_readCodePoint,
-            strictNumericEscape: this.errorBuilder(Errors$1.StrictNumericEscape),
-            unterminated: (pos, lineStart, curLine) => {
-                throw this.raise(Errors$1.UnterminatedTemplate, buildPosition$1(pos, lineStart, curLine));
-            },
-        });
         this.state = new State$3();
         this.state.init(options);
         this.input = input;
@@ -26025,21 +23752,54 @@ var Tokenizer$1 = class Tokenizer extends CommentsParser$1 {
             this.raise(error, buildPosition$1(pos, lineStart, curLine));
         };
     }
+    
+    errorHandlers_readInt = {
+        invalidDigit: (pos, lineStart, curLine, radix) => {
+            if (!(this.optionFlags & 2048))
+                return false;
+            
+            this.raise(Errors$1.InvalidDigit, buildPosition$1(pos, lineStart, curLine), {
+                radix,
+            });
+            return true;
+        },
+        numericSeparatorInEscapeSequence: this.errorBuilder(Errors$1.NumericSeparatorInEscapeSequence),
+        unexpectedNumericSeparator: this.errorBuilder(Errors$1.UnexpectedNumericSeparator),
+    };
+    errorHandlers_readCodePoint = {
+        ...this.errorHandlers_readInt,
+        invalidEscapeSequence: this.errorBuilder(Errors$1.InvalidEscapeSequence),
+        invalidCodePoint: this.errorBuilder(Errors$1.InvalidCodePoint),
+    };
+    errorHandlers_readStringContents_string = {
+        ...this.errorHandlers_readCodePoint,
+        strictNumericEscape: (pos, lineStart, curLine) => {
+            this.recordStrictModeErrors(Errors$1.StrictNumericEscape, buildPosition$1(pos, lineStart, curLine));
+        },
+        unterminated: (pos, lineStart, curLine) => {
+            throw this.raise(Errors$1.UnterminatedString, buildPosition$1(pos - 1, lineStart, curLine));
+        },
+    };
+    errorHandlers_readStringContents_template = {
+        ...this.errorHandlers_readCodePoint,
+        strictNumericEscape: this.errorBuilder(Errors$1.StrictNumericEscape),
+        unterminated: (pos, lineStart, curLine) => {
+            throw this.raise(Errors$1.UnterminatedTemplate, buildPosition$1(pos, lineStart, curLine));
+        },
+    };
 };
 
 var ClassScope$1 = class ClassScope {
-    constructor() {
-        __publicField$1(this, 'privateNames',         /* @__PURE__ */new Set());
-        __publicField$1(this, 'loneAccessors',         /* @__PURE__ */new Map());
-        __publicField$1(this, 'undefinedPrivateNames',         /* @__PURE__ */new Map());
-    }
+    privateNames =     /* @__PURE__ */new Set();
+    loneAccessors =     /* @__PURE__ */new Map();
+    undefinedPrivateNames =     /* @__PURE__ */new Map();
 };
 
 var ClassScopeHandler$1 = class ClassScopeHandler {
+    parser;
+    stack = [];
+    undefinedPrivateNames =     /* @__PURE__ */new Map();
     constructor(parser) {
-        __publicField$1(this, 'parser');
-        __publicField$1(this, 'stack', []);
-        __publicField$1(this, 'undefinedPrivateNames',         /* @__PURE__ */new Map());
         this.parser = parser;
     }
     
@@ -26138,9 +23898,9 @@ var ExpressionScope$1 = class ExpressionScope {
 };
 
 var ArrowHeadParsingScope$1 = class ArrowHeadParsingScope extends ExpressionScope$1 {
+    declarationErrors =     /* @__PURE__ */new Map();
     constructor(type) {
         super(type);
-        __publicField$1(this, 'declarationErrors',         /* @__PURE__ */new Map());
     }
     
     recordDeclarationError(ParsingErrorClass, at) {
@@ -26158,9 +23918,11 @@ var ArrowHeadParsingScope$1 = class ArrowHeadParsingScope extends ExpressionScop
 };
 
 var ExpressionScopeHandler$1 = class ExpressionScopeHandler {
+    parser;
+    stack = [
+        new ExpressionScope$1(),
+    ];
     constructor(parser) {
-        __publicField$1(this, 'parser');
-        __publicField$1(this, 'stack', [new ExpressionScope$1()]);
         this.parser = parser;
     }
     
@@ -26550,18 +24312,15 @@ var UtilParser$1 = class UtilParser extends Tokenizer$1 {
 };
 
 var ExpressionErrors$1 = class ExpressionErrors {
-    constructor() {
-        __publicField$1(this, 'shorthandAssignLoc', null);
-        __publicField$1(this, 'doubleProtoLoc', null);
-        __publicField$1(this, 'privateKeyLoc', null);
-        __publicField$1(this, 'optionalParametersLoc', null);
-        __publicField$1(this, 'voidPatternLoc', null);
-    }
+    shorthandAssignLoc = null;
+    doubleProtoLoc = null;
+    privateKeyLoc = null;
+    optionalParametersLoc = null;
+    voidPatternLoc = null;
 };
 
 var Node$2 = class Node {
     constructor(parser, pos, loc) {
-        __publicField$1(this, 'type', '');
         this.start = pos;
         this.end = 0;
         this.loc = new SourceLocation$1(loc);
@@ -26572,6 +24331,8 @@ var Node$2 = class Node {
         if (parser?.filename)
             this.loc.filename = parser.filename;
     }
+    
+    type = '';
 };
 
 var NodePrototype$1 = Node$2.prototype;
@@ -27023,7 +24784,7 @@ var LValParser$1 = class LValParser extends NodeUtils$1 {
     }
     
     parseMaybeDefault(startLoc, left) {
-        startLoc ?? (startLoc = this.state.startLoc);
+        startLoc ??= this.state.startLoc;
         left = left ?? this.parseBindingAtom();
         
         if (!this.eat(25))
@@ -27120,7 +24881,8 @@ var LValParser$1 = class LValParser extends NodeUtils$1 {
         }
         
         const unwrappedExpression = unwrapParenthesizedExpression$1(expression2);
-        disallowCallExpression || (disallowCallExpression = unwrappedExpression.type === 'CallExpression' && (unwrappedExpression.callee.type === 'Import' || unwrappedExpression.callee.type === 'Super'));
+        
+        disallowCallExpression ||= unwrappedExpression.type === 'CallExpression' && (unwrappedExpression.callee.type === 'Import' || unwrappedExpression.callee.type === 'Super');
         const validity = this.isValidLVal(type, disallowCallExpression, !(hasParenthesizedAncestor || expression2.extra?.parenthesized) && ancestor.type === 'AssignmentExpression', binding);
         
         if (validity === true)
@@ -27366,47 +25128,7 @@ function tsIsEntityName$1(node) {
     }
 }
 
-var typescript$4 = (superClass) => class TypeScriptParserMixin extends superClass {
-    constructor() {
-        super(...arguments);
-        __publicField$1(this, 'tsParseInOutModifiers', this.tsParseModifiers.bind(this, {
-            allowedModifiers: ['in', 'out'],
-            disallowedModifiers: [
-                'const',
-                'public',
-                'private',
-                'protected',
-                'readonly',
-                'declare',
-                'abstract',
-                'override',
-            ],
-            errorTemplate: TSErrors$1.InvalidModifierOnTypeParameter,
-        }));
-        __publicField$1(this, 'tsParseConstModifier', this.tsParseModifiers.bind(this, {
-            allowedModifiers: ['const'],
-            disallowedModifiers: ['in', 'out'],
-            errorTemplate: TSErrors$1.InvalidModifierOnTypeParameterPositions,
-        }));
-        __publicField$1(this, 'tsParseInOutConstModifiers', this.tsParseModifiers.bind(this, {
-            allowedModifiers: [
-                'in',
-                'out',
-                'const',
-            ],
-            disallowedModifiers: [
-                'public',
-                'private',
-                'protected',
-                'readonly',
-                'declare',
-                'abstract',
-                'override',
-            ],
-            errorTemplate: TSErrors$1.InvalidModifierOnTypeParameter,
-        }));
-    }
-    
+var typescript$2 = (superClass) => class TypeScriptParserMixin extends superClass {
     getScopeHandler() {
         return TypeScriptScopeHandler$1;
     }
@@ -27781,6 +25503,42 @@ var typescript$4 = (superClass) => class TypeScriptParserMixin extends superClas
         return this.finishNode(node, 'TSTypeQuery');
     }
     
+    tsParseInOutModifiers = this.tsParseModifiers.bind(this, {
+        allowedModifiers: ['in', 'out'],
+        disallowedModifiers: [
+            'const',
+            'public',
+            'private',
+            'protected',
+            'readonly',
+            'declare',
+            'abstract',
+            'override',
+        ],
+        errorTemplate: TSErrors$1.InvalidModifierOnTypeParameter,
+    });
+    tsParseConstModifier = this.tsParseModifiers.bind(this, {
+        allowedModifiers: ['const'],
+        disallowedModifiers: ['in', 'out'],
+        errorTemplate: TSErrors$1.InvalidModifierOnTypeParameterPositions,
+    });
+    tsParseInOutConstModifiers = this.tsParseModifiers.bind(this, {
+        allowedModifiers: [
+            'in',
+            'out',
+            'const',
+        ],
+        disallowedModifiers: [
+            'public',
+            'private',
+            'protected',
+            'readonly',
+            'declare',
+            'abstract',
+            'override',
+        ],
+        errorTemplate: TSErrors$1.InvalidModifierOnTypeParameter,
+    });
     tsParseTypeParameter(parseModifiers) {
         const node = this.startNode();
         parseModifiers(node);
@@ -28105,7 +25863,7 @@ var typescript$4 = (superClass) => class TypeScriptParserMixin extends superClas
                 this.raise(TSErrors$1.OptionalTypeBeforeRequired, elementNode);
             }
             
-            seenOptionalElement || (seenOptionalElement = type === 'TSNamedTupleMember' && elementNode.optional || type === 'TSOptionalType');
+            seenOptionalElement ||= type === 'TSNamedTupleMember' && elementNode.optional || type === 'TSOptionalType';
         });
         return this.finishNode(node, 'TSTupleType');
     }
@@ -28769,7 +26527,7 @@ var typescript$4 = (superClass) => class TypeScriptParserMixin extends superClas
     }
     
     tsInTopLevelContext(cb) {
-        if (this.curContext() !== types$1a.brace) {
+        if (this.curContext() !== types$r.brace) {
             const oldContext = this.state.context;
             
             this.state.context = [oldContext[0]];
@@ -29162,7 +26920,7 @@ var typescript$4 = (superClass) => class TypeScriptParserMixin extends superClas
         
         if (node.params.length === 0) {
             this.raise(TSErrors$1.EmptyTypeArguments, node);
-        } else if (!this.state.inType && this.curContext() === types$1a.brace) {
+        } else if (!this.state.inType && this.curContext() === types$r.brace) {
             this.reScan_lt_gt();
         }
         
@@ -30064,7 +27822,7 @@ var typescript$4 = (superClass) => class TypeScriptParserMixin extends superClas
             
             const currentContext = context[context.length - 1];
             
-            if (currentContext === types$1a.j_oTag || currentContext === types$1a.j_expr) {
+            if (currentContext === types$r.j_oTag || currentContext === types$r.j_expr) {
                 context.pop();
             }
         }
@@ -30625,7 +28383,7 @@ var typescript$4 = (superClass) => class TypeScriptParserMixin extends superClas
     fillOptionalPropertiesForTSESLint(node) {
         switch(node.type) {
         case 'ExpressionStatement':
-            node.directive ?? (node.directive = void 0);
+            node.directive ??= void 0;
             return;
         
         case 'RestElement':
@@ -30635,17 +28393,17 @@ var typescript$4 = (superClass) => class TypeScriptParserMixin extends superClas
         case 'ArrayPattern':        
         case 'AssignmentPattern':        
         case 'ObjectPattern':
-            node.decorators ?? (node.decorators = []);
-            node.optional ?? (node.optional = false);
-            node.typeAnnotation ?? (node.typeAnnotation = void 0);
+            node.decorators ??= [];
+            node.optional ??= false;
+            node.typeAnnotation ??= void 0;
             return;
         
         case 'TSParameterProperty':
-            node.accessibility ?? (node.accessibility = void 0);
-            node.decorators ?? (node.decorators = []);
-            node.override ?? (node.override = false);
-            node.readonly ?? (node.readonly = false);
-            node.static ?? (node.static = false);
+            node.accessibility ??= void 0;
+            node.decorators ??= [];
+            node.override ??= false;
+            node.readonly ??= false;
+            node.static ??= false;
             return;
         
         case 'TSEmptyBodyFunctionExpression':
@@ -30656,97 +28414,97 @@ var typescript$4 = (superClass) => class TypeScriptParserMixin extends superClas
         case 'FunctionExpression':        
         case 'ClassMethod':        
         case 'ClassPrivateMethod':
-            node.declare ?? (node.declare = false);
-            node.returnType ?? (node.returnType = void 0);
-            node.typeParameters ?? (node.typeParameters = void 0);
+            node.declare ??= false;
+            node.returnType ??= void 0;
+            node.typeParameters ??= void 0;
             return;
         
         case 'Property':
-            node.optional ?? (node.optional = false);
+            node.optional ??= false;
             return;
         
         case 'TSMethodSignature':        
         case 'TSPropertySignature':
-            node.optional ?? (node.optional = false);
+            node.optional ??= false;
         
         case 'TSIndexSignature':
-            node.accessibility ?? (node.accessibility = void 0);
-            node.readonly ?? (node.readonly = false);
-            node.static ?? (node.static = false);
+            node.accessibility ??= void 0;
+            node.readonly ??= false;
+            node.static ??= false;
             return;
         
         case 'TSAbstractPropertyDefinition':        
         case 'PropertyDefinition':        
         case 'TSAbstractAccessorProperty':        
         case 'AccessorProperty':
-            node.declare ?? (node.declare = false);
-            node.definite ?? (node.definite = false);
-            node.readonly ?? (node.readonly = false);
-            node.typeAnnotation ?? (node.typeAnnotation = void 0);
+            node.declare ??= false;
+            node.definite ??= false;
+            node.readonly ??= false;
+            node.typeAnnotation ??= void 0;
         
         case 'TSAbstractMethodDefinition':        
         case 'MethodDefinition':
-            node.accessibility ?? (node.accessibility = void 0);
-            node.decorators ?? (node.decorators = []);
-            node.override ?? (node.override = false);
-            node.optional ?? (node.optional = false);
+            node.accessibility ??= void 0;
+            node.decorators ??= [];
+            node.override ??= false;
+            node.optional ??= false;
             return;
         
         case 'ClassExpression':
-            node.id ?? (node.id = null);
+            node.id ??= null;
         
         case 'ClassDeclaration':
-            node.abstract ?? (node.abstract = false);
-            node.declare ?? (node.declare = false);
-            node.decorators ?? (node.decorators = []);
-            node.implements ?? (node.implements = []);
-            node.superTypeArguments ?? (node.superTypeArguments = void 0);
-            node.typeParameters ?? (node.typeParameters = void 0);
+            node.abstract ??= false;
+            node.declare ??= false;
+            node.decorators ??= [];
+            node.implements ??= [];
+            node.superTypeArguments ??= void 0;
+            node.typeParameters ??= void 0;
             return;
         
         case 'TSTypeAliasDeclaration':        
         case 'VariableDeclaration':
-            node.declare ?? (node.declare = false);
+            node.declare ??= false;
             return;
         
         case 'VariableDeclarator':
-            node.definite ?? (node.definite = false);
+            node.definite ??= false;
             return;
         
         case 'TSEnumDeclaration':
-            node.const ?? (node.const = false);
-            node.declare ?? (node.declare = false);
+            node.const ??= false;
+            node.declare ??= false;
             return;
         
         case 'TSEnumMember':
-            node.computed ?? (node.computed = false);
+            node.computed ??= false;
             return;
         
         case 'TSImportType':
-            node.qualifier ?? (node.qualifier = null);
-            node.options ?? (node.options = null);
-            node.typeArguments ?? (node.typeArguments = null);
+            node.qualifier ??= null;
+            node.options ??= null;
+            node.typeArguments ??= null;
             return;
         
         case 'TSInterfaceDeclaration':
-            node.declare ?? (node.declare = false);
-            node.extends ?? (node.extends = []);
+            node.declare ??= false;
+            node.extends ??= [];
             return;
         
         case 'TSMappedType':
-            node.optional ?? (node.optional = false);
-            node.readonly ?? (node.readonly = void 0);
+            node.optional ??= false;
+            node.readonly ??= void 0;
             return;
         
         case 'TSModuleDeclaration':
-            node.declare ?? (node.declare = false);
-            node.global ?? (node.global = node.kind === 'global');
+            node.declare ??= false;
+            node.global ??= node.kind === 'global';
             return;
         
         case 'TSTypeParameter':
-            node.const ?? (node.const = false);
-            node.in ?? (node.in = false);
-            node.out ?? (node.out = false);
+            node.const ??= false;
+            node.in ??= false;
+            node.out ??= false;
             return;
         }
     }
@@ -31254,8 +29012,8 @@ function validatePlugins$1(pluginsMap) {
 
 var mixinPlugins$1 = {
     estree: estree$1,
-    jsx: jsx$4,
-    typescript: typescript$4,
+    jsx: jsx$2,
+    typescript: typescript$2,
     v8intrinsic: v8intrinsic$1,
     placeholders: placeholders$1,
 };
@@ -34981,7 +32739,7 @@ var StatementParser$1 = class StatementParser extends ExpressionParser$1 {
     
     maybeParseExportNamespaceSpecifier(node) {
         if (this.isContextual(89)) {
-            node.specifiers ?? (node.specifiers = []);
+            node.specifiers ??= [];
             const specifier = this.startNodeAt(this.state.lastTokStartLoc);
             this.next();
             specifier.exported = this.parseModuleExportName();
@@ -35388,7 +33146,7 @@ var StatementParser$1 = class StatementParser extends ExpressionParser$1 {
     }
     
     parseImportSourceAndAttributes(node) {
-        node.specifiers ?? (node.specifiers = []);
+        node.specifiers ??= [];
         node.source = this.parseImportSource();
         this.maybeParseImportAttributes(node);
         this.checkImportPhase(node);
@@ -35643,7 +33401,7 @@ var Parser$1 = class Parser extends StatementParser$1 {
     }
 };
 
-function parse$7(input, options) {
+function parse$b(input, options) {
     if (options?.sourceType === 'unambiguous') {
         options = {
             ...options,
@@ -36270,7 +34028,7 @@ var js_tokens_default = jsTokens;
 
 // ../babel-babel/packages/babel-code-frame/lib/index.js
 function isColorSupported$1() {
-    return typeof browser$1$1 === 'object' && (browser$1$1.env.FORCE_COLOR === '0' || browser$1$1.env.FORCE_COLOR === 'false') ? false : import_picocolors$1.default.isColorSupported;
+    return typeof process === 'object' && (process.env.FORCE_COLOR === '0' || process.env.FORCE_COLOR === 'false') ? false : import_picocolors$1.default.isColorSupported;
 }
 
 var compose$1 = (f, g) => (v) => f(g(v));
@@ -36315,7 +34073,7 @@ var getTokenType$1 = function(token) {
     if (token.type === 'IdentifierName') {
         const tokenValue = token.value;
         
-        if (isKeyword$1(tokenValue) || isStrictReservedWord$1(tokenValue, true) || sometimesKeywords$1.has(tokenValue)) {
+        if (isKeyword$2(tokenValue) || isStrictReservedWord$1(tokenValue, true) || sometimesKeywords$1.has(tokenValue)) {
             return 'keyword';
         }
         
@@ -36374,7 +34132,7 @@ var getTokenType$1 = function(token) {
     }
 };
 
-function* tokenize$3(text) {
+function* tokenize$2(text) {
     for (const token of js_tokens_default(text, {jsx: true})) {
         switch(token.type) {
         case 'TemplateHead':
@@ -36430,7 +34188,7 @@ function highlight$1(text) {
     const defs = getDefs$1(true);
     let highlighted = '';
     
-    for (const {type, value} of tokenize$3(text)) {
+    for (const {type, value} of tokenize$2(text)) {
         if (type in defs) {
             highlighted += value
                 .split(NEWLINE$1$1)
@@ -36520,7 +34278,7 @@ function getMarkerLines$1(loc, source, opts) {
     };
 }
 
-function codeFrameColumns$2(rawLines, loc, opts = {}) {
+function codeFrameColumns$1(rawLines, loc, opts = {}) {
     const shouldHighlight = opts.forceColor || isColorSupported$1() && opts.highlightCode;
     const defs = getDefs$1(shouldHighlight);
     const lines = rawLines.split(NEWLINE$3);
@@ -36884,12 +34642,12 @@ function parseWithCodeFrame$1(code2, parserOpts, syntacticPlaceholders) {
         plugins,
     };
     try {
-        return parse$7(code2, parserOpts);
+        return parse$b(code2, parserOpts);
     } catch(err) {
         const loc = err.loc;
         
         if (loc) {
-            err.message += '\n' + codeFrameColumns$2(code2, {
+            err.message += '\n' + codeFrameColumns$1(code2, {
                 start: loc,
             });
             err.code = 'BABEL_TEMPLATE_PARSE_ERROR';
@@ -37229,14 +34987,14 @@ ${rootStack}`;
 
 var smart$2 = createTemplateBuilder$1(smart$1$1);
 var statement$2 = createTemplateBuilder$1(statement$1$1);
-var statements$5 = createTemplateBuilder$1(statements$1$1);
+var statements$3 = createTemplateBuilder$1(statements$1$1);
 var expression$2 = createTemplateBuilder$1(expression$1$1);
 var program2$1 = createTemplateBuilder$1(program$1$1);
 
-var index$2 = Object.assign(smart$2.bind(void 0), {
+var index$1 = Object.assign(smart$2.bind(void 0), {
     smart: smart$2,
     statement: statement$2,
-    statements: statements$5,
+    statements: statements$3,
     expression: expression$2,
     program: program2$1,
     ast: smart$2.ast,
@@ -38256,14 +36014,14 @@ function addMappingInternal$1(skipable, map, mapping) {
 var import_jsesc$1 = __toESM$1(require_jsesc$1());
 
 var SourceMap$1 = class SourceMap {
+    _map;
+    _rawMappings;
+    _sourceFileName;
+    _lastGenLine = 0;
+    _lastSourceLine = 0;
+    _lastSourceColumn = 0;
+    _inputMap = null;
     constructor(opts, code2) {
-        __publicField$1(this, '_map');
-        __publicField$1(this, '_rawMappings');
-        __publicField$1(this, '_sourceFileName');
-        __publicField$1(this, '_lastGenLine', 0);
-        __publicField$1(this, '_lastSourceLine', 0);
-        __publicField$1(this, '_lastSourceColumn', 0);
-        __publicField$1(this, '_inputMap', null);
         const map = this._map = new GenMapping$1({
             sourceRoot: opts.sourceRoot,
         });
@@ -38300,7 +36058,7 @@ var SourceMap$1 = class SourceMap {
     }
     
     getRawMappings() {
-        return this._rawMappings || (this._rawMappings = allMappings$1(this._map));
+        return this._rawMappings ||= allMappings$1(this._map);
     }
     
     mark(generated, line, column, identifierName, identifierNamePos, filename) {
@@ -38342,27 +36100,6 @@ var SourceMap$1 = class SourceMap {
 
 var Buffer2$1 = class Buffer2 {
     constructor(map, indentChar) {
-        __publicField$1(this, '_map', null);
-        __publicField$1(this, '_buf', '');
-        __publicField$1(this, '_str', '');
-        __publicField$1(this, '_appendCount', 0);
-        __publicField$1(this, '_last', 0);
-        __publicField$1(this, '_queue', []);
-        __publicField$1(this, '_queueCursor', 0);
-        __publicField$1(this, '_canMarkIdName', true);
-        __publicField$1(this, '_indentChar', '');
-        __publicField$1(this, '_fastIndentations', []);
-        __publicField$1(this, '_position', {
-            line: 1,
-            column: 0,
-        });
-        __publicField$1(this, '_sourcePosition', {
-            identifierName: void 0,
-            identifierNamePos: void 0,
-            line: void 0,
-            column: void 0,
-            filename: void 0,
-        });
         this._map = map;
         this._indentChar = indentChar;
         for (let i = 0; i < 64; i++) {
@@ -38372,6 +36109,27 @@ var Buffer2$1 = class Buffer2 {
         this._allocQueue();
     }
     
+    _map = null;
+    _buf = '';
+    _str = '';
+    _appendCount = 0;
+    _last = 0;
+    _queue = [];
+    _queueCursor = 0;
+    _canMarkIdName = true;
+    _indentChar = '';
+    _fastIndentations = [];
+    _position = {
+        line: 1,
+        column: 0,
+    };
+    _sourcePosition = {
+        identifierName: void 0,
+        identifierNamePos: void 0,
+        line: void 0,
+        column: void 0,
+        filename: void 0,
+    };
     _allocQueue() {
         const queue = this._queue;
         
@@ -39299,7 +37057,7 @@ function Identifier$1$1(node, parent, tokenContext, getRawIdentifier) {
     });
 }
 
-var parens$2 = /* @__PURE__ */Object.freeze({
+var parens$1 = /* @__PURE__ */Object.freeze({
     __proto__: null,
     ArrowFunctionExpression: ConditionalExpression$1$1,
     AssignmentExpression: AssignmentExpression$1$1,
@@ -39387,7 +37145,7 @@ function expandAliases$1(obj) {
     return map;
 }
 
-var expandedParens$1 = expandAliases$1(parens$2);
+var expandedParens$1 = expandAliases$1(parens$1);
 var expandedWhitespaceNodes$1 = expandAliases$1(nodes$1);
 
 function isOrHasCallExpression$1(node) {
@@ -39488,12 +37246,12 @@ var n$1 = /* @__PURE__ */Object.freeze({
 var {traverseFast: traverseFast2$1, VISITOR_KEYS: VISITOR_KEYS2$1} = lib_exports$1;
 
 var TokenMap$1 = class TokenMap {
+    _tokens;
+    _source;
+    _nodesToTokenIndexes =     /* @__PURE__ */new Map();
+    _nodesOccurrencesCountCache =     /* @__PURE__ */new Map();
+    _tokensCache =     /* @__PURE__ */new Map();
     constructor(ast, tokens, source) {
-        __publicField$1(this, '_tokens');
-        __publicField$1(this, '_source');
-        __publicField$1(this, '_nodesToTokenIndexes',         /* @__PURE__ */new Map());
-        __publicField$1(this, '_nodesOccurrencesCountCache',         /* @__PURE__ */new Map());
-        __publicField$1(this, '_tokensCache',         /* @__PURE__ */new Map());
         this._tokens = tokens;
         this._source = source;
         traverseFast2$1(ast, (node) => {
@@ -42247,8 +40005,8 @@ function TSTypeParameterInstantiation2$1(node, parent) {
     let printTrailingSeparator = parent.type === 'ArrowFunctionExpression' && node.params.length === 1;
     
     if (this.tokenMap && node.start != null && node.end != null) {
-        printTrailingSeparator && (printTrailingSeparator = !!this.tokenMap.find(node, (t) => this.tokenMap.matchesOriginal(t, ',')));
-        printTrailingSeparator || (printTrailingSeparator = this.shouldPrintTrailingComma('>'));
+        printTrailingSeparator &&= !!this.tokenMap.find(node, (t) => this.tokenMap.matchesOriginal(t, ','));
+        printTrailingSeparator ||= this.shouldPrintTrailingComma('>');
     }
     
     this.printList(node.params, printTrailingSeparator);
@@ -43275,27 +41033,6 @@ var {needsParens: needsParens$2} = n$1;
 
 var Printer$1 = class Printer {
     constructor(format, map, tokens = null, originalCode = null) {
-        __publicField$1(this, 'tokenContext', TokenContext$1.normal);
-        __publicField$1(this, '_tokens', null);
-        __publicField$1(this, '_originalCode', null);
-        __publicField$1(this, '_currentNode', null);
-        __publicField$1(this, '_indent', 0);
-        __publicField$1(this, '_indentRepeat', 0);
-        __publicField$1(this, '_insideAux', false);
-        __publicField$1(this, '_noLineTerminator', false);
-        __publicField$1(this, '_noLineTerminatorAfterNode', null);
-        __publicField$1(this, '_printAuxAfterOnNextUserNode', false);
-        __publicField$1(this, '_printedComments',         /* @__PURE__ */new Set());
-        __publicField$1(this, '_endsWithInteger', false);
-        __publicField$1(this, '_endsWithWord', false);
-        __publicField$1(this, '_endsWithDiv', false);
-        __publicField$1(this, '_lastCommentLine', 0);
-        __publicField$1(this, '_endsWithInnerRaw', false);
-        __publicField$1(this, '_indentInnerComments', true);
-        __publicField$1(this, 'tokenMap', null);
-        __publicField$1(this, '_boundGetRawIdentifier', this._getRawIdentifier.bind(this));
-        __publicField$1(this, '_printSemicolonBeforeNextNode', -1);
-        __publicField$1(this, '_printSemicolonBeforeNextToken', -1);
         this.format = format;
         this._tokens = tokens;
         this._originalCode = originalCode;
@@ -43335,6 +41072,25 @@ var Printer$1 = class Printer {
         };
     }
     
+    tokenContext = TokenContext$1.normal;
+    _tokens = null;
+    _originalCode = null;
+    _currentNode = null;
+    _indent = 0;
+    _indentRepeat = 0;
+    _insideAux = false;
+    _noLineTerminator = false;
+    _noLineTerminatorAfterNode = null;
+    _printAuxAfterOnNextUserNode = false;
+    _printedComments =     /* @__PURE__ */new Set();
+    _endsWithInteger = false;
+    _endsWithWord = false;
+    _endsWithDiv = false;
+    _lastCommentLine = 0;
+    _endsWithInnerRaw = false;
+    _indentInnerComments = true;
+    tokenMap = null;
+    _boundGetRawIdentifier = this._getRawIdentifier.bind(this);
     generate(ast) {
         if (this.format.preserveFormat) {
             this.tokenMap = new TokenMap$1(ast, this._tokens, this._originalCode);
@@ -43365,6 +41121,8 @@ var Printer$1 = class Printer {
         this._indent--;
     }
     
+    _printSemicolonBeforeNextNode = -1;
+    _printSemicolonBeforeNextToken = -1;
     semicolon(force = false) {
         this._maybeAddAuxComment();
         
@@ -43759,7 +41517,7 @@ var Printer$1 = class Printer {
         let oldTokenContext;
         
         if (!shouldPrintParens) {
-            noLineTerminatorAfter || (noLineTerminatorAfter = !!parent && this._noLineTerminatorAfterNode === parent && isLastChild$1(parent, node));
+            noLineTerminatorAfter ||= !!parent && this._noLineTerminatorAfterNode === parent && isLastChild$1(parent, node);
             
             if (noLineTerminatorAfter) {
                 if (node.trailingComments?.some(commentIsNewline$1)) {
@@ -44374,7 +42132,7 @@ function normalizeOptions$1(code2, opts, ast) {
     return format;
 }
 
-function generate$7(ast, opts = {}, code2) {
+function generate$2(ast, opts = {}, code2) {
     const format = normalizeOptions$1(code2, opts, ast);
     const map = opts.sourceMaps ? new SourceMap$1(opts, code2) : null;
     const printer = new Printer$1(format, map, ast.tokens, typeof code2 === 'string' ? code2 : null);
@@ -44403,7 +42161,7 @@ function humanize$1(value) {
 
 var globalNamespaces$1 = '';
 
-function createDebug$c() {
+function createDebug$6() {
     return {
         enabled: false,
     };
@@ -44430,31 +42188,30 @@ function enable$2(namespaces$1) {
 }
 
 // ../babel-babel/node_modules/obug/dist/node.js
-var import_node_util = {
-    formatWithOptions: () => false,
-    inspect: () => false,
-};
+var isatty = () => false;
 
 var colors$1 = [];
 
 var inspectOpts = {};
 
-function useColors() {}
+function useColors() {
+    return 'colors' in inspectOpts ? Boolean(inspectOpts.colors) : isatty(process.stderr.fd);
+}
 
 function formatArgs$1() {}
 
 function log$7(...args) {
-    browser$1$1.stderr.write(`${(0, import_node_util.formatWithOptions)(this.inspectOpts, ...args)}
+    process.stderr.write(`${formatWithOptions(this.inspectOpts, ...args)}
 `);
 }
 
-var defaultOptions$8 = {
+var defaultOptions$6 = {
     useColors: useColors(),
     formatArgs: formatArgs$1,
     formatters: {
         o(v) {
             this.inspectOpts.colors = this.useColors;
-            return (0, import_node_util.inspect)(v, this
+            return inspect(v, this
                 .inspectOpts)
                 .split('\n')
                 .map((str) => str.trim())
@@ -44462,7 +42219,7 @@ var defaultOptions$8 = {
         },
         O(v) {
             this.inspectOpts.colors = this.useColors;
-            return (0, import_node_util.inspect)(v, this.inspectOpts);
+            return inspect(v, this.inspectOpts);
         },
     },
     inspectOpts,
@@ -44474,13 +42231,13 @@ function createDebug2(namespace, options) {
     var _ref;
     const color = (_ref = options) !== null && _ref !== void 0 ? _ref : selectColor$1(colors$1, namespace);
     
-    return createDebug$c(namespace, Object.assign(
-        defaultOptions$8,{color},
+    return createDebug$6(namespace, Object.assign(
+        defaultOptions$6,{color},
         options,
     ));
 }
 
-enable$2(browser$1$1.env.DEBUG || '');
+enable$2(process.env.DEBUG || '');
 // ../babel-babel/packages/babel-helper-globals/data/builtin-lower.json
 
 var builtin_lower_default$1 = [
@@ -44844,7 +42601,7 @@ function explode$1$1(visitor) {
         
         if (types2 !== null) {
             for (const type of types2) {
-                visitor[type] ?? (visitor[type] = {});
+                visitor[type] ??= {};
                 mergePair$1(visitor[type], fns);
             }
         } else {
@@ -44968,7 +42725,7 @@ function merge2$1(visitors2, states = [], wrapper) {
                 typeVisitor = wrapWithStateOrWrapper$1(typeVisitor, state, wrapper);
             }
             
-            const nodeVisitor = mergedVisitor[key] || (mergedVisitor[key] = {});
+            const nodeVisitor = mergedVisitor[key] ||= {};
             mergePair$1(nodeVisitor, typeVisitor);
         }
     }
@@ -45093,7 +42850,7 @@ function environmentVisitor$1(visitor) {
     return merge2$1([_environmentVisitor$1, visitor]);
 }
 
-var visitors$3 = /* @__PURE__ */Object.freeze({
+var visitors$1 = /* @__PURE__ */Object.freeze({
     __proto__: null,
     environmentVisitor: environmentVisitor$1,
     explode: explode$1$1,
@@ -45116,6 +42873,10 @@ var renameVisitor$1 = {
             
             if (path.isMethod()) {
                 path.requeueComputedKeyAndDecorators();
+            }
+            
+            if (path.isSwitchStatement()) {
+                path.context.maybeQueue(path.get('discriminant'));
             }
         }
     },
@@ -45291,16 +43052,11 @@ function traverseForScope$1(path, visitors2, state) {
 }
 
 var Binding$1 = class Binding {
+    identifier;
+    scope;
+    path;
+    kind;
     constructor({identifier: identifier4, scope: scope2, path, kind}) {
-        __publicField$1(this, 'identifier');
-        __publicField$1(this, 'scope');
-        __publicField$1(this, 'path');
-        __publicField$1(this, 'kind');
-        __publicField$1(this, 'constantViolations', []);
-        __publicField$1(this, 'constant', true);
-        __publicField$1(this, 'referencePaths', []);
-        __publicField$1(this, 'referenced', false);
-        __publicField$1(this, 'references', 0);
         this.identifier = identifier4;
         this.scope = scope2;
         this.path = path;
@@ -45313,6 +43069,11 @@ var Binding$1 = class Binding {
         this.clearValue();
     }
     
+    constantViolations = [];
+    constant = true;
+    referencePaths = [];
+    referenced = false;
+    references = 0;
     deoptValue() {
         this.clearValue();
         this.hasDeoptedValue = true;
@@ -45400,7 +43161,7 @@ function getCachedPaths$1(path) {
 
 function getOrCreateCachedPaths$1(node, parentPath) {
     if (parentPath) {
-        return parentPath._store || (parentPath._store =         /* @__PURE__ */new Map());
+        return parentPath._store ||=         /* @__PURE__ */new Map();
     }
     
     let paths = pathsCache$1.get(node);
@@ -45771,19 +43532,19 @@ var collectorVisitor$1 = {
 var scopeVisitor$1;
 var uid$1 = 0;
 
-var _Scope$1 = class _Scope {
+var Scope2$1 = class _Scope {
+    uid;
+    path;
+    block;
+    inited;
+    labels;
+    bindings;
+    referencesSet;
+    globals;
+    uidsSet;
+    data;
+    crawling;
     constructor(path) {
-        __publicField$1(this, 'uid');
-        __publicField$1(this, 'path');
-        __publicField$1(this, 'block');
-        __publicField$1(this, 'inited');
-        __publicField$1(this, 'labels');
-        __publicField$1(this, 'bindings');
-        __publicField$1(this, 'referencesSet');
-        __publicField$1(this, 'globals');
-        __publicField$1(this, 'uidsSet');
-        __publicField$1(this, 'data');
-        __publicField$1(this, 'crawling');
         const {node} = path;
         
         const cached = scope$1.get(node);
@@ -45800,6 +43561,16 @@ var _Scope$1 = class _Scope {
         this.inited = false;
     }
     
+    static globals = [
+        ...builtin_lower_default$1,
+        ...builtin_upper_default$1,
+    ];
+    static contextVariables = [
+        'arguments',
+        'undefined',
+        'Infinity',
+        'NaN',
+    ];
     get parent() {
         let parent, path = this.path;
         
@@ -45937,7 +43708,7 @@ var _Scope$1 = class _Scope {
         const binding = this.getBinding(oldName);
         
         if (binding) {
-            newName || (newName = this.generateUidIdentifier(oldName).name);
+            newName ||= this.generateUidIdentifier(oldName).name;
             const renamer = new Renamer$1(binding, oldName, newName);
             renamer.rename();
         }
@@ -46276,12 +44047,12 @@ var _Scope$1 = class _Scope {
         };
         
         this.crawling = true;
-        scopeVisitor$1 || (scopeVisitor$1 = traverse3$1.visitors.merge([{
+        scopeVisitor$1 ||= traverse3$1.visitors.merge([{
             Scope(path2) {
                 resetScope$1(path2.scope);
             },
         },
-collectorVisitor$1]));
+collectorVisitor$1]);
         
         if (path.type !== 'Program') {
             const typeVisitors = scopeVisitor$1[path.type];
@@ -46570,7 +44341,7 @@ collectorVisitor$1]));
             const init = [];
             
             for (const decl of parent.declarations) {
-                firstId ?? (firstId = decl.id);
+                firstId ??= decl.id;
                 
                 if (decl.init) {
                     init.push(assignmentExpression$3$1('=', decl.id, decl.init));
@@ -46599,15 +44370,6 @@ collectorVisitor$1]));
         }
     }
 };
-
-__publicField$1(_Scope$1, 'globals', [...builtin_lower_default$1, ...builtin_upper_default$1]);
-__publicField$1(_Scope$1, 'contextVariables', [
-    'arguments',
-    'undefined',
-    'Infinity',
-    'NaN',
-]);
-var Scope2$1 = _Scope$1;
 
 var {VISITOR_KEYS: VISITOR_KEYS$4$1} = lib_exports$1;
 
@@ -47450,7 +45212,7 @@ var hooks$1 = [
     },
 ];
 
-function remove$4() {
+function remove$3() {
     _assertUnremoved$1.call(this);
     resync$1.call(this);
     
@@ -47527,7 +45289,7 @@ var {
     thisExpression: thisExpression$1$1,
 } = lib_exports$1;
 
-function insertBefore$1(nodes_) {
+function insertBefore$2(nodes_) {
     _assertUnremoved$1.call(this);
     const nodes2 = _verifyNodeList$1.call(this, nodes_);
     const {parentPath, parent} = this;
@@ -47606,7 +45368,7 @@ function isAlmostConstantAssignment$1(node, scope2) {
     return blockScope.hasOwnBinding(node.left.name) && blockScope.getOwnBinding(node.left.name).constantViolations.length <= 1;
 }
 
-function insertAfter$2(nodes_) {
+function insertAfter$3(nodes_) {
     _assertUnremoved$1.call(this);
     
     if (this.isSequenceExpression()) {
@@ -47811,12 +45573,12 @@ function replaceWithSourceString$1(replacement) {
     
     try {
         replacement = `(${replacement})`;
-        ast = parse$7(replacement);
+        ast = parse$b(replacement);
     } catch(err) {
         const loc = err.loc;
         
         if (loc) {
-            err.message += ' - make sure this is an expression.\n' + codeFrameColumns$2(replacement, {
+            err.message += ' - make sure this is an expression.\n' + codeFrameColumns$1(replacement, {
                 start: {
                     line: loc.line,
                     column: loc.column + 1,
@@ -47834,7 +45596,7 @@ function replaceWithSourceString$1(replacement) {
     return this.replaceWith(expressionAST);
 }
 
-function replaceWith$9(replacementPath) {
+function replaceWith$8(replacementPath) {
     resync$1.call(this);
     
     if (this.removed) {
@@ -48511,7 +46273,7 @@ function _evaluate$1(path, state) {
         let func;
         
         if (callee.isIdentifier() && !path.scope.getBinding(callee.node.name) && (isValidObjectCallee$1(callee.node.name) || isValidIdentifierCallee$1(callee.node.name))) {
-            func = commonjsGlobal[callee.node.name];
+            func = global[callee.node.name];
         }
         
         if (callee.isMemberExpression()) {
@@ -48519,7 +46281,7 @@ function _evaluate$1(path, state) {
             const property = callee.get('property');
             
             if (object.isIdentifier() && property.isIdentifier() && isValidObjectCallee$1(object.node.name) && !isInvalidMethod$1(property.node.name)) {
-                context = commonjsGlobal[object.node.name];
+                context = global[object.node.name];
                 const key = property.node.name;
                 
                 if (Object.hasOwn(context, key)) {
@@ -48752,7 +46514,7 @@ function hoistFunctionEnvironment$1(fnPath, noNewArrows = true, allowInsertArrow
     let arrowParent;
     let thisEnvFn = fnPath.findParent((p) => {
         if (p.isArrowFunctionExpression()) {
-            arrowParent ?? (arrowParent = p);
+            arrowParent ??= p;
             return false;
         }
         
@@ -49282,7 +47044,7 @@ function ensureFunctionName$1(supportUnicodeId) {
         params.push(scope2.generateUidIdentifier('x'));
     }
     
-    const call2 = index$2.expression.ast`
+    const call2 = index$1.expression.ast`
     (function (${key}) {
       function ${id}(${params}) {
         return ${cloneNode3$1(key)}.apply(this, arguments);
@@ -50288,17 +48050,6 @@ var SHOULD_SKIP$1 = 1 << 2;
 
 var NodePath_Final$1 = class NodePath {
     constructor(hub, parent) {
-        __publicField$1(this, 'contexts', []);
-        __publicField$1(this, 'state', null);
-        __publicField$1(this, '_traverseFlags', 0);
-        __publicField$1(this, 'skipKeys', null);
-        __publicField$1(this, 'parentPath', null);
-        __publicField$1(this, 'container', null);
-        __publicField$1(this, 'listKey', null);
-        __publicField$1(this, 'key', null);
-        __publicField$1(this, 'node', null);
-        __publicField$1(this, 'type', null);
-        __publicField$1(this, '_store', null);
         this.parent = parent;
         this.hub = hub;
         this.data = null;
@@ -50306,6 +48057,9 @@ var NodePath_Final$1 = class NodePath {
         this.scope = null;
     }
     
+    contexts = [];
+    state = null;
+    _traverseFlags = 0;
     get removed() {
         return (this._traverseFlags & 1) > 0;
     }
@@ -50339,6 +48093,14 @@ var NodePath_Final$1 = class NodePath {
             this._traverseFlags &= -5;
     }
     
+    skipKeys = null;
+    parentPath = null;
+    container = null;
+    listKey = null;
+    key = null;
+    node = null;
+    type = null;
+    _store = null;
     static get({hub, parentPath, parent, container, listKey, key}) {
         if (!hub && parentPath) {
             hub = parentPath.hub;
@@ -50427,7 +48189,7 @@ var NodePath_Final$1 = class NodePath {
     }
     
     toString() {
-        return generate$7(this.node).code;
+        return generate$2(this.node).code;
     }
     
     get inList() {
@@ -50463,7 +48225,7 @@ var methods$1 = {
     isGenericType: isGenericType$1,
     replaceWithMultiple: replaceWithMultiple$4,
     replaceWithSourceString: replaceWithSourceString$1,
-    replaceWith: replaceWith$9,
+    replaceWith: replaceWith$8,
     replaceExpressionWithStatements: replaceExpressionWithStatements$1,
     replaceInline: replaceInline$1,
     evaluateTruthy: evaluateTruthy$1,
@@ -50496,9 +48258,9 @@ var methods$1 = {
     setContext: setContext$1,
     requeue: requeue$1,
     requeueComputedKeyAndDecorators: requeueComputedKeyAndDecorators$1,
-    remove: remove$4,
-    insertBefore: insertBefore$1,
-    insertAfter: insertAfter$2,
+    remove: remove$3,
+    insertBefore: insertBefore$2,
+    insertAfter: insertAfter$3,
     unshiftContainer: unshiftContainer$1,
     pushContainer: pushContainer$1,
     getOpposite: getOpposite$1,
@@ -50520,7 +48282,7 @@ var methods$1 = {
 };
 
 Object.assign(NodePath_Final$1.prototype, methods$1);
-for (const type of TYPES$5) {
+for (const type of TYPES$4) {
     const typeKey = `is${type}`;
     const fn = lib_exports$1[typeKey];
     
@@ -50539,22 +48301,22 @@ for (const type of Object.keys(virtualTypes$1)) {
     if (type.startsWith('_'))
         continue;
     
-    if (!TYPES$5.includes(type))
-        TYPES$5.push(type);
+    if (!TYPES$4.includes(type))
+        TYPES$4.push(type);
 }
 
 var {VISITOR_KEYS: VISITOR_KEYS$2$1} = lib_exports$1;
 
 var TraversalContext$1 = class TraversalContext {
     constructor(scope2, opts, state, parentPath) {
-        __publicField$1(this, 'queue', null);
-        __publicField$1(this, 'priorityQueue', null);
         this.parentPath = parentPath;
         this.scope = scope2;
         this.state = state;
         this.opts = opts;
     }
     
+    queue = null;
+    priorityQueue = null;
     shouldVisit(node) {
         const opts = this.opts;
         
@@ -50802,6 +48564,8 @@ function traverseNode$1(node, opts, scope2, state, path, skipKeys, visitSelf) {
         return _visitPaths$1(ctx, [path]);
     }
     
+    const hub = path == null ? node.type === 'Program' || node.type === 'File' ? new Hub() : void 0 : path.hub;
+    
     for (const key of keys2) {
         if (skipKeys?.[key])
             continue;
@@ -50824,6 +48588,7 @@ function traverseNode$1(node, opts, scope2, state, path, skipKeys, visitSelf) {
                     container: prop,
                     key: i,
                     listKey: key,
+                    hub,
                 });
                 
                 paths.push(childPath);
@@ -50833,7 +48598,7 @@ function traverseNode$1(node, opts, scope2, state, path, skipKeys, visitSelf) {
                 return true;
         } else {
             if (_visitPaths$1(ctx, [
-                NodePath_Final$1.get({parentPath: path, parent: node, container: node, key, listKey: null}),
+                NodePath_Final$1.get({parentPath: path, parent: node, container: node, key, listKey: null, hub}),
             ])) {
                 return true;
             }
@@ -51131,6 +48896,20 @@ function _getQueueContexts$1() {
     return contexts;
 }
 
+var Hub = class {
+    getCode() {}
+    
+    getScope() {}
+    
+    addHelper() {
+        throw new Error('Helpers are not supported by the default hub.');
+    }
+    
+    buildError(node, msg, Error2 = TypeError) {
+        return new Error2(msg);
+    }
+};
+
 var {
     VISITOR_KEYS: VISITOR_KEYS3$1,
     removeProperties: removeProperties2$1,
@@ -51159,7 +48938,7 @@ function traverse3$1(parent, opts = {}, scope2, state, parentPath, visitSelf) {
     traverseNode$1(parent, opts, scope2, state, parentPath, void 0, visitSelf);
 }
 
-traverse3$1.visitors = visitors$3;
+traverse3$1.visitors = visitors$1;
 traverse3$1.verify = verify$1$1;
 traverse3$1.explode = explode$1$1;
 traverse3$1.cheap = function(node, enter) {
@@ -51195,54 +48974,29 @@ traverse3$1.hasType = function(tree, type, denylistTypes) {
 };
 traverse3$1.cache = cache$1;
 
-bundle$1.default;
+var bundle$1 = /*#__PURE__*/Object.freeze({
+	__proto__: null,
+	codeFrameColumns: codeFrameColumns$1,
+	generate: generate$2,
+	parse: parse$b,
+	parseExpression: parseExpression$2,
+	template: index$1,
+	tokTypes: tokTypes$1,
+	traverse: traverse3$1,
+	types: lib_exports$1
+});
 
-var parser$5 = {};
-
-var printer = {};
-
-var tokenize$2 = {};
-
-var fullstore$3 = (value) => {
-    const data = {
-        value,
-    };
-    
-    return (...args) => {
-        const [value] = args;
-        
-        if (!args.length)
-            return data.value;
-        
-        data.value = value;
-        
-        return value;
-    };
-};
-
-var types$19 = {};
-
-types$19.TYPES = {
+const TYPES$3 = {
     TOKEN: 'Token',
     NEWLINE: 'Newline',
-    LINEBREAK: 'Linebreak',
     SPLITTER: 'Splitter',
     INDENT: 'Indent',
     DEBUG: 'Debug',
     SPACE: 'Space',
-    ROUND_BRACE_OPEN: 'RoundBraceOpen',
-    ROUND_BRACE_CLOSE: 'RoundBraceClose',
     QUOTE: 'Quote',
     END_OF_FILE: 'EndOfFile',
 };
 
-var functions$1 = {};
-
-var arrowFunctionExpression$3 = {};
-
-var is$4 = {};
-
-const {types: types$18} = bundle$1;
 const {
     isStringLiteral: isStringLiteral$a,
     isIdentifier: isIdentifier$i,
@@ -51250,16 +49004,16 @@ const {
     isStatement: isStatement$9,
     isForOfStatement: isForOfStatement$2,
     isVariableDeclaration: isVariableDeclaration$6,
-    isMemberExpression: isMemberExpression$b,
+    isMemberExpression: isMemberExpression$c,
     isArrayExpression: isArrayExpression$a,
     isObjectExpression: isObjectExpression$a,
     isLabeledStatement: isLabeledStatement$2,
-} = types$18;
+} = lib_exports$1;
 
-const isParentProgram$1 = (path) => path.parentPath?.isProgram();
-const isParentBlock$3 = (path) => path.parentPath.isBlockStatement();
+const isParentProgram = (path) => path.parentPath?.isProgram();
+const isParentBlock$1 = (path) => path.parentPath.isBlockStatement();
 
-const isNext$p = (path) => {
+const isNext = (path) => {
     const next = path.getNextSibling();
     
     if (!next.node)
@@ -51268,35 +49022,30 @@ const isNext$p = (path) => {
     return !next.isEmptyStatement();
 };
 
-const isPrev$1 = (path) => {
+const isPrev = (path) => {
     const next = path.getPrevSibling();
     return next.node;
 };
 
-const isNextParent$5 = (path) => isNext$p(path.parentPath);
-const isLast$d = (path) => isParentProgram$1(path) && !isNext$p(path);
+const isNextParent = (path) => isNext(path.parentPath);
+const isLast$2 = (path) => isParentProgram(path) && !isNext(path);
 
-is$4.isNextObject = (a) => a
+const isNextObject = (a) => a
     .getNextSibling()
     .isObjectExpression();
 
-is$4.isPrevObject = (a) => a
+const isPrevObject = (a) => a
     .getPrevSibling()
     .isObjectExpression();
 
-is$4.isFirst = (path) => path.node === path.parentPath.node.body?.[0];
-is$4.isPrevBody = (path) => path
+const isFirst$2 = (path) => path.node === path.parentPath.node.body?.[0];
+const isPrevBody = (path) => path
     .getPrevSibling()
     .isBlockStatement();
-is$4.isNext = isNext$p;
-is$4.isPrev = isPrev$1;
-is$4.isNextParent = isNextParent$5;
-is$4.isParentProgram = isParentProgram$1;
-is$4.isParentBlock = isParentBlock$3;
-is$4.isLast = isLast$d;
-is$4.isParentLast = (path) => isLast$d(path.parentPath);
 
-is$4.isIndented = (path = {}) => {
+const isParentLast = (path) => isLast$2(path.parentPath);
+
+const isIndented = (path = {}) => {
     const {parentPath, node} = path;
     
     if (!parentPath.node.loc)
@@ -51305,18 +49054,16 @@ is$4.isIndented = (path = {}) => {
     return node.loc?.start.column !== parentPath.node.loc.start.column;
 };
 
-is$4.isCoupleLines = isCoupleLines$9;
-
-function isCoupleLines$9(path) {
+function isCoupleLines(path) {
     const start = path.node?.loc?.start?.line;
     const end = path.node?.loc?.end?.line;
     
     return end !== start;
 }
 
-is$4.exists = (a) => a.node;
-is$4.isStringAndIdentifier = isStringAndIdentifier$2;
-function isStringAndIdentifier$2([a, b]) {
+const exists = (a) => a.node;
+
+function isStringAndIdentifier([a, b]) {
     return isStringLiteral$a(a) && isIdentifier$i(b);
 }
 
@@ -51332,7 +49079,7 @@ const checkObject = (elements) => {
     return a.node.properties.length;
 };
 
-is$4.isSimpleAndNotEmptyObject = (elements) => {
+const isSimpleAndNotEmptyObject = (elements) => {
     const [a] = elements;
     
     const simpleTypes = [
@@ -51349,28 +49096,28 @@ is$4.isSimpleAndNotEmptyObject = (elements) => {
     return checkObject(elements);
 };
 
-is$4.isIdentifierAndIdentifier = ([a, b]) => {
+const isIdentifierAndIdentifier = ([a, b]) => {
     return isIdentifier$i(a) && isIdentifier$i(b);
 };
 
-is$4.isStringAndMember = ([a, b]) => isStringLiteral$a(a) && isMemberExpression$b(b);
-is$4.isIdentifierAndString = ([a, b]) => isIdentifier$i(a) && isStringLiteral$a(b);
-is$4.isStringAndArray = ([a, b]) => {
+const isStringAndMember = ([a, b]) => isStringLiteral$a(a) && isMemberExpression$c(b);
+const isIdentifierAndString = ([a, b]) => isIdentifier$i(a) && isStringLiteral$a(b);
+const isStringAndArray = ([a, b]) => {
     if (!isStringLiteral$a(a))
         return false;
     
     if (!isArrayExpression$a(b))
         return false;
     
-    return !isStringAndIdentifier$2(b.node.elements);
+    return !isStringAndIdentifier(b.node.elements);
 };
 
 const isIfOrStatement = (a) => isIfStatement$3(a) || isStatement$9(a);
 const isForOfOrStatement = (a) => isForOfStatement$2(a) || isStatement$9(a);
 
-is$4.isIf = (path) => isIfStatement$3(path.find(isIfOrStatement));
+const isIf = (path) => isIfStatement$3(path.find(isIfOrStatement));
 
-is$4.isForOf = (path) => {
+const isForOf$2 = (path) => {
     const current = path.find(isForOfOrStatement);
     
     if (isForOfStatement$2(current))
@@ -51382,9 +49129,9 @@ is$4.isForOf = (path) => {
     return false;
 };
 
-is$4.isInsideIf = (path) => path.parentPath?.isIfStatement();
+const isInsideIf = (path) => path.parentPath?.isIfStatement();
 
-is$4.isNewlineBetweenSiblings = (path) => {
+const isNewlineBetweenSiblings = (path) => {
     const endCurrent = path.node?.loc?.end?.line;
     const startNext = path.getNextSibling().node?.loc?.start?.line;
     
@@ -51394,9 +49141,9 @@ is$4.isNewlineBetweenSiblings = (path) => {
     return startNext - endCurrent > 1;
 };
 
-is$4.isInsideLabel = ({parentPath}) => isLabeledStatement$2(parentPath);
+const isInsideLabel = ({parentPath}) => isLabeledStatement$2(parentPath);
 
-is$4.satisfy = (conditions) => (path) => {
+const satisfy = (conditions) => (path) => {
     for (const condition of conditions)
         if (condition(path))
             return true;
@@ -51406,57 +49153,43 @@ is$4.satisfy = (conditions) => (path) => {
 
 const parseNode$3 = (path) => path.node || path;
 
-is$4.hasCoupleTrailingComments = (path) => {
+const hasCoupleTrailingComments = (path) => {
     const node = parseNode$3(path);
     return node?.trailingComments?.length > 1;
 };
 
-is$4.hasTrailingComment = (path) => {
+const hasTrailingComment = (path) => {
     const node = parseNode$3(path);
     return node.trailingComments?.length;
 };
 
-is$4.hasLeadingComment = (path) => path.node?.leadingComments?.length;
+const hasLeadingComment = (path) => path.node?.leadingComments?.length;
 
-is$4.noTrailingComment = (path) => !path.node.trailingComments?.length;
-is$4.noLeadingComment = (path) => !path.node.leadingComments?.length;
-
-var params = {};
-
-var comment = {};
-
-var parseLeadingComments$4 = {};
-
-var mark = {};
+const noTrailingComment = (path) => !path.node.trailingComments?.length;
+const noLeadingComment = (path) => !path.node.leadingComments?.length;
 
 const WATER_MARK_BEFORE = '__putout_newline_before';
 const WATER_MARK_AFTER = '__putout_newline_after';
 
-mark.markBefore = markBefore$2;
-mark.markAfter = markAfter$c;
-mark.maybeMarkAfter = (a, path) => a && markAfter$c(path);
+const maybeMarkAfter = (a, path) => a && markAfter(path);
 
-function markBefore$2(path) {
+function markBefore(path) {
     path[WATER_MARK_BEFORE] = true;
 }
 
-function markAfter$c(path) {
+function markAfter(path) {
     path[WATER_MARK_AFTER] = true;
 }
 
-mark.isMarkedAfter = isMarkedAfter$3;
-
-function isMarkedAfter$3(path) {
+function isMarkedAfter(path) {
     return path[WATER_MARK_AFTER];
 }
 
-mark.hasPrevNewline = (path) => {
-    return isMarkedAfter$3(path.getPrevSibling());
+const hasPrevNewline = (path) => {
+    return isMarkedAfter(path.getPrevSibling());
 };
 
-var maybeInsideFn$1 = {};
-
-maybeInsideFn$1.maybeInsideFn = (insideFn, {print, indent}) => {
+const maybeInsideFn = (insideFn, {print, indent}) => {
     if (!insideFn)
         return;
     
@@ -51467,12 +49200,10 @@ maybeInsideFn$1.maybeInsideFn = (insideFn, {print, indent}) => {
     indent.dec();
 };
 
-var commentsPrinter = {};
-
 const createPrintCommentLine$1 = (fn, value) => () => fn(`//${value}`);
 const createPrintCommentBlock$1 = (fn, value) => () => fn(`/*${value}*/\n`);
 
-commentsPrinter.hasTrailingCommentsPrinter = (currentTraverse) => {
+const hasTrailingCommentsPrinter = (currentTraverse) => {
     const {
         printTrailingCommentBlock,
         printTrailingCommentLine,
@@ -51484,7 +49215,7 @@ commentsPrinter.hasTrailingCommentsPrinter = (currentTraverse) => {
     return Boolean(printTrailingCommentLine);
 };
 
-commentsPrinter.hasLeadingCommentsPrinter = (currentTraverse) => {
+const hasLeadingCommentsPrinter = (currentTraverse) => {
     const {
         printLeadingCommentLine,
         printLeadingCommentBlock,
@@ -51496,7 +49227,7 @@ commentsPrinter.hasLeadingCommentsPrinter = (currentTraverse) => {
     return Boolean(printLeadingCommentBlock);
 };
 
-commentsPrinter.printLeadingComments = (path, printer, semantics, {currentTraverse}) => {
+const printLeadingComments$1 = (path, printer, semantics, {currentTraverse}) => {
     const {print} = printer;
     const {
         leadingComments = [],
@@ -51527,7 +49258,7 @@ commentsPrinter.printLeadingComments = (path, printer, semantics, {currentTraver
     }
 };
 
-commentsPrinter.printTrailingComments = (path, printer, semantics, {currentTraverse}) => {
+const printTrailingComments = (path, printer, semantics, {currentTraverse}) => {
     const {print} = printer;
     const {
         trailingComments = []} = path.node;
@@ -51557,20 +49288,6 @@ commentsPrinter.printTrailingComments = (path, printer, semantics, {currentTrave
     }
 };
 
-const {types: types$17} = bundle$1;
-const {
-    hasTrailingComment: hasTrailingComment$4,
-    satisfy: satisfy$3,
-} = is$4;
-
-const {markBefore: markBefore$1} = mark;
-const {maybeInsideFn} = maybeInsideFn$1;
-
-const {
-    printLeadingComments: printLeadingComments$1,
-    hasLeadingCommentsPrinter,
-} = commentsPrinter;
-
 const {
     isArrowFunctionExpression: isArrowFunctionExpression$3,
     isObjectProperty: isObjectProperty$3,
@@ -51582,9 +49299,9 @@ const {
     isBinaryExpression: isBinaryExpression$2,
     isClassMethod: isClassMethod$2,
     isDecorator: isDecorator$2,
-} = types$17;
+} = lib_exports$1;
 
-const isProperty$1 = satisfy$3([
+const isProperty$1 = satisfy([
     isObjectProperty$3,
     isVariableDeclarator$4,
     isClassProperty$1,
@@ -51631,7 +49348,7 @@ function isCommentOnPreviousLine(path) {
     return line <= loc.start.line - 1;
 }
 
-const isFirst$2 = (path) => {
+const isFirst$1 = (path) => {
     const {parentPath} = path;
     
     if (path === parentPath.get('properties')[0])
@@ -51643,7 +49360,7 @@ const isFirst$2 = (path) => {
     return false;
 };
 
-parseLeadingComments$4.parseLeadingComments = (path, printer, semantics, {currentTraverse = {}} = {}) => {
+const parseLeadingComments = (path, printer, semantics, {currentTraverse = {}} = {}) => {
     const {
         print,
         maybe,
@@ -51668,13 +49385,13 @@ parseLeadingComments$4.parseLeadingComments = (path, printer, semantics, {curren
     
     const looksLikeSwitchCase = path.isSwitchCase();
     
-    if (!looksLikeSwitchCase && hasTrailingComment$4(path.getPrevSibling()))
+    if (!looksLikeSwitchCase && hasTrailingComment(path.getPrevSibling()))
         return;
     
     const insideFn = (path.parentPath.isFunction() || path.parentPath.isTSDeclareMethod()) && !path.isTSTypeParameterDeclaration();
     
     const propIs = isProperty$1(path);
-    const isIndent = isFirst$2(path)
+    const isIndent = isFirst$1(path)
         || !looksLikeSwitchCase
         && !path.isClassMethod()
         && !insideFn
@@ -51693,7 +49410,7 @@ parseLeadingComments$4.parseLeadingComments = (path, printer, semantics, {curren
             });
             
             if (isCommentOnPreviousLine(path))
-                maybe.print.breakline(!isFirst$2(path));
+                maybe.print.breakline(!isFirst$1(path));
             else
                 maybe.print.space(propIs && !path.isClassProperty());
             
@@ -51737,7 +49454,7 @@ parseLeadingComments$4.parseLeadingComments = (path, printer, semantics, {curren
             
             if (path.isStatement() || path.isTSEnumMember() || looksLikeDirective || looksLikeMethod || looksLikeProp || looksLikeSwitchCase) {
                 print.newline();
-                markBefore$1(path);
+                markBefore(path);
                 maybe.indent(looksLikeMethod || looksLikeProp || looksLikeSwitchCase);
             }
             
@@ -51746,16 +49463,9 @@ parseLeadingComments$4.parseLeadingComments = (path, printer, semantics, {curren
     }
 };
 
-var parseTrailingComments$2 = {};
-
-var isLooksLikeChain$4 = {};
-
-var chain$4 = {};
-
-const {hasTrailingComment: hasTrailingComment$3} = is$4;
 const {assign: assign$b} = Object;
 
-chain$4.chain = (path) => {
+const chain$2 = (path) => {
     const all = [
         ...down$1(path),
         ...up$1(path),
@@ -51794,7 +49504,7 @@ function up$1(current) {
     const properties = [];
     
     while (current.isMemberExpression()) {
-        if (hasTrailingComment$3(current.get('object')))
+        if (hasTrailingComment(current.get('object')))
             properties.push({
                 type: 'CommentLine',
             });
@@ -51831,21 +49541,17 @@ function build(path) {
     return prop;
 }
 
-const {types: types$16} = bundle$1;
-const {chain: chain$3} = chain$4;
-const {satisfy: satisfy$2} = is$4;
-
 const {
     isUnaryExpression: isUnaryExpression$1,
     isIfStatement: isIfStatement$2,
-    isCallExpression: isCallExpression$b,
+    isCallExpression: isCallExpression$c,
     isIdentifier: isIdentifier$h,
-} = types$16;
+} = lib_exports$1;
 
 const isArgOfCall = (path) => path.parentPath?.isCallExpression() && path.parentPath.get('arguments.0') === path;
 const isCall$1 = (a) => a.type === 'CallExpression';
 
-const isExcludedFromChain = satisfy$2([isUnaryExpression$1, isIfStatement$2]);
+const isExcludedFromChain = satisfy([isUnaryExpression$1, isIfStatement$2]);
 const hasComment = ({type}) => type === 'CommentLine';
 
 const isInsideMemberCall = (path) => {
@@ -51858,20 +49564,20 @@ const isInsideMemberCall = (path) => {
     if (isLastArgInCall(path))
         return true;
     
-    return isCallExpression$b(path.parentPath.parentPath);
+    return isCallExpression$c(path.parentPath.parentPath);
 };
 
 function isLastArgInCall(path) {
     const {parentPath} = path;
     
-    if (!isCallExpression$b(parentPath))
+    if (!isCallExpression$c(parentPath))
         return false;
     
     return path === parentPath.get('arguments').at(-1);
 }
 
-isLooksLikeChain$4.isLooksLikeChain = (path) => {
-    const [root, properties] = chain$3(path);
+const isLooksLikeChain = (path) => {
+    const [root, properties] = chain$2(path);
     
     if (isInsideMemberCall(path))
         return false;
@@ -51901,7 +49607,7 @@ isLooksLikeChain$4.isLooksLikeChain = (path) => {
 };
 
 const isPathGet = ([property]) => {
-    return isCallExpression$b(property, {
+    return isCallExpression$c(property, {
         name: 'get',
     });
 };
@@ -51925,27 +49631,12 @@ const isIfUp = (path) => {
     return is;
 };
 
-const {types: types$15} = bundle$1;
-
-const {
-    isLast: isLast$c,
-    isCoupleLines: isCoupleLines$8,
-    isNext: isNext$o,
-} = is$4;
-
-const {isLooksLikeChain: isLooksLikeChain$3} = isLooksLikeChain$4;
-
-const {
-    printTrailingComments,
-    hasTrailingCommentsPrinter,
-} = commentsPrinter;
-
 const {
     isDecorator: isDecorator$1,
-    isMemberExpression: isMemberExpression$a,
-    isExpressionStatement: isExpressionStatement$8,
-    isCallExpression: isCallExpression$a,
-} = types$15;
+    isMemberExpression: isMemberExpression$b,
+    isExpressionStatement: isExpressionStatement$a,
+    isCallExpression: isCallExpression$b,
+} = lib_exports$1;
 
 const hasBody$1 = (path) => {
     if (path.isTSModuleDeclaration())
@@ -51977,13 +49668,11 @@ const isNewlineAfter = (path) => {
         return !isSameLine(path, loc);
     }
     
-    if (isMemberExpression$a(parentPath))
+    if (isMemberExpression$b(parentPath))
         return false;
     
-    return !isLast$c(path);
+    return !isLast$2(path);
 };
-
-parseTrailingComments$2.isTrailingIsLeading = isTrailingIsLeading;
 
 function isCommentOnNextLine(path) {
     const {node} = path;
@@ -52020,7 +49709,7 @@ function isCommentOnNextLine(path) {
     return isNextLine || isNextLineAfterNewline;
 }
 
-parseTrailingComments$2.parseTrailingComments = (path, printer, semantics, {currentTraverse} = {}) => {
+const parseTrailingComments = (path, printer, semantics, {currentTraverse} = {}) => {
     const {parentPath} = path;
     const {
         write,
@@ -52045,7 +49734,7 @@ parseTrailingComments$2.parseTrailingComments = (path, printer, semantics, {curr
         return;
     
     const n = trailingComments.length - 1;
-    const likeChain = isLooksLikeChain$3(parentPath);
+    const likeChain = isLooksLikeChain(parentPath);
     
     for (const {type, value, loc} of trailingComments) {
         const sameLine = isSameLine(path, loc);
@@ -52065,7 +49754,7 @@ parseTrailingComments$2.parseTrailingComments = (path, printer, semantics, {curr
             }
             
             if (hasBody$1(path)) {
-                maybe.write.breakline(!isNext$o(path));
+                maybe.write.breakline(!isNext(path));
                 maybe.write.breakline(!n);
             }
             
@@ -52080,7 +49769,7 @@ parseTrailingComments$2.parseTrailingComments = (path, printer, semantics, {curr
             maybe.indent(!sameLine);
             maybe.print.breakline(isPrevCall(path));
             write(`/*${value}*/`);
-            maybe.write.newline(!sameLine || !isFnParam(path) && isCoupleLines$8(path.parentPath));
+            maybe.write.newline(!sameLine || !isFnParam(path) && isCoupleLines(path.parentPath));
         }
     }
 };
@@ -52088,22 +49777,18 @@ parseTrailingComments$2.parseTrailingComments = (path, printer, semantics, {curr
 function isPrevCall(path) {
     const prev = path.getPrevSibling();
     
-    if (isExpressionStatement$8(prev))
+    if (isExpressionStatement$a(prev))
         return false;
     
     const {expression} = path.node;
     
-    if (!isCallExpression$a(expression))
+    if (!isCallExpression$b(expression))
         return false;
     
-    return !isCallExpression$a(expression.arguments[0]);
+    return !isCallExpression$b(expression.arguments[0]);
 }
 
-var parseComments$8 = {};
-
-const {isNext: isNext$n} = is$4;
-
-parseComments$8.parseComments = (path, {write, maybe}, semantics) => {
+const parseComments = (path, {write, maybe}, semantics) => {
     if (!semantics.comments)
         return;
     
@@ -52117,7 +49802,7 @@ parseComments$8.parseComments = (path, {write, maybe}, semantics) => {
     
     for (const [i, {type, value}] of comments.entries()) {
         if (type === 'CommentLine') {
-            maybe.write.breakline(isNext$n(path) || !program);
+            maybe.write.breakline(isNext(path) || !program);
             write('//');
             write(value);
             
@@ -52138,20 +49823,10 @@ parseComments$8.parseComments = (path, {write, maybe}, semantics) => {
     }
 };
 
-const {parseLeadingComments: parseLeadingComments$3} = parseLeadingComments$4;
-const {parseTrailingComments: parseTrailingComments$1} = parseTrailingComments$2;
-const {parseComments: parseComments$7} = parseComments$8;
-
-comment.parseLeadingComments = parseLeadingComments$3;
-comment.parseTrailingComments = parseTrailingComments$1;
-comment.parseComments = parseComments$7;
-
-const {parseComments: parseComments$6} = comment;
-
 const noop$7 = () => {};
 const parseParams = (path) => path.get('params');
 
-params.printParams = (path, printer, semantics, customization = {}) => {
+const printParams = (path, printer, semantics, customization = {}) => {
     const {extra, typeParameters} = path.node;
     const {
         print,
@@ -52177,7 +49852,7 @@ params.printParams = (path, printer, semantics, customization = {}) => {
         braceOpen,
     }, semantics);
     
-    parseComments$6(path, printer, semantics);
+    parseComments(path, printer, semantics);
     printAfterOpen();
     
     const n = params.length - 1;
@@ -52231,21 +49906,19 @@ function isOneArgArrow(path) {
     return param.type === 'Identifier';
 }
 
-var maybeParens$e = {};
+const isFn$7 = (a) => typeof a === 'function';
 
-const isFn$6 = (a) => typeof a === 'function';
-const isParens$3 = (path) => path.node.extra?.parenthesized;
+const isParens$2 = (path) => path.node.extra?.parenthesized;
 
-maybeParens$e.isParens = isParens$3;
-maybeParens$e.maybeParens = (print) => {
-    if (isFn$6(print))
+const maybeParens = (print) => {
+    if (isFn$7(print))
         return maybeParensPrint(print);
     
-    return maybeParensCondition$1(print);
+    return maybeParensCondition(print);
 };
 
 const maybeParensPrint = (print) => ({
-    condition: isParens$3,
+    condition: isParens$2,
     before(path, {write}) {
         write('(');
     },
@@ -52255,7 +49928,7 @@ const maybeParensPrint = (print) => ({
     },
 });
 
-const maybeParensCondition$1 = ({print, condition, checkParens = true}) => ({
+const maybeParensCondition = ({print, condition, checkParens = true}) => ({
     ...maybeParensPrint(print),
     condition: (path, print, semantics) => {
         const is = condition?.(path, print, semantics);
@@ -52263,15 +49936,11 @@ const maybeParensCondition$1 = ({print, condition, checkParens = true}) => ({
         if (!checkParens)
             return is;
         
-        return is || isParens$3(path);
+        return is || isParens$2(path);
     },
 });
 
-const {exists: exists$e} = is$4;
-const {printParams: printParams$d} = params;
-const {maybeParens: maybeParens$d} = maybeParens$e;
-
-arrowFunctionExpression$3.ArrowFunctionExpression = maybeParens$d((path, printer, semantics) => {
+const ArrowFunctionExpression$1 = maybeParens((path, printer, semantics) => {
     const {
         print,
         maybe,
@@ -52282,11 +49951,11 @@ arrowFunctionExpression$3.ArrowFunctionExpression = maybeParens$d((path, printer
     const {async} = path.node;
     
     maybe.print(async, 'async ');
-    printParams$d(path, printer, semantics);
+    printParams(path, printer, semantics);
     
     const returnType = path.get('returnType');
     
-    if (exists$e(returnType)) {
+    if (exists(returnType)) {
         write(':');
         write.space();
         traverse(returnType);
@@ -52304,29 +49973,22 @@ arrowFunctionExpression$3.ArrowFunctionExpression = maybeParens$d((path, printer
     print('__body');
 });
 
-var functionDeclaration$1 = {};
-
-const {types: types$14} = bundle$1;
-const {markAfter: markAfter$b} = mark;
-const {isNext: isNext$m, isNextParent: isNextParent$4} = is$4;
-const {printParams: printParams$c} = params;
-
-const not = (fn) => (...a) => !fn(...a);
-const notInsideExportDefaultWithBody = not(isInsideExportDefaultWithBody);
+const not$1 = (fn) => (...a) => !fn(...a);
+const notInsideExportDefaultWithBody = not$1(isInsideExportDefaultWithBody);
 
 const {
-    isAssignmentExpression: isAssignmentExpression$3,
+    isAssignmentExpression: isAssignmentExpression$4,
     isTSModuleBlock: isTSModuleBlock$4,
     isBlockStatement: isBlockStatement$7,
     isExportNamedDeclaration: isExportNamedDeclaration$4,
-    isExpressionStatement: isExpressionStatement$7,
+    isExpressionStatement: isExpressionStatement$9,
     isFunctionDeclaration: isFunctionDeclaration$3,
     isExportDefaultDeclaration: isExportDefaultDeclaration$1,
-} = types$14;
+} = lib_exports$1;
 
 const isInsideNamedExport$1 = ({parentPath}) => isExportNamedDeclaration$4(parentPath);
 
-functionDeclaration$1.FunctionDeclaration = {
+const FunctionDeclaration$1 = {
     print(path, printer, semantics) {
         const {print, maybe} = printer;
         
@@ -52349,7 +50011,7 @@ functionDeclaration$1.FunctionDeclaration = {
         }
         
         print('__id');
-        printParams$c(path, printer, semantics);
+        printParams(path, printer, semantics);
         
         if (returnType) {
             print(': ');
@@ -52359,13 +50021,13 @@ functionDeclaration$1.FunctionDeclaration = {
         print.space();
         print('__body');
     },
-    afterSatisfy: () => [isNext$m, isNextParent$4, isInsideBlockStatement],
+    afterSatisfy: () => [isNext, isNextParent, isInsideBlockStatement],
     after(path, {indent, maybe}) {
-        if (isNextAssign$1(path) || isNextFunction(path) || isNext$m(path))
+        if (isNextAssign$1(path) || isNextFunction(path) || isNext(path))
             indent();
         
         maybe.write.newline(notInsideExportDefaultWithBody(path));
-        markAfter$b(path);
+        markAfter(path);
     },
 };
 
@@ -52377,10 +50039,10 @@ const isNextFunction = (path) => {
 const isNextAssign$1 = (path) => {
     const next = path.getNextSibling();
     
-    if (!isExpressionStatement$7(next))
+    if (!isExpressionStatement$9(next))
         return false;
     
-    return isAssignmentExpression$3(next.node.expression);
+    return isAssignmentExpression$4(next.node.expression);
 };
 
 function isInsideBlockStatement(path) {
@@ -52402,10 +50064,6 @@ function isInsideExportDefaultWithBody(path) {
     return path.node.body.body.length;
 }
 
-var classMethod$2 = {};
-
-var maybeDecorators$4 = {};
-
 const isPrevClassProperty = (path) => {
     const prev = path.getPrevSibling();
     
@@ -52415,7 +50073,7 @@ const isPrevClassProperty = (path) => {
     return prev.isClassProperty() || prev.isClassAccessorProperty();
 };
 
-maybeDecorators$4.maybeDecorators = (visitor) => (path, printer, semantics, options) => {
+const maybeDecorators$1 = (visitor) => (path, printer, semantics, options) => {
     const {
         write,
         traverse,
@@ -52434,11 +50092,7 @@ maybeDecorators$4.maybeDecorators = (visitor) => (path, printer, semantics, opti
     visitor(path, printer, semantics, options);
 };
 
-var printKey$6 = {};
-
-var maybePrintComputed$2 = {};
-
-maybePrintComputed$2.maybePrintComputed = (path, key, {maybe, traverse}) => {
+const maybePrintComputed = (path, key, {maybe, traverse}) => {
     const {computed} = path.node;
     
     maybe.write(computed, '[');
@@ -52446,17 +50100,13 @@ maybePrintComputed$2.maybePrintComputed = (path, key, {maybe, traverse}) => {
     maybe.write(computed, ']');
 };
 
-const {maybePrintComputed: maybePrintComputed$1} = maybePrintComputed$2;
-
-printKey$6.printKey = (path, printer) => {
+const printKey = (path, printer) => {
     const key = path.get('key');
     
-    maybePrintComputed$1(path, key, printer);
+    maybePrintComputed(path, key, printer);
 };
 
-var kind = {};
-
-kind.printKind = (path, {write}) => {
+const printKind = (path, {write}) => {
     const {kind, generator} = path.node;
     
     const isGetter = kind === 'get' || kind === 'set';
@@ -52466,11 +50116,6 @@ kind.printKind = (path, {write}) => {
     else if (generator)
         write('*');
 };
-
-var printFunctionParams$1 = {};
-
-const {printParams: printParams$b} = params;
-const {hasLeadingComment: hasLeadingComment$4} = is$4;
 
 const isAllParamsHasLeadingComments = (path) => {
     const params = path.get('params');
@@ -52486,7 +50131,7 @@ const isAllParamsHasLeadingComments = (path) => {
         const [firstDecorator] = decorators;
         ++decoratorsCount;
         
-        if (hasLeadingComment$4(firstDecorator))
+        if (hasLeadingComment(firstDecorator))
             ++commentsCount;
     }
     
@@ -52495,12 +50140,12 @@ const isAllParamsHasLeadingComments = (path) => {
 
 const hasDecorators = ({decorators}) => decorators?.length;
 
-printFunctionParams$1.printFunctionParams = (path, printer, semantics) => {
+const printFunctionParams = (path, printer, semantics) => {
     const {params} = path.node;
     const isNewline = params.filter(hasDecorators).length;
     const isAllHasComments = isAllParamsHasLeadingComments(path);
     
-    const printSpace = createPrintSpace$1({
+    const printSpace = createPrintSpace({
         isNewline,
         printer,
     });
@@ -52519,7 +50164,7 @@ printFunctionParams$1.printFunctionParams = (path, printer, semantics) => {
         isAllHasComments,
     });
     
-    printParams$b(path, printer, semantics, {
+    printParams(path, printer, semantics, {
         printAfterOpen,
         printSpace,
         printBeforeClose,
@@ -52550,7 +50195,7 @@ const createPrintBeforeClose = ({isNewline, printer, isAllHasComments, type}) =>
     print.breakline();
 };
 
-const createPrintSpace$1 = ({isNewline, printer}) => () => {
+const createPrintSpace = ({isNewline, printer}) => () => {
     const {print} = printer;
     
     if (!isNewline)
@@ -52559,27 +50204,15 @@ const createPrintSpace$1 = ({isNewline, printer}) => () => {
     print.breakline();
 };
 
-printFunctionParams$1.createPrintSpace = createPrintSpace$1;
-
-const {
-    isNext: isNext$l,
-    hasTrailingComment: hasTrailingComment$2,
-} = is$4;
-
-const {maybeDecorators: maybeDecorators$3} = maybeDecorators$4;
-const {printKey: printKey$5} = printKey$6;
-const {printKind: printKind$3} = kind;
-const {printFunctionParams} = printFunctionParams$1;
-
 const noTrailingCommentAndNext = (path) => {
-    if (hasTrailingComment$2(path))
+    if (hasTrailingComment(path))
         return false;
     
-    return isNext$l(path);
+    return isNext(path);
 };
 
-const ClassMethod$2 = {
-    print: maybeDecorators$3((path, printer, semantics) => {
+const ClassMethod$1 = {
+    print: maybeDecorators$1((path, printer, semantics) => {
         const {print} = printer;
         const {node} = path;
         const {accessibility, returnType} = node;
@@ -52604,8 +50237,8 @@ const ClassMethod$2 = {
             print(' ');
         }
         
-        printKind$3(path, printer);
-        printKey$5(path, printer);
+        printKind(path, printer);
+        printKey(path, printer);
         printFunctionParams(path, printer, semantics);
         
         if (returnType) {
@@ -52623,17 +50256,9 @@ const ClassMethod$2 = {
     },
 };
 
-classMethod$2.ClassPrivateMethod = ClassMethod$2;
-classMethod$2.ClassMethod = ClassMethod$2;
+const ClassPrivateMethod$1 = ClassMethod$1;
 
-var objectMethod$2 = {};
-
-const {isNewlineBetweenSiblings: isNewlineBetweenSiblings$3} = is$4;
-const {printParams: printParams$a} = params;
-const {printKey: printKey$4} = printKey$6;
-const {printKind: printKind$2} = kind;
-
-objectMethod$2.ObjectMethod = {
+const ObjectMethod$1 = {
     beforeIf(path) {
         return path.node.async;
     },
@@ -52643,28 +50268,22 @@ objectMethod$2.ObjectMethod = {
     print(path, printer, semantics) {
         const {print} = printer;
         
-        printKind$2(path, printer);
-        printKey$4(path, printer);
-        printParams$a(path, printer, semantics);
+        printKind(path, printer);
+        printKey(path, printer);
+        printParams(path, printer, semantics);
         
         print.space();
         print('__body');
     },
     afterIf(path) {
-        return isNewlineBetweenSiblings$3(path);
+        return isNewlineBetweenSiblings(path);
     },
     after(path, {print}) {
         print.linebreak();
     },
 };
 
-var functionExpression$1 = {};
-
-const {exists: exists$d} = is$4;
-const {printParams: printParams$9} = params;
-const {maybeParens: maybeParens$c} = maybeParens$e;
-
-functionExpression$1.FunctionExpression = maybeParens$c((path, printer, semantics) => {
+const FunctionExpression$2 = maybeParens((path, printer, semantics) => {
     const {
         print,
         maybe,
@@ -52681,43 +50300,20 @@ functionExpression$1.FunctionExpression = maybeParens$c((path, printer, semantic
     
     const id = path.get('id');
     
-    if (exists$d(id)) {
+    if (exists(id)) {
         write(' ');
         traverse(id);
     }
     
-    printParams$9(path, printer, semantics);
+    printParams(path, printer, semantics);
     
     print.space();
     print('__body');
 });
 
-const {ArrowFunctionExpression: ArrowFunctionExpression$1} = arrowFunctionExpression$3;
-const {FunctionDeclaration: FunctionDeclaration$1} = functionDeclaration$1;
-
-const {
-    ClassMethod: ClassMethod$1,
-    ClassPrivateMethod: ClassPrivateMethod$1,
-} = classMethod$2;
-
-const {ObjectMethod: ObjectMethod$1} = objectMethod$2;
-const {FunctionExpression: FunctionExpression$2} = functionExpression$1;
-
-functions$1.FunctionDeclaration = FunctionDeclaration$1;
-functions$1.FunctionExpression = FunctionExpression$2;
-functions$1.ArrowFunctionExpression = ArrowFunctionExpression$1;
-functions$1.ClassMethod = ClassMethod$1;
-functions$1.ClassPrivateMethod = ClassPrivateMethod$1;
-functions$1.ObjectMethod = ObjectMethod$1;
-
-var unaryExpressions$1 = {};
-
-const {isLast: isLast$b, isNext: isNext$k} = is$4;
-const {maybeParens: maybeParens$b} = maybeParens$e;
-
 const isWord = (a) => /^(delete|typeof|void|throw)$/.test(a);
 
-const unaryExpression$2 = maybeParens$b((path, printer) => {
+const unaryExpression$2 = maybeParens((path, printer) => {
     const {maybe, traverse} = printer;
     const {prefix, operator} = path.node;
     const argPath = path.get('argument');
@@ -52728,16 +50324,16 @@ const unaryExpression$2 = maybeParens$b((path, printer) => {
     maybe.print(!prefix, operator);
 });
 
-unaryExpressions$1.UnaryExpression = unaryExpression$2;
-unaryExpressions$1.UpdateExpression = unaryExpression$2;
+const UnaryExpression$1 = unaryExpression$2;
+const UpdateExpression$2 = unaryExpression$2;
 
-unaryExpressions$1.AwaitExpression = maybeParens$b((path, {print}) => {
+const AwaitExpression$1 = maybeParens((path, {print}) => {
     printUnary('await', {
         print,
     });
 });
 
-unaryExpressions$1.YieldExpression = maybeParens$b((path, {print, maybe}) => {
+const YieldExpression$2 = maybeParens((path, {print, maybe}) => {
     const {delegate} = path.node;
     
     print(`yield`);
@@ -52746,7 +50342,7 @@ unaryExpressions$1.YieldExpression = maybeParens$b((path, {print, maybe}) => {
     print('__argument');
 });
 
-unaryExpressions$1.ThrowStatement = (path, {print, indent, maybe}) => {
+const ThrowStatement$1 = (path, {print, indent, maybe}) => {
     indent();
     
     printUnary('throw', {
@@ -52754,8 +50350,8 @@ unaryExpressions$1.ThrowStatement = (path, {print, indent, maybe}) => {
     });
     
     print(';');
-    maybe.print.newline(!isLast$b(path));
-    maybe.print.breakline(isNext$k(path));
+    maybe.print.newline(!isLast$2(path));
+    maybe.print.breakline(isNext(path));
 };
 
 function printUnary(name, {print}) {
@@ -52763,19 +50359,12 @@ function printUnary(name, {print}) {
     print('__argument');
 }
 
-var memberExpressions$1 = {};
-
-const {types: types$13} = bundle$1;
-const {maybePrintComputed} = maybePrintComputed$2;
-const {maybeParens: maybeParens$a} = maybeParens$e;
-const {isLooksLikeChain: isLooksLikeChain$2} = isLooksLikeChain$4;
-
 const {
     isObjectExpression: isObjectExpression$9,
     isArrowFunctionExpression: isArrowFunctionExpression$2,
-} = types$13;
+} = lib_exports$1;
 
-memberExpressions$1.MemberExpression = maybeParens$a({
+const MemberExpression$1 = maybeParens({
     checkParens: false,
     condition: (path) => isObjectInsideArrow(path),
     print: (path, printer) => {
@@ -52790,7 +50379,7 @@ memberExpressions$1.MemberExpression = maybeParens$a({
         
         const {computed} = path.node;
         
-        const isChain = isLooksLikeChain$2(path);
+        const isChain = isLooksLikeChain(path);
         
         traverse(object);
         
@@ -52806,7 +50395,7 @@ memberExpressions$1.MemberExpression = maybeParens$a({
     },
 });
 
-memberExpressions$1.OptionalMemberExpression = maybeParens$a((path, {print, maybe}) => {
+const OptionalMemberExpression$2 = maybeParens((path, {print, maybe}) => {
     const {computed, optional} = path.node;
     
     print('__object');
@@ -52832,26 +50421,13 @@ const isObjectInsideArrow = ({node, parentPath}) => {
     return isArrowFunctionExpression$2(parentPath);
 };
 
-var _class = {};
-
-var maybeDeclare$6 = {};
-
-maybeDeclare$6.maybeDeclare = (visit) => (path, printer, semantics) => {
+const maybeDeclare = (visit) => (path, printer, semantics) => {
     const {maybe} = printer;
     const {declare} = path.node;
     
     maybe.print(declare, 'declare ');
     visit(path, printer, semantics);
 };
-
-const {types: types$12} = bundle$1;
-
-const {isNext: isNext$j} = is$4;
-const {markAfter: markAfter$a} = mark;
-
-const {maybeDeclare: maybeDeclare$5} = maybeDeclare$6;
-const {parseComments: parseComments$5} = comment;
-const {maybeDecorators: maybeDecorators$2} = maybeDecorators$4;
 
 const isInsideTSModuleBlock = (path) => {
     return isTSModuleBlock$3(path.parentPath.parentPath);
@@ -52860,13 +50436,13 @@ const isInsideTSModuleBlock = (path) => {
 const {
     isFunction: isFunction$8,
     isTSModuleBlock: isTSModuleBlock$3,
-} = types$12;
+} = lib_exports$1;
 
 const isInsideExport = ({parentPath}) => parentPath.isExportDeclaration();
 const isFunctionLike = (path) => isFunction$8(path.parentPath.parentPath);
 const hasBody = ({node}) => node.body.body.length;
 
-const classVisitor = maybeDecorators$2((path, printer, semantics) => {
+const classVisitor = maybeDecorators$1((path, printer, semantics) => {
     const {
         id,
         abstract,
@@ -52926,17 +50502,17 @@ const classVisitor = maybeDecorators$2((path, printer, semantics) => {
     }
     
     if (!body.length)
-        parseComments$5(classBody, printer, semantics);
+        parseComments(classBody, printer, semantics);
     
     indent.dec();
     maybe.indent(body.length);
     print('}');
 });
 
-_class.ClassExpression = classVisitor;
+const ClassExpression$1 = classVisitor;
 
-_class.ClassDeclaration = {
-    print: maybeDeclare$5((path, printer, semantics) => {
+const ClassDeclaration$1 = {
+    print: maybeDeclare((path, printer, semantics) => {
         const {maybe} = printer;
         maybe.indent(!isInsideExport(path));
         classVisitor(path, printer, semantics);
@@ -52945,7 +50521,7 @@ _class.ClassDeclaration = {
         if (isFunctionLike(path))
             return true;
         
-        if (isNext$j(path))
+        if (isNext(path))
             return true;
         
         return isInsideTSModuleBlock(path);
@@ -52955,27 +50531,23 @@ _class.ClassDeclaration = {
         
         if (!isFunctionLike(path) && hasBody(path)) {
             write.newline();
-            markAfter$a(path);
+            markAfter(path);
         }
     },
 };
 
-var callExpression$3 = {};
-
-const {exists: exists$c} = is$4;
-const {maybeParens: maybeParens$9} = maybeParens$e;
-const {isArray: isArray$c} = Array;
+const {isArray: isArray$d} = Array;
 
 const parseArgs = (path) => {
     const argsPath = path.get('arguments');
     
-    if (!isArray$c(argsPath))
+    if (!isArray$d(argsPath))
         return [];
     
     return argsPath;
 };
 
-const CallExpression$2 = maybeParens$9((path, {indent, print, maybe, traverse}) => {
+const CallExpression$1 = maybeParens((path, {indent, print, maybe, traverse}) => {
     const args = parseArgs(path);
     const isParentCall = tooLong$1(args) && path.parentPath.isCallExpression();
     
@@ -52984,7 +50556,7 @@ const CallExpression$2 = maybeParens$9((path, {indent, print, maybe, traverse}) 
     
     traverse(callee);
     
-    if (exists$c(typeParameters))
+    if (exists(typeParameters))
         traverse(typeParameters);
     
     if (path.node.optional)
@@ -53023,8 +50595,7 @@ const CallExpression$2 = maybeParens$9((path, {indent, print, maybe, traverse}) 
     print(')');
 });
 
-callExpression$3.OptionalCallExpression = CallExpression$2;
-callExpression$3.CallExpression = CallExpression$2;
+const OptionalCallExpression$1 = CallExpression$1;
 
 function tooLong$1(args) {
     for (const arg of args) {
@@ -53035,20 +50606,14 @@ function tooLong$1(args) {
     return false;
 }
 
-var newExpression$1 = {};
-
-const {types: types$11} = bundle$1;
-const {exists: exists$b} = is$4;
-const {isMarkedAfter: isMarkedAfter$2} = mark;
-
 const {
-    isExpressionStatement: isExpressionStatement$6,
-    isMemberExpression: isMemberExpression$9,
-} = types$11;
+    isExpressionStatement: isExpressionStatement$8,
+    isMemberExpression: isMemberExpression$a,
+} = lib_exports$1;
 
-const isInsideExpressionStatement = ({parentPath}) => isExpressionStatement$6(parentPath);
-const notFirst = ({parentPath}) => exists$b(parentPath.getPrevSibling());
-const isInsideMember = ({parentPath}) => isMemberExpression$9(parentPath);
+const isInsideExpressionStatement = ({parentPath}) => isExpressionStatement$8(parentPath);
+const notFirst = ({parentPath}) => exists(parentPath.getPrevSibling());
+const isInsideMember = ({parentPath}) => isMemberExpression$a(parentPath);
 
 const getPrev = ({parentPath}) => {
     const prev = parentPath.getPrevSibling();
@@ -53059,7 +50624,7 @@ const getPrev = ({parentPath}) => {
     ];
 };
 
-newExpression$1.NewExpression = {
+const NewExpression$1 = {
     beforeIf(path) {
         if (!isInsideExpressionStatement(path))
             return false;
@@ -53069,7 +50634,7 @@ newExpression$1.NewExpression = {
         if (!exists)
             return false;
         
-        if (isMarkedAfter$2(prev))
+        if (isMarkedAfter(prev))
             return false;
         
         if (prev.isExpressionStatement())
@@ -53119,20 +50684,15 @@ function maybePrintBrace(brace, path, printer, semantics) {
     maybe.print(roundBraces.new, brace);
 }
 
-var objectExpression$3 = {};
+const {isArrayExpression: isArrayExpression$9} = lib_exports$1;
 
-var isInsideTuple$1 = {};
-
-const {types: types$10} = bundle$1;
-const {isArrayExpression: isArrayExpression$9} = types$10;
-
-const TYPES$4 = [
+const TYPES$2 = [
     'NullLiteral',
     'NumericLiteral',
     'BigIntLiteral',
 ];
 
-isInsideTuple$1.isInsideTuple = (path) => {
+const isInsideTuple = (path) => {
     const {parentPath} = path;
     
     if (!isArrayExpression$9(parentPath))
@@ -53143,48 +50703,28 @@ isInsideTuple$1.isInsideTuple = (path) => {
     if (second !== path.node)
         return false;
     
-    return TYPES$4.includes(first.type);
+    return TYPES$2.includes(first.type);
 };
 
-var isThirdObjectInsideArray$1 = {};
-
-const {types: types$$} = bundle$1;
 const {
     isArrayExpression: isArrayExpression$8,
-    isCallExpression: isCallExpression$9,
+    isCallExpression: isCallExpression$a,
     isIdentifier: isIdentifier$g,
-} = types$$;
+} = lib_exports$1;
 
-isThirdObjectInsideArray$1.isThirdObjectInsideArray = ({parentPath}) => {
+const isThirdObjectInsideArray = ({parentPath}) => {
     if (!isArrayExpression$8(parentPath))
         return false;
     
     const [, second] = parentPath.node.elements;
     
-    return isCallExpression$9(second) && !!isIdentifier$g(second);
+    return isCallExpression$a(second) && !!isIdentifier$g(second);
 };
-
-const {types: types$_} = bundle$1;
-const {
-    isCoupleLines: isCoupleLines$7,
-    isForOf: isForOf$3,
-    isIf,
-    noTrailingComment: noTrailingComment$2,
-    isNewlineBetweenSiblings: isNewlineBetweenSiblings$2,
-    noLeadingComment,
-    hasLeadingComment: hasLeadingComment$3,
-    exists: exists$a,
-} = is$4;
-
-const {parseComments: parseComments$4} = comment;
-const {isInsideTuple} = isInsideTuple$1;
-const {isLooksLikeChain: isLooksLikeChain$1} = isLooksLikeChain$4;
-const {isThirdObjectInsideArray} = isThirdObjectInsideArray$1;
 
 const {
     isStringLiteral: isStringLiteral$9,
     isArrayExpression: isArrayExpression$7,
-} = types$_;
+} = lib_exports$1;
 
 const isBodyOfArrow = (path) => path.parentPath.node.body === path.node;
 const isLogical = (path) => path.get('argument').isLogicalExpression();
@@ -53200,7 +50740,7 @@ const isMemberExpressionCallee = ({parentPath}) => {
     if (!callee.isMemberExpression())
         return false;
     
-    return isLooksLikeChain$1(callee);
+    return isLooksLikeChain(callee);
 };
 
 const isInsideCall = ({parentPath}) => parentPath.isCallExpression();
@@ -53222,7 +50762,7 @@ function isInsideNestedTuple({parentPath}) {
     return isStringLiteral$9(first);
 }
 
-objectExpression$3.ObjectExpression = (path, printer, semantics) => {
+const ObjectExpression$2 = (path, printer, semantics) => {
     const {trailingComma} = semantics;
     const {
         print,
@@ -53236,12 +50776,12 @@ objectExpression$3.ObjectExpression = (path, printer, semantics) => {
     
     const properties = path.get('properties');
     const {length} = properties;
-    const parens = isParens$2(path);
-    const manyLines = !isOneLine$1(path);
+    const parens = isParens$1(path);
+    const manyLines = !isOneLine(path);
     
     maybe.print(parens, '(');
     print('{');
-    parseComments$4(path, printer, semantics);
+    parseComments(path, printer, semantics);
     maybe.print.newline(manyLines);
     
     const n = properties.length - 1;
@@ -53258,7 +50798,7 @@ objectExpression$3.ObjectExpression = (path, printer, semantics) => {
             
             print(property);
             
-            if (noTrailingComment$2(property) && (length > 1 || manyLines)) {
+            if (noTrailingComment(property) && (length > 1 || manyLines)) {
                 maybe.print(index !== n || trailingComma, ',');
                 print.newline();
             }
@@ -53272,9 +50812,9 @@ objectExpression$3.ObjectExpression = (path, printer, semantics) => {
         if (property.isObjectMethod())
             continue;
         
-        if (noTrailingComment$2(property) && !hasNextLeadingComment(property)) {
+        if (noTrailingComment(property) && !hasNextLeadingComment(property)) {
             maybe.print.newline(manyLines);
-            maybe.print.linebreak(isNewlineBetweenSiblings$2(property));
+            maybe.print.linebreak(isNewlineBetweenSiblings(property));
         }
     }
     
@@ -53296,10 +50836,10 @@ objectExpression$3.ObjectExpression = (path, printer, semantics) => {
 const hasNextLeadingComment = (path) => {
     const next = path.getNextSibling();
     
-    if (!exists$a(next))
+    if (!exists(next))
         return false;
     
-    return hasLeadingComment$3(next);
+    return hasLeadingComment(next);
 };
 
 const notLastArgInsideCall = (path) => {
@@ -53308,7 +50848,7 @@ const notLastArgInsideCall = (path) => {
     if (!parentPath.isCallExpression())
         return false;
     
-    if (isCoupleLines$7(path))
+    if (isCoupleLines(path))
         return false;
     
     return path !== parentPath.get('arguments').at(-1);
@@ -53317,8 +50857,7 @@ const notLastArgInsideCall = (path) => {
 const ONE_LINE$2 = true;
 const MANY_LINES = false;
 
-objectExpression$3.isOneLine = isOneLine$1;
-function isOneLine$1(path) {
+function isOneLine(path) {
     const {length} = path.get('properties');
     
     if (!length)
@@ -53327,35 +50866,30 @@ function isOneLine$1(path) {
     if (notLastArgInsideCall(path))
         return ONE_LINE$2;
     
-    if (isForOf$3(path))
+    if (isForOf$2(path))
         return ONE_LINE$2;
     
     if (isIf(path))
         return ONE_LINE$2;
     
-    if (isCoupleLines$7(path))
+    if (isCoupleLines(path))
         return MANY_LINES;
     
     return !isValue(path);
 }
 
-function isParens$2(path) {
+function isParens$1(path) {
     if (isBodyOfArrow(path))
         return true;
     
     return isParentExpression(path);
 }
 
-var objectProperty$4 = {};
-
-var concatenate$1 = {};
-
-const {types: types$Z} = bundle$1;
 const {
     isStringLiteral: isStringLiteral$8,
     isTemplateLiteral: isTemplateLiteral$4,
     isBinaryExpression: isBinaryExpression$1,
-} = types$Z;
+} = lib_exports$1;
 
 const isStringLike = (a) => {
     if (isStringLiteral$8(a))
@@ -53364,7 +50898,7 @@ const isStringLike = (a) => {
     return isTemplateLiteral$4(a);
 };
 
-concatenate$1.isConcatenation = (path) => {
+const isConcatenation = (path) => {
     const {parentPath} = path;
     const {operator} = path.node;
     
@@ -53386,7 +50920,7 @@ concatenate$1.isConcatenation = (path) => {
     return isBinaryExpression$1(left) && isStringLike(right);
 };
 
-concatenate$1.concatenate = (path, {print, indent}) => {
+const concatenate = (path, {print, indent}) => {
     if (!path.parentPath.isBinaryExpression()) {
         indent.inc();
         print.breakline();
@@ -53402,11 +50936,7 @@ concatenate$1.concatenate = (path, {print, indent}) => {
         indent.dec();
 };
 
-const {isConcatenation: isConcatenation$2} = concatenate$1;
-const {isOneLine} = objectExpression$3;
-const {printKey: printKey$3} = printKey$6;
-
-objectProperty$4.ObjectProperty = (path, printer, semantics) => {
+const ObjectProperty$1 = (path, printer, semantics) => {
     const {trailingComma} = semantics;
     const {shorthand} = path.node;
     const {
@@ -53420,11 +50950,11 @@ objectProperty$4.ObjectProperty = (path, printer, semantics) => {
     const isLast = path === properties.at(-1);
     const manyLines = !isOneLine(path.parentPath);
     
-    printKey$3(path, printer);
+    printKey(path, printer);
     
     if (!shorthand) {
         write(':');
-        maybe.write.space(!isConcatenation$2(value));
+        maybe.write.space(!isConcatenation(value));
         traverse(value);
     }
     
@@ -53434,17 +50964,11 @@ objectProperty$4.ObjectProperty = (path, printer, semantics) => {
         write(', ');
 };
 
-var objectPattern$2 = {};
-
-var wrongShorthand$1 = {};
-
-wrongShorthand$1.wrongShorthand = ({computed, isAssign, keyPath, valuePath}) => {
+const wrongShorthand = ({computed, isAssign, keyPath, valuePath}) => {
     return !computed && !isAssign && keyPath.node.name !== valuePath.node.name;
 };
 
-var moreThenMaxPropertiesInOneLine$1 = {};
-
-moreThenMaxPropertiesInOneLine$1.moreThenMaxPropertiesInOneLine = (path, {maxPropertiesInOneLine}) => {
+const moreThenMaxPropertiesInOneLine = (path, {maxPropertiesInOneLine}) => {
     const {parentPath} = path;
     
     if (parentPath.isObjectProperty())
@@ -53455,23 +50979,18 @@ moreThenMaxPropertiesInOneLine$1.moreThenMaxPropertiesInOneLine = (path, {maxPro
     return maxPropertiesInOneLine >= n;
 };
 
-var maybeTypeAnnotation$4 = {};
-
-const {types: types$Y} = bundle$1;
 const {
-    isMemberExpression: isMemberExpression$8,
+    isMemberExpression: isMemberExpression$9,
     isSequenceExpression: isSequenceExpression$2,
-} = types$Y;
+} = lib_exports$1;
 
-maybeTypeAnnotation$4.maybePrintTypeAnnotation = maybePrintTypeAnnotation$2;
-
-maybeTypeAnnotation$4.maybeTypeAnnotation = (visit) => (path, printer, semantics) => {
+const maybeTypeAnnotation = (visit) => (path, printer, semantics) => {
     visit(path, printer, semantics);
     
-    maybePrintTypeAnnotation$2(path, printer);
+    maybePrintTypeAnnotation(path, printer);
 };
 
-function maybePrintTypeAnnotation$2(path, printer) {
+function maybePrintTypeAnnotation(path, printer) {
     const {parentPath, node} = path;
     
     const {typeAnnotation} = node;
@@ -53480,7 +50999,7 @@ function maybePrintTypeAnnotation$2(path, printer) {
     if (isSequenceExpression$2(parentPath))
         return;
     
-    if (isMemberExpression$8(parentPath))
+    if (isMemberExpression$9(parentPath))
         return;
     
     if (typeAnnotation) {
@@ -53490,13 +51009,10 @@ function maybePrintTypeAnnotation$2(path, printer) {
     }
 }
 
-var moreThenMaxPropertiesLengthInOneLine$1 = {};
-
-const {types: types$X} = bundle$1;
 const {
     isAssignmentPattern: isAssignmentPattern$3,
     isIdentifier: isIdentifier$f,
-} = types$X;
+} = lib_exports$1;
 
 function getLength(left, right) {
     if (isIdentifier$f(left) && isIdentifier$f(right))
@@ -53508,7 +51024,7 @@ function getLength(left, right) {
     return 0;
 }
 
-moreThenMaxPropertiesLengthInOneLine$1.moreThenMaxPropertiesLengthInOneLine = (path, {maxPropertiesLengthInOneLine}) => {
+const moreThenMaxPropertiesLengthInOneLine = (path, {maxPropertiesLengthInOneLine}) => {
     const {properties} = path.node;
     
     for (const {key, value} of properties) {
@@ -53533,18 +51049,15 @@ moreThenMaxPropertiesLengthInOneLine$1.moreThenMaxPropertiesLengthInOneLine = (p
     return false;
 };
 
-var calculateLongAssignPattern = {};
-
-const {types: types$W} = bundle$1;
 const {
     isAssignmentPattern: isAssignmentPattern$2,
     isArrayExpression: isArrayExpression$6,
     isObjectExpression: isObjectExpression$8,
     isIdentifier: isIdentifier$e,
-} = types$W;
+} = lib_exports$1;
 
-calculateLongAssignPattern.calculateAssigns = (property, semantics) => {
-    const currentAssign = isLongAssignPattern$1(property, semantics);
+const calculateAssigns = (property, semantics) => {
+    const currentAssign = isLongAssignPattern(property, semantics);
     
     const {right} = property.node.value;
     const isArrayOrObjectRight = isArrayExpression$6(right) || isComplexObject(right);
@@ -53555,9 +51068,7 @@ calculateLongAssignPattern.calculateAssigns = (property, semantics) => {
     };
 };
 
-calculateLongAssignPattern.isLongAssignPattern = isLongAssignPattern$1;
-
-function isLongAssignPattern$1(path, semantics) {
+function isLongAssignPattern(path, semantics) {
     const {key, value} = path.node;
     
     if (!isAssignmentPattern$2(value))
@@ -53578,12 +51089,10 @@ function isComplexObject(node) {
     return node.properties.length;
 }
 
-var comments$2 = {};
-
 const createPrintCommentLine = (fn) => (value) => fn(`//${value}`);
 const createPrintCommentBlock = (fn) => (value) => fn(`/*${value}*/`);
 
-comments$2.printLeadingComments = (path, {print}) => {
+const printLeadingComments = (path, {print}) => {
     const printCommentLine = createPrintCommentLine(print);
     const printCommentBlock = createPrintCommentBlock(print);
     const {leadingComments} = path.node;
@@ -53601,29 +51110,6 @@ comments$2.printLeadingComments = (path, {print}) => {
     }
 };
 
-const {types: types$V} = bundle$1;
-
-const {wrongShorthand} = wrongShorthand$1;
-
-const {
-    isForOf: isForOf$2,
-    isCoupleLines: isCoupleLines$6,
-    exists: exists$9,
-} = is$4;
-
-const {moreThenMaxPropertiesInOneLine} = moreThenMaxPropertiesInOneLine$1;
-
-const {maybeTypeAnnotation: maybeTypeAnnotation$3} = maybeTypeAnnotation$4;
-const {moreThenMaxPropertiesLengthInOneLine} = moreThenMaxPropertiesLengthInOneLine$1;
-const {printKey: printKey$2} = printKey$6;
-
-const {
-    calculateAssigns,
-    isLongAssignPattern,
-} = calculateLongAssignPattern;
-
-const {printLeadingComments} = comments$2;
-
 const {
     isObjectExpression: isObjectExpression$7,
     isIdentifier: isIdentifier$d,
@@ -53633,7 +51119,7 @@ const {
     isObjectPattern: isObjectPattern$3,
     isForOfStatement: isForOfStatement$1,
     isVariableDeclaration: isVariableDeclaration$5,
-} = types$V;
+} = lib_exports$1;
 
 const isInsideFn = (path) => {
     if (isFunction$7(path.parentPath))
@@ -53647,10 +51133,10 @@ function isIndent(path) {
 }
 
 const isCoupleProperties = ({path, valuePath, property}) => {
-    if (!isCoupleLines$6(valuePath))
+    if (!isCoupleLines(valuePath))
         return false;
     
-    if (exists$9(property.getPrevSibling()))
+    if (exists(property.getPrevSibling()))
         return false;
     
     const properties = path.get('properties');
@@ -53696,8 +51182,8 @@ function isNextAssignObject(path) {
     return isObjectExpression$7(right);
 }
 
-objectPattern$2.ObjectPattern = {
-    print: maybeTypeAnnotation$3((path, printer, semantics) => {
+const ObjectPattern$1 = {
+    print: maybeTypeAnnotation((path, printer, semantics) => {
         const shouldIndent = isIndent(path);
         const {
             maxPropertiesInOneLine,
@@ -53759,7 +51245,7 @@ objectPattern$2.ObjectPattern = {
             printLeadingComments(property, {
                 print,
             });
-            printKey$2(property, printer);
+            printKey(property, printer);
             
             if (!shorthand || wrongShorthand({computed, isAssign, keyPath, valuePath})) {
                 print(':');
@@ -53940,74 +51426,7 @@ function isFunctionParam({parentPath}) {
     return parentPath.parentPath.isFunction();
 }
 
-var classProperty$1 = {};
-
-const {exists: exists$8} = is$4;
-const {maybePrintTypeAnnotation: maybePrintTypeAnnotation$1} = maybeTypeAnnotation$4;
-const {maybeDecorators: maybeDecorators$1} = maybeDecorators$4;
-const {printKey: printKey$1} = printKey$6;
-const {printKind: printKind$1} = kind;
-
-const processClassProperty = maybeDecorators$1((path, printer, semantics, {accessor} = {}) => {
-    const {node} = path;
-    const {
-        accessibility,
-        declare,
-        optional,
-    } = node;
-    
-    const {print, maybe} = printer;
-    
-    maybe.print(accessor, 'accessor ');
-    
-    const value = path.get('value');
-    
-    maybe.print(declare, 'declare ');
-    maybe.print(accessibility, `${accessibility} `);
-    maybe.print(node.static, 'static ');
-    maybe.print(node.readonly, 'readonly ');
-    
-    printKind$1(path, printer);
-    printKey$1(path, printer);
-    
-    maybe.print(optional, '?');
-    
-    maybePrintTypeAnnotation$1(path, printer);
-    
-    if (exists$8(value)) {
-        print.space();
-        print('=');
-        print.space();
-        print('__value');
-    }
-    
-    print(';');
-    print.newline();
-});
-
-classProperty$1.ClassProperty = processClassProperty;
-classProperty$1.ClassPrivateProperty = processClassProperty;
-
-classProperty$1.PrivateName = (path, {print}) => {
-    print('#');
-    print('__id');
-};
-
-classProperty$1.ClassAccessorProperty = (path, printer, semantics) => {
-    processClassProperty(path, printer, semantics, {
-        accessor: true,
-    });
-};
-
-var assignmentExpression$4 = {exports: {}};
-
-var maybeParensCondition = {};
-
-const {hasLeadingComment: hasLeadingComment$2} = is$4;
-
-const {isParens: isParens$1} = maybeParens$e;
-
-maybeParensCondition.condition = (path, printer, semantics) => {
+const condition$4 = (path, printer, semantics) => {
     const {parentPath} = path;
     const {type} = parentPath;
     const {roundBraces} = semantics;
@@ -54027,19 +51446,15 @@ maybeParensCondition.condition = (path, printer, semantics) => {
     if (type === 'UnaryExpression')
         return true;
     
-    if (!roundBraces.assign && !hasLeadingComment$2(path))
+    if (!roundBraces.assign && !hasLeadingComment(path))
         return false;
     
-    return isParens$1(path);
+    return isParens$2(path);
 };
 
-var assignmentExpressionComments = {};
+const {isReturnStatement: isReturnStatement$4} = lib_exports$1;
 
-const {types: types$U} = bundle$1;
-const {hasLeadingComment: hasLeadingComment$1} = is$4;
-const {isReturnStatement: isReturnStatement$4} = types$U;
-
-assignmentExpressionComments.printLeadingCommentLine = (path, printer, semantics, {printComment, isLast}) => {
+const printLeadingCommentLine$3 = (path, printer, semantics, {printComment, isLast}) => {
     const {parentPath} = path;
     const {print, maybe} = printer;
     
@@ -54051,7 +51466,7 @@ assignmentExpressionComments.printLeadingCommentLine = (path, printer, semantics
     print.breakline();
 };
 
-assignmentExpressionComments.printLeadingCommentBlock = (path, printer, semantics, {printComment}) => {
+const printLeadingCommentBlock$3 = (path, printer, semantics, {printComment}) => {
     const {parentPath} = path;
     const {print} = printer;
     
@@ -54062,11 +51477,11 @@ assignmentExpressionComments.printLeadingCommentBlock = (path, printer, semantic
     print.indent();
 };
 
-assignmentExpressionComments.maybeInsideReturnWithCommentStart = (path, {print, indent}) => {
+const maybeInsideReturnWithCommentStart = (path, {print, indent}) => {
     const {parentPath} = path;
     const is = isReturnStatement$4(parentPath);
     
-    if (is && hasLeadingComment$1(path)) {
+    if (is && hasLeadingComment(path)) {
         indent.inc();
         const {leadingComments} = path.node;
         
@@ -54082,26 +51497,23 @@ assignmentExpressionComments.maybeInsideReturnWithCommentStart = (path, {print, 
     }
 };
 
-assignmentExpressionComments.maybeInsideReturnWithCommentEnd = (path, {print, indent}) => {
+const maybeInsideReturnWithCommentEnd = (path, {print, indent}) => {
     const {parentPath} = path;
     const is = isReturnStatement$4(parentPath);
     
-    if (!is || !hasLeadingComment$1(path))
+    if (!is || !hasLeadingComment(path))
         return;
     
     indent.dec();
     print.breakline();
 };
 
-var printSeparator = {};
-
-const {types: types$T} = bundle$1;
 const {
-    isAssignmentExpression: isAssignmentExpression$2,
-    isExpressionStatement: isExpressionStatement$5,
-} = types$T;
+    isAssignmentExpression: isAssignmentExpression$3,
+    isExpressionStatement: isExpressionStatement$7,
+} = lib_exports$1;
 
-printSeparator.printSeparator = (path, {print}) => {
+const printSeparator = (path, {print}) => {
     if (isMultiline(path))
         print.breakline();
     else
@@ -54111,72 +51523,52 @@ printSeparator.printSeparator = (path, {print}) => {
 function isMultiline(path) {
     const {right} = path.node;
     
-    if (!path.parentPath.find(isExpressionStatement$5))
+    if (!path.parentPath.find(isExpressionStatement$7))
         return false;
     
-    return isAssignmentExpression$2(right);
+    return isAssignmentExpression$3(right);
 }
 
-(function (module) {
+const isInsideBlock$4 = ({parentPath}) => /BlockStatement|Program/.test(parentPath.type);
 
-	const {condition} = maybeParensCondition;
+const AssignmentExpression$2 = maybeParens({
+    checkParens: false,
+    condition: condition$4,
+    print(path, printer) {
+        const {print} = printer;
+        const {operator} = path.node;
+        
+        maybeInsideReturnWithCommentStart(path, printer);
+        
+        print('__left');
+        print.space();
+        print(operator);
+        printSeparator(path, printer);
+        print('__right');
+        
+        if (isInsideBlock$4(path)) {
+            print(';');
+            print.breakline();
+        }
+        
+        maybeInsideReturnWithCommentEnd(path, printer);
+    },
+});
 
-	const {
-	    printLeadingCommentLine,
-	    maybeInsideReturnWithCommentEnd,
-	    maybeInsideReturnWithCommentStart,
-	    printLeadingCommentBlock,
-	} = assignmentExpressionComments;
-
-	const {maybeParens} = maybeParens$e;
-	const {printSeparator: printSeparator$1} = printSeparator;
-
-	const isInsideBlock = ({parentPath}) => /BlockStatement|Program/.test(parentPath.type);
-
-	module.exports.AssignmentExpression = maybeParens({
-	    checkParens: false,
-	    condition,
-	    print(path, printer) {
-	        const {print} = printer;
-	        const {operator} = path.node;
-	        
-	        maybeInsideReturnWithCommentStart(path, printer);
-	        
-	        print('__left');
-	        print.space();
-	        print(operator);
-	        printSeparator$1(path, printer);
-	        print('__right');
-	        
-	        if (isInsideBlock(path)) {
-	            print(';');
-	            print.breakline();
-	        }
-	        
-	        maybeInsideReturnWithCommentEnd(path, printer);
-	    },
-	});
-
-	module.exports.AssignmentExpression.printLeadingCommentLine = printLeadingCommentLine;
-	module.exports.AssignmentExpression.printLeadingCommentBlock = printLeadingCommentBlock; 
-} (assignmentExpression$4));
-
-var assignmentExpressionExports = assignmentExpression$4.exports;
-assignmentExpressionExports.default;
-
-var arrayExpression$4 = {};
-
-var newline = {};
+AssignmentExpression$2.printLeadingCommentLine = printLeadingCommentLine$3;
+AssignmentExpression$2.printLeadingCommentBlock = printLeadingCommentBlock$3;
 
 var operate = {};
 
+var require$$2$2 = /*@__PURE__*/getAugmentedNamespace(bundle$1);
+
 var getBinding$3 = {};
 
-const {types: types$S} = bundle$1;
+const {types: types$q} = require$$2$2;
 const {
     isIdentifier: isIdentifier$c,
-    isMemberExpression: isMemberExpression$7,
-} = types$S;
+    isMemberExpression: isMemberExpression$8,
+} = types$q;
 
 const isString$e = (a) => typeof a === 'string';
 
@@ -54195,30 +51587,30 @@ const parseName$1 = (node) => {
     if (isIdentifier$c(node))
         return node.name;
     
-    if (isMemberExpression$7(node))
+    if (isMemberExpression$8(node))
         return parseName$1(node.object);
     
     return '';
 };
 
-var isSimple$2 = {};
+var isSimple$1 = {};
 
-const {types: types$R} = bundle$1;
+const {types: types$p} = require$$2$2;
 const {
     isOptionalMemberExpression: isOptionalMemberExpression$2,
-    isMemberExpression: isMemberExpression$6,
+    isMemberExpression: isMemberExpression$7,
     isIdentifier: isIdentifier$b,
     isLiteral: isLiteral$4,
-} = types$R;
+} = types$p;
 
-isSimple$2.isSimple = (a) => {
+isSimple$1.isSimple = (a) => {
     if (isLiteral$4(a))
         return true;
     
     if (isIdentifier$b(a))
         return true;
     
-    if (isMemberExpression$6(a))
+    if (isMemberExpression$7(a))
         return true;
     
     return isOptionalMemberExpression$2(a);
@@ -54226,12 +51618,12 @@ isSimple$2.isSimple = (a) => {
 
 var extract$6 = {};
 
-const {types: types$Q} = bundle$1;
+const {types: types$o} = require$$2$2;
 const {
     isArrayExpression: isArrayExpression$5,
     isLiteral: isLiteral$3,
     isIdentifier: isIdentifier$a,
-    isMemberExpression: isMemberExpression$5,
+    isMemberExpression: isMemberExpression$6,
     isTemplateElement: isTemplateElement$4,
     isRegExpLiteral: isRegExpLiteral$2,
     isClassMethod: isClassMethod$1,
@@ -54242,7 +51634,7 @@ const {
     isTSTypeReference: isTSTypeReference$3,
     isTSTypeParameter: isTSTypeParameter$1,
     isTSAsExpression: isTSAsExpression$1,
-} = types$Q;
+} = types$o;
 
 extract$6.extract = extract$5;
 
@@ -54267,7 +51659,7 @@ function extract$5(node) {
     if (isTemplateElement$4(node))
         return node.value.raw;
     
-    if (isMemberExpression$5(node))
+    if (isMemberExpression$6(node))
         return `${extract$5(node.object)}.${extract$5(node.property)}`;
     
     if (isArrayExpression$5(node))
@@ -54477,12 +51869,12 @@ function usedInAssignment(path) {
     return false;
 }
 
-var remove$3 = {};
+var remove$2 = {};
 
 const {entries: entries$a} = Object;
 const isOneDeclaration = ({node}) => node.declarations.length === 1;
 
-remove$3.remove = (path) => {
+remove$2.remove = (path) => {
     if (!path.node)
         return;
     
@@ -54661,15 +52053,15 @@ function isRequire$1(path) {
 
 var properties = {};
 
-var traverseProperties$4 = {};
+var traverseProperties$3 = {};
 
-const {traverse: traverse$a, types: types$P} = bundle$1;
+const {traverse: traverse$6, types: types$n} = require$$2$2;
 const {extract: extract$3} = extract$6;
 
 const {
-    isCallExpression: isCallExpression$8,
+    isCallExpression: isCallExpression$9,
     isObjectExpression: isObjectExpression$6,
-} = types$P;
+} = types$n;
 
 const nodeOrPath = (path) => path.node || path;
 
@@ -54677,7 +52069,7 @@ function getNode$1(path) {
     if (!isObjectExpression$6(path))
         return nodeOrPath(path);
     
-    if (isCallExpression$8(path.parentPath))
+    if (isCallExpression$9(path.parentPath))
         return path.parentPath.node;
     
     return {
@@ -54686,7 +52078,7 @@ function getNode$1(path) {
     };
 }
 
-traverseProperties$4.traverseProperties = (path, name, {firstLevel = false} = {}) => {
+traverseProperties$3.traverseProperties = (path, name, {firstLevel = false} = {}) => {
     const collector = [];
     const node = getNode$1(path);
     
@@ -54700,7 +52092,7 @@ traverseProperties$4.traverseProperties = (path, name, {firstLevel = false} = {}
         return collector;
     }
     
-    traverse$a(node, {
+    traverse$6(node, {
         noScope: true,
         ObjectExpression: fn,
     });
@@ -54731,12 +52123,12 @@ const collect = ({name, collector}) => (path) => {
 const {
     isObjectExpression: isObjectExpression$5,
     isObjectPattern: isObjectPattern$2,
-} = bundle$1.types;
+} = require$$2$2.types;
 
 const {extract: extract$2} = extract$6;
-const {traverseProperties: traverseProperties$3} = traverseProperties$4;
+const {traverseProperties: traverseProperties$2} = traverseProperties$3;
 
-properties.traverseProperties = traverseProperties$3;
+properties.traverseProperties = traverseProperties$2;
 
 properties.getProperties = (path, names) => {
     const result = {};
@@ -54803,19 +52195,19 @@ function maybeEncode(a) {
     return a.replaceAll(`'`, `\\'`);
 }
 
-var replaceWith$8 = {};
+var replaceWith$7 = {};
 
 var replaceWithMultiple$3 = {};
 
 var maybeBody$2 = {};
 
-const {types: types$O} = bundle$1;
+const {types: types$m} = require$$2$2;
 const {
     isStatement: isStatement$8,
     isBlockStatement: isBlockStatement$6,
-    blockStatement: blockStatement$4,
-    expressionStatement: expressionStatement$8,
-} = types$O;
+    blockStatement: blockStatement$3,
+    expressionStatement: expressionStatement$7,
+} = types$m;
 
 maybeBody$2.maybeBody = (path, node) => {
     const {parentPath} = path;
@@ -54825,8 +52217,8 @@ maybeBody$2.maybeBody = (path, node) => {
             currentPath: path,
         };
     
-    parentPath.node.body = blockStatement$4([
-        expressionStatement$8(path.node),
+    parentPath.node.body = blockStatement$3([
+        expressionStatement$7(path.node),
     ]);
     
     return {
@@ -54836,12 +52228,12 @@ maybeBody$2.maybeBody = (path, node) => {
 
 var toExpression$4 = {};
 
-const {types: types$N} = bundle$1;
+const {types: types$l} = require$$2$2;
 const {
     isExpression: isExpression$4,
     toStatement: toStatement$1,
-    expressionStatement: expressionStatement$7,
-} = types$N;
+    expressionStatement: expressionStatement$6,
+} = types$l;
 
 toExpression$4.toExpression = (el) => {
     const {type} = el;
@@ -54854,14 +52246,14 @@ toExpression$4.toExpression = (el) => {
         return el;
     
     if (isExpression$4(el))
-        return expressionStatement$7(el);
+        return expressionStatement$6(el);
     
     return toStatement$1(el);
 };
 
 const {maybeBody: maybeBody$1} = maybeBody$2;
 const {toExpression: toExpression$3} = toExpression$4;
-const {isSequenceExpression: isSequenceExpression$1} = bundle$1.types;
+const {isSequenceExpression: isSequenceExpression$1} = require$$2$2.types;
 
 replaceWithMultiple$3.replaceWithMultiple = (path, nodes) => {
     const {node} = path;
@@ -54908,7 +52300,7 @@ function removeDuplicateLeadingComments(nodes) {
     }
 }
 
-var replaceWith$7 = {};
+var replaceWith$6 = {};
 
 const {maybeBody} = maybeBody$2;
 const {assign: assign$a} = Object;
@@ -54922,7 +52314,7 @@ const parseNode$2 = (a) => {
     return a;
 };
 
-replaceWith$7.replaceWith = (path, node) => {
+replaceWith$6.replaceWith = (path, node) => {
     node = parseNode$2(node);
     
     if (path?.parentPath?.isExpressionStatement() && !path.parentPath.isProgram()) {
@@ -54955,20 +52347,20 @@ function extractMark(node) {
 }
 
 const {replaceWithMultiple: replaceWithMultiple$2} = replaceWithMultiple$3;
-const {replaceWith: replaceWith$6} = replaceWith$7;
+const {replaceWith: replaceWith$5} = replaceWith$6;
 const {toExpression: toExpression$2} = toExpression$4;
 
-replaceWith$8.replaceWith = replaceWith$6;
-replaceWith$8.replaceWithMultiple = replaceWithMultiple$2;
-replaceWith$8.toExpression = toExpression$2;
+replaceWith$7.replaceWith = replaceWith$5;
+replaceWith$7.replaceWithMultiple = replaceWithMultiple$2;
+replaceWith$7.toExpression = toExpression$2;
 
-const {types: types$M} = bundle$1;
+const {types: types$k} = require$$2$2;
 
 const {getBinding: getBinding$1, getBindingPath} = getBinding$3;
-const {isSimple: isSimple$1} = isSimple$2;
+const {isSimple} = isSimple$1;
 const {extract: extract$1} = extract$6;
 const {compute} = compute$2;
-const {remove: remove$2} = remove$3;
+const {remove: remove$1} = remove$2;
 const {getExportDefault} = getExportDefault$1;
 const {rename} = rename$1;
 const {renameProperty} = renameProperty$2;
@@ -54978,49 +52370,49 @@ const {getPathAfterRequires} = getPathAfterRequires$1;
 const {
     getProperty: getProperty$3,
     getProperties,
-    traverseProperties: traverseProperties$2,
+    traverseProperties: traverseProperties$1,
 } = properties;
 
 const {getLiteralRaw} = getLiteralRaw$1;
 
 const {
-    replaceWith: replaceWith$5,
+    replaceWith: replaceWith$4,
     replaceWithMultiple: replaceWithMultiple$1,
     toExpression: toExpression$1,
-} = replaceWith$8;
+} = replaceWith$7;
 
 const {
     matchesPattern: matchesPattern$2,
     isImportDeclaration: isImportDeclaration$2,
     isExportDeclaration: isExportDeclaration$5,
     isStatement: isStatement$7,
-    expressionStatement: expressionStatement$6,
-} = types$M;
+    expressionStatement: expressionStatement$5,
+} = types$k;
 
-operate.getBinding = getBinding$1;
-operate.getBindingPath = getBindingPath;
-operate.getLiteralRaw = getLiteralRaw;
-operate.extract = extract$1;
-operate.compute = compute;
-operate.replaceWith = replaceWith$5;
-operate.getExportDefault = getExportDefault;
-operate.toExpression = toExpression$1;
-operate.isSimple = isSimple$1;
-operate.rename = rename;
-operate.renameProperty = renameProperty;
-operate.setLiteralValue = setLiteralValue$2;
+var getBinding_1 = operate.getBinding = getBinding$1;
+var getBindingPath_1 = operate.getBindingPath = getBindingPath;
+var getLiteralRaw_1 = operate.getLiteralRaw = getLiteralRaw;
+var extract_1 = operate.extract = extract$1;
+var compute_1 = operate.compute = compute;
+var replaceWith_1 = operate.replaceWith = replaceWith$4;
+var getExportDefault_1 = operate.getExportDefault = getExportDefault;
+var toExpression_1 = operate.toExpression = toExpression$1;
+var isSimple_1 = operate.isSimple = isSimple;
+var rename_1 = operate.rename = rename;
+var renameProperty_1 = operate.renameProperty = renameProperty;
+var setLiteralValue_1 = operate.setLiteralValue = setLiteralValue$2;
 
-operate.getProperty = getProperty$3;
-operate.getProperties = getProperties;
-operate.traverseProperties = traverseProperties$2;
+var getProperty_1 = operate.getProperty = getProperty$3;
+var getProperties_1 = operate.getProperties = getProperties;
+var traverseProperties_1 = operate.traverseProperties = traverseProperties$1;
 
-operate.replaceWithMultiple = replaceWithMultiple$1;
+var replaceWithMultiple_1 = operate.replaceWithMultiple = replaceWithMultiple$1;
 
-operate.insertBefore = (path, node) => {
+var insertBefore$1 = operate.insertBefore = (path, node) => {
     path.insertBefore(node);
 };
 
-operate.insertAfter = (path, node) => {
+var insertAfter$2 = operate.insertAfter = (path, node) => {
     const {comments} = path.node;
     
     if (path.node.trailingComments?.length && path.getNextSibling()?.node?.leadingComments)
@@ -55030,20 +52422,20 @@ operate.insertAfter = (path, node) => {
         delete node.trailingComments;
     
     if (isStatement$7(path) && !isStatement$7(node))
-        path.insertAfter(expressionStatement$6(node));
+        path.insertAfter(expressionStatement$5(node));
     else
         path.insertAfter(node);
     
     path.node.comments = comments;
 };
 
-operate.isModuleExports = (path) => {
+var isModuleExports = operate.isModuleExports = (path) => {
     return matchesPattern$2(path.node || path, 'module.exports');
 };
 
 const isBinding$1 = (name) => (path) => path.scope.bindings[name];
 
-operate.findBinding = (path, name) => {
+var findBinding = operate.findBinding = (path, name) => {
     const referencePath = path.findParent(isBinding$1(name));
     
     if (!referencePath)
@@ -55052,10 +52444,10 @@ operate.findBinding = (path, name) => {
     return referencePath.scope.bindings[name];
 };
 
-operate.remove = remove$2;
+var remove_1 = operate.remove = remove$1;
 
-operate.getPathAfterRequires = getPathAfterRequires;
-operate.getPathAfterImports = (body) => {
+var getPathAfterRequires_1 = operate.getPathAfterRequires = getPathAfterRequires;
+var getPathAfterImports = operate.getPathAfterImports = (body) => {
     const n = body.length;
     let i = 0;
     
@@ -55065,7 +52457,7 @@ operate.getPathAfterImports = (body) => {
     return body[i];
 };
 
-operate.isESM = (path) => {
+var isESM$1 = operate.isESM = (path) => {
     const scope = path.scope.getProgramParent();
     const programPath = scope.path;
     
@@ -55080,31 +52472,18 @@ operate.isESM = (path) => {
     return false;
 };
 
-const {isSimple} = operate;
-const {types: types$L} = bundle$1;
-
-const {
-    isStringAndMember,
-    isStringAndIdentifier: isStringAndIdentifier$1,
-    isIdentifierAndString,
-    isCoupleLines: isCoupleLines$5,
-    isStringAndArray: isStringAndArray$1,
-    isIdentifierAndIdentifier: isIdentifierAndIdentifier$1,
-    isSimpleAndNotEmptyObject: isSimpleAndNotEmptyObject$1,
-} = is$4;
-
 const {
     isObjectExpression: isObjectExpression$4,
     isArrayExpression: isArrayExpression$4,
     isObjectProperty: isObjectProperty$2,
-    isCallExpression: isCallExpression$7,
+    isCallExpression: isCallExpression$8,
     isAwaitExpression: isAwaitExpression$1,
     isBooleanLiteral: isBooleanLiteral$2,
     isNullLiteral: isNullLiteral$1,
     isStringLiteral: isStringLiteral$7,
     isSpreadElement: isSpreadElement$2,
     isIdentifier: isIdentifier$9,
-} = types$L;
+} = lib_exports$1;
 
 const {round: round$1} = Math;
 
@@ -55118,16 +52497,16 @@ const isOneSpread = (elements) => {
 };
 
 const isSimpleAndCall = ([a, b]) => {
-    if (!isSimple(a))
+    if (!isSimple_1(a))
         return;
     
-    return isCallExpression$7(b) || isAwaitExpression$1(b);
+    return isCallExpression$8(b) || isAwaitExpression$1(b);
 };
 
-const isBooleanAndSimple = ([a, b]) => isBooleanLiteral$2(a) && isSimple(b);
+const isBooleanAndSimple = ([a, b]) => isBooleanLiteral$2(a) && isSimple_1(b);
 const isBooleanAndObject = ([a, b]) => isBooleanLiteral$2(a) && isObjectExpression$4(b);
-const isNullAndSimple = ([a, b]) => isNullLiteral$1(a) && isSimple(b);
-const isSimpleAndObject = ([a, b]) => isSimple(a) && isObjectExpression$4(b);
+const isNullAndSimple = ([a, b]) => isNullLiteral$1(a) && isSimple_1(b);
+const isSimpleAndObject = ([a, b]) => isSimple_1(a) && isObjectExpression$4(b);
 const ONE_LINE = false;
 const MULTI_LINE = true;
 
@@ -55152,7 +52531,7 @@ function isMaxElementLengthInOneLine(elements, maxElementLengthInOneLine) {
     return first.node.name.length < maxElementLengthInOneLine;
 }
 
-newline.isMultiLine = (path, {elements, maxElementsInOneLine, maxElementLengthInOneLine}) => {
+const isMultiLine = (path, {elements, maxElementsInOneLine, maxElementLengthInOneLine}) => {
     const [first] = elements;
     
     if (isMaxElementLengthInOneLine(elements, maxElementLengthInOneLine))
@@ -55164,7 +52543,7 @@ newline.isMultiLine = (path, {elements, maxElementsInOneLine, maxElementLengthIn
     if (elements.length > 3 && !isObjectExpression$4(first))
         return MULTI_LINE;
     
-    if (isSimpleAndNotEmptyObject$1(elements))
+    if (isSimpleAndNotEmptyObject(elements))
         return MULTI_LINE;
     
     if (isOneSimple(path))
@@ -55173,13 +52552,13 @@ newline.isMultiLine = (path, {elements, maxElementsInOneLine, maxElementLengthIn
     if (isOneSpread(elements))
         return ONE_LINE;
     
-    if (elements.length === 2 && isIdentifierAndIdentifier$1(elements))
+    if (elements.length === 2 && isIdentifierAndIdentifier(elements))
         return ONE_LINE;
     
     if (isCallInsideArrow(path))
         return ONE_LINE;
     
-    if (isIncreaseIndent$1(path))
+    if (isIncreaseIndent(path))
         return ONE_LINE;
     
     if (isInsideLoop(path))
@@ -55203,13 +52582,13 @@ newline.isMultiLine = (path, {elements, maxElementsInOneLine, maxElementLengthIn
     if (isTwoSimplesInsideObjectProperty(path))
         return ONE_LINE;
     
-    if (isStringAndArray$1(elements) && elements.length < 3)
+    if (isStringAndArray(elements) && elements.length < 3)
         return ONE_LINE;
     
     if (isStringAndMember(elements))
         return ONE_LINE;
     
-    if (isStringAndIdentifier$1(elements))
+    if (isStringAndIdentifier(elements))
         return ONE_LINE;
     
     if (isIdentifierAndString(elements))
@@ -55224,7 +52603,7 @@ newline.isMultiLine = (path, {elements, maxElementsInOneLine, maxElementLengthIn
     if (isSiblingIsArray(path))
         return ONE_LINE;
     
-    if (tooLong(path) || isCoupleLines$5(path) || !isNumbers(elements) && !isForOf$1(path) && isLastArg(path) && !isParentProperty(path))
+    if (tooLong(path) || isCoupleLines(path) || !isNumbers(elements) && !isForOf$1(path) && isLastArg(path) && !isParentProperty(path))
         return MULTI_LINE;
     
     return ONE_LINE;
@@ -55266,7 +52645,7 @@ const isTwoSimplesInsideObjectProperty = (path) => {
     if (!isStringLiteral$7(a) || !isStringLiteral$7(b))
         return false;
     
-    return !isCoupleLines$5(path);
+    return !isCoupleLines(path);
 };
 
 function isOneSimple(path) {
@@ -55283,7 +52662,7 @@ function isOneSimple(path) {
     if (first.isStringLiteral() && first.node.value.length > 10)
         return false;
     
-    if (!first.isIdentifier() && isSimple(first))
+    if (!first.isIdentifier() && isSimple_1(first))
         return true;
     
     if (first.isCallExpression())
@@ -55350,8 +52729,7 @@ const isLastArg = ({parentPath}) => !parentPath.isCallExpression();
 
 const isParentProperty = (path) => path.find(isObjectProperty$2);
 
-newline.isIncreaseIndent = isIncreaseIndent$1;
-function isIncreaseIndent$1(path) {
+function isIncreaseIndent(path) {
     const elements = path.get('elements');
     
     if (!elements.length)
@@ -55386,41 +52764,32 @@ const isStringAndObject = (elements) => {
     return isStringLiteral$7(first) && isObjectExpression$4(last);
 };
 
-newline.isCurrentNewLine = (path) => {
+const isCurrentNewLine = (path) => {
     if (path.isSpreadElement())
         return true;
     
     return !path.isObjectExpression();
 };
 
-var indent = {};
-
-const {types: types$K} = bundle$1;
-const {isIndented} = is$4;
-
 const {
     isStringLiteral: isStringLiteral$6,
     isArrayExpression: isArrayExpression$3,
-} = types$K;
+} = lib_exports$1;
 
-const isInsideArray$1 = (path) => path.parentPath.isArrayExpression();
+const isInsideArray = (path) => path.parentPath.isArrayExpression();
 
-indent.isInsideArray = isInsideArray$1;
-
-indent.isArrayIndented = (path) => {
+const isArrayIndented = (path) => {
     const elements = path.get('elements');
     
-    if (isArrayInsideArray$1(path))
+    if (isArrayInsideArray(path))
         return false;
     
     const [first] = elements;
     
-    return !isTwoLongStrings(elements) || !isInsideArray$1(path) && isIndented(first);
+    return !isTwoLongStrings(elements) || !isInsideArray(path) && isIndented(first);
 };
 
-indent.isArrayInsideArray = isArrayInsideArray$1;
-
-function isArrayInsideArray$1(path) {
+function isArrayInsideArray(path) {
     if (!path.isArrayExpression() || !path.parentPath.isArrayExpression())
         return false;
     
@@ -55445,10 +52814,6 @@ const isTwoLongStrings = ([a, b]) => {
     return a.node.value.length > LONG_STRING;
 };
 
-var isObjectAfterSimple$1 = {};
-
-const {isNextObject: isNextObject$1, isPrevObject} = is$4;
-
 const SIMPLE_TYPES = [
     'ArrayExpression',
     'ObjectExpression',
@@ -55458,47 +52823,20 @@ const SIMPLE_TYPES = [
     'NewExpression',
 ];
 
-isObjectAfterSimple$1.isObjectAfterSimple = (a) => {
+const isObjectAfterSimple = (a) => {
     const {type} = a;
     
-    if (!isNextObject$1(a) || isPrevObject(a))
+    if (!isNextObject(a) || isPrevObject(a))
         return false;
     
     return SIMPLE_TYPES.includes(type);
 };
 
-isObjectAfterSimple$1.isNextSimple = (a) => {
+const isNextSimple = (a) => {
     const {type} = a.getNextSibling();
     
     return SIMPLE_TYPES.includes(type);
 };
-
-const {types: types$J} = bundle$1;
-const {
-    isCoupleLines: isCoupleLines$4,
-    isStringAndIdentifier,
-    isIdentifierAndIdentifier,
-    isStringAndArray,
-    isSimpleAndNotEmptyObject,
-    isNextObject,
-} = is$4;
-
-const {
-    isIncreaseIndent,
-    isCurrentNewLine,
-    isMultiLine,
-} = newline;
-
-const {
-    isInsideArray,
-    isArrayInsideArray,
-    isArrayIndented,
-} = indent;
-
-const {
-    isObjectAfterSimple,
-    isNextSimple,
-} = isObjectAfterSimple$1;
 
 const {
     isObjectExpression: isObjectExpression$3,
@@ -55506,9 +52844,9 @@ const {
     isStringLiteral: isStringLiteral$5,
     isIdentifier: isIdentifier$8,
     isFunction: isFunction$6,
-    isCallExpression: isCallExpression$6,
+    isCallExpression: isCallExpression$7,
     isObjectProperty: isObjectProperty$1,
-} = types$J;
+} = lib_exports$1;
 
 const isNextString = (path) => isStringLiteral$5(path.getNextSibling());
 const isPrevString = (path) => isStringLiteral$5(path.getPrevSibling());
@@ -55552,7 +52890,7 @@ const isNextSimpleBetweenObjects = (a) => {
 
 const isInsideOneElementArray = ({parentPath}) => parentPath.node.elements.length === 1;
 
-arrayExpression$4.ArrayExpression = {
+const ArrayExpression$1 = {
     beforeIf(path) {
         const {parentPath} = path;
         const {elements} = path.node;
@@ -55560,7 +52898,7 @@ arrayExpression$4.ArrayExpression = {
         if (!parentPath.isArrayExpression())
             return false;
         
-        if (isCoupleLines$4(parentPath))
+        if (isCoupleLines(parentPath))
             return false;
         
         if (isStringAndIdentifier(elements) && isInsideOneElementArray(path))
@@ -55637,7 +52975,7 @@ arrayExpression$4.ArrayExpression = {
             maybe.indent(elements.length && isNewLine);
         }
         
-        if (isSimpleAndNotEmptyObject(elements) && !isSpreadElement$1(elements.at(-1)) && !isCallExpression$6(elements.at(-1))) {
+        if (isSimpleAndNotEmptyObject(elements) && !isSpreadElement$1(elements.at(-1)) && !isCallExpression$7(elements.at(-1))) {
             print(',');
             print.breakline();
         }
@@ -55651,7 +52989,7 @@ arrayExpression$4.ArrayExpression = {
         if (!parentPath.isArrayExpression())
             return false;
         
-        if (isCoupleLines$4(parentPath))
+        if (isCoupleLines(parentPath))
             return false;
         
         if (isStringAndIdentifier(elements) && isInsideOneElementArray(path))
@@ -55667,7 +53005,7 @@ arrayExpression$4.ArrayExpression = {
 };
 
 function isSimpleAfterObject(path) {
-    if (!isSpreadElement$1(path) && !isIdentifier$8(path) && !isCallExpression$6(path))
+    if (!isSpreadElement$1(path) && !isIdentifier$8(path) && !isCallExpression$7(path))
         return;
     
     const prev = path.getPrevSibling();
@@ -55679,12 +53017,9 @@ function isSimpleAfterObject(path) {
     return prev.isObjectExpression();
 }
 
-var arrayPattern$1 = {};
-
-const {maybeTypeAnnotation: maybeTypeAnnotation$2} = maybeTypeAnnotation$4;
 const isForOf = ({parentPath}) => parentPath.parentPath.parentPath?.isForOfStatement();
 
-arrayPattern$1.ArrayPattern = maybeTypeAnnotation$2((path, {indent, maybe, print}, semantics) => {
+const ArrayPattern$1 = maybeTypeAnnotation((path, {indent, maybe, print}, semantics) => {
     const {maxElementsInOneLine} = semantics;
     
     print('[');
@@ -55714,11 +53049,9 @@ arrayPattern$1.ArrayPattern = maybeTypeAnnotation$2((path, {indent, maybe, print
     print(']');
 });
 
-var assignmentPattern$1 = {};
-
 const isArg = (path) => path.parentPath.isFunction();
 
-assignmentPattern$1.AssignmentPattern = {
+const AssignmentPattern$1 = {
     print(path, {print, maybe}) {
         maybe.print(shouldPrint(path), '__left');
         print.space();
@@ -55743,33 +53076,21 @@ function shouldPrint(path) {
     return parentPath.isArrayPattern();
 }
 
-var restElement$1 = {};
-
-const {maybeTypeAnnotation: maybeTypeAnnotation$1} = maybeTypeAnnotation$4;
-
-restElement$1.RestElement = maybeTypeAnnotation$1((path, {print}) => {
+const RestElement$1 = maybeTypeAnnotation((path, {print}) => {
     print('...');
     print('__argument');
 });
 
-var spreadElement$1 = {};
-
-const {hasTrailingComment: hasTrailingComment$1} = is$4;
-
-spreadElement$1.SpreadElement = (path, printer) => {
+const SpreadElement$1 = (path, printer) => {
     const {print} = printer;
     print('...');
     print('__argument');
     
-    if (hasTrailingComment$1(path))
+    if (hasTrailingComment(path))
         print(',');
 };
 
-var sequenceExpression$3 = {exports: {}};
-
-var maybeWriteBrace = {};
-
-maybeWriteBrace.condition = (path, printer, semantics) => {
+const condition$3 = (path, printer, semantics) => {
     const {parentPath} = path;
     const {type} = parentPath;
     const {roundBraces} = semantics;
@@ -55786,15 +53107,12 @@ maybeWriteBrace.condition = (path, printer, semantics) => {
     return roundBraces.sequence;
 };
 
-var sequenceExpressionComments = {};
-
-const {hasLeadingComment} = is$4;
 const noop$6 = () => {};
 
-sequenceExpressionComments.printLeadingCommentLine = noop$6;
-sequenceExpressionComments.printLeadingCommentBlock = noop$6;
+const printLeadingCommentLine$2 = noop$6;
+const printLeadingCommentBlock$2 = noop$6;
 
-sequenceExpressionComments.maybePrintComments = (path, {print}) => {
+const maybePrintComments = (path, {print}) => {
     if (hasLeadingComment(path)) {
         const {leadingComments} = path.node;
         
@@ -55809,76 +53127,54 @@ sequenceExpressionComments.maybePrintComments = (path, {print}) => {
     }
 };
 
-(function (module) {
+const SequenceExpression$2 = maybeParens({
+    checkParens: false,
+    condition: condition$3,
+    print(path, printer) {
+        const {
+            write,
+            traverse,
+            indent,
+            maybe,
+        } = printer;
+        
+        const expressions = path.get('expressions');
+        const n = expressions.length - 1;
+        
+        const withComment = hasLeadingComment(path);
+        
+        if (withComment) {
+            indent.inc();
+            write.breakline();
+            maybePrintComments(path, printer);
+        }
+        
+        for (const [index, expression] of expressions.entries()) {
+            traverse(expression);
+            
+            if (index < n) {
+                write(',');
+                maybe.write.space(!withComment);
+                maybe.print.breakline(withComment);
+            }
+        }
+        
+        if (withComment) {
+            indent.dec();
+            write.breakline();
+        }
+    },
+});
 
-	const {hasLeadingComment} = is$4;
-	const {maybeParens} = maybeParens$e;
-	const {condition} = maybeWriteBrace;
+SequenceExpression$2.printLeadingCommentLine = printLeadingCommentLine$2;
+SequenceExpression$2.printLeadingCommentBlock = printLeadingCommentBlock$2;
 
-	const {
-	    maybePrintComments,
-	    printLeadingCommentLine,
-	    printLeadingCommentBlock,
-	} = sequenceExpressionComments;
-
-	module.exports.SequenceExpression = maybeParens({
-	    checkParens: false,
-	    condition,
-	    print(path, printer) {
-	        const {
-	            write,
-	            traverse,
-	            indent,
-	            maybe,
-	        } = printer;
-	        
-	        const expressions = path.get('expressions');
-	        const n = expressions.length - 1;
-	        
-	        const withComment = hasLeadingComment(path);
-	        
-	        if (withComment) {
-	            indent.inc();
-	            write.breakline();
-	            maybePrintComments(path, printer);
-	        }
-	        
-	        for (const [index, expression] of expressions.entries()) {
-	            traverse(expression);
-	            
-	            if (index < n) {
-	                write(',');
-	                maybe.write.space(!withComment);
-	                maybe.print.breakline(withComment);
-	            }
-	        }
-	        
-	        if (withComment) {
-	            indent.dec();
-	            write.breakline();
-	        }
-	    },
-	});
-
-	module.exports.SequenceExpression.printLeadingCommentLine = printLeadingCommentLine;
-	module.exports.SequenceExpression.printLeadingCommentBlock = printLeadingCommentBlock; 
-} (sequenceExpression$3));
-
-var sequenceExpressionExports = sequenceExpression$3.exports;
-sequenceExpressionExports.default;
-
-var taggedTemplateExpression$1 = {};
-
-taggedTemplateExpression$1.TaggedTemplateExpression = (path, {print}) => {
+const TaggedTemplateExpression$1 = (path, {print}) => {
     print('__tag');
     print('__quasi');
 };
 
-var binaryExpression$1 = {};
-
-var maybeSpace$1 = {};
-
-maybeSpace$1.maybeSpace = (path, {print}) => {
+const maybeSpace = (path, {print}) => {
     const {right} = path.node;
     
     if (right.type === 'UnaryExpression' && right.operator === '+')
@@ -55887,15 +53183,7 @@ maybeSpace$1.maybeSpace = (path, {print}) => {
     return print.space();
 };
 
-const {
-    concatenate,
-    isConcatenation: isConcatenation$1,
-} = concatenate$1;
-
-const {maybeSpace} = maybeSpace$1;
-const {maybeParens: maybeParens$8} = maybeParens$e;
-
-binaryExpression$1.BinaryExpression = maybeParens$8((path, {print, indent, maybe}) => {
+const BinaryExpression$1 = maybeParens((path, {print, indent, maybe}) => {
     const {operator} = path.node;
     
     if (operator === 'in' || operator === 'instanceof') {
@@ -55908,12 +53196,10 @@ binaryExpression$1.BinaryExpression = maybeParens$8((path, {print, indent, maybe
         return;
     }
     
-    if (isConcatenation$1(path))
+    if (isConcatenation(path))
         return concatenate(path, {
             print,
-            indent,
-            maybe,
-        });
+            indent});
     
     print('__left');
     print.space();
@@ -55924,22 +53210,17 @@ binaryExpression$1.BinaryExpression = maybeParens$8((path, {print, indent, maybe
     print('__right');
 });
 
-var logicalExpression$1 = {};
-
-var chain$2 = {};
-
-const {types: types$I} = bundle$1;
 const {
     isLogicalExpression: isLogicalExpression$1,
     isReturnStatement: isReturnStatement$3,
     isVariableDeclarator: isVariableDeclarator$2,
-} = types$I;
+} = lib_exports$1;
 
-chain$2.isRootOk = (path) => {
+const isRootOk = (path) => {
     return isReturnStatement$3(path) || isVariableDeclarator$2(path);
 };
 
-chain$2.chain = (path) => {
+const chain$1 = (path) => {
     const [downCount] = down(path);
     const [upCount, root] = up(path);
     
@@ -55987,10 +53268,7 @@ function up(current) {
     ];
 }
 
-const {maybeParens: maybeParens$7} = maybeParens$e;
-const {chain: chain$1, isRootOk} = chain$2;
-
-logicalExpression$1.LogicalExpression = maybeParens$7({
+const LogicalExpression$1 = maybeParens({
     condition(path) {
         if (path.parentPath.isUnaryExpression())
             return true;
@@ -56026,11 +53304,7 @@ function isNewLine$1(path, semantics) {
     return operator === '||' || operator === '&&';
 }
 
-var conditionalExpression$2 = {};
-
-const {maybeParens: maybeParens$6} = maybeParens$e;
-
-conditionalExpression$2.ConditionalExpression = maybeParens$6((path, {print}) => {
+const ConditionalExpression$2 = maybeParens((path, {print}) => {
     print('__test');
     print.space();
     print('?');
@@ -56042,9 +53316,7 @@ conditionalExpression$2.ConditionalExpression = maybeParens$6((path, {print}) =>
     print('__alternate');
 });
 
-var staticBlock$1 = {};
-
-staticBlock$1.StaticBlock = (path, {print, traverse}) => {
+const StaticBlock$1 = (path, {print, traverse}) => {
     print('static ');
     print('{');
     print.breakline();
@@ -56058,12 +53330,9 @@ staticBlock$1.StaticBlock = (path, {print, traverse}) => {
     print.newline();
 };
 
-var importExpression$1 = {};
+const ImportExpression$1 = createImportExpression;
 
-importExpression$1.ImportExpression = createImportExpression$1;
-importExpression$1.createImportExpression = createImportExpression$1;
-
-function createImportExpression$1(path, printer) {
+function createImportExpression(path, printer) {
     const {print, maybe} = printer;
     const {options} = path.node;
     
@@ -56077,17 +53346,14 @@ function createImportExpression$1(path, printer) {
     print(')');
 }
 
-var parenthesizedExpression$3 = {};
-
-const {types: types$H} = bundle$1;
-const {isJSXElement: isJSXElement$5} = types$H;
+const {isJSXElement: isJSXElement$5} = lib_exports$1;
 
 const condition$2 = (path) => {
     const {expression} = path.node;
     return !isJSXElement$5(expression);
 };
 
-parenthesizedExpression$3.ParenthesizedExpression = {
+const ParenthesizedExpression$1 = {
     before(path, {print}) {
         print('(');
     },
@@ -56100,1077 +53366,245 @@ parenthesizedExpression$3.ParenthesizedExpression = {
     },
 };
 
-const functions = functions$1;
-const unaryExpressions = unaryExpressions$1;
-const memberExpressions = memberExpressions$1;
-
-const {
-    ClassExpression: ClassExpression$1,
-    ClassDeclaration: ClassDeclaration$1,
-} = _class;
-
-const {
-    CallExpression: CallExpression$1,
-    OptionalCallExpression: OptionalCallExpression$1,
-} = callExpression$3;
-
-const {NewExpression: NewExpression$1} = newExpression$1;
-
-const {ObjectExpression: ObjectExpression$2} = objectExpression$3;
-const {ObjectProperty: ObjectProperty$1} = objectProperty$4;
-const {ObjectPattern: ObjectPattern$1} = objectPattern$2;
-
-const {
-    ClassProperty: ClassProperty$1,
-    ClassAccessorProperty: ClassAccessorProperty$1,
-    ClassPrivateProperty: ClassPrivateProperty$1,
-    PrivateName: PrivateName$1,
-} = classProperty$1;
-
-const {AssignmentExpression: AssignmentExpression$2} = assignmentExpressionExports;
-const {ArrayExpression: ArrayExpression$1} = arrayExpression$4;
-const {ArrayPattern: ArrayPattern$1} = arrayPattern$1;
-const {AssignmentPattern: AssignmentPattern$1} = assignmentPattern$1;
-const {RestElement: RestElement$1} = restElement$1;
-const {SpreadElement: SpreadElement$1} = spreadElement$1;
-const {SequenceExpression: SequenceExpression$2} = sequenceExpressionExports;
-const {TaggedTemplateExpression: TaggedTemplateExpression$1} = taggedTemplateExpression$1;
-const {BinaryExpression: BinaryExpression$1} = binaryExpression$1;
-const {LogicalExpression: LogicalExpression$1} = logicalExpression$1;
-const {ConditionalExpression: ConditionalExpression$2} = conditionalExpression$2;
-const {StaticBlock: StaticBlock$1} = staticBlock$1;
-const {ImportExpression: ImportExpression$1} = importExpression$1;
-const {ParenthesizedExpression: ParenthesizedExpression$1} = parenthesizedExpression$3;
-
-var expressions$2 = {
-    ...functions,
-    ...unaryExpressions,
-    ...memberExpressions,
-    ArrayPattern: ArrayPattern$1,
-    ArrayExpression: ArrayExpression$1,
-    AssignmentExpression: AssignmentExpression$2,
-    AssignmentPattern: AssignmentPattern$1,
-    BinaryExpression: BinaryExpression$1,
-    CallExpression: CallExpression$1,
-    ClassExpression: ClassExpression$1,
-    ClassProperty: ClassProperty$1,
-    ClassAccessorProperty: ClassAccessorProperty$1,
-    ClassPrivateProperty: ClassPrivateProperty$1,
-    ClassDeclaration: ClassDeclaration$1,
-    ConditionalExpression: ConditionalExpression$2,
-    NewExpression: NewExpression$1,
-    LogicalExpression: LogicalExpression$1,
-    OptionalCallExpression: OptionalCallExpression$1,
-    ObjectExpression: ObjectExpression$2,
-    ObjectProperty: ObjectProperty$1,
-    ObjectPattern: ObjectPattern$1,
-    ParenthesizedExpression: ParenthesizedExpression$1,
-    PrivateName: PrivateName$1,
-    RestElement: RestElement$1,
-    ImportExpression: ImportExpression$1,
-    SpreadElement: SpreadElement$1,
-    SequenceExpression: SequenceExpression$2,
-    StaticBlock: StaticBlock$1,
-    TaggedTemplateExpression: TaggedTemplateExpression$1,
-    ThisExpression(path, {write}) {
-        write('this');
-    },
-};
-
-var expressionStatement$5 = {exports: {}};
-
-var isInsideAssignNextAssignFunction = {};
-
-const {types: types$G} = bundle$1;
-const {
-    isExpressionStatement: isExpressionStatement$4,
-    isFunction: isFunction$5,
-    isAssignmentExpression: isAssignmentExpression$1,
-} = types$G;
-
-isInsideAssignNextAssignFunction.isInsideAssignNextAssignFunction = (path) => {
-    const {expression} = path.node;
+const processClassProperty = maybeDecorators$1((path, printer, semantics, {accessor} = {}) => {
+    const {node} = path;
+    const {
+        accessibility,
+        declare,
+        optional,
+    } = node;
     
-    if (!isAssignmentExpression$1(expression))
-        return false;
+    const {print, maybe} = printer;
     
-    const next = path.getNextSibling();
+    maybe.print(accessor, 'accessor ');
     
-    if (isFunction$5(next) && next.node.leadingComments)
-        return true;
+    const value = path.get('value');
     
-    if (!isExpressionStatement$4(next))
-        return false;
+    maybe.print(declare, 'declare ');
+    maybe.print(accessibility, `${accessibility} `);
+    maybe.print(node.static, 'static ');
+    maybe.print(node.readonly, 'readonly ');
     
-    const {leadingComments} = next.node;
+    printKind(path, printer);
+    printKey(path, printer);
     
-    if (!leadingComments)
-        return false;
+    maybe.print(optional, '?');
     
-    if (!isAssignmentExpression$1(next.node.expression))
-        return false;
+    maybePrintTypeAnnotation(path, printer);
     
-    return isFunction$5(next.node.expression.right);
-};
-
-var expressionStatementComments = {};
-
-const {types: types$F} = bundle$1;
-const {hasTrailingComment} = is$4;
-
-const {
-    isBlockStatement: isBlockStatement$5,
-    isProgram: isProgram$5,
-    isIfStatement: isIfStatement$1,
-} = types$F;
-
-expressionStatementComments.printLeadingCommentLine = (path, printer, semantics, {index, isLast, printComment}) => {
-    const {print, indent} = printer;
-    const prev = path.getPrevSibling();
-    const {parentPath} = path;
+    if (exists(value)) {
+        print.space();
+        print('=');
+        print.space();
+        print('__value');
+    }
     
-    if (hasTrailingComment(prev))
-        return;
-    
-    if (!index && !prev.node && (isIfStatement$1(parentPath) || isBlockStatement$5(parentPath)))
-        indent();
-    
-    printComment();
+    print(';');
     print.newline();
-    
-    if (!isLast && !path.parentPath.isIfStatement())
-        print.indent();
+});
+
+const ClassProperty$1 = processClassProperty;
+const ClassPrivateProperty$1 = processClassProperty;
+
+const PrivateName$1 = (path, {print}) => {
+    print('#');
+    print('__id');
 };
 
-expressionStatementComments.printLeadingCommentBlock = (path, printer, semantics, {printComment}) => {
-    const {indent} = printer;
-    const prev = path.getPrevSibling();
-    
-    if (hasTrailingComment(prev))
-        return;
-    
-    if (isBlockStatement$5(path.parentPath) && !isProgram$5(path.parentPath.parentPath))
+const ClassAccessorProperty$1 = (path, printer, semantics) => {
+    processClassProperty(path, printer, semantics, {
+        accessor: true,
+    });
+};
+
+const ThisExpression$1 = (path, {write}) => {
+    write('this');
+};
+
+const WithStatement$1 = {
+    print(path, {print, indent}) {
         indent();
-    
-    printComment();
+        print('with');
+        print.space();
+        print('(');
+        print('__object');
+        print(')');
+        
+        if (path.node.body.body) {
+            print.space();
+            print('__body');
+        } else {
+            indent.inc();
+            print.newline();
+            print('__body');
+            indent.dec();
+        }
+    },
+    afterIf(path) {
+        return isNext(path);
+    },
+    after(path, {print}) {
+        print.linebreak();
+        markAfter(path);
+    },
 };
 
-(function (module) {
+const EmptyStatement$1 = (path, {write, maybe}) => {
+    const {parentPath} = path;
+    write(';');
+    maybe.write.newline(!isLast$2(path) && !isLast$2(parentPath));
+};
 
-	const {types} = bundle$1;
-	const {
-	    isNext,
-	    isLast,
-	    isParentBlock,
-	    isParentLast,
-	    isNewlineBetweenSiblings,
-	    satisfy,
-	    noTrailingComment,
-	    hasTrailingComment,
-	    isCoupleLines,
-	    isInsideLabel,
-	} = is$4;
+const LabeledStatement$1 = (path, {print, maybe}) => {
+    maybe.indent(!isInsideLabel(path));
+    print('__label');
+    print(':');
+    print.space();
+    print('__body');
+};
 
-	const {isInsideAssignNextAssignFunction: isInsideAssignNextAssignFunction$1} = isInsideAssignNextAssignFunction;
-
-	const {
-	    printLeadingCommentLine,
-	    printLeadingCommentBlock,
-	} = expressionStatementComments;
-
-	const isCommentBlock = (a) => a?.type === 'CommentBlock';
-
-	const {
-	    isCallExpression,
-	    isExpressionStatement,
-	    isAssignmentExpression,
-	} = types;
-
-	const not = (fn) => (...a) => !fn(...a);
-
-	const isBeforeElse = (path) => {
-	    if (!path.parentPath.isIfStatement())
-	        return false;
-	    
-	    if (path !== path.parentPath.get('consequent'))
-	        return false;
-	    
-	    return Boolean(path.parentPath.node.alternate);
-	};
-
-	const isInsideReturn = ({parentPath}) => parentPath.isReturnStatement();
-	const notInsideReturn = not(isInsideReturn);
-
-	const satisfyAfter = satisfy([
-	    isNotLastOrParentLast,
-	    isParentBlock,
-	    isNext,
-	    isNextUp,
-	]);
-
-	const isNextIf = (path) => path
-	    .getNextSibling()
-	    .isIfStatement();
-
-	const shouldBreakline = satisfy([
-	    isNewlineBetweenSiblings,
-	    isNotLastBody,
-	    isStrictMode,
-	    isNextIf,
-	]);
-
-	module.exports.ExpressionStatement = {
-	    beforeIf(path) {
-	        if (isInsideReturn(path))
-	            return false;
-	        
-	        return !isInsideLabel(path);
-	    },
-	    before(path, {indent}) {
-	        indent();
-	    },
-	    print(path, {print, maybe, store, indent}) {
-	        const insideReturn = isInsideReturn(path);
-	        
-	        print('__expression');
-	        maybe.print(!insideReturn, ';');
-	        
-	        if (!isNext(path))
-	            return;
-	        
-	        if (!insideReturn && shouldBreakline(path)) {
-	            print.newline();
-	            
-	            const condition = isNext(path)
-	                && noTrailingComment(path)
-	                || isNextToAssignmentCall(path)
-	                || isNextStatementWithBlockComment(path);
-	            
-	            if (condition)
-	                indent();
-	            
-	            store(true);
-	        }
-	    },
-	    afterIf: (path) => {
-	        if (satisfyAfter(path))
-	            return true;
-	        
-	        if (hasTrailingComment(path) && isLast(path))
-	            return true;
-	        
-	        return isBeforeElse(path);
-	    },
-	    after(path, {print, maybe, store, indent}) {
-	        if (hasTrailingComment(path) && isLast(path) && isCoupleLines(path))
-	            print.breakline();
-	        
-	        if (hasTrailingComment(path) && !isCoupleLines(path))
-	            return;
-	        
-	        if (isTopParentLast(path))
-	            return;
-	        
-	        if (notInsideReturn(path)) {
-	            if (isInsideAssignNextAssignFunction$1(path))
-	                indent();
-	            
-	            print.newline();
-	            maybe.markAfter(store(), path);
-	        }
-	    },
-	};
-	module.exports.ExpressionStatement.printLeadingCommentLine = printLeadingCommentLine;
-	module.exports.ExpressionStatement.printLeadingCommentBlock = printLeadingCommentBlock;
-
-	function isTopParentLast({parentPath}) {
-	    if (!parentPath.isIfStatement())
-	        return false;
-	    
-	    const nextParent = parentPath.parentPath;
-	    
-	    if (!nextParent.isIfStatement())
-	        return false;
-	    
-	    const nextNext = nextParent.parentPath;
-	    
-	    if (!nextNext.isIfStatement())
-	        return false;
-	    
-	    return isLast(nextNext);
-	}
-
-	function isNotLastBody(path) {
-	    return path.parentPath.get('body') === path;
-	}
-
-	function isNotLastOrParentLast(path) {
-	    return !isLast(path) && !isParentLast(path);
-	}
-
-	function isNextUp(path) {
-	    return path.findParent(isNext);
-	}
-
-	function isStrictMode(path) {
-	    const expressionPath = path.get('expression');
-	    
-	    if (!expressionPath.isStringLiteral())
-	        return false;
-	    
-	    const {value} = path.node.expression;
-	    
-	    return value === 'use strict';
-	}
-
-	function isNextToAssignmentCall(path) {
-	    if (isAssignmentExpression(path.node.expression))
-	        return false;
-	    
-	    const nextPath = path.getNextSibling();
-	    
-	    if (!isExpressionStatement(nextPath))
-	        return false;
-	    
-	    const {expression} = nextPath.node;
-	    
-	    return isCallExpression(expression);
-	}
-
-	function isNextStatementWithBlockComment(path) {
-	    const {expression} = path.node;
-	    
-	    if (!isCallExpression(expression))
-	        return false;
-	    
-	    if (!isCallExpression(expression.arguments[0]))
-	        return false;
-	    
-	    return hasTrailingBlock(path);
-	}
-
-	function hasTrailingBlock(path) {
-	    const {trailingComments} = path.node;
-	    const [first] = trailingComments;
-	    
-	    return isCommentBlock(first);
-	} 
-} (expressionStatement$5));
-
-var expressionStatementExports = expressionStatement$5.exports;
-expressionStatementExports.default;
-
-var variableDeclaration$2 = {};
-
-var maybeSpaceAfterKeyword$4 = {};
-
-maybeSpaceAfterKeyword$4.maybeSpaceAfterKeyword = (path, {write}) => {
-    const {declarations} = path.node;
+const ContinueStatement$1 = (path, {print, maybe, write}) => {
+    const {label} = path.node;
     
-    if (!declarations.length)
+    maybe.indent(!isInsideLabel(path));
+    print('continue');
+    
+    maybe.print.space(label);
+    print('__label');
+    
+    write(';');
+    print.newline();
+};
+
+const getDirectives = (path) => !path.node.directives ? [] : path.get('directives');
+
+const Program$1 = (path, printer, semantics) => {
+    const {body} = path.node;
+    const {
+        traverse,
+        maybe,
+        write,
+    } = printer;
+    
+    traverse(path.get('interpreter'));
+    parseComments(path, printer, semantics);
+    
+    const directives = getDirectives(path);
+    
+    for (const directive of directives) {
+        traverse(directive);
+        maybe.write.newline(body.length);
+    }
+    
+    path.get('body').forEach(traverse);
+    
+    if (directives.length && !body.length)
         return;
     
-    const {id} = declarations[0];
+    if (body.length && hasCoupleTrailingComments(body.at(-1)))
+        return;
     
-    if (id.type === 'ArrayPattern' || id.type === 'ObjectPattern')
-        return write.space();
-    
-    write(' ');
+    write.endOfFile();
 };
 
-const {types: types$E} = bundle$1;
-const {
-    isNext: isNext$i,
-    isCoupleLines: isCoupleLines$3,
-    isNewlineBetweenSiblings: isNewlineBetweenSiblings$1,
-    exists: exists$7,
-    noTrailingComment: noTrailingComment$1,
-} = is$4;
+const notLast = (path) => !isLast$2(path);
 
-const {hasPrevNewline: hasPrevNewline$3} = mark;
-const {maybeSpaceAfterKeyword: maybeSpaceAfterKeyword$3} = maybeSpaceAfterKeyword$4;
-
-const {isConcatenation} = concatenate$1;
-const {parseLeadingComments: parseLeadingComments$2} = comment;
-const {maybeDeclare: maybeDeclare$4} = maybeDeclare$6;
-
-const {isExportDeclaration: isExportDeclaration$4} = types$E;
-
-const isParentTSModuleBlock = (path) => path.parentPath.isTSModuleBlock();
-const isParentBlock$2 = (path) => /Program|BlockStatement|Export|LabeledStatement/.test(path.parentPath.type);
-const isInsideBlock$3 = (path) => /^(Program|BlockStatement|TSModuleBlock|SwitchCase)$/.test(path.parentPath.type);
-const isParentSwitchCase = (path) => path.parentPath.isSwitchCase();
-const isFirstInSwitch = (path) => path.parentPath.get('consequent.0') === path;
-const isParentIf = (path) => path.parentPath.isIfStatement();
-
-variableDeclaration$2.VariableDeclaration = {
-    beforeIf: shouldAddNewlineBefore,
-    before(path, {print}) {
-        print.breakline();
-    },
-    print: maybeDeclare$4((path, {maybe, store, write, traverse, print, indent}, semantics) => {
-        const {maxVariablesInOneLine} = semantics;
-        
-        maybe.indent(isInsideBlock$3(path));
-        
-        write(path.node.kind);
-        maybeSpaceAfterKeyword$3(path, {
-            write,
-        });
-        
-        const declarations = path.get('declarations');
-        const n = declarations.length - 1;
-        
-        maybe.indent.inc(n);
-        
-        for (const [index, declaration] of declarations.entries()) {
-            const id = declaration.get('id');
-            const init = declaration.get('init');
-            const isLast = index === n;
-            
-            traverse(id);
-            
-            if (exists$7(init)) {
-                write.space();
-                write('=');
-                maybe.write.space(!isConcatenation(init));
-                traverse(init);
-            }
-            
-            if (!isLast) {
-                const next = declarations[index + 1];
-                
-                write(',');
-                
-                if (!next.node.leadingComments) {
-                    maybe.write.breakline(n > maxVariablesInOneLine);
-                    maybe.write.space(n <= maxVariablesInOneLine);
-                    continue;
-                }
-                
-                parseLeadingComments$2(next, {print, maybe, indent}, semantics);
-            }
-        }
-        
-        maybe.indent.dec(n);
-        
-        if (isParentBlock$2(path) || isParentSwitchCase(path) || isParentTSModuleBlock(path) || isParentIf(path))
-            write(';');
-        
-        let wasNewline = false;
-        
-        if (isParentSwitchCase(path)) {
-            write.newline();
-            
-            if (!isFirstInSwitch(path))
-                wasNewline = true;
-        }
-        
-        if (isParentBlock$2(path) && isNext$i(path) && (noTrailingComment$1(path) || isNewlineBetweenSiblings$1(path))) {
-            write.newline();
-            wasNewline = true;
-        }
-        
-        store(wasNewline);
-    }),
-    afterSatisfy: () => [
-        isNextIf,
-        isNextFn,
-        noNextParentBlock,
-        notLastCoupleLines,
-        isNextAssign,
-        isNextCoupleLines,
-        notLastPrevVarNotNextVar,
-        isNewlineBetweenSiblings$1,
-        notLastParentExport,
-        isParentTSModuleBlock,
-    ],
-    after(path, {maybe, store}) {
-        const wasNewline = store();
-        
-        if (isLast$a(path.parentPath) && !path.parentPath.isBlockStatement() || !isParentBlock$2(path) && !isParentTSModuleBlock(path))
-            return false;
-        
-        maybe.print.linebreak(wasNewline);
-        maybe.print.newline(!wasNewline);
-        maybe.markAfter(wasNewline, path);
-    },
-};
-
-function noNextParentBlock(path) {
-    if (isNext$i(path))
-        return false;
-    
-    return path.parentPath.isBlockStatement();
-}
-
-function notLastParentExport(path) {
-    if (isLast$a(path.parentPath))
-        return false;
-    
-    return path.parentPath.isExportDeclaration();
-}
-
-function notLastCoupleLines(path) {
-    if (isLast$a(path))
-        return false;
-    
-    return isCoupleLines$3(path);
-}
-
-function notLastPrevVarNotNextVar(path) {
-    const prev = path.getPrevSibling();
-    const next = path.getNextSibling();
-    
-    if (!exists$7(prev.getPrevSibling()))
-        return false;
-    
-    if (path.node.loc?.start.line === prev.node?.loc?.start.line + 2)
-        return false;
-    
-    return !isLast$a(path) && prev.isVariableDeclaration() && !next.isVariableDeclaration();
-}
-
-function isNextCoupleLines(path) {
-    const next = path.getNextSibling();
-    const prev = path.getPrevSibling();
-    
-    if (!exists$7(prev.getPrevSibling()) && next.isVariableDeclaration())
-        return false;
-    
-    if (path.node.loc?.start.line === prev.node?.loc?.start?.line + 2)
-        return false;
-    
-    return isCoupleLines$3(next);
-}
-
-const isLast$a = (path) => path.parentPath?.isProgram() && !isNext$i(path);
-
-function shouldAddNewlineBefore(path) {
-    if (isFirst$1(path))
-        return false;
-    
-    if (hasPrevNewline$3(path))
-        return false;
-    
-    if (hasPrevNewline$3(path.parentPath))
-        return false;
-    
-    const prevPath = path.getPrevSibling();
-    
-    if (prevPath.isStatement() && !prevPath.isExpressionStatement() && !prevPath.isBlockStatement())
-        return false;
-    
-    return !isExportDeclaration$4(path.parentPath) && isCoupleLines$3(path);
-}
-
-function isFirst$1(path) {
-    return path.node === path.parentPath.node.body?.[0];
-}
-
-const isNextIf = (path) => {
-    const nextPath = path.getNextSibling();
-    return nextPath.isIfStatement();
-};
-
-const isNextFn = (path) => {
-    const nextPath = path.getNextSibling();
-    return nextPath.isFunctionDeclaration();
-};
-
-const isNextAssign = (path) => {
-    const nextPath = path.getNextSibling();
-    
-    if (!nextPath.isExpressionStatement())
-        return false;
-    
-    const {parentPath} = path;
-    
-    if (parentPath.isBlockStatement() && parentPath.node.body.length < 3)
-        return false;
-    
-    return nextPath.get('expression').isAssignmentExpression();
-};
-
-var ifStatement$1 = {};
-
-const {types: types$D} = bundle$1;
-
-const {markAfter: markAfter$9} = mark;
-const {
-    exists: exists$6,
-    isNext: isNext$h,
-    isInsideIf: isInsideIf$2,
-} = is$4;
-
-const {
-    isBlockStatement: isBlockStatement$4,
-    isFunctionDeclaration: isFunctionDeclaration$2,
-    isStatement: isStatement$6,
-    isExpressionStatement: isExpressionStatement$3,
-    isReturnStatement: isReturnStatement$2,
-    isContinueStatement: isContinueStatement$1,
-} = types$D;
-
-const isStatementNotExpression = (path) => {
-    if (isBlockStatement$4(path))
-        return false;
-    
-    if (isReturnStatement$2(path))
-        return false;
-    
-    if (isContinueStatement$1(path))
-        return false;
-    
-    return !isExpressionStatement$3(path);
-};
-
-const isTopLevel = ({parentPath}) => parentPath.parentPath.isProgram();
-const isEmptyConsequent = (path) => path.get('consequent').isEmptyStatement();
-
-const isInsideNestedBody = ({parentPath}) => {
-    if (parentPath.type !== 'BlockStatement')
-        return false;
-    
-    return parentPath.parentPath.type === 'BlockStatement';
-};
-
-const isEmptyBody = (path) => !path.node.body.length;
-
-const isLastEmptyInsideBody = (path) => {
-    const {parentPath} = path;
-    
-    if (!isBlockStatement$4(parentPath))
-        return false;
-    
-    if (!isBlockStatement$4(path.node.consequent))
-        return false;
-    
-    if (path.node.consequent.body.length)
-        return false;
-    
-    return isFunctionDeclaration$2(path.parentPath.parentPath);
-};
-
-ifStatement$1.IfStatement = {
-    print: (path, {indent, print, maybe, write, traverse}) => {
-        const {parentPath} = path;
-        const partOfAlternate = parentPath.get('alternate');
-        
-        if (path !== partOfAlternate)
-            indent();
-        
-        print('if');
+const DoWhileStatement$1 = {
+    print(path, {print, indent}) {
+        indent();
+        print('do');
+        print.space();
+        print('__body');
+        print.space();
+        print('while');
         print.space();
         print('(');
         print('__test');
         print(')');
-        
-        const consequent = path.get('consequent');
-        const alternate = path.get('alternate');
-        const isConsequentBlock = consequent.isBlockStatement();
-        const isVar = consequent.isVariableDeclaration();
-        
-        if (isConsequentBlock) {
-            print.space();
-            print(consequent);
-            
-            if (isInsideIf$2(path.parentPath) || isInsideNestedBody(path))
-                maybe.print.newline(isEmptyBody(consequent));
-        } else {
-            const is = !isEmptyConsequent(path);
-            
-            maybe.print.newline(is);
-            maybe.indent.inc(is);
-            maybe.indent(isVar);
-            print(consequent);
-            maybe.indent.dec(is);
-        }
-        
-        if (alternate.isBlockStatement()) {
-            write.space();
-            write('else');
-            write.space();
-            traverse(alternate);
-        } else if (alternate.isIfStatement()) {
-            if (alternate.get('consequent').isBlockStatement()) {
-                write.space();
-            } else {
-                maybe.write.newline(isStatementNotExpression(consequent));
-                indent();
-            }
-            
-            write('else ');
-            traverse(alternate);
-        } else if (exists$6(alternate)) {
-            maybe.write.newline(isVar || isStatementNotExpression(consequent));
-            maybe.indent(!isConsequentBlock);
-            maybe.write.space(isConsequentBlock);
-            write('else');
-            write.splitter();
-            indent.inc();
-            traverse(alternate);
-            indent.dec();
-        }
-        
-        if (!isNext$h(path) && !consequent.isBlockStatement())
-            return;
-        
-        const nextPath = path.parentPath.getNextSibling();
-        
-        if (path === partOfAlternate && !isTopLevel(path) && !isStatement$6(nextPath))
-            print.newline();
-        
-        if (isLastEmptyInsideBody(path))
-            print.newline();
     },
-    afterSatisfy: () => [isNext$h],
-    after: (path, {print}) => {
-        print.linebreak();
-        markAfter$9(path);
-    },
-};
-
-var forOfStatement$1 = {};
-
-const {
-    hasPrevNewline: hasPrevNewline$2,
-    markAfter: markAfter$8,
-    markBefore,
-    isMarkedAfter: isMarkedAfter$1,
-} = mark;
-
-const {
-    isFirst,
-    isNext: isNext$g,
-    isLast: isLast$9,
-} = is$4;
-
-forOfStatement$1.ForOfStatement = {
-    beforeIf(path) {
-        const {parentPath} = path;
-        
-        if (!parentPath.isBlockStatement() && parentPath.isStatement())
-            return false;
-        
-        return !isFirst(path) && !hasPrevNewline$2(path);
-    },
-    before(path, {print}) {
-        print.linebreak();
-        markBefore(path);
-    },
-    print(path, {indent, print, maybe, traverse}) {
-        const {node} = path;
-        
-        indent();
-        print('for');
-        maybe.print(node.await, ' await');
-        print.space();
-        print('(');
-        print('__left');
-        print(' of ');
-        print('__right');
-        print(')');
-        
-        const bodyPath = path.get('body');
-        
-        if (bodyPath.isBlockStatement()) {
-            print.space();
-            print('__body');
-            
-            const {length} = bodyPath.node.body;
-            maybe.print.newline(!length && !isLast$9(path) && !isNext$g(path));
-            
-            return;
-        }
-        
-        indent.inc();
-        print.newline();
-        traverse(bodyPath);
-        indent.dec();
-        
-        maybe.markAfter(isMarkedAfter$1(bodyPath), path);
-    },
-    afterIf: isNext$g,
+    afterSatisfy: () => [notLast],
     after(path, {print}) {
-        print.linebreak();
-        markAfter$8(path);
+        print.newline();
     },
 };
 
-var blockStatement$3 = {};
+const isInsideCase = (path) => path.parentPath.isSwitchCase();
 
-var insideIfWithNoBody$1 = {};
-
-const {exists: exists$5} = is$4;
-
-insideIfWithNoBody$1.insideIfWithNoBody = (path) => {
-    if (!path.parentPath.isIfStatement())
-        return false;
-    
-    if (!path.parentPath.parentPath.isIfStatement())
-        return false;
-    
-    const next = path.parentPath?.parentPath.getNextSibling();
-    
-    return !exists$5(next);
-};
-
-var getDirectives$2 = {};
-
-getDirectives$2.getDirectives = (path) => !path.node.directives ? [] : path.get('directives');
-
-var isCallInsideChain$1 = {};
-
-const {types: types$C} = bundle$1;
-const {isLooksLikeChain} = isLooksLikeChain$4;
-const {
-    isReturnStatement: isReturnStatement$1,
-    isExpressionStatement: isExpressionStatement$2,
-    isMemberExpression: isMemberExpression$4,
-    isCallExpression: isCallExpression$5,
-} = types$C;
-
-isCallInsideChain$1.isCallInsideChain = (path) => {
-    if (!isCallExpression$5(path.parentPath.parentPath))
-        return false;
-    
-    const member = path.find(isTopMemberInsideCall);
-    
-    if (member)
-        return isLooksLikeChain(member);
-    
-    const callPath = path.find(isTopCall);
-    
-    if (!callPath)
-        return false;
-    
-    const calleeMember = callPath.get('callee');
-    
-    return isLooksLikeChain(calleeMember);
-};
-
-function isTopMemberInsideCall(path) {
-    if (!isMemberExpression$4(path))
-        return false;
-    
-    return isExpressionStatement$2(path.parentPath.parentPath);
-}
-
-function isTopCall(path) {
-    if (!isCallExpression$5(path))
-        return false;
-    
-    const {parentPath} = path;
-    
-    if (isReturnStatement$1(parentPath))
-        return true;
-    
-    return isExpressionStatement$2(parentPath);
-}
-
-const {types: types$B} = bundle$1;
-const {
-    isNext: isNext$f,
-    isParentProgram,
-    isLast: isLast$8,
-    exists: exists$4,
-    satisfy: satisfy$1,
-} = is$4;
-
-const {markAfter: markAfter$7} = mark;
-const {parseComments: parseComments$3} = comment;
-const {insideIfWithNoBody} = insideIfWithNoBody$1;
-const {getDirectives: getDirectives$1} = getDirectives$2;
-
-const {isCallInsideChain} = isCallInsideChain$1;
-const {
-    isArrowFunctionExpression: isArrowFunctionExpression$1,
-    isObjectMethod: isObjectMethod$1,
-    isFunctionDeclaration: isFunctionDeclaration$1,
-    isExportDeclaration: isExportDeclaration$3,
-    isDoWhileStatement: isDoWhileStatement$1,
-    isBlockStatement: isBlockStatement$3,
-    isArrayExpression: isArrayExpression$2,
-} = types$B;
-
-const isFirstStatement = (path) => path.node.body[0];
-const isFirstDirective = (path) => path.node.directives?.[0];
-const isMethodOrArrow = (path) => isArrowFunctionExpression$1(path) || isObjectMethod$1(path);
-
-const isInsideArrayTupleOfThree = (path) => {
-    const {parentPath} = path.parentPath;
-    
-    if (!isArrayExpression$2(parentPath))
-        return false;
-    
-    const {length} = parentPath.node.elements;
-    
-    return length === 3;
-};
-
-const parentIfWithoutElse = ({parentPath}) => {
-    if (!parentPath.isIfStatement())
-        return false;
-    
-    return !parentPath.node.alternate;
-};
-
-blockStatement$3.BlockStatement = {
-    print(path, printer, semantics) {
-        const {trailingComma} = semantics;
-        const {
-            indent,
-            maybe,
-            write,
-            traverse,
-        } = printer;
-        
-        const body = path.get('body');
-        const directives = getDirectives$1(path);
-        
-        if (path.parentPath.isBlockStatement())
-            indent();
-        
-        const insideArray = isInsideArrayTupleOfThree(path);
-        maybe.indent.inc(!insideArray);
-        write('{');
-        
-        if (isFirstStatement(path) || isFirstDirective(path))
-            write.newline();
-        
-        for (const directive of directives) {
-            traverse(directive);
-        }
-        
-        maybe.write.linebreak(directives.length && body.length);
-        const callInsideChain = isCallInsideChain(path);
-        
-        maybe.indent.inc(callInsideChain);
-        
-        for (const element of body) {
-            traverse(element);
-        }
-        
-        parseComments$3(path, printer, semantics);
-        
-        maybe.indent.dec(!insideArray);
-        
-        maybe.indent.dec(insideArray);
-        maybe.indent(body.length);
-        maybe.indent.inc(insideArray);
-        write('}');
-        
-        maybe.indent.dec(callInsideChain);
-        
-        const {parentPath} = path;
-        
-        if (isObjectMethod$1(parentPath))
-            maybe.write(isNext$f(parentPath) || trailingComma, ',');
+const BreakStatement$1 = {
+    split(path, {print}) {
+        print.newline();
     },
-    afterIf: shouldAddNewlineAfter,
-    after(path, {write}) {
-        write.newline();
-        markAfter$7(path.parentPath);
+    print(path, {print, maybe}) {
+        const {label} = path.node;
+        
+        maybe.indent(!isInsideLabel(path));
+        print('break');
+        maybe.print.space(label);
+        print('__label');
+        print(';');
+    },
+    afterSatisfy: () => [
+        isParentBlock$1,
+        isNextParent,
+        isInsideCase,
+        isInsideIf,
+    ],
+};
+
+const {
+    isVariableDeclaration: isVariableDeclaration$4,
+    isFunction: isFunction$5,
+} = lib_exports$1;
+
+function shouldAddSemicolon(path) {
+    if (path.isClassDeclaration())
+        return false;
+    
+    return !path.isFunctionDeclaration();
+}
+
+const ExportDefaultDeclaration$1 = {
+    print(path, {print, traverse, maybe}) {
+        const declaration = path.get('declaration');
+        print('export default ');
+        traverse(declaration);
+        maybe.print(shouldAddSemicolon(declaration), ';');
+    },
+    afterSatisfy: () => [isNext],
+    after(path, {print, maybe}) {
+        print.newline();
+        maybe.print.newline(!isVarAfterFn(path));
     },
 };
 
-const isTopLevelWithNoNext = (path) => {
-    if (isNext$f(path))
+function isVarAfterFn(path) {
+    const next = path.getNextSibling();
+    
+    if (!isVariableDeclaration$4(next))
         return false;
     
-    return !isNext$f(path.parentPath) && isParentProgram(path.parentPath);
-};
-
-const isInsideIfWithoutElseInsideFn = (path) => {
-    return parentIfWithoutElse(path) && path.find(isMethodOrArrow);
-};
-
-const isEmptyBodyNoNext = (path) => {
-    const {parentPath} = path;
-    return parentPath.isStatement() && !path.node.body.length && !isNext$f(parentPath);
-};
-
-const isLooksLikeInsideFn = ({parentPath}) => {
-    return /FunctionExpression/.test(parentPath.type);
-};
-
-const NEWLINE$2 = true;
-const NO_NEWLINE = false;
-
-const isInsideDoWhile = ({parentPath}) => isDoWhileStatement$1(parentPath);
-const isInsideBlock$2 = ({parentPath}) => isBlockStatement$3(parentPath);
-
-const isNoNewline = satisfy$1([
-    isInsideDoWhile,
-    isTopLevelWithNoNext,
-    insideIfWithNoBody,
-]);
-
-function shouldAddNewlineAfter(path) {
-    if (isInsideBlock$2(path))
-        return NEWLINE$2;
+    const {declaration} = path.node;
     
-    if (isNoNewline(path))
-        return NO_NEWLINE;
-    
-    if (isInsideIfWithoutElseInsideFn(path))
-        return NEWLINE$2;
-    
-    if (isEmptyBodyNoNext(path))
-        return NO_NEWLINE;
-    
-    if (isTry(path))
-        return NO_NEWLINE;
-    
-    if (isLooksLikeInsideFn(path))
-        return NO_NEWLINE;
-    
-    if (isLast$8(path))
-        return NO_NEWLINE;
-    
-    if (isExportFunction(path))
-        return NO_NEWLINE;
-    
-    return !isNextIfAlternate(path);
+    return isFunction$5(declaration);
 }
 
-function isExportFunction(path) {
-    if (!isFunctionDeclaration$1(path.parentPath))
-        return false;
+const ForInStatement$1 = (path, {print, indent}) => {
+    indent();
+    print('for');
+    print.space();
+    print('(');
+    print('__left');
+    print(' in ');
+    print('__right');
+    print(')');
     
-    if (!isExportDeclaration$3(path.parentPath?.parentPath))
-        return false;
+    if (path.get('body').isBlockStatement())
+        print.space();
     
-    return !isNext$f(path.parentPath?.parentPath);
-}
+    print('__body');
+};
 
-function isNextIfAlternate(path) {
-    const {parentPath} = path;
-    
-    if (!parentPath.isIfStatement())
-        return false;
-    
-    const alternate = parentPath.get('alternate');
-    
-    if (path === alternate)
-        return false;
-    
-    return exists$4(alternate);
-}
-
-function isTry({parentPath}) {
-    if (parentPath.isTryStatement())
-        return true;
-    
-    return parentPath.parentPath?.isTryStatement();
-}
-
-var returnStatement$2 = {};
-
-var maybeSpaceAfterKeyword$2 = {};
-
-maybeSpaceAfterKeyword$2.maybeSpaceAfterKeyword = (path, {print}, semantics) => {
+const maybeSpaceAfterKeyword$1 = (path, {print}, semantics) => {
     const {roundBraces} = semantics;
     const {node} = path;
     
@@ -57197,652 +53631,7 @@ maybeSpaceAfterKeyword$2.maybeSpaceAfterKeyword = (path, {print}, semantics) => 
     print(' ');
 };
 
-const {types: types$A} = bundle$1;
-
-const {isInsideLabel: isInsideLabel$4} = is$4;
-const {
-    isPrevBody,
-    noTrailingComment,
-    isLast: isLast$7,
-} = is$4;
-
-const {hasPrevNewline: hasPrevNewline$1} = mark;
-const {maybeSpaceAfterKeyword: maybeSpaceAfterKeyword$1} = maybeSpaceAfterKeyword$2;
-
-const {isJSXElement: isJSXElement$4} = types$A;
-const isBodyLength = ({parentPath}) => parentPath.node?.body?.length > 2;
-
-const isInsideIfWithElse = ({parentPath}) => parentPath.isIfStatement() && parentPath.node.alternate;
-
-returnStatement$2.ReturnStatement = {
-    beforeIf(path) {
-        return !hasPrevNewline$1(path) && isBodyLength(path) || isPrevBody(path);
-    },
-    before(path, {print}) {
-        print.linebreak();
-    },
-    print(path, printer, semantics) {
-        const {maybe, print} = printer;
-        
-        maybe.indent(!isInsideLabel$4(path));
-        print('return');
-        
-        const arg = path.get('argument');
-        
-        maybeSpaceAfterKeyword$1(arg, printer, semantics);
-        
-        if (isJSXWithComment(path)) {
-            print('(');
-            print.breakline();
-            print('__argument');
-            print(');');
-            
-            return;
-        }
-        
-        print('__argument');
-        print(';');
-    },
-    afterIf: (path) => {
-        if (isInsideIfWithElse(path))
-            return true;
-        
-        if (isLast$7(path))
-            return false;
-        
-        if (isLast$7(path.parentPath))
-            return false;
-        
-        return noTrailingComment(path);
-    },
-    after(path, {print}) {
-        print.newline();
-    },
-};
-function isJSXWithComment(path) {
-    const arg = path.node.argument;
-    
-    if (!arg)
-        return;
-    
-    const {leadingComments} = arg;
-    
-    return isJSXElement$4(arg) && leadingComments?.length;
-}
-
-var tryStatements = {};
-
-const {isNext: isNext$e} = is$4;
-
-tryStatements.TryStatement = {
-    print(path, {print}) {
-        const finalizer = path.get('finalizer');
-        print.indent();
-        print('try');
-        print.space();
-        print('__block');
-        print('__handler');
-        
-        if (finalizer.node) {
-            print.space();
-            print('finally');
-            print.space();
-            print(finalizer);
-            print.newline();
-        }
-    },
-    afterSatisfy: () => [isNext$e],
-    after(path, {maybe, print}) {
-        maybe.print.newline(!path.node.finalizer);
-        print.breakline();
-    },
-};
-
-tryStatements.CatchClause = (path, {print, maybe}) => {
-    const param = path.get('param');
-    const body = path.get('body');
-    
-    print.space();
-    print('catch');
-    
-    if (!param.node) {
-        print.space();
-    } else {
-        print('(');
-        print(param);
-        print(')');
-        print.space();
-    }
-    
-    print(body);
-    maybe.print.newline(isInsideBlock$1(path));
-};
-
-function isInsideBlock$1(path) {
-    return path.parentPath.parentPath.isBlockStatement();
-}
-
-var debuggerStatement$1 = {};
-
-const {isNext: isNext$d, isInsideIf: isInsideIf$1} = is$4;
-const isInsideBlock = (path) => path.parentPath.isBlockStatement();
-
-debuggerStatement$1.DebuggerStatement = {
-    print(path, {print, indent}) {
-        indent();
-        print('debugger;');
-    },
-    afterSatisfy: () => [
-        isNext$d,
-        isInsideBlock,
-        isInsideIf$1,
-    ],
-    after(path, {print}) {
-        print.newline();
-    },
-};
-
-var forStatement$1 = {};
-
-const {isInsideLabel: isInsideLabel$3} = is$4;
-const {exists: exists$3} = is$4;
-
-const {markAfter: markAfter$6} = mark;
-
-forStatement$1.ForStatement = {
-    print(path, {print, maybe}) {
-        const {
-            test,
-            update,
-            body,
-        } = path.node;
-        
-        maybe.indent(!isInsideLabel$3(path));
-        print('for');
-        print.space();
-        print('(');
-        print('__init');
-        print(';');
-        maybe.print.space(test);
-        print('__test');
-        
-        print(';');
-        maybe.print.space(update);
-        print('__update');
-        print(')');
-        
-        if (body.body) {
-            print.space();
-            print('__body');
-        } else {
-            const is = !path.get('body').isEmptyStatement();
-            maybe.print.newline(is);
-            maybe.indent.inc(is);
-            print('__body');
-            maybe.indent.dec(is);
-        }
-    },
-    afterIf(path) {
-        return exists$3(path.getNextSibling());
-    },
-    after(path, {print}) {
-        print.linebreak();
-        markAfter$6(path);
-    },
-};
-
-var importDeclaration$1 = {exports: {}};
-
-var parseImportSpecifiers = {};
-
-parseImportSpecifiers.parseImportSpecifiers = (specifiers) => {
-    const defaults = [];
-    const namespaces = [];
-    const imports = [];
-    
-    for (const spec of specifiers) {
-        if (spec.type === 'ImportDefaultSpecifier') {
-            defaults.push(spec);
-            continue;
-        }
-        
-        if (spec.type === 'ImportNamespaceSpecifier') {
-            namespaces.push(spec);
-            continue;
-        }
-        
-        if (spec.type === 'ImportSpecifier') {
-            imports.push(spec);
-            continue;
-        }
-    }
-    
-    return {
-        defaults,
-        namespaces,
-        imports,
-    };
-};
-
-var importAttribute$1 = {};
-
-importAttribute$1.ImportAttribute = (path, {print}) => {
-    print('__key');
-    print(':');
-    print.space();
-    print('__value');
-    print(',');
-};
-
-importAttribute$1.printAttributes = (path, keyword, {write, traverse, indent}) => {
-    const attributes = path.get('attributes');
-    
-    if (!attributes.length)
-        return;
-    
-    write(` ${keyword}`);
-    write.space();
-    
-    write('{');
-    write.breakline();
-    indent.inc();
-    
-    for (const attr of attributes) {
-        indent();
-        traverse(attr);
-        write.newline();
-    }
-    
-    indent.dec();
-    write('}');
-};
-
-var importDeclarationComments = {};
-
-const {types: types$z} = bundle$1;
-const {isExportDeclaration: isExportDeclaration$2} = types$z;
-
-importDeclarationComments.printTrailingCommentLine = (path, printer, semantics, {printComment}) => {
-    const {print} = printer;
-    printComment();
-    print.breakline();
-};
-
-importDeclarationComments.printTrailingCommentBlock = (path, printer, semantics, {printComment}) => {
-    const {maybe} = printer;
-    const next = path.getNextSibling();
-    
-    maybe.print.breakline(!isExportDeclaration$2(next));
-    printComment();
-};
-
-(function (module) {
-
-	const {parseImportSpecifiers: parseImportSpecifiers$1} = parseImportSpecifiers;
-
-	const {markAfter} = mark;
-	const {isLast, isNext} = is$4;
-
-	const {
-	    ImportAttribute,
-	    printAttributes,
-	} = importAttribute$1;
-
-	const {
-	    printTrailingCommentBlock,
-	    printTrailingCommentLine,
-	} = importDeclarationComments;
-
-	module.exports.ImportAttribute = ImportAttribute;
-	module.exports.ImportDeclaration = {
-	    print(path, printer, semantics) {
-	        const {
-	            print,
-	            maybe,
-	            write,
-	            traverse,
-	            indent,
-	        } = printer;
-	        
-	        const {phase} = path.node;
-	        const isType = path.node.importKind === 'type';
-	        const specifiers = path.get('specifiers');
-	        
-	        indent();
-	        write('import');
-	        maybe.write(isType, ' type');
-	        maybe.write(phase, ` ${phase}`);
-	        
-	        let wasSpecifier = false;
-	        const n = specifiers.length - 1;
-	        
-	        const {
-	            defaults,
-	            namespaces,
-	            imports,
-	        } = parseImportSpecifiers$1(specifiers);
-	        
-	        maybe.write(specifiers.length, ' ');
-	        
-	        for (const spec of defaults) {
-	            traverse(spec.get('local'));
-	            maybe.write(n, ',');
-	            maybe.write.space(n);
-	        }
-	        
-	        for (const spec of namespaces) {
-	            write('* as ');
-	            traverse(spec.get('local'));
-	        }
-	        
-	        const maxSpecifiersInOneLine = parseMaxSpecifiers(imports, semantics);
-	        const importsCount = imports.length - 1;
-	        
-	        for (const [index, spec] of imports.entries()) {
-	            const last = index === importsCount;
-	            const notLast = !last;
-	            
-	            const {imported, local} = spec.node;
-	            
-	            indent.inc();
-	            
-	            maybe.write(!wasSpecifier, '{');
-	            maybe.write.breakline(importsCount >= maxSpecifiersInOneLine);
-	            
-	            wasSpecifier = true;
-	            traverse(spec.get('imported'));
-	            
-	            if (imported.name !== local.name) {
-	                write(' as ');
-	                write(local.name);
-	            }
-	            
-	            if (importsCount < maxSpecifiersInOneLine && notLast) {
-	                maybe.write(n, ',');
-	                maybe.write.space(n);
-	            }
-	            
-	            if (importsCount >= maxSpecifiersInOneLine) {
-	                maybe.write(n, ',');
-	                
-	                const last = index === n;
-	                const penalty = index === n - 1;
-	                
-	                maybe.write.newline(penalty && defaults.length);
-	                maybe.write.newline(last);
-	            }
-	            
-	            indent.dec();
-	            maybe.write(last, '}');
-	        }
-	        
-	        maybe.write(specifiers.length, ' from');
-	        print.space();
-	        
-	        print('__source');
-	        printAttributes(path, 'with', printer);
-	        
-	        print(';');
-	        
-	        if (isNext(path))
-	            print.newline();
-	    },
-	    afterIf(path) {
-	        if (isLast(path))
-	            return false;
-	        
-	        return !path.getNextSibling().isImportDeclaration();
-	    },
-	    after(path, {print}) {
-	        print.newline();
-	        markAfter(path);
-	    },
-	};
-
-	function parseMaxSpecifiers(imports, semantics) {
-	    const {
-	        maxSpecifiersInOneLine,
-	        maxPropertiesLengthInOneLine,
-	    } = semantics;
-	    
-	    for (const {node} of imports) {
-	        if (node.imported.name !== node.local.name)
-	            return 1;
-	        
-	        if (node.imported.name.length >= maxPropertiesLengthInOneLine)
-	            return 1;
-	    }
-	    
-	    return maxSpecifiersInOneLine;
-	}
-
-	module.exports.ImportDeclaration.printTrailingCommentBlock = printTrailingCommentBlock;
-	module.exports.ImportDeclaration.printTrailingCommentLine = printTrailingCommentLine; 
-} (importDeclaration$1));
-
-var importDeclarationExports = importDeclaration$1.exports;
-importDeclarationExports.default;
-
-var exportDeclaration = {};
-
-const {types: types$y} = bundle$1;
-
-const {isParentBlock: isParentBlock$1} = is$4;
-const {
-    markAfter: markAfter$5,
-    isMarkedAfter,
-    hasPrevNewline,
-} = mark;
-
-const {
-    isNewlineBetweenSiblings,
-    exists: exists$2,
-    isNext: isNext$c,
-    isLast: isLast$6,
-} = is$4;
-
-const {
-    isExportNamespaceSpecifier: isExportNamespaceSpecifier$1,
-    isVariableDeclaration: isVariableDeclaration$4,
-    isExportNamedDeclaration: isExportNamedDeclaration$3,
-} = types$y;
-
-const isDeclarationNewline = (path) => isMarkedAfter(path.get('declaration'));
-const isInsideNamespace$1 = (path) => path.parentPath.isTSModuleBlock();
-
-const options$2 = {
-    exports: {
-        maxOneLineSpecifiers: 2,
-    },
-};
-
-exportDeclaration.ExportSpecifier = (path, {print}) => {
-    const {local, exported} = path.node;
-    
-    print('__local');
-    
-    if (exported.name !== local.name) {
-        print(' as ');
-        print('__exported');
-    }
-};
-
-exportDeclaration.ExportNamespaceSpecifier = (path, {print}) => {
-    print('* as ');
-    print('__exported');
-};
-
-exportDeclaration.ExportNamedDeclaration = {
-    beforeIf(path) {
-        const prev = path.getPrevSibling();
-        
-        if (hasPrevNewline(path))
-            return false;
-        
-        return isVariableDeclaration$4(prev);
-    },
-    before(path, {print}) {
-        print.linebreak();
-    },
-    print(path, {print, traverse, indent, maybe}, semantics) {
-        const {trailingComma} = semantics;
-        const {exportKind} = path.node;
-        const specifiers = path.get('specifiers');
-        const {maxOneLineSpecifiers} = options$2.exports;
-        const source = path.get('source');
-        
-        indent();
-        print('export');
-        
-        if (exportKind === 'type' && specifiers.length)
-            print(' type');
-        
-        if (isExportNamespaceSpecifier$1(specifiers[0])) {
-            print(' ');
-            print(specifiers[0]);
-            print(' from ');
-            print('__source');
-            print(';');
-            maybe.print.newline(!isLast$6(path));
-            
-            return;
-        }
-        
-        const n = specifiers.length;
-        const isNewline = !exists$2(source) || n > maxOneLineSpecifiers;
-        
-        if (specifiers && !path.node.declaration) {
-            print.space();
-            print('{');
-            
-            if (specifiers.length) {
-                indent.inc();
-                maybe.print.newline(isNewline);
-                
-                const lastIndex = n - 1;
-                
-                for (const [i, spec] of specifiers.entries()) {
-                    const isType = spec.node.exportKind === 'type';
-                    const isLast = i < lastIndex;
-                    
-                    maybe.indent(isNewline);
-                    maybe.print(isType, 'type ');
-                    traverse(spec);
-                    
-                    if (isLast && !isNewline)
-                        print(', ');
-                    else if (isNewline)
-                        maybe.print(isLast || trailingComma, ',');
-                    
-                    maybe.print.newline(isNewline);
-                }
-                
-                indent.dec();
-                indent();
-            }
-            
-            print('}');
-            const source = path.get('source');
-            
-            if (exists$2(source)) {
-                print(' from ');
-                traverse(source);
-            }
-            
-            print(';');
-            maybe.print.newline(isNext$c(path) || isInsideNamespace$1(path));
-            
-            return;
-        }
-        
-        print(' ');
-        print('__declaration');
-    },
-    afterIf(path) {
-        if (isLast$6(path))
-            return false;
-        
-        if (isDeclarationNewline(path))
-            return false;
-        
-        if (isNewlineBetweenSiblings(path))
-            return true;
-        
-        return isParentBlock$1(path);
-    },
-    after(path, {print, indent}) {
-        const next = path.getNextSibling();
-        
-        if (isExportNamedDeclaration$3(next))
-            indent();
-        
-        print.newline();
-        
-        markAfter$5(path);
-    },
-};
-
-var exportAllDeclaration$1 = {};
-
-exportAllDeclaration$1.ExportAllDeclaration = (path, {print}) => {
-    const {exportKind} = path.node;
-    print('export ');
-    
-    if (exportKind === 'type')
-        print('type ');
-    
-    print('* from ');
-    print('__source');
-    print(';');
-    print.newline();
-};
-
-var whileStatement$1 = {};
-
-const {isNext: isNext$b} = is$4;
-const {markAfter: markAfter$4} = mark;
-
-whileStatement$1.WhileStatement = {
-    print(path, {print, indent}) {
-        indent();
-        print('while');
-        print.space();
-        print('(');
-        print('__test');
-        print(')');
-        
-        if (path.node.body.body) {
-            print.space();
-            print('__body');
-        } else {
-            indent.inc();
-            print.newline();
-            print('__body');
-            indent.dec();
-        }
-    },
-    afterIf(path) {
-        return isNext$b(path);
-    },
-    after(path, {print}) {
-        print.linebreak();
-        markAfter$4(path);
-    },
-};
-
-var switchStatement$1 = {};
-
-const {
-    isNext: isNext$a,
-    exists: exists$1,
-    isLast: isLast$5,
-} = is$4;
-
-const {parseLeadingComments: parseLeadingComments$1} = comment;
-
-const {maybeSpaceAfterKeyword} = maybeSpaceAfterKeyword$2;
-
-switchStatement$1.SwitchStatement = {
+const SwitchStatement$1 = {
     print(path, printer, semantics) {
         const {
             print,
@@ -57867,11 +53656,11 @@ switchStatement$1.SwitchStatement = {
             
             indent();
             
-            parseLeadingComments$1(switchCase, printer, semantics);
+            parseLeadingComments(switchCase, printer, semantics);
             
-            if (exists$1(test)) {
+            if (exists(test)) {
                 write('case');
-                maybeSpaceAfterKeyword(test, printer, semantics);
+                maybeSpaceAfterKeyword$1(test, printer, semantics);
                 traverse(test);
             } else {
                 write('default');
@@ -57902,218 +53691,23 @@ switchStatement$1.SwitchStatement = {
         print.indent();
         print('}');
         
-        if (!isNext$a(path) && !isLast$5(path))
+        if (!isNext(path) && !isLast$2(path))
             print.newline();
     },
-    afterSatisfy: () => [isNext$a],
+    afterSatisfy: () => [isNext],
     after(path, {print}) {
         print.breakline();
         print.newline();
     },
 };
 
-var forInStatement$1 = {};
-
-forInStatement$1.ForInStatement = (path, {print, indent}) => {
-    indent();
-    print('for');
-    print.space();
-    print('(');
-    print('__left');
-    print(' in ');
-    print('__right');
-    print(')');
-    
-    if (path.get('body').isBlockStatement())
-        print.space();
-    
-    print('__body');
-};
-
-var exportDefaultDeclaration$1 = {};
-
-const {types: types$x} = bundle$1;
-const {isNext: isNext$9} = is$4;
-
-const {
-    isVariableDeclaration: isVariableDeclaration$3,
-    isFunction: isFunction$4,
-} = types$x;
-
-function shouldAddSemicolon(path) {
-    if (path.isClassDeclaration())
-        return false;
-    
-    return !path.isFunctionDeclaration();
-}
-
-exportDefaultDeclaration$1.ExportDefaultDeclaration = {
-    print(path, {print, traverse, maybe}) {
-        const declaration = path.get('declaration');
-        print('export default ');
-        traverse(declaration);
-        maybe.print(shouldAddSemicolon(declaration), ';');
-    },
-    afterSatisfy: () => [isNext$9],
-    after(path, {print, maybe}) {
-        print.newline();
-        maybe.print.newline(!isVarAfterFn(path));
-    },
-};
-
-function isVarAfterFn(path) {
-    const next = path.getNextSibling();
-    
-    if (!isVariableDeclaration$3(next))
-        return false;
-    
-    const {declaration} = path.node;
-    
-    return isFunction$4(declaration);
-}
-
-var breakStatement$1 = {};
-
-const {
-    isParentBlock,
-    isNextParent: isNextParent$3,
-    isInsideIf,
-    isInsideLabel: isInsideLabel$2,
-} = is$4;
-
-const isInsideCase = (path) => path.parentPath.isSwitchCase();
-
-breakStatement$1.BreakStatement = {
-    split(path, {print}) {
-        print.newline();
-    },
-    print(path, {print, maybe}) {
-        const {label} = path.node;
-        
-        maybe.indent(!isInsideLabel$2(path));
-        print('break');
-        maybe.print.space(label);
-        print('__label');
-        print(';');
-    },
-    afterSatisfy: () => [
-        isParentBlock,
-        isNextParent$3,
-        isInsideCase,
-        isInsideIf,
-    ],
-};
-
-var doWhileStatement$1 = {};
-
-const {isLast: isLast$4} = is$4;
-const notLast = (path) => !isLast$4(path);
-
-doWhileStatement$1.DoWhileStatement = {
+const WhileStatement$1 = {
     print(path, {print, indent}) {
         indent();
-        print('do');
-        print.space();
-        print('__body');
-        print.space();
         print('while');
         print.space();
         print('(');
         print('__test');
-        print(')');
-    },
-    afterSatisfy: () => [notLast],
-    after(path, {print}) {
-        print.newline();
-    },
-};
-
-var program$3 = {};
-
-const {parseComments: parseComments$2} = comment;
-const {getDirectives} = getDirectives$2;
-const {hasCoupleTrailingComments} = is$4;
-
-program$3.Program = (path, printer, semantics) => {
-    const {body} = path.node;
-    const {
-        traverse,
-        maybe,
-        write,
-    } = printer;
-    
-    traverse(path.get('interpreter'));
-    parseComments$2(path, printer, semantics);
-    
-    const directives = getDirectives(path);
-    
-    for (const directive of directives) {
-        traverse(directive);
-        maybe.write.newline(body.length);
-    }
-    
-    path.get('body').forEach(traverse);
-    
-    if (directives.length && !body.length)
-        return;
-    
-    if (body.length && hasCoupleTrailingComments(body.at(-1)))
-        return;
-    
-    write.endOfFile();
-};
-
-var continueStatement$1 = {};
-
-const {isInsideLabel: isInsideLabel$1} = is$4;
-
-continueStatement$1.ContinueStatement = (path, {print, maybe, write}) => {
-    const {label} = path.node;
-    
-    maybe.indent(!isInsideLabel$1(path));
-    print('continue');
-    
-    maybe.print.space(label);
-    print('__label');
-    
-    write(';');
-    print.newline();
-};
-
-var labeledStatement$1 = {};
-
-const {isInsideLabel} = is$4;
-
-labeledStatement$1.LabeledStatement = (path, {print, maybe}) => {
-    maybe.indent(!isInsideLabel(path));
-    print('__label');
-    print(':');
-    print.space();
-    print('__body');
-};
-
-var emptyStatement$1 = {};
-
-const {isLast: isLast$3} = is$4;
-
-emptyStatement$1.EmptyStatement = (path, {write, maybe}) => {
-    const {parentPath} = path;
-    write(';');
-    maybe.write.newline(!isLast$3(path) && !isLast$3(parentPath));
-};
-
-var withStatement$1 = {};
-
-const {isNext: isNext$8} = is$4;
-const {markAfter: markAfter$3} = mark;
-
-withStatement$1.WithStatement = {
-    print(path, {print, indent}) {
-        indent();
-        print('with');
-        print.space();
-        print('(');
-        print('__object');
         print(')');
         
         if (path.node.body.body) {
@@ -58127,82 +53721,1431 @@ withStatement$1.WithStatement = {
         }
     },
     afterIf(path) {
-        return isNext$8(path);
+        return isNext(path);
     },
     after(path, {print}) {
         print.linebreak();
-        markAfter$3(path);
+        markAfter(path);
     },
 };
 
-const {ExpressionStatement: ExpressionStatement$1} = expressionStatementExports;
-const {VariableDeclaration: VariableDeclaration$1} = variableDeclaration$2;
-const {IfStatement: IfStatement$1} = ifStatement$1;
-const {ForOfStatement: ForOfStatement$1} = forOfStatement$1;
-const {BlockStatement: BlockStatement$1} = blockStatement$3;
-const {ReturnStatement: ReturnStatement$1} = returnStatement$2;
-const TryStatements = tryStatements;
-const {DebuggerStatement: DebuggerStatement$1} = debuggerStatement$1;
-const {ForStatement: ForStatement$1} = forStatement$1;
-const importDeclarations = importDeclarationExports;
-const exportDeclarations = exportDeclaration;
-const {ExportAllDeclaration: ExportAllDeclaration$1} = exportAllDeclaration$1;
-
-const {WhileStatement: WhileStatement$1} = whileStatement$1;
-const {SwitchStatement: SwitchStatement$1} = switchStatement$1;
-const {ForInStatement: ForInStatement$1} = forInStatement$1;
-const {ExportDefaultDeclaration: ExportDefaultDeclaration$1} = exportDefaultDeclaration$1;
-const {BreakStatement: BreakStatement$1} = breakStatement$1;
-const {DoWhileStatement: DoWhileStatement$1} = doWhileStatement$1;
-const {Program: Program$1} = program$3;
-const {ContinueStatement: ContinueStatement$1} = continueStatement$1;
-const {LabeledStatement: LabeledStatement$1} = labeledStatement$1;
-const {EmptyStatement: EmptyStatement$1} = emptyStatement$1;
-const {WithStatement: WithStatement$1} = withStatement$1;
+const ExportAllDeclaration$1 = (path, {print}) => {
+    const {exportKind} = path.node;
+    print('export ');
+    
+    if (exportKind === 'type')
+        print('type ');
+    
+    print('* from ');
+    print('__source');
+    print(';');
+    print.newline();
+};
 
 const {
-    ExportNamespaceSpecifier: ExportNamespaceSpecifier$1,
-    ExportSpecifier: ExportSpecifier$1,
-} = exportDeclarations;
+    isExportNamespaceSpecifier: isExportNamespaceSpecifier$1,
+    isVariableDeclaration: isVariableDeclaration$3,
+    isExportNamedDeclaration: isExportNamedDeclaration$3,
+    isExportDefaultSpecifier: isExportDefaultSpecifier$1,
+} = lib_exports$1;
 
-var statements$4 = {
-    ...importDeclarations,
-    ...exportDeclarations,
-    BlockStatement: BlockStatement$1,
-    DoWhileStatement: DoWhileStatement$1,
-    ExpressionStatement: ExpressionStatement$1,
-    ExportSpecifier: ExportSpecifier$1,
-    ExportNamespaceSpecifier: ExportNamespaceSpecifier$1,
-    ExportDefaultDeclaration: ExportDefaultDeclaration$1,
-    ExportAllDeclaration: ExportAllDeclaration$1,
-    VariableDeclaration: VariableDeclaration$1,
-    IfStatement: IfStatement$1,
-    ForStatement: ForStatement$1,
-    ForInStatement: ForInStatement$1,
-    ForOfStatement: ForOfStatement$1,
-    ReturnStatement: ReturnStatement$1,
-    DebuggerStatement: DebuggerStatement$1,
-    LabeledStatement: LabeledStatement$1,
-    Program: Program$1,
-    EmptyStatement: EmptyStatement$1,
-    InterpreterDirective(path, {print}) {
-        // shebang, hashbang
-        print(`#!${path.node.value}\n`);
-        print.newline();
+const isDeclarationNewline = (path) => isMarkedAfter(path.get('declaration'));
+const isInsideNamespace$1 = (path) => path.parentPath.isTSModuleBlock();
+
+const options$1 = {
+    exports: {
+        maxOneLineSpecifiers: 2,
     },
-    SwitchStatement: SwitchStatement$1,
-    ...TryStatements,
-    BreakStatement: BreakStatement$1,
-    ContinueStatement: ContinueStatement$1,
-    WhileStatement: WhileStatement$1,
-    WithStatement: WithStatement$1,
 };
 
-var templateLiteral$1 = {};
+const ExportSpecifier$1 = (path, {print}) => {
+    const {local, exported} = path.node;
+    
+    print('__local');
+    
+    if (exported.name !== local.name) {
+        print(' as ');
+        print('__exported');
+    }
+};
 
-var writeTemplateLiteral$2 = {};
+const ExportNamespaceSpecifier$1 = (path, {print}) => {
+    print('* as ');
+    print('__exported');
+};
 
-writeTemplateLiteral$2.writeTemplateLiteral = (quasis, expressions, {write, traverse}) => {
+const ExportDefaultSpecifier$1 = (path, {print}) => {
+    print('__exported');
+};
+
+const ExportNamedDeclaration$1 = {
+    beforeIf(path) {
+        const prev = path.getPrevSibling();
+        
+        if (hasPrevNewline(path))
+            return false;
+        
+        return isVariableDeclaration$3(prev);
+    },
+    before(path, {print}) {
+        print.linebreak();
+    },
+    print(path, {print, traverse, indent, maybe}, semantics) {
+        const {trailingComma} = semantics;
+        const {exportKind} = path.node;
+        const specifiers = path.get('specifiers');
+        const {maxOneLineSpecifiers} = options$1.exports;
+        const source = path.get('source');
+        
+        indent();
+        print('export');
+        
+        if (exportKind === 'type' && specifiers.length)
+            print(' type');
+        
+        if (isExportNamespaceSpecifier$1(specifiers[0])) {
+            print(' ');
+            print(specifiers[0]);
+            print(' from ');
+            print('__source');
+            print(';');
+            maybe.print.newline(!isLast$2(path));
+            
+            return;
+        }
+        
+        const n = specifiers.length;
+        const isNewline = !exists(source) || n > maxOneLineSpecifiers;
+        
+        if (specifiers && !path.node.declaration) {
+            print.space();
+            
+            const [first, ...rest] = specifiers;
+            
+            if (!specifiers.length) {
+                print('{}');
+            } else if (isExportDefaultSpecifier$1(first) && !rest.length) {
+                traverse(first);
+            } else {
+                if (isExportDefaultSpecifier$1(first)) {
+                    traverse(first);
+                    print(',');
+                    print.space();
+                } else {
+                    rest.unshift(first);
+                }
+                
+                print('{');
+                
+                indent.inc();
+                maybe.print.newline(isNewline);
+                
+                const lastIndex = n - 1;
+                
+                for (const [i, spec] of rest.entries()) {
+                    const isType = spec.node.exportKind === 'type';
+                    const isLast = i < lastIndex;
+                    
+                    maybe.indent(isNewline);
+                    maybe.print(isType, 'type ');
+                    traverse(spec);
+                    
+                    if (isLast && !isNewline)
+                        print(', ');
+                    else if (isNewline)
+                        maybe.print(isLast || trailingComma, ',');
+                    
+                    maybe.print.newline(isNewline);
+                }
+                
+                indent.dec();
+                indent();
+                print('}');
+            }
+            
+            const source = path.get('source');
+            
+            if (exists(source)) {
+                print(' from ');
+                traverse(source);
+            }
+            
+            print(';');
+            maybe.print.newline(isNext(path) || isInsideNamespace$1(path));
+            
+            return;
+        }
+        
+        print(' ');
+        print('__declaration');
+    },
+    afterIf(path) {
+        if (isLast$2(path))
+            return false;
+        
+        if (isDeclarationNewline(path))
+            return false;
+        
+        if (isNewlineBetweenSiblings(path))
+            return true;
+        
+        return isParentBlock$1(path);
+    },
+    after(path, {print, indent}) {
+        const next = path.getNextSibling();
+        
+        if (isExportNamedDeclaration$3(next))
+            indent();
+        
+        print.newline();
+        
+        markAfter(path);
+    },
+};
+
+var parseImportSpecifiers_1 = (specifiers) => {
+    const defaults = [];
+    const namespaces = [];
+    const imports = [];
+    
+    for (const spec of specifiers) {
+        if (spec.type === 'ImportDefaultSpecifier') {
+            defaults.push(spec);
+            continue;
+        }
+        
+        if (spec.type === 'ImportNamespaceSpecifier') {
+            namespaces.push(spec);
+            continue;
+        }
+        
+        if (spec.type === 'ImportSpecifier') {
+            imports.push(spec);
+            continue;
+        }
+    }
+    
+    return {
+        defaults,
+        namespaces,
+        imports,
+    };
+};
+
+const ImportAttribute$1 = (path, {print}) => {
+    print('__key');
+    print(':');
+    print.space();
+    print('__value');
+    print(',');
+};
+
+const printAttributes = (path, keyword, {write, traverse, indent}) => {
+    const attributes = path.get('attributes');
+    
+    if (!attributes.length)
+        return;
+    
+    write(` ${keyword}`);
+    write.space();
+    
+    write('{');
+    write.breakline();
+    indent.inc();
+    
+    for (const attr of attributes) {
+        indent();
+        traverse(attr);
+        write.newline();
+    }
+    
+    indent.dec();
+    write('}');
+};
+
+const {isExportDeclaration: isExportDeclaration$4} = lib_exports$1;
+
+const printTrailingCommentLine = (path, printer, semantics, {printComment}) => {
+    const {print} = printer;
+    printComment();
+    print.breakline();
+};
+
+const printTrailingCommentBlock$1 = (path, printer, semantics, {printComment}) => {
+    const {maybe} = printer;
+    const next = path.getNextSibling();
+    
+    maybe.print.breakline(!isExportDeclaration$4(next));
+    printComment();
+};
+
+const ImportDeclaration$1 = {
+    print(path, printer, semantics) {
+        const {
+            print,
+            maybe,
+            write,
+            traverse,
+            indent,
+        } = printer;
+        
+        const {phase} = path.node;
+        const isType = path.node.importKind === 'type';
+        const specifiers = path.get('specifiers');
+        
+        indent();
+        write('import');
+        maybe.write(isType, ' type');
+        maybe.write(phase, ` ${phase}`);
+        
+        let wasSpecifier = false;
+        const n = specifiers.length - 1;
+        
+        const {
+            defaults,
+            namespaces,
+            imports,
+        } = parseImportSpecifiers_1(specifiers);
+        
+        maybe.write(specifiers.length, ' ');
+        
+        for (const spec of defaults) {
+            traverse(spec.get('local'));
+            maybe.write(n, ',');
+            maybe.write.space(n);
+        }
+        
+        for (const spec of namespaces) {
+            write('* as ');
+            traverse(spec.get('local'));
+        }
+        
+        const maxSpecifiersInOneLine = parseMaxSpecifiers(imports, semantics);
+        const importsCount = imports.length - 1;
+        
+        for (const [index, spec] of imports.entries()) {
+            const last = index === importsCount;
+            const notLast = !last;
+            
+            const {imported, local} = spec.node;
+            
+            indent.inc();
+            
+            maybe.write(!wasSpecifier, '{');
+            maybe.write.breakline(importsCount >= maxSpecifiersInOneLine);
+            
+            wasSpecifier = true;
+            traverse(spec.get('imported'));
+            
+            if (imported.name !== local.name) {
+                write(' as ');
+                write(local.name);
+            }
+            
+            if (importsCount < maxSpecifiersInOneLine && notLast) {
+                maybe.write(n, ',');
+                maybe.write.space(n);
+            }
+            
+            if (importsCount >= maxSpecifiersInOneLine) {
+                maybe.write(n, ',');
+                
+                const last = index === n;
+                const penalty = index === n - 1;
+                
+                maybe.write.newline(penalty && defaults.length);
+                maybe.write.newline(last);
+            }
+            
+            indent.dec();
+            maybe.write(last, '}');
+        }
+        
+        maybe.write(specifiers.length, ' from');
+        print.space();
+        
+        print('__source');
+        printAttributes(path, 'with', printer);
+        
+        print(';');
+        
+        if (isNext(path))
+            print.newline();
+    },
+    afterIf(path) {
+        if (isLast$2(path))
+            return false;
+        
+        return !path.getNextSibling().isImportDeclaration();
+    },
+    after(path, {print}) {
+        print.newline();
+        markAfter(path);
+    },
+};
+
+function parseMaxSpecifiers(imports, semantics) {
+    const {
+        maxSpecifiersInOneLine,
+        maxPropertiesLengthInOneLine,
+    } = semantics;
+    
+    for (const {node} of imports) {
+        if (node.imported.name !== node.local.name)
+            return 1;
+        
+        if (node.imported.name.length >= maxPropertiesLengthInOneLine)
+            return 1;
+    }
+    
+    return maxSpecifiersInOneLine;
+}
+
+ImportDeclaration$1.printTrailingCommentBlock = printTrailingCommentBlock$1;
+ImportDeclaration$1.printTrailingCommentLine = printTrailingCommentLine;
+
+const ForStatement$1 = {
+    print(path, {print, maybe}) {
+        const {
+            test,
+            update,
+            body,
+        } = path.node;
+        
+        maybe.indent(!isInsideLabel(path));
+        print('for');
+        print.space();
+        print('(');
+        print('__init');
+        print(';');
+        maybe.print.space(test);
+        print('__test');
+        
+        print(';');
+        maybe.print.space(update);
+        print('__update');
+        print(')');
+        
+        if (body.body) {
+            print.space();
+            print('__body');
+        } else {
+            const is = !path.get('body').isEmptyStatement();
+            maybe.print.newline(is);
+            maybe.indent.inc(is);
+            print('__body');
+            maybe.indent.dec(is);
+        }
+    },
+    afterIf(path) {
+        return exists(path.getNextSibling());
+    },
+    after(path, {print}) {
+        print.linebreak();
+        markAfter(path);
+    },
+};
+
+const isInsideBlock$3 = (path) => path.parentPath.isBlockStatement();
+
+const DebuggerStatement$1 = {
+    print(path, {print, indent}) {
+        indent();
+        print('debugger;');
+    },
+    afterSatisfy: () => [
+        isNext,
+        isInsideBlock$3,
+        isInsideIf,
+    ],
+    after(path, {print}) {
+        print.newline();
+    },
+};
+
+const TryStatement$1 = {
+    print(path, {print}) {
+        const finalizer = path.get('finalizer');
+        print.indent();
+        print('try');
+        print.space();
+        print('__block');
+        print('__handler');
+        
+        if (finalizer.node) {
+            print.space();
+            print('finally');
+            print.space();
+            print(finalizer);
+            print.newline();
+        }
+    },
+    afterSatisfy: () => [isNext],
+    after(path, {maybe, print}) {
+        maybe.print.newline(!path.node.finalizer);
+        print.breakline();
+    },
+};
+
+const CatchClause$1 = (path, {print, maybe}) => {
+    const param = path.get('param');
+    const body = path.get('body');
+    
+    print.space();
+    print('catch');
+    
+    if (!param.node) {
+        print.space();
+    } else {
+        print('(');
+        print(param);
+        print(')');
+        print.space();
+    }
+    
+    print(body);
+    maybe.print.newline(isInsideBlock$2(path));
+};
+
+function isInsideBlock$2(path) {
+    return path.parentPath.parentPath.isBlockStatement();
+}
+
+const {isJSXElement: isJSXElement$4} = lib_exports$1;
+const isBodyLength = ({parentPath}) => parentPath.node?.body?.length > 2;
+
+const isInsideIfWithElse = ({parentPath}) => parentPath.isIfStatement() && parentPath.node.alternate;
+
+const ReturnStatement$1 = {
+    beforeIf(path) {
+        return !hasPrevNewline(path) && isBodyLength(path) || isPrevBody(path);
+    },
+    before(path, {print}) {
+        print.linebreak();
+    },
+    print(path, printer, semantics) {
+        const {maybe, print} = printer;
+        
+        maybe.indent(!isInsideLabel(path));
+        print('return');
+        
+        const arg = path.get('argument');
+        
+        maybeSpaceAfterKeyword$1(arg, printer, semantics);
+        
+        if (isJSXWithComment(path)) {
+            print('(');
+            print.breakline();
+            print('__argument');
+            print(');');
+            
+            return;
+        }
+        
+        print('__argument');
+        print(';');
+    },
+    afterIf: (path) => {
+        if (isInsideIfWithElse(path))
+            return true;
+        
+        if (isLast$2(path))
+            return false;
+        
+        if (isLast$2(path.parentPath))
+            return false;
+        
+        return noTrailingComment(path);
+    },
+    after(path, {print}) {
+        print.newline();
+    },
+};
+
+function isJSXWithComment(path) {
+    const arg = path.node.argument;
+    
+    if (!arg)
+        return;
+    
+    const {leadingComments} = arg;
+    
+    return isJSXElement$4(arg) && leadingComments?.length;
+}
+
+const insideIfWithNoBody = (path) => {
+    if (!path.parentPath.isIfStatement())
+        return false;
+    
+    if (!path.parentPath.parentPath.isIfStatement())
+        return false;
+    
+    const next = path.parentPath?.parentPath.getNextSibling();
+    
+    return !exists(next);
+};
+
+const {
+    isReturnStatement: isReturnStatement$2,
+    isExpressionStatement: isExpressionStatement$6,
+    isMemberExpression: isMemberExpression$5,
+    isCallExpression: isCallExpression$6,
+} = lib_exports$1;
+
+const isCallInsideChain = (path) => {
+    if (!isCallExpression$6(path.parentPath.parentPath))
+        return false;
+    
+    const member = path.find(isTopMemberInsideCall);
+    
+    if (member)
+        return isLooksLikeChain(member);
+    
+    const callPath = path.find(isTopCall);
+    
+    if (!callPath)
+        return false;
+    
+    const calleeMember = callPath.get('callee');
+    
+    return isLooksLikeChain(calleeMember);
+};
+
+function isTopMemberInsideCall(path) {
+    if (!isMemberExpression$5(path))
+        return false;
+    
+    return isExpressionStatement$6(path.parentPath.parentPath);
+}
+
+function isTopCall(path) {
+    if (!isCallExpression$6(path))
+        return false;
+    
+    const {parentPath} = path;
+    
+    if (isReturnStatement$2(parentPath))
+        return true;
+    
+    return isExpressionStatement$6(parentPath);
+}
+
+const {
+    isArrowFunctionExpression: isArrowFunctionExpression$1,
+    isObjectMethod: isObjectMethod$1,
+    isFunctionDeclaration: isFunctionDeclaration$2,
+    isExportDeclaration: isExportDeclaration$3,
+    isDoWhileStatement: isDoWhileStatement$1,
+    isBlockStatement: isBlockStatement$5,
+    isArrayExpression: isArrayExpression$2,
+} = lib_exports$1;
+
+const isFirstStatement = (path) => path.node.body[0];
+const isFirstDirective = (path) => path.node.directives?.[0];
+const isMethodOrArrow = (path) => isArrowFunctionExpression$1(path) || isObjectMethod$1(path);
+
+const isInsideArrayTupleOfThree = (path) => {
+    const {parentPath} = path.parentPath;
+    
+    if (!isArrayExpression$2(parentPath))
+        return false;
+    
+    const {length} = parentPath.node.elements;
+    
+    return length === 3;
+};
+
+const parentIfWithoutElse = ({parentPath}) => {
+    if (!parentPath.isIfStatement())
+        return false;
+    
+    return !parentPath.node.alternate;
+};
+
+const BlockStatement$1 = {
+    print(path, printer, semantics) {
+        const {trailingComma} = semantics;
+        const {
+            indent,
+            maybe,
+            write,
+            traverse,
+        } = printer;
+        
+        const body = path.get('body');
+        const directives = getDirectives(path);
+        
+        if (path.parentPath.isBlockStatement())
+            indent();
+        
+        const insideArray = isInsideArrayTupleOfThree(path);
+        maybe.indent.inc(!insideArray);
+        write('{');
+        
+        if (isFirstStatement(path) || isFirstDirective(path))
+            write.newline();
+        
+        for (const directive of directives) {
+            traverse(directive);
+        }
+        
+        maybe.write.linebreak(directives.length && body.length);
+        const callInsideChain = isCallInsideChain(path);
+        
+        maybe.indent.inc(callInsideChain);
+        
+        for (const element of body) {
+            traverse(element);
+        }
+        
+        parseComments(path, printer, semantics);
+        
+        maybe.indent.dec(!insideArray);
+        
+        maybe.indent.dec(insideArray);
+        maybe.indent(body.length);
+        maybe.indent.inc(insideArray);
+        write('}');
+        
+        maybe.indent.dec(callInsideChain);
+        
+        const {parentPath} = path;
+        
+        if (isObjectMethod$1(parentPath))
+            maybe.write(isNext(parentPath) || trailingComma, ',');
+    },
+    afterIf: shouldAddNewlineAfter,
+    after(path, {write}) {
+        write.newline();
+        markAfter(path.parentPath);
+    },
+};
+
+const isTopLevelWithNoNext = (path) => {
+    if (isNext(path))
+        return false;
+    
+    return !isNext(path.parentPath) && isParentProgram(path.parentPath);
+};
+
+const isInsideIfWithoutElseInsideFn = (path) => {
+    return parentIfWithoutElse(path) && path.find(isMethodOrArrow);
+};
+
+const isEmptyBodyNoNext = (path) => {
+    const {parentPath} = path;
+    return parentPath.isStatement() && !path.node.body.length && !isNext(parentPath);
+};
+
+const isLooksLikeInsideFn = ({parentPath}) => {
+    return /FunctionExpression/.test(parentPath.type);
+};
+
+const NEWLINE$2 = true;
+const NO_NEWLINE = false;
+
+const isInsideDoWhile = ({parentPath}) => isDoWhileStatement$1(parentPath);
+const isInsideBlock$1 = ({parentPath}) => isBlockStatement$5(parentPath);
+
+const isNoNewline = satisfy([
+    isInsideDoWhile,
+    isTopLevelWithNoNext,
+    insideIfWithNoBody,
+]);
+
+function shouldAddNewlineAfter(path) {
+    if (isInsideBlock$1(path))
+        return NEWLINE$2;
+    
+    if (isNoNewline(path))
+        return NO_NEWLINE;
+    
+    if (isInsideIfWithoutElseInsideFn(path))
+        return NEWLINE$2;
+    
+    if (isEmptyBodyNoNext(path))
+        return NO_NEWLINE;
+    
+    if (isTry(path))
+        return NO_NEWLINE;
+    
+    if (isLooksLikeInsideFn(path))
+        return NO_NEWLINE;
+    
+    if (isLast$2(path))
+        return NO_NEWLINE;
+    
+    if (isExportFunction(path))
+        return NO_NEWLINE;
+    
+    return !isNextIfAlternate(path);
+}
+
+function isExportFunction(path) {
+    if (!isFunctionDeclaration$2(path.parentPath))
+        return false;
+    
+    if (!isExportDeclaration$3(path.parentPath?.parentPath))
+        return false;
+    
+    return !isNext(path.parentPath?.parentPath);
+}
+
+function isNextIfAlternate(path) {
+    const {parentPath} = path;
+    
+    if (!parentPath.isIfStatement())
+        return false;
+    
+    const alternate = parentPath.get('alternate');
+    
+    if (path === alternate)
+        return false;
+    
+    return exists(alternate);
+}
+
+function isTry({parentPath}) {
+    if (parentPath.isTryStatement())
+        return true;
+    
+    return parentPath.parentPath?.isTryStatement();
+}
+
+const ForOfStatement$1 = {
+    beforeIf(path) {
+        const {parentPath} = path;
+        
+        if (!parentPath.isBlockStatement() && parentPath.isStatement())
+            return false;
+        
+        return !isFirst$2(path) && !hasPrevNewline(path);
+    },
+    before(path, {print}) {
+        print.linebreak();
+        markBefore(path);
+    },
+    print(path, {indent, print, maybe, traverse}) {
+        const {node} = path;
+        
+        indent();
+        print('for');
+        maybe.print(node.await, ' await');
+        print.space();
+        print('(');
+        print('__left');
+        print(' of ');
+        print('__right');
+        print(')');
+        
+        const bodyPath = path.get('body');
+        
+        if (bodyPath.isBlockStatement()) {
+            print.space();
+            print('__body');
+            
+            const {length} = bodyPath.node.body;
+            maybe.print.newline(!length && !isLast$2(path) && !isNext(path));
+            
+            return;
+        }
+        
+        indent.inc();
+        print.newline();
+        traverse(bodyPath);
+        indent.dec();
+        
+        maybe.markAfter(isMarkedAfter(bodyPath), path);
+    },
+    afterIf: isNext,
+    after(path, {print}) {
+        print.linebreak();
+        markAfter(path);
+    },
+};
+
+const {
+    isBlockStatement: isBlockStatement$4,
+    isFunctionDeclaration: isFunctionDeclaration$1,
+    isStatement: isStatement$6,
+    isExpressionStatement: isExpressionStatement$5,
+    isReturnStatement: isReturnStatement$1,
+    isContinueStatement: isContinueStatement$1,
+} = lib_exports$1;
+
+const isStatementNotExpression = (path) => {
+    if (isBlockStatement$4(path))
+        return false;
+    
+    if (isReturnStatement$1(path))
+        return false;
+    
+    if (isContinueStatement$1(path))
+        return false;
+    
+    return !isExpressionStatement$5(path);
+};
+
+const isTopLevel = ({parentPath}) => parentPath.parentPath.isProgram();
+const isEmptyConsequent = (path) => path.get('consequent').isEmptyStatement();
+
+const isInsideNestedBody = ({parentPath}) => {
+    if (parentPath.type !== 'BlockStatement')
+        return false;
+    
+    return parentPath.parentPath.type === 'BlockStatement';
+};
+
+const isEmptyBody = (path) => !path.node.body.length;
+
+const isLastEmptyInsideBody = (path) => {
+    const {parentPath} = path;
+    
+    if (!isBlockStatement$4(parentPath))
+        return false;
+    
+    if (!isBlockStatement$4(path.node.consequent))
+        return false;
+    
+    if (path.node.consequent.body.length)
+        return false;
+    
+    return isFunctionDeclaration$1(path.parentPath.parentPath);
+};
+
+const IfStatement$1 = {
+    print: (path, {indent, print, maybe, write, traverse}) => {
+        const {parentPath} = path;
+        const partOfAlternate = parentPath.get('alternate');
+        
+        if (path !== partOfAlternate)
+            indent();
+        
+        print('if');
+        print.space();
+        print('(');
+        print('__test');
+        print(')');
+        
+        const consequent = path.get('consequent');
+        const alternate = path.get('alternate');
+        const isConsequentBlock = consequent.isBlockStatement();
+        const isVar = consequent.isVariableDeclaration();
+        
+        if (isConsequentBlock) {
+            print.space();
+            print(consequent);
+            
+            if (isInsideIf(path.parentPath) || isInsideNestedBody(path))
+                maybe.print.newline(isEmptyBody(consequent));
+        } else {
+            const is = !isEmptyConsequent(path);
+            
+            maybe.print.newline(is);
+            maybe.indent.inc(is);
+            maybe.indent(isVar);
+            print(consequent);
+            maybe.indent.dec(is);
+        }
+        
+        if (alternate.isBlockStatement()) {
+            write.space();
+            write('else');
+            write.space();
+            traverse(alternate);
+        } else if (alternate.isIfStatement()) {
+            if (alternate.get('consequent').isBlockStatement()) {
+                write.space();
+            } else {
+                maybe.write.newline(isStatementNotExpression(consequent));
+                indent();
+            }
+            
+            write('else ');
+            traverse(alternate);
+        } else if (exists(alternate)) {
+            maybe.write.newline(isVar || isStatementNotExpression(consequent));
+            maybe.indent(!isConsequentBlock);
+            maybe.write.space(isConsequentBlock);
+            write('else');
+            write.splitter();
+            indent.inc();
+            traverse(alternate);
+            indent.dec();
+        }
+        
+        if (!isNext(path) && !consequent.isBlockStatement())
+            return;
+        
+        const nextPath = path.parentPath.getNextSibling();
+        
+        if (path === partOfAlternate && !isTopLevel(path) && !isStatement$6(nextPath))
+            print.newline();
+        
+        if (isLastEmptyInsideBody(path))
+            print.newline();
+    },
+    afterSatisfy: () => [isNext],
+    after: (path, {print}) => {
+        print.linebreak();
+        markAfter(path);
+    },
+};
+
+const maybeSpaceAfterKeyword = (path, {write}) => {
+    const {declarations} = path.node;
+    
+    if (!declarations.length)
+        return;
+    
+    const {id} = declarations[0];
+    
+    if (id.type === 'ArrayPattern' || id.type === 'ObjectPattern')
+        return write.space();
+    
+    write(' ');
+};
+
+const {isExportDeclaration: isExportDeclaration$2} = lib_exports$1;
+
+const isParentTSModuleBlock = (path) => path.parentPath.isTSModuleBlock();
+const isParentBlock = (path) => /Program|BlockStatement|Export|LabeledStatement/.test(path.parentPath.type);
+const isInsideBlock = (path) => /^(Program|BlockStatement|TSModuleBlock|SwitchCase)$/.test(path.parentPath.type);
+const isParentSwitchCase = (path) => path.parentPath.isSwitchCase();
+const isFirstInSwitch = (path) => path.parentPath.get('consequent.0') === path;
+const isParentIf = (path) => path.parentPath.isIfStatement();
+
+const VariableDeclaration$1 = {
+    beforeIf: shouldAddNewlineBefore,
+    before(path, {print}) {
+        print.breakline();
+    },
+    print: maybeDeclare((path, {maybe, store, write, traverse, print, indent}, semantics) => {
+        const {maxVariablesInOneLine} = semantics;
+        
+        maybe.indent(isInsideBlock(path));
+        
+        write(path.node.kind);
+        maybeSpaceAfterKeyword(path, {
+            write,
+        });
+        
+        const declarations = path.get('declarations');
+        const n = declarations.length - 1;
+        
+        maybe.indent.inc(n);
+        
+        for (const [index, declaration] of declarations.entries()) {
+            const id = declaration.get('id');
+            const init = declaration.get('init');
+            const isLast = index === n;
+            
+            traverse(id);
+            
+            if (exists(init)) {
+                write.space();
+                write('=');
+                maybe.write.space(!isConcatenation(init));
+                traverse(init);
+            }
+            
+            if (!isLast) {
+                const next = declarations[index + 1];
+                
+                write(',');
+                
+                if (!next.node.leadingComments) {
+                    maybe.write.breakline(n > maxVariablesInOneLine);
+                    maybe.write.space(n <= maxVariablesInOneLine);
+                    continue;
+                }
+                
+                parseLeadingComments(next, {print, maybe, indent}, semantics);
+            }
+        }
+        
+        maybe.indent.dec(n);
+        
+        if (isParentBlock(path) || isParentSwitchCase(path) || isParentTSModuleBlock(path) || isParentIf(path))
+            write(';');
+        
+        let wasNewline = false;
+        
+        if (isParentSwitchCase(path)) {
+            write.newline();
+            
+            if (!isFirstInSwitch(path))
+                wasNewline = true;
+        }
+        
+        if (isParentBlock(path) && isNext(path) && (noTrailingComment(path) || isNewlineBetweenSiblings(path))) {
+            write.newline();
+            wasNewline = true;
+        }
+        
+        store(wasNewline);
+    }),
+    afterSatisfy: () => [
+        isNextIf$1,
+        isNextFn,
+        noNextParentBlock,
+        notLastCoupleLines,
+        isNextAssign,
+        isNextCoupleLines,
+        notLastPrevVarNotNextVar,
+        isNewlineBetweenSiblings,
+        notLastParentExport,
+        isParentTSModuleBlock,
+    ],
+    after(path, {maybe, store}) {
+        const wasNewline = store();
+        
+        if (isLast$1(path.parentPath) && !path.parentPath.isBlockStatement() || !isParentBlock(path) && !isParentTSModuleBlock(path))
+            return false;
+        
+        maybe.print.linebreak(wasNewline);
+        maybe.print.newline(!wasNewline);
+        maybe.markAfter(wasNewline, path);
+    },
+};
+
+function noNextParentBlock(path) {
+    if (isNext(path))
+        return false;
+    
+    return path.parentPath.isBlockStatement();
+}
+
+function notLastParentExport(path) {
+    if (isLast$1(path.parentPath))
+        return false;
+    
+    return path.parentPath.isExportDeclaration();
+}
+
+function notLastCoupleLines(path) {
+    if (isLast$1(path))
+        return false;
+    
+    return isCoupleLines(path);
+}
+
+function notLastPrevVarNotNextVar(path) {
+    const prev = path.getPrevSibling();
+    const next = path.getNextSibling();
+    
+    if (!exists(prev.getPrevSibling()))
+        return false;
+    
+    if (path.node.loc?.start.line === prev.node?.loc?.start.line + 2)
+        return false;
+    
+    return !isLast$1(path) && prev.isVariableDeclaration() && !next.isVariableDeclaration();
+}
+
+function isNextCoupleLines(path) {
+    const next = path.getNextSibling();
+    const prev = path.getPrevSibling();
+    
+    if (!exists(prev.getPrevSibling()) && next.isVariableDeclaration())
+        return false;
+    
+    if (path.node.loc?.start.line === prev.node?.loc?.start?.line + 2)
+        return false;
+    
+    return isCoupleLines(next);
+}
+
+const isLast$1 = (path) => path.parentPath?.isProgram() && !isNext(path);
+
+function shouldAddNewlineBefore(path) {
+    if (isFirst(path))
+        return false;
+    
+    if (hasPrevNewline(path))
+        return false;
+    
+    if (hasPrevNewline(path.parentPath))
+        return false;
+    
+    const prevPath = path.getPrevSibling();
+    
+    if (prevPath.isStatement() && !prevPath.isExpressionStatement() && !prevPath.isBlockStatement())
+        return false;
+    
+    return !isExportDeclaration$2(path.parentPath) && isCoupleLines(path);
+}
+
+function isFirst(path) {
+    return path.node === path.parentPath.node.body?.[0];
+}
+
+const isNextIf$1 = (path) => {
+    const nextPath = path.getNextSibling();
+    return nextPath.isIfStatement();
+};
+
+const isNextFn = (path) => {
+    const nextPath = path.getNextSibling();
+    return nextPath.isFunctionDeclaration();
+};
+
+const isNextAssign = (path) => {
+    const nextPath = path.getNextSibling();
+    
+    if (!nextPath.isExpressionStatement())
+        return false;
+    
+    const {parentPath} = path;
+    
+    if (parentPath.isBlockStatement() && parentPath.node.body.length < 3)
+        return false;
+    
+    return nextPath.get('expression').isAssignmentExpression();
+};
+
+const {
+    isExpressionStatement: isExpressionStatement$4,
+    isFunction: isFunction$4,
+    isAssignmentExpression: isAssignmentExpression$2,
+} = lib_exports$1;
+
+const isInsideAssignNextAssignFunction = (path) => {
+    const {expression} = path.node;
+    
+    if (!isAssignmentExpression$2(expression))
+        return false;
+    
+    const next = path.getNextSibling();
+    
+    if (isFunction$4(next) && next.node.leadingComments)
+        return true;
+    
+    if (!isExpressionStatement$4(next))
+        return false;
+    
+    const {leadingComments} = next.node;
+    
+    if (!leadingComments)
+        return false;
+    
+    if (!isAssignmentExpression$2(next.node.expression))
+        return false;
+    
+    return isFunction$4(next.node.expression.right);
+};
+
+const {
+    isBlockStatement: isBlockStatement$3,
+    isProgram: isProgram$5,
+    isIfStatement: isIfStatement$1,
+} = lib_exports$1;
+
+const printLeadingCommentLine$1 = (path, printer, semantics, {index, isLast, printComment}) => {
+    const {print, indent} = printer;
+    const prev = path.getPrevSibling();
+    const {parentPath} = path;
+    
+    if (hasTrailingComment(prev))
+        return;
+    
+    if (!index && !prev.node && (isIfStatement$1(parentPath) || isBlockStatement$3(parentPath)))
+        indent();
+    
+    printComment();
+    print.newline();
+    
+    if (!isLast && !path.parentPath.isIfStatement())
+        print.indent();
+};
+
+const printLeadingCommentBlock$1 = (path, printer, semantics, {printComment}) => {
+    const {indent} = printer;
+    const prev = path.getPrevSibling();
+    
+    if (hasTrailingComment(prev))
+        return;
+    
+    if (isBlockStatement$3(path.parentPath) && !isProgram$5(path.parentPath.parentPath))
+        indent();
+    
+    printComment();
+};
+
+const isCommentBlock = (a) => a?.type === 'CommentBlock';
+
+const {
+    isCallExpression: isCallExpression$5,
+    isExpressionStatement: isExpressionStatement$3,
+    isAssignmentExpression: isAssignmentExpression$1,
+} = lib_exports$1;
+
+const not = (fn) => (...a) => !fn(...a);
+
+const isBeforeElse = (path) => {
+    if (!path.parentPath.isIfStatement())
+        return false;
+    
+    if (path !== path.parentPath.get('consequent'))
+        return false;
+    
+    return Boolean(path.parentPath.node.alternate);
+};
+
+const isInsideReturn = ({parentPath}) => parentPath.isReturnStatement();
+const notInsideReturn = not(isInsideReturn);
+
+const satisfyAfter = satisfy([
+    isNotLastOrParentLast,
+    isParentBlock$1,
+    isNext,
+    isNextUp,
+]);
+
+const isNextIf = (path) => path
+    .getNextSibling()
+    .isIfStatement();
+
+const shouldBreakline = satisfy([
+    isNewlineBetweenSiblings,
+    isNotLastBody,
+    isNextIf,
+]);
+
+const ExpressionStatement$1 = {
+    beforeIf(path) {
+        if (isInsideReturn(path))
+            return false;
+        
+        return !isInsideLabel(path);
+    },
+    before(path, {indent}) {
+        indent();
+    },
+    print(path, {print, maybe, store, indent}) {
+        const insideReturn = isInsideReturn(path);
+        
+        print('__expression');
+        maybe.print(!insideReturn, ';');
+        
+        if (!isNext(path))
+            return;
+        
+        if (!insideReturn && shouldBreakline(path)) {
+            print.newline();
+            
+            const condition = isNext(path)
+                && noTrailingComment(path)
+                || isNextToAssignmentCall(path)
+                || isNextStatementWithBlockComment(path);
+            
+            if (condition)
+                indent();
+            
+            store(true);
+        }
+    },
+    afterIf: (path) => {
+        if (satisfyAfter(path))
+            return true;
+        
+        if (hasTrailingComment(path) && isLast$2(path))
+            return true;
+        
+        return isBeforeElse(path);
+    },
+    after(path, {print, maybe, store, indent}) {
+        if (hasTrailingComment(path) && isLast$2(path) && isCoupleLines(path))
+            print.breakline();
+        
+        if (hasTrailingComment(path) && !isCoupleLines(path))
+            return;
+        
+        if (isTopParentLast(path))
+            return;
+        
+        if (notInsideReturn(path)) {
+            if (isInsideAssignNextAssignFunction(path))
+                indent();
+            
+            print.newline();
+            maybe.markAfter(store(), path);
+        }
+    },
+};
+ExpressionStatement$1.printLeadingCommentLine = printLeadingCommentLine$1;
+ExpressionStatement$1.printLeadingCommentBlock = printLeadingCommentBlock$1;
+
+function isTopParentLast({parentPath}) {
+    if (!parentPath.isIfStatement())
+        return false;
+    
+    const nextParent = parentPath.parentPath;
+    
+    if (!nextParent.isIfStatement())
+        return false;
+    
+    const nextNext = nextParent.parentPath;
+    
+    if (!nextNext.isIfStatement())
+        return false;
+    
+    return isLast$2(nextNext);
+}
+
+function isNotLastBody(path) {
+    return path.parentPath.get('body') === path;
+}
+
+function isNotLastOrParentLast(path) {
+    return !isLast$2(path) && !isParentLast(path);
+}
+
+function isNextUp(path) {
+    return path.findParent(isNext);
+}
+
+function isNextToAssignmentCall(path) {
+    if (isAssignmentExpression$1(path.node.expression))
+        return false;
+    
+    const nextPath = path.getNextSibling();
+    
+    if (!isExpressionStatement$3(nextPath))
+        return false;
+    
+    const {expression} = nextPath.node;
+    
+    return isCallExpression$5(expression);
+}
+
+function isNextStatementWithBlockComment(path) {
+    const {expression} = path.node;
+    
+    if (!isCallExpression$5(expression))
+        return false;
+    
+    if (!isCallExpression$5(expression.arguments[0]))
+        return false;
+    
+    return hasTrailingBlock(path);
+}
+
+function hasTrailingBlock(path) {
+    const {trailingComments} = path.node;
+    const [first] = trailingComments;
+    
+    return isCommentBlock(first);
+}
+
+const SHEBANG_HASHBANG = '#!';
+
+const InterpreterDirective$1 = (path, {print}) => {
+    print(`${SHEBANG_HASHBANG}${path.node.value}\n`);
+    print.newline();
+};
+
+const writeTemplateLiteral = (quasis, expressions, {write, traverse}) => {
     write('`');
     let i = 0;
     
@@ -58221,31 +55164,21 @@ writeTemplateLiteral$2.writeTemplateLiteral = (quasis, expressions, {write, trav
     write('`');
 };
 
-const {writeTemplateLiteral: writeTemplateLiteral$1} = writeTemplateLiteral$2;
-
-templateLiteral$1.TemplateLiteral = (path, printer) => {
+const TemplateLiteral$1 = (path, printer) => {
     const expressions = path.get('expressions');
     const quasis = path.get('quasis');
     
-    writeTemplateLiteral$1(quasis, expressions, printer);
+    writeTemplateLiteral(quasis, expressions, printer);
 };
 
-var identifier$4 = {};
-
-var maybeGet = {};
-
-maybeGet.maybeDecorators = (path) => {
+const maybeDecorators = (path) => {
     if (!path.node.decorators)
         return [];
     
     return path.get('decorators');
 };
 
-const {maybeDecorators} = maybeGet;
-const {maybeParens: maybeParens$5} = maybeParens$e;
-const {maybeTypeAnnotation} = maybeTypeAnnotation$4;
-
-identifier$4.Identifier = maybeParens$5(maybeTypeAnnotation((path, printer) => {
+const Identifier$2 = maybeParens(maybeTypeAnnotation((path, printer) => {
     const {
         write,
         maybe,
@@ -58265,37 +55198,26 @@ identifier$4.Identifier = maybeParens$5(maybeTypeAnnotation((path, printer) => {
     maybe.write(optional, '?');
 }));
 
-var decorator$1 = {exports: {}};
+const {isMemberExpression: isMemberExpression$4} = lib_exports$1;
 
-(function (module) {
+const Decorator$1 = (path, {print, maybe}) => {
+    const {expression} = path.node;
+    const isMember = isMemberExpression$4(expression);
+    
+    print('@');
+    
+    maybe.print(isMember, '(');
+    print('__expression');
+    maybe.print(isMember, ')');
+};
 
-	const {types} = bundle$1;
-	const {isMemberExpression} = types;
+Decorator$1.printLeadingCommentLine = (path, printer, semantics, {printComment}) => {
+    const {print} = printer;
+    printComment();
+    print.breakline();
+};
 
-	module.exports.Decorator = (path, {print, maybe}) => {
-	    const {expression} = path.node;
-	    const isMember = isMemberExpression(expression);
-	    
-	    print('@');
-	    
-	    maybe.print(isMember, '(');
-	    print('__expression');
-	    maybe.print(isMember, ')');
-	};
-
-	module.exports.Decorator.printLeadingCommentLine = (path, printer, semantics, {printComment}) => {
-	    const {print} = printer;
-	    printComment();
-	    print.breakline();
-	}; 
-} (decorator$1));
-
-var decoratorExports = decorator$1.exports;
-decoratorExports.default;
-
-var stringLiteral$6 = {};
-
-stringLiteral$6.StringLiteral = (path, {write}, semantics) => {
+const StringLiteral$1 = (path, {write}, semantics) => {
     const {value, raw = `'${value}'`} = path.node;
     
     if (path.parentPath.isJSXAttribute()) {
@@ -58345,73 +55267,58 @@ const escape$1 = (list, {slash, quote}) => {
     return res.join('');
 };
 
-var directiveLiteral$2 = {};
-
-directiveLiteral$2.DirectiveLiteral = (path, {write}) => {
+const DirectiveLiteral$1 = (path, {write}) => {
     write.indent();
     write(path.node.raw || `'${path.node.value}'`);
     write(';');
     write.newline();
 };
 
-var voidPattern$1 = {};
-
-voidPattern$1.VoidPattern = (path, {write}) => {
+const VoidPattern$1 = (path, {write}) => {
     write('void');
 };
 
-const {TemplateLiteral: TemplateLiteral$1} = templateLiteral$1;
-const {Identifier: Identifier$2} = identifier$4;
-
-const {Decorator: Decorator$1} = decoratorExports;
-const {StringLiteral: StringLiteral$1} = stringLiteral$6;
-const {DirectiveLiteral: DirectiveLiteral$1} = directiveLiteral$2;
-const {VoidPattern: VoidPattern$1} = voidPattern$1;
-
-var literals$1 = {
-    Identifier: Identifier$2,
-    Decorator: Decorator$1,
-    DirectiveLiteral: DirectiveLiteral$1,
-    TemplateLiteral: TemplateLiteral$1,
-    VoidPattern: VoidPattern$1,
-    BigIntLiteral(path, {write}) {
-        write(path.node.raw);
-    },
-    NumericLiteral(path, {write}) {
-        const {
-            raw,
-            extra,
-            value,
-        } = path.node;
-        
-        write(raw || extra?.raw || value);
-    },
-    Directive(path, {print, maybe}) {
-        maybe.print.breakline(path.node.leadingComments?.length);
-        print('__value');
-    },
-    BooleanLiteral(path, {write}) {
-        write(path.node.value);
-    },
-    StringLiteral: StringLiteral$1,
-    RegExpLiteral(path, {print}) {
-        const {raw, pattern} = path.node;
-        print(raw || `/${pattern}/`);
-    },
-    NullLiteral(path, {write}) {
-        write('null');
-    },
-    MetaProperty(path, {write}) {
-        write('import.meta');
-    },
-    Super(path, {write}) {
-        write('super');
-    },
+const BigIntLiteral$1 = (path, {write}) => {
+    write(path.node.raw);
 };
 
-var tsTypeLiteral$1 = {};
+const NumericLiteral$1 = (path, {write}) => {
+    const {
+        raw,
+        extra,
+        value,
+    } = path.node;
+    
+    write(raw || extra?.raw || value);
+};
 
-tsTypeLiteral$1.TSTypeLiteral = (path, {indent, traverse, write}) => {
+const Directive$1 = (path, {print, maybe}) => {
+    maybe.print.breakline(path.node.leadingComments?.length);
+    print('__value');
+};
+
+const BooleanLiteral$1 = (path, {write}) => {
+    write(path.node.value);
+};
+
+const RegExpLiteral$1 = (path, {print}) => {
+    const {raw, pattern} = path.node;
+    print(raw || `/${pattern}/`);
+};
+
+const NullLiteral$1 = (path, {write}) => {
+    write('null');
+};
+
+const MetaProperty$1 = (path, {write}) => {
+    write('import.meta');
+};
+
+const Super$1 = (path, {write}) => {
+    write('super');
+};
+
+const TSTypeLiteral$1 = (path, {indent, traverse, write}) => {
     const members = path.get('members');
     write('{');
     
@@ -58449,17 +55356,6 @@ function isNewline(path) {
     return !parentPath.isTSTypeParameterInstantiation();
 }
 
-var tsTypeAliasDeclaration$1 = {};
-
-const {
-    isLast: isLast$2,
-    isNext: isNext$7,
-    isNextParent: isNextParent$2,
-} = is$4;
-
-const {markAfter: markAfter$2} = mark;
-const {maybeDeclare: maybeDeclare$3} = maybeDeclare$6;
-
 const isNextType = (a) => a
     .getNextSibling()
     .isTSTypeAliasDeclaration();
@@ -58468,12 +55364,12 @@ const isNextExport = (a) => a
     .getNextSibling()
     .isExportDeclaration();
 
-tsTypeAliasDeclaration$1.TSTypeAliasDeclaration = {
+const TSTypeAliasDeclaration$1 = {
     beforeIf: (path) => !path.parentPath.isExportDeclaration(),
     before: (path, {indent}) => {
         indent();
     },
-    print: maybeDeclare$3((path, {print, maybe, store}) => {
+    print: maybeDeclare((path, {print, maybe, store}) => {
         const typeAnnotation = path.get('typeAnnotation');
         const isConditional = typeAnnotation.isTSConditionalType();
         
@@ -58497,7 +55393,7 @@ tsTypeAliasDeclaration$1.TSTypeAliasDeclaration = {
         if (last)
             return false;
         
-        if (!isNext$7(path) && !isNextParent$2(path))
+        if (!isNext(path) && !isNextParent(path))
             return false;
         
         return !isNextType(path);
@@ -58505,16 +55401,13 @@ tsTypeAliasDeclaration$1.TSTypeAliasDeclaration = {
     after(path, {print, maybe}) {
         maybe.indent(isNextExport(path));
         print.newline();
-        markAfter$2(path);
+        markAfter(path);
     },
 };
 
-var tsMappedType$1 = {};
+const {isTSConditionalType: isTSConditionalType$1} = lib_exports$1;
 
-const {types: types$w} = bundle$1;
-const {isTSConditionalType: isTSConditionalType$1} = types$w;
-
-tsMappedType$1.TSMappedType = (path, {print, indent, maybe}) => {
+const TSMappedType$1 = (path, {print, indent, maybe}) => {
     const {
         readonly,
         optional,
@@ -58565,9 +55458,7 @@ tsMappedType$1.TSMappedType = (path, {print, indent, maybe}) => {
     print('}');
 };
 
-var tsConditionalType$1 = {};
-
-tsConditionalType$1.TSConditionalType = (path, {print, indent}) => {
+const TSConditionalType$2 = (path, {print, indent}) => {
     indent.inc();
     print.breakline();
     print('__checkType');
@@ -58589,11 +55480,7 @@ tsConditionalType$1.TSConditionalType = (path, {print, indent}) => {
     indent.dec();
 };
 
-var tsTypeParameter$1 = {};
-
-const {exists} = is$4;
-
-tsTypeParameter$1.TSTypeParameter = (path, {write, traverse}) => {
+const TSTypeParameter$1 = (path, {write, traverse}) => {
     const constraint = path.get('constraint');
     
     if (path.node.in)
@@ -58620,12 +55507,6 @@ tsTypeParameter$1.TSTypeParameter = (path, {write, traverse}) => {
     }
 };
 
-var tsDeclareFunction$1 = {};
-
-const {printParams: printParams$8} = params;
-const {isNext: isNext$6} = is$4;
-const {maybeDeclare: maybeDeclare$2} = maybeDeclare$6;
-
 const isInsideDefaultExport = (path) => {
     return path.parentPath.isExportDefaultDeclaration();
 };
@@ -58634,18 +55515,18 @@ const isInsideNamedExport = (path) => {
     return path.parentPath.isExportNamedDeclaration();
 };
 
-tsDeclareFunction$1.TSDeclareFunction = {
+const TSDeclareFunction$1 = {
     beforeIf: (path) => !isInsideNamedExport(path),
     before: (path, {indent}) => {
         indent();
     },
-    print: maybeDeclare$2((path, printer, semantics) => {
+    print: maybeDeclare((path, printer, semantics) => {
         const {print} = printer;
         
         print('function ');
         print('__id');
         
-        printParams$8(path, printer, semantics);
+        printParams(path, printer, semantics);
         
         print(':');
         print.space();
@@ -58655,16 +55536,12 @@ tsDeclareFunction$1.TSDeclareFunction = {
     after: (path, {print}) => {
         print(';');
         
-        if (isNext$6(path) || isNext$6(path.parentPath) || isInsideNamedExport(path))
+        if (isNext(path) || isNext(path.parentPath) || isInsideNamedExport(path))
             print.newline();
     },
 };
 
-var tsDeclareMethod$1 = {};
-
-const {printParams: printParams$7} = params;
-
-tsDeclareMethod$1.TSDeclareMethod = (path, printer, semantics) => {
+const TSDeclareMethod$1 = (path, printer, semantics) => {
     const {print} = printer;
     const {
         accessibility,
@@ -58684,7 +55561,7 @@ tsDeclareMethod$1.TSDeclareMethod = (path, printer, semantics) => {
     
     print('__key');
     
-    printParams$7(path, printer, semantics);
+    printParams(path, printer, semantics);
     
     if (returnType) {
         print(':');
@@ -58696,13 +55573,8 @@ tsDeclareMethod$1.TSDeclareMethod = (path, printer, semantics) => {
     print.newline();
 };
 
-var tsModuleDeclaration$1 = {};
-
-const {isNext: isNext$5} = is$4;
-const {maybeDeclare: maybeDeclare$1} = maybeDeclare$6;
-
-tsModuleDeclaration$1.TSModuleDeclaration = {
-    print: maybeDeclare$1((path, {print}) => {
+const TSModuleDeclaration$1 = {
+    print: maybeDeclare((path, {print}) => {
         const {kind} = path.node;
         const id = path.get('id');
         
@@ -58715,14 +55587,14 @@ tsModuleDeclaration$1.TSModuleDeclaration = {
         print.space();
         print('__body');
     }),
-    afterSatisfy: () => [isNext$5],
+    afterSatisfy: () => [isNext],
     after(path, {print}) {
         print.newline();
         print.newline();
     },
 };
 
-tsModuleDeclaration$1.TSModuleBlock = (path, {print, traverse, indent}) => {
+const TSModuleBlock$1 = (path, {print, traverse, indent}) => {
     print('{');
     print.breakline();
     indent.inc();
@@ -58735,23 +55607,15 @@ tsModuleDeclaration$1.TSModuleBlock = (path, {print, traverse, indent}) => {
     print('}');
 };
 
-var tsInterfaceDeclaration$1 = {};
-
-const {types: types$v} = bundle$1;
-
-const {isNext: isNext$4, isNextParent: isNextParent$1} = is$4;
-const {maybeDeclare} = maybeDeclare$6;
-const {markAfter: markAfter$1} = mark;
-
 const {
     isTSTypeAliasDeclaration: isTSTypeAliasDeclaration$1,
     isExportNamedDeclaration: isExportNamedDeclaration$2,
     isTSModuleBlock: isTSModuleBlock$2,
-} = types$v;
+} = lib_exports$1;
 
 const isInsideNamespace = (path) => isTSModuleBlock$2(path.parentPath.parentPath);
 
-tsInterfaceDeclaration$1.TSInterfaceDeclaration = {
+const TSInterfaceDeclaration$1 = {
     print: maybeDeclare((path, {print, maybe}) => {
         const {node} = path;
         const {typeParameters} = node;
@@ -58779,30 +55643,25 @@ tsInterfaceDeclaration$1.TSInterfaceDeclaration = {
         
         print('__body');
     }),
-    afterSatisfy: () => [isNext$4, isNextParent$1],
+    afterSatisfy: () => [isNext, isNextParent],
     after(path, {print}) {
         print.linebreak();
         const exportNamed = isExportNamedDeclaration$2(path.parentPath);
         
         if (exportNamed && isInsideNamespace(path))
-            markAfter$1(path);
+            markAfter(path);
         
         if (!exportNamed && !isTSTypeAliasDeclaration$1(path))
             print.newline();
     },
 };
 
-var tsAsExpression$1 = {};
-
-const {types: types$u} = bundle$1;
-const {maybeParens: maybeParens$4} = maybeParens$e;
-
 const {
     isVariableDeclarator: isVariableDeclarator$1,
     isObjectExpression: isObjectExpression$2,
-} = types$u;
+} = lib_exports$1;
 
-tsAsExpression$1.TSAsExpression = maybeParens$4((path, {print, maybe}) => {
+const TSAsExpression$1 = maybeParens((path, {print, maybe}) => {
     const is = isParens(path);
     
     maybe.print(is, '(');
@@ -58822,11 +55681,7 @@ function isParens(path) {
     return isObjectExpression$2(expression);
 }
 
-var tsInterfaceBody$1 = {};
-
-const {parseComments: parseComments$1} = comment;
-
-tsInterfaceBody$1.TSInterfaceBody = (path, printer, semantics) => {
+const TSInterfaceBody$1 = (path, printer, semantics) => {
     const body = path.get('body');
     const {
         traverse,
@@ -58841,7 +55696,7 @@ tsInterfaceBody$1.TSInterfaceBody = (path, printer, semantics) => {
     maybe.write.newline(hasNoLeadingComments(path));
     indent.inc();
     
-    parseComments$1(path, printer, semantics);
+    parseComments(path, printer, semantics);
     
     for (const [index, item] of body.entries()) {
         if (index || !item.node.leadingComments)
@@ -58876,9 +55731,7 @@ function findTSModuleBlock(path) {
     return path.parentPath.parentPath.parentPath?.isTSModuleBlock();
 }
 
-var tsIntersectionType$1 = {};
-
-tsIntersectionType$1.TSIntersectionType = (path, {traverse, write}) => {
+const TSIntersectionType$2 = (path, {traverse, write}) => {
     const types = path.get('types');
     const n = types.length - 1;
     
@@ -58895,21 +55748,14 @@ tsIntersectionType$1.TSIntersectionType = (path, {traverse, write}) => {
     }
 };
 
-var tsPropertySignature$1 = {exports: {}};
-
-var comments$1 = {};
-
-const {isPrev} = is$4;
-const noop$5 = () => {};
-
-comments$1.printLeadingCommentLine = (path, printer, semantics, {printComment}) => {
+const printLeadingCommentLine = (path, printer, semantics, {printComment}) => {
     const {print} = printer;
     print.breakline();
     printComment();
     print.breakline();
 };
 
-comments$1.printLeadingCommentBlock = (path, printer, semantics, {printComment}) => {
+const printLeadingCommentBlock = (path, printer, semantics, {printComment}) => {
     const {print, maybe} = printer;
     
     maybe.print.breakline(!isPrev(path));
@@ -58917,94 +55763,54 @@ comments$1.printLeadingCommentBlock = (path, printer, semantics, {printComment})
     print.indent();
 };
 
-comments$1.printTrailingCommentBlock = noop$5;
+const printTrailingCommentBlock = () => {};
 
-(function (module) {
+const TSPropertySignature$1 = (path, printer) => {
+    const {maybe, write} = printer;
+    const {optional, readonly} = path.node;
+    
+    maybe.print(readonly, 'readonly ');
+    printKey(path, printer);
+    maybe.print(optional, '?');
+    
+    maybePrintTypeAnnotation(path, printer);
+    
+    if (!isTSTypeLiteralWithOneMember(path)) {
+        write(';');
+        write.newline();
+    }
+    
+    if (isNext(path) && hasTrailingComment(path))
+        write.newline();
+};
+TSPropertySignature$1.printLeadingCommentLine = printLeadingCommentLine;
+TSPropertySignature$1.printLeadingCommentBlock = printLeadingCommentBlock;
+TSPropertySignature$1.printTrailingCommentBlock = printTrailingCommentBlock;
 
-	const {maybePrintTypeAnnotation} = maybeTypeAnnotation$4;
+function isTSTypeLiteralWithOneMember({parentPath}) {
+    if (!parentPath.parentPath.isTSTypeParameterInstantiation())
+        return false;
+    
+    return parentPath.node.members.length === 1;
+}
 
-	const {
-	    hasTrailingComment,
-	    isNext,
-	} = is$4;
+const hasReturnType = (path) => path.node.returnType;
 
-	const {printKey} = printKey$6;
-
-	const {
-	    printLeadingCommentLine,
-	    printLeadingCommentBlock,
-	    printTrailingCommentBlock,
-	} = comments$1;
-
-	module.exports.TSPropertySignature = (path, printer) => {
-	    const {maybe, write} = printer;
-	    const {optional, readonly} = path.node;
-	    
-	    maybe.print(readonly, 'readonly ');
-	    printKey(path, printer);
-	    maybe.print(optional, '?');
-	    
-	    maybePrintTypeAnnotation(path, printer);
-	    
-	    if (!isTSTypeLiteralWithOneMember(path)) {
-	        write(';');
-	        write.newline();
-	    }
-	    
-	    if (isNext(path) && hasTrailingComment(path))
-	        write.newline();
-	};
-	module.exports.TSPropertySignature.printLeadingCommentLine = printLeadingCommentLine;
-	module.exports.TSPropertySignature.printLeadingCommentBlock = printLeadingCommentBlock;
-	module.exports.TSPropertySignature.printTrailingCommentBlock = printTrailingCommentBlock;
-
-	function isTSTypeLiteralWithOneMember({parentPath}) {
-	    if (!parentPath.parentPath.isTSTypeParameterInstantiation())
-	        return false;
-	    
-	    return parentPath.node.members.length === 1;
-	} 
-} (tsPropertySignature$1));
-
-var tsPropertySignatureExports = tsPropertySignature$1.exports;
-tsPropertySignatureExports.default;
-
-var tsFunctionType$1 = {};
-
-var printReturnType$5 = {};
-
-printReturnType$5.hasReturnType = (path) => path.node.returnType;
-
-printReturnType$5.printReturnType = (path, {traverse}) => {
+const printReturnType = (path, {traverse}) => {
     traverse(path.get('returnType'));
 };
 
-const {printParams: printParams$6} = params;
-const {printReturnType: printReturnType$4} = printReturnType$5;
-
-const {maybeParens: maybeParens$3} = maybeParens$e;
-
-tsFunctionType$1.TSFunctionType = maybeParens$3((path, printer, semantics) => {
+const TSFunctionType$2 = maybeParens((path, printer, semantics) => {
     const {print} = printer;
     
-    printParams$6(path, printer, semantics);
+    printParams(path, printer, semantics);
     print.space();
     print('=>');
     print.space();
-    printReturnType$4(path, printer);
+    printReturnType(path, printer);
 });
 
-var tsEnumDeclaration$1 = {};
-
-const {
-    isNext: isNext$3,
-    isNextParent,
-    isLast: isLast$1,
-} = is$4;
-
-const {markAfter} = mark;
-
-tsEnumDeclaration$1.TSEnumDeclaration = {
+const TSEnumDeclaration$1 = {
     beforeIf(path) {
         return path.node.const;
     },
@@ -59030,21 +55836,19 @@ tsEnumDeclaration$1.TSEnumDeclaration = {
         indent();
         print('}');
         
-        if (isLast$1(path))
+        if (isLast$2(path))
             return;
         
         print.newline();
         markAfter(path);
     },
-    afterSatisfy: () => [isNext$3, isNextParent],
+    afterSatisfy: () => [isNext, isNextParent],
     after(path, {print}) {
         print.linebreak();
     },
 };
 
-var tsEnumMember$1 = {};
-
-tsEnumMember$1.TSEnumMember = (path, {print, indent}) => {
+const TSEnumMember$1 = (path, {print, indent}) => {
     const {initializer} = path.node;
     indent();
     print('__id');
@@ -59057,9 +55861,7 @@ tsEnumMember$1.TSEnumMember = (path, {print, indent}) => {
     }
 };
 
-var tsTupleType$1 = {};
-
-tsTupleType$1.TSTupleType = (path, {write, traverse, indent, maybe}) => {
+const TSTupleType$1 = (path, {write, traverse, indent, maybe}) => {
     const elementTypes = path.get('elementTypes');
     
     write('[');
@@ -59095,90 +55897,41 @@ function isSameType(array) {
     return true;
 }
 
-var tsNamedTupleMember$1 = {};
-
-tsNamedTupleMember$1.TSNamedTupleMember = (path, {print}) => {
+const TSNamedTupleMember$1 = (path, {print}) => {
     print('__label');
     print(':');
     print.space();
     print('__elementType');
 };
 
-var tsConstructorType$1 = {};
-
-const {printParams: printParams$5} = params;
-const {printReturnType: printReturnType$3} = printReturnType$5;
-
-tsConstructorType$1.TSConstructorType = (path, printer, semantics) => {
+const TSConstructorType$1 = (path, printer, semantics) => {
     const {print} = printer;
     
     print('new');
     print(' ');
     
-    printParams$5(path, printer, semantics);
+    printParams(path, printer, semantics);
     print.space();
     print('=>');
     print.space();
-    printReturnType$3(path, printer);
+    printReturnType(path, printer);
 };
 
-var tsCallSignatureDeclaration$1 = {};
-
-const {printReturnType: printReturnType$2} = printReturnType$5;
-const {printParams: printParams$4} = params;
-
-tsCallSignatureDeclaration$1.TSCallSignatureDeclaration = (path, printer, semantics) => {
+const TSCallSignatureDeclaration$1 = (path, printer, semantics) => {
     const {print} = printer;
-    printParams$4(path, printer, semantics);
+    printParams(path, printer, semantics);
     print(':');
     print.space();
-    printReturnType$2(path, printer);
+    printReturnType(path, printer);
     print(';');
     print.newline();
 };
 
-var tsConstructSignatureDeclaration$1 = {};
-
-const {printParams: printParams$3} = params;
-
-const {
-    hasReturnType: hasReturnType$1,
-    printReturnType: printReturnType$1,
-} = printReturnType$5;
-
-tsConstructSignatureDeclaration$1.TSConstructSignatureDeclaration = (path, printer, semantics) => {
+const TSConstructSignatureDeclaration$1 = (path, printer, semantics) => {
     const {write} = printer;
     
     write('new');
-    printParams$3(path, printer, semantics);
-    
-    if (hasReturnType$1(path)) {
-        write(':');
-        write.space();
-        printReturnType$1(path, printer);
-    }
-    
-    write(';');
-    write.newline();
-};
-
-var tsMethodSignature$1 = {};
-
-const {printParams: printParams$2} = params;
-const {printKind} = kind;
-const {
-    hasReturnType,
-    printReturnType,
-} = printReturnType$5;
-
-const {printKey} = printKey$6;
-
-tsMethodSignature$1.TSMethodSignature = (path, printer, semantics) => {
-    const {write} = printer;
-    
-    printKind(path, printer);
-    printKey(path, printer);
-    printParams$2(path, printer, semantics);
+    printParams(path, printer, semantics);
     
     if (hasReturnType(path)) {
         write(':');
@@ -59190,12 +55943,26 @@ tsMethodSignature$1.TSMethodSignature = (path, printer, semantics) => {
     write.newline();
 };
 
-var tsUnionType$1 = {};
+const TSMethodSignature$1 = (path, printer, semantics) => {
+    const {write} = printer;
+    
+    printKind(path, printer);
+    printKey(path, printer);
+    printParams(path, printer, semantics);
+    
+    if (hasReturnType(path)) {
+        write(':');
+        write.space();
+        printReturnType(path, printer);
+    }
+    
+    write(';');
+    write.newline();
+};
 
-const {maybeParens: maybeParens$2} = maybeParens$e;
 const insideTypeDeclaration = ({parentPath}) => parentPath.isTSTypeAliasDeclaration();
 
-tsUnionType$1.TSUnionType = maybeParens$2({
+const TSUnionType$2 = maybeParens({
     condition: (path) => {
         return path.parentPath.isTSArrayType();
     },
@@ -59237,128 +56004,99 @@ function printInCoupleLines(types, {traverse, write, indent}) {
     indent.dec();
 }
 
-var tsImportType$1 = {};
-
-const {createImportExpression} = importExpression$1;
-
-tsImportType$1.TSImportType = (path, printer) => {
+const TSImportType$1 = (path, printer) => {
     createImportExpression(path, printer);
 };
 
-var tsExportAssignment$1 = {};
-
-const {isNext: isNext$2} = is$4;
-
-tsExportAssignment$1.TSExportAssignment = {
+const TSExportAssignment$1 = {
     print: (path, {print}) => {
         print('export = ');
         print('__expression');
         print(';');
     },
-    afterSatisfy: () => [isNext$2],
+    afterSatisfy: () => [isNext],
     after: (path, {print}) => {
         print.newline();
     },
 };
 
-var tsTypeReference$1 = {};
-
-tsTypeReference$1.TSTypeReference = (path, {print}) => {
+const TSTypeReference$1 = (path, {print}) => {
     print('__typeName');
     print('__typeArguments');
 };
 
-var tsInferType$1 = {};
-
-const {maybeParens: maybeParens$1} = maybeParens$e;
-
-tsInferType$1.TSInferType = maybeParens$1((path, {print}) => {
+const TSInferType$2 = maybeParens((path, {print}) => {
     print('infer ');
     print('__typeParameter');
 });
 
-var tsParameterProperty$1 = {exports: {}};
+const TSParameterProperty$1 = (path, {print, maybe, indent}) => {
+    const {
+        decorators,
+        readonly,
+        accessibility,
+    } = path.node;
+    
+    const decoratorsLength = decorators?.length > 1;
+    
+    maybe.print.breakline(decoratorsLength);
+    
+    if (decorators) {
+        for (const decorator of path.get('decorators')) {
+            maybe.indent(decoratorsLength);
+            print(decorator);
+        }
+        
+        maybe.print.breakline(decoratorsLength);
+        
+        if (!hasLeadingComment(path))
+            indent();
+        else
+            print(' ');
+    }
+    
+    if (accessibility) {
+        print(accessibility);
+        print.space();
+    }
+    
+    if (readonly) {
+        print('readonly');
+        print.space();
+    }
+    
+    print('__parameter');
+    
+    if (hasLeadingComment(path) && !path.node.decorators)
+        print.breakline();
+};
 
-(function (module) {
+TSParameterProperty$1.printLeadingCommentLine = (path, printer, semantics, {printComment}) => {
+    const {indent, print} = printer;
+    
+    if (path.node.decorators) {
+        printComment();
+        print.breakline();
+        
+        return;
+    }
+    
+    if (path.parentPath.isClassMethod()) {
+        indent.inc();
+        print.breakline();
+        
+        printComment();
+        print.breakline();
+        indent.dec();
+        
+        return;
+    }
+};
 
-	const {hasLeadingComment} = is$4;
+const {isTSUnionType: isTSUnionType$1} = lib_exports$1;
+const noop$5 = () => {};
 
-	module.exports.TSParameterProperty = (path, {print, maybe, indent}) => {
-	    const {
-	        decorators,
-	        readonly,
-	        accessibility,
-	    } = path.node;
-	    
-	    const decoratorsLength = decorators?.length > 1;
-	    
-	    maybe.print.breakline(decoratorsLength);
-	    
-	    if (decorators) {
-	        for (const decorator of path.get('decorators')) {
-	            maybe.indent(decoratorsLength);
-	            print(decorator);
-	        }
-	        
-	        maybe.print.breakline(decoratorsLength);
-	        
-	        if (!hasLeadingComment(path))
-	            indent();
-	        else
-	            print(' ');
-	    }
-	    
-	    if (accessibility) {
-	        print(accessibility);
-	        print.space();
-	    }
-	    
-	    if (readonly) {
-	        print('readonly');
-	        print.space();
-	    }
-	    
-	    print('__parameter');
-	    
-	    if (hasLeadingComment(path) && !path.node.decorators)
-	        print.breakline();
-	};
-
-	module.exports.TSParameterProperty.printLeadingCommentLine = (path, printer, semantics, {printComment}) => {
-	    const {indent, print} = printer;
-	    
-	    if (path.node.decorators) {
-	        printComment();
-	        print.breakline();
-	        
-	        return;
-	    }
-	    
-	    if (path.parentPath.isClassMethod()) {
-	        indent.inc();
-	        print.breakline();
-	        
-	        printComment();
-	        print.breakline();
-	        indent.dec();
-	        
-	        return;
-	    }
-	}; 
-} (tsParameterProperty$1));
-
-var tsParameterPropertyExports = tsParameterProperty$1.exports;
-tsParameterPropertyExports.default;
-
-var tsTypeParameterDeclaration$1 = {};
-
-const {types: types$t} = bundle$1;
-const {createPrintSpace} = printFunctionParams$1;
-const {printParams: printParams$1} = params;
-const {isTSUnionType: isTSUnionType$1} = types$t;
-const noop$4 = () => {};
-
-tsTypeParameterDeclaration$1.TSTypeParameterDeclaration = (path, printer, semantics) => {
+const TSTypeParameterDeclaration$1 = (path, printer, semantics) => {
     const {print, indent} = printer;
     const isNewline = hasComplexParameters(path);
     const printSpace = createPrintSpace({
@@ -59366,21 +56104,21 @@ tsTypeParameterDeclaration$1.TSTypeParameterDeclaration = (path, printer, semant
         printer,
     });
     
-    const printAfterOpen = !isNewline ? noop$4 : () => {
+    const printAfterOpen = !isNewline ? noop$5 : () => {
         indent.inc();
         print.breakline();
     };
     
-    const printAfterClose = !isNewline ? noop$4 : () => {
+    const printAfterClose = !isNewline ? noop$5 : () => {
         print.breakline();
     };
     
-    const printBeforeClose = !isNewline ? noop$4 : () => {
+    const printBeforeClose = !isNewline ? noop$5 : () => {
         indent.dec();
         print.breakline();
     };
     
-    printParams$1(path, printer, semantics, {
+    printParams(path, printer, semantics, {
         printSpace,
         braceOpen: '<',
         braceClose: '>',
@@ -59401,266 +56139,179 @@ function hasComplexParameters({node}) {
     return false;
 }
 
-var tsTypeQuery$1 = {};
-
-const {maybeParens} = maybeParens$e;
-
-tsTypeQuery$1.TSTypeQuery = maybeParens((path, {print}) => {
+const TSTypeQuery$1 = maybeParens((path, {print}) => {
     print('typeof ');
     print('__exprName');
 });
 
-var tsParenthesizedType$3 = {};
-
-tsParenthesizedType$3.TSParenthesizedType = (path, {print}) => {
+const TSParenthesizedType$1 = (path, {print}) => {
     print('(');
     print('__typeAnnotation');
     print(')');
 };
 
-var tsTemplateLiteralType$1 = {};
-
-const {writeTemplateLiteral} = writeTemplateLiteral$2;
-
-tsTemplateLiteralType$1.TSTemplateLiteralType = (path, printer) => {
+const TSTemplateLiteralType$1 = (path, printer) => {
     const quasis = path.get('quasis');
     const types = path.get('types');
     
     writeTemplateLiteral(quasis, types, printer);
 };
 
-var tsOptionalType$1 = {};
-
-tsOptionalType$1.TSOptionalType = (path, {print}) => {
+const TSOptionalType$1 = (path, {print}) => {
     print('__typeAnnotation');
     print('?');
 };
 
-const {isNext: isNext$1} = is$4;
-const {TSTypeLiteral: TSTypeLiteral$1} = tsTypeLiteral$1;
-const {TSTypeAliasDeclaration: TSTypeAliasDeclaration$1} = tsTypeAliasDeclaration$1;
-const {TSMappedType: TSMappedType$1} = tsMappedType$1;
-const {TSConditionalType: TSConditionalType$2} = tsConditionalType$1;
-const {TSTypeParameter: TSTypeParameter$1} = tsTypeParameter$1;
-const {TSDeclareFunction: TSDeclareFunction$1} = tsDeclareFunction$1;
-const {TSDeclareMethod: TSDeclareMethod$1} = tsDeclareMethod$1;
-
-const {
-    TSModuleDeclaration: TSModuleDeclaration$1,
-    TSModuleBlock: TSModuleBlock$1,
-} = tsModuleDeclaration$1;
-
-const {TSInterfaceDeclaration: TSInterfaceDeclaration$1} = tsInterfaceDeclaration$1;
-const {TSAsExpression: TSAsExpression$1} = tsAsExpression$1;
-const {TSInterfaceBody: TSInterfaceBody$1} = tsInterfaceBody$1;
-const {TSIntersectionType: TSIntersectionType$2} = tsIntersectionType$1;
-const {TSPropertySignature: TSPropertySignature$1} = tsPropertySignatureExports;
-const {TSFunctionType: TSFunctionType$2} = tsFunctionType$1;
-const {printParams} = params;
-const {TSEnumDeclaration: TSEnumDeclaration$1} = tsEnumDeclaration$1;
-const {TSEnumMember: TSEnumMember$1} = tsEnumMember$1;
-const {TSTupleType: TSTupleType$1} = tsTupleType$1;
-const {TSNamedTupleMember: TSNamedTupleMember$1} = tsNamedTupleMember$1;
-const {TSConstructorType: TSConstructorType$1} = tsConstructorType$1;
-const {TSCallSignatureDeclaration: TSCallSignatureDeclaration$1} = tsCallSignatureDeclaration$1;
-const {TSConstructSignatureDeclaration: TSConstructSignatureDeclaration$1} = tsConstructSignatureDeclaration$1;
-const {TSMethodSignature: TSMethodSignature$1} = tsMethodSignature$1;
-const {TSUnionType: TSUnionType$2} = tsUnionType$1;
-
-const {maybePrintTypeAnnotation} = maybeTypeAnnotation$4;
-const {TSImportType: TSImportType$1} = tsImportType$1;
-const {TSExportAssignment: TSExportAssignment$1} = tsExportAssignment$1;
-const {TSTypeReference: TSTypeReference$1} = tsTypeReference$1;
-const {TSInferType: TSInferType$2} = tsInferType$1;
-const {TSParameterProperty: TSParameterProperty$1} = tsParameterPropertyExports;
-const {TSTypeParameterDeclaration: TSTypeParameterDeclaration$1} = tsTypeParameterDeclaration$1;
-const {TSTypeQuery: TSTypeQuery$1} = tsTypeQuery$1;
-const {TSParenthesizedType: TSParenthesizedType$1} = tsParenthesizedType$3;
-const {TSTemplateLiteralType: TSTemplateLiteralType$1} = tsTemplateLiteralType$1;
-const {TSOptionalType: TSOptionalType$1} = tsOptionalType$1;
-
-var typescript$3 = {
-    TSAsExpression: TSAsExpression$1,
-    TSExportAssignment: TSExportAssignment$1,
-    TSTypeLiteral: TSTypeLiteral$1,
-    TSTypeAliasDeclaration: TSTypeAliasDeclaration$1,
-    TSTypeParameter: TSTypeParameter$1,
-    TSMappedType: TSMappedType$1,
-    TSConditionalType: TSConditionalType$2,
-    TSDeclareFunction: TSDeclareFunction$1,
-    TSModuleDeclaration: TSModuleDeclaration$1,
-    TSModuleBlock: TSModuleBlock$1,
-    TSIntersectionType: TSIntersectionType$2,
-    TSImportType: TSImportType$1,
-    TSUnionType: TSUnionType$2,
-    TSTypeQuery: TSTypeQuery$1,
-    TSTemplateLiteralType: TSTemplateLiteralType$1,
-    TSOptionalType: TSOptionalType$1,
-    TSTypeParameterDeclaration: TSTypeParameterDeclaration$1,
-    TSBigIntKeyword(path, {write}) {
-        write('bigint');
-    },
-    TSNullKeyword(path, {write}) {
-        write('null');
-    },
-    TSSymbolKeyword(path, {write}) {
-        write('symbol');
-    },
-    TSNeverKeyword(path, {write}) {
-        write('never');
-    },
-    TSUnknownKeyword(path, {write}) {
-        write('unknown');
-    },
-    TSObjectKeyword(path, {write}) {
-        write('object');
-    },
-    TSLiteralType(path, {print}) {
-        print('__literal');
-    },
-    TSTupleType: TSTupleType$1,
-    TSInferType: TSInferType$2,
-    TSRestType(path, {print}) {
-        print('...');
-        print('__typeAnnotation');
-    },
-    TSTypeParameterInstantiation(path, printer, semantics) {
-        printParams(path, printer, semantics, {
-            braceOpen: '<',
-            braceClose: '>',
-        });
-    },
-    TSArrayType(path, {print}) {
-        print('__elementType');
-        print('[]');
-    },
-    TSTypeReference: TSTypeReference$1,
-    TSTypeOperator(path, {write, print}) {
-        const {operator} = path.node;
-        write(`${operator} `);
-        print('__typeAnnotation');
-    },
-    TSInterfaceDeclaration: TSInterfaceDeclaration$1,
-    TSInterfaceBody: TSInterfaceBody$1,
-    TSTypeAssertion(path, {print}) {
-        print('<');
-        print('__typeAnnotation');
-        print('>');
-        print('__expression');
-    },
-    TSUndefinedKeyword(path, {write}) {
-        write('undefined');
-    },
-    TSBooleanKeyword(path, {write}) {
-        write('boolean');
-    },
-    TSSatisfiesExpression(path, {print}) {
-        print('__expression');
-        print(' satisfies ');
-        print('__typeAnnotation');
-    },
-    TSNumberKeyword(path, {write}) {
-        write('number');
-    },
-    TSIndexedAccessType(path, {print}) {
-        print('__objectType');
-        print('[');
-        print('__indexType');
-        print(']');
-    },
-    TSStringKeyword(path, {write}) {
-        write('string');
-    },
-    TSInstantiationExpression(path, {print}) {
-        print('__expression');
-        print('__typeArguments');
-    },
-    TSAnyKeyword(path, {write}) {
-        write('any');
-    },
-    TSVoidKeyword(path, {write}) {
-        write('void');
-    },
-    TSQualifiedName(path, {print}) {
-        print('__left');
-        print('.');
-        print('__right');
-    },
-    TSTypeAnnotation(path, {print}) {
-        print('__typeAnnotation');
-    },
-    TSParameterProperty: TSParameterProperty$1,
-    TSConstructSignatureDeclaration: TSConstructSignatureDeclaration$1,
-    TSIndexSignature(path, printer) {
-        const {print} = printer;
-        print('[');
-        print('__parameters.0');
-        print(']');
-        maybePrintTypeAnnotation(path, printer);
-        print(';');
-        print.newline();
-    },
-    TSClassImplements(path, {print}) {
-        print('__expression');
-        print('__typeArguments');
-    },
-    TSInterfaceHeritage(path, {print}) {
-        print('__expression');
-        print('__typeArguments');
-    },
-    TSParenthesizedType: TSParenthesizedType$1,
-    TSPropertySignature: TSPropertySignature$1,
-    TSFunctionType: TSFunctionType$2,
-    TSTypePredicate(path, {print}) {
-        print('__parameterName');
-        print(' is ');
-        print('__typeAnnotation');
-    },
-    TSNonNullExpression(path, {print}) {
-        print('__expression');
-        print('!');
-    },
-    TSEnumDeclaration: TSEnumDeclaration$1,
-    TSEnumMember: TSEnumMember$1,
-    TSImportEqualsDeclaration(path, {print, maybe}) {
-        maybe.print(path.node.isExport, 'export ');
-        print('import ');
-        print('__id');
-        print.space();
-        print('=');
-        print.space();
-        print('__moduleReference');
-        print(';');
-        maybe.print.newline(isNext$1(path));
-    },
-    TSExternalModuleReference(path, {print}) {
-        print('require(');
-        print('__expression');
-        print(')');
-    },
-    TSDeclareMethod: TSDeclareMethod$1,
-    TSNamedTupleMember: TSNamedTupleMember$1,
-    TSConstructorType: TSConstructorType$1,
-    TSMethodSignature: TSMethodSignature$1,
-    TSCallSignatureDeclaration: TSCallSignatureDeclaration$1,
-    TSThisType(path, {print}) {
-        print('this');
-    },
+const TSBigIntKeyword$1 = (path, {write}) => {
+    write('bigint');
+};
+const TSNullKeyword$1 = (path, {write}) => {
+    write('null');
+};
+const TSSymbolKeyword$1 = (path, {write}) => {
+    write('symbol');
+};
+const TSNeverKeyword$1 = (path, {write}) => {
+    write('never');
+};
+const TSUnknownKeyword$1 = (path, {write}) => {
+    write('unknown');
+};
+const TSObjectKeyword$1 = (path, {write}) => {
+    write('object');
+};
+const TSLiteralType$1 = (path, {print}) => {
+    print('__literal');
+};
+const TSRestType$1 = (path, {print}) => {
+    print('...');
+    print('__typeAnnotation');
+};
+const TSTypeParameterInstantiation$1 = (path, printer, semantics) => {
+    printParams(path, printer, semantics, {
+        braceOpen: '<',
+        braceClose: '>',
+    });
+};
+const TSArrayType$1 = (path, {print}) => {
+    print('__elementType');
+    print('[]');
+};
+const TSTypeOperator$2 = (path, {write, print}) => {
+    const {operator} = path.node;
+    write(`${operator} `);
+    print('__typeAnnotation');
+};
+const TSTypeAssertion$1 = (path, {print}) => {
+    print('<');
+    print('__typeAnnotation');
+    print('>');
+    print('__expression');
+};
+const TSUndefinedKeyword$1 = (path, {write}) => {
+    write('undefined');
+};
+const TSBooleanKeyword$1 = (path, {write}) => {
+    write('boolean');
+};
+const TSSatisfiesExpression$1 = (path, {print}) => {
+    print('__expression');
+    print(' satisfies ');
+    print('__typeAnnotation');
+};
+const TSNumberKeyword$1 = (path, {write}) => {
+    write('number');
+};
+const TSIndexedAccessType$1 = (path, {print}) => {
+    print('__objectType');
+    print('[');
+    print('__indexType');
+    print(']');
+};
+const TSStringKeyword$1 = (path, {write}) => {
+    write('string');
+};
+const TSInstantiationExpression$2 = (path, {print}) => {
+    print('__expression');
+    print('__typeArguments');
+};
+const TSAnyKeyword$1 = (path, {write}) => {
+    write('any');
+};
+const TSVoidKeyword$1 = (path, {write}) => {
+    write('void');
+};
+const TSQualifiedName$1 = (path, {print}) => {
+    print('__left');
+    print('.');
+    print('__right');
+};
+const TSTypeAnnotation$1 = (path, {print}) => {
+    print('__typeAnnotation');
 };
 
-var jsxElement$1 = {};
+const TSIndexSignature$1 = (path, printer) => {
+    const {print} = printer;
+    print('[');
+    print('__parameters.0');
+    print(']');
+    maybePrintTypeAnnotation(path, printer);
+    print(';');
+    print.newline();
+};
 
-const {types: types$s} = bundle$1;
+const TSClassImplements$1 = (path, {print}) => {
+    print('__expression');
+    print('__typeArguments');
+};
+
+const TSInterfaceHeritage$1 = (path, {print}) => {
+    print('__expression');
+    print('__typeArguments');
+};
+
+const TSTypePredicate$1 = (path, {print}) => {
+    print('__parameterName');
+    print(' is ');
+    print('__typeAnnotation');
+};
+
+const TSNonNullExpression$1 = (path, {print}) => {
+    print('__expression');
+    print('!');
+};
+
+const TSImportEqualsDeclaration$1 = (path, {print, maybe}) => {
+    maybe.print(path.node.isExport, 'export ');
+    print('import ');
+    print('__id');
+    print.space();
+    print('=');
+    print.space();
+    print('__moduleReference');
+    print(';');
+    maybe.print.newline(isNext(path));
+};
+const TSExternalModuleReference$1 = (path, {print}) => {
+    print('require(');
+    print('__expression');
+    print(')');
+};
+
+const TSThisType$1 = (path, {print}) => {
+    print('this');
+};
+
 const {
     isJSXElement: isJSXElement$3,
     isJSXExpressionContainer: isJSXExpressionContainer$1,
     isFunction: isFunction$3,
     isJSXSpreadAttribute: isJSXSpreadAttribute$1,
-} = types$s;
+} = lib_exports$1;
 
 const isInsideArrow = ({parentPath}) => parentPath.isArrowFunctionExpression();
 
-jsxElement$1.JSXElement = {
+const JSXElement$1 = {
     condition: condition$1,
     before(path, {write, indent, maybe}) {
         const {leadingComments} = path.node;
@@ -59749,13 +56400,9 @@ function isNeedIndent(path) {
     return insideJSX || insideFn && insideCall;
 }
 
-var jsxAttribute$2 = {};
-
-const {isCoupleLines: isCoupleLines$2} = is$4;
-
-jsxAttribute$2.JSXAttribute = {
+const JSXAttribute$1 = {
     condition(path) {
-        return isCoupleLines$2(path.parentPath);
+        return isCoupleLines(path.parentPath);
     },
     before(path, {print, indent}) {
         indent.inc();
@@ -59772,10 +56419,6 @@ jsxAttribute$2.JSXAttribute = {
         indent.dec();
     },
 };
-
-var jsxOpeningElement$1 = {};
-
-const {isCoupleLines: isCoupleLines$1} = is$4;
 
 const isNotJSX = ({parentPath}) => {
     const grandPath = parentPath.parentPath;
@@ -59798,13 +56441,13 @@ const isNotJSX = ({parentPath}) => {
     return !grandPath.isLogicalExpression();
 };
 
-jsxOpeningElement$1.JSXOpeningElement = {
+const JSXOpeningElement$1 = {
     print(path, {print, maybe}) {
         maybe.indent(isNotJSX(path));
         print('<');
         print('__name');
         
-        const coupleLines = isCoupleLines$1(path);
+        const coupleLines = isCoupleLines(path);
         const noCoupleLines = !coupleLines;
         const shouldIndent = coupleLines && path.parentPath.parentPath.isJSXElement();
         
@@ -59815,7 +56458,7 @@ jsxOpeningElement$1.JSXOpeningElement = {
             print(attr);
         }
         
-        if (isCoupleLines$1(path))
+        if (isCoupleLines(path))
             print.breakline();
         
         if (path.node.selfClosing)
@@ -59826,9 +56469,7 @@ jsxOpeningElement$1.JSXOpeningElement = {
     },
 };
 
-var jsxFragment$1 = {};
-
-jsxFragment$1.JSXFragment = {
+const JSXFragment$1 = {
     condition,
     before(path, {write, indent}) {
         write('(');
@@ -59847,11 +56488,11 @@ jsxFragment$1.JSXFragment = {
     },
 };
 
-jsxFragment$1.JSXOpeningFragment = (path, {write}) => {
+const JSXOpeningFragment$1 = (path, {write}) => {
     write('<>');
 };
 
-jsxFragment$1.JSXClosingFragment = (path, {write}) => {
+const JSXClosingFragment$1 = (path, {write}) => {
     write('</>');
 };
 
@@ -59862,11 +56503,7 @@ function condition(path) {
     return path.parentPath.isVariableDeclarator();
 }
 
-var jsxText$1 = {};
-
-const {isNext} = is$4;
-
-jsxText$1.JSXText = (path, {write, indent}) => {
+const JSXText$1 = (path, {write, indent}) => {
     const {node} = path;
     const {value, extra} = node;
     const isSpacesOnly = /^\s+$/.test(value);
@@ -59891,76 +56528,208 @@ jsxText$1.JSXText = (path, {write, indent}) => {
     write(value);
 };
 
-const {JSXElement: JSXElement$1} = jsxElement$1;
-const {JSXAttribute: JSXAttribute$1} = jsxAttribute$2;
-const {isCoupleLines} = is$4;
-const {JSXOpeningElement: JSXOpeningElement$1} = jsxOpeningElement$1;
-const fragments = jsxFragment$1;
-const {JSXText: JSXText$1} = jsxText$1;
-const {parseComments} = comment;
-
-var jsx$3 = {
-    ...fragments,
-    JSXElement: JSXElement$1,
-    JSXAttribute: JSXAttribute$1,
-    JSXOpeningElement: JSXOpeningElement$1,
-    JSXText: JSXText$1,
-    JSXEmptyExpression(path, operations, semantics) {
-        parseComments(path, operations, semantics);
-    },
-    JSXExpressionContainer(path, {print}) {
-        print('{');
-        print('__expression');
-        print('}');
-    },
-    JSXIdentifier(path, {write}) {
-        write(path.node.name);
-    },
-    JSXMemberExpression(path, {print}) {
-        print('__object');
-        print('.');
-        print('__property');
-    },
-    JSXSpreadAttribute(path, {print, maybe}) {
-        const isNewline = isCoupleLines(path.parentPath);
-        maybe.indent.inc(isNewline);
-        maybe.print.breakline(isNewline);
-        print('{');
-        print('...');
-        print('__argument');
-        print('}');
-        maybe.indent.dec(isNewline);
-    },
-    JSXClosingElement(path, {print}) {
-        print('</');
-        print('__name');
-        print('>');
-    },
+const JSXEmptyExpression$1 = (path, operations, semantics) => {
+    parseComments(path, operations, semantics);
+};
+const JSXExpressionContainer$1 = (path, {print}) => {
+    print('{');
+    print('__expression');
+    print('}');
+};
+const JSXIdentifier$1 = (path, {write}) => {
+    write(path.node.name);
+};
+const JSXMemberExpression$1 = (path, {print}) => {
+    print('__object');
+    print('.');
+    print('__property');
+};
+const JSXSpreadAttribute$1 = (path, {print, maybe}) => {
+    const isNewline = isCoupleLines(path.parentPath);
+    maybe.indent.inc(isNewline);
+    maybe.print.breakline(isNewline);
+    print('{');
+    print('...');
+    print('__argument');
+    print('}');
+    maybe.indent.dec(isNewline);
+};
+const JSXClosingElement$1 = (path, {print}) => {
+    print('</');
+    print('__name');
+    print('>');
 };
 
-const expressions$1 = expressions$2;
-const statements$3 = statements$4;
-const literals = literals$1;
-const typescript$2 = typescript$3;
-const jsx$2 = jsx$3;
-
-var visitors$2 = {
-    ...expressions$1,
-    ...statements$3,
-    ...literals,
-    ...typescript$2,
-    ...jsx$2,
-};
-
-visitors$2.default;
-
-var maybe = {};
+var baseVisitors = /*#__PURE__*/Object.freeze({
+	__proto__: null,
+	ArrayExpression: ArrayExpression$1,
+	ArrayPattern: ArrayPattern$1,
+	ArrowFunctionExpression: ArrowFunctionExpression$1,
+	AssignmentExpression: AssignmentExpression$2,
+	AssignmentPattern: AssignmentPattern$1,
+	AwaitExpression: AwaitExpression$1,
+	BigIntLiteral: BigIntLiteral$1,
+	BinaryExpression: BinaryExpression$1,
+	BlockStatement: BlockStatement$1,
+	BooleanLiteral: BooleanLiteral$1,
+	BreakStatement: BreakStatement$1,
+	CallExpression: CallExpression$1,
+	CatchClause: CatchClause$1,
+	ClassAccessorProperty: ClassAccessorProperty$1,
+	ClassDeclaration: ClassDeclaration$1,
+	ClassExpression: ClassExpression$1,
+	ClassMethod: ClassMethod$1,
+	ClassPrivateMethod: ClassPrivateMethod$1,
+	ClassPrivateProperty: ClassPrivateProperty$1,
+	ClassProperty: ClassProperty$1,
+	ConditionalExpression: ConditionalExpression$2,
+	ContinueStatement: ContinueStatement$1,
+	DebuggerStatement: DebuggerStatement$1,
+	Decorator: Decorator$1,
+	Directive: Directive$1,
+	DirectiveLiteral: DirectiveLiteral$1,
+	DoWhileStatement: DoWhileStatement$1,
+	EmptyStatement: EmptyStatement$1,
+	ExportAllDeclaration: ExportAllDeclaration$1,
+	ExportDefaultDeclaration: ExportDefaultDeclaration$1,
+	ExportDefaultSpecifier: ExportDefaultSpecifier$1,
+	ExportNamedDeclaration: ExportNamedDeclaration$1,
+	ExportNamespaceSpecifier: ExportNamespaceSpecifier$1,
+	ExportSpecifier: ExportSpecifier$1,
+	ExpressionStatement: ExpressionStatement$1,
+	ForInStatement: ForInStatement$1,
+	ForOfStatement: ForOfStatement$1,
+	ForStatement: ForStatement$1,
+	FunctionDeclaration: FunctionDeclaration$1,
+	FunctionExpression: FunctionExpression$2,
+	Identifier: Identifier$2,
+	IfStatement: IfStatement$1,
+	ImportAttribute: ImportAttribute$1,
+	ImportDeclaration: ImportDeclaration$1,
+	ImportExpression: ImportExpression$1,
+	InterpreterDirective: InterpreterDirective$1,
+	JSXAttribute: JSXAttribute$1,
+	JSXClosingElement: JSXClosingElement$1,
+	JSXClosingFragment: JSXClosingFragment$1,
+	JSXElement: JSXElement$1,
+	JSXEmptyExpression: JSXEmptyExpression$1,
+	JSXExpressionContainer: JSXExpressionContainer$1,
+	JSXFragment: JSXFragment$1,
+	JSXIdentifier: JSXIdentifier$1,
+	JSXMemberExpression: JSXMemberExpression$1,
+	JSXOpeningElement: JSXOpeningElement$1,
+	JSXOpeningFragment: JSXOpeningFragment$1,
+	JSXSpreadAttribute: JSXSpreadAttribute$1,
+	JSXText: JSXText$1,
+	LabeledStatement: LabeledStatement$1,
+	LogicalExpression: LogicalExpression$1,
+	MemberExpression: MemberExpression$1,
+	MetaProperty: MetaProperty$1,
+	NewExpression: NewExpression$1,
+	NullLiteral: NullLiteral$1,
+	NumericLiteral: NumericLiteral$1,
+	ObjectExpression: ObjectExpression$2,
+	ObjectMethod: ObjectMethod$1,
+	ObjectPattern: ObjectPattern$1,
+	ObjectProperty: ObjectProperty$1,
+	OptionalCallExpression: OptionalCallExpression$1,
+	OptionalMemberExpression: OptionalMemberExpression$2,
+	ParenthesizedExpression: ParenthesizedExpression$1,
+	PrivateName: PrivateName$1,
+	Program: Program$1,
+	RegExpLiteral: RegExpLiteral$1,
+	RestElement: RestElement$1,
+	ReturnStatement: ReturnStatement$1,
+	SequenceExpression: SequenceExpression$2,
+	SpreadElement: SpreadElement$1,
+	StaticBlock: StaticBlock$1,
+	StringLiteral: StringLiteral$1,
+	Super: Super$1,
+	SwitchStatement: SwitchStatement$1,
+	TSAnyKeyword: TSAnyKeyword$1,
+	TSArrayType: TSArrayType$1,
+	TSAsExpression: TSAsExpression$1,
+	TSBigIntKeyword: TSBigIntKeyword$1,
+	TSBooleanKeyword: TSBooleanKeyword$1,
+	TSCallSignatureDeclaration: TSCallSignatureDeclaration$1,
+	TSClassImplements: TSClassImplements$1,
+	TSConditionalType: TSConditionalType$2,
+	TSConstructSignatureDeclaration: TSConstructSignatureDeclaration$1,
+	TSConstructorType: TSConstructorType$1,
+	TSDeclareFunction: TSDeclareFunction$1,
+	TSDeclareMethod: TSDeclareMethod$1,
+	TSEnumDeclaration: TSEnumDeclaration$1,
+	TSEnumMember: TSEnumMember$1,
+	TSExportAssignment: TSExportAssignment$1,
+	TSExternalModuleReference: TSExternalModuleReference$1,
+	TSFunctionType: TSFunctionType$2,
+	TSImportEqualsDeclaration: TSImportEqualsDeclaration$1,
+	TSImportType: TSImportType$1,
+	TSIndexSignature: TSIndexSignature$1,
+	TSIndexedAccessType: TSIndexedAccessType$1,
+	TSInferType: TSInferType$2,
+	TSInstantiationExpression: TSInstantiationExpression$2,
+	TSInterfaceBody: TSInterfaceBody$1,
+	TSInterfaceDeclaration: TSInterfaceDeclaration$1,
+	TSInterfaceHeritage: TSInterfaceHeritage$1,
+	TSIntersectionType: TSIntersectionType$2,
+	TSLiteralType: TSLiteralType$1,
+	TSMappedType: TSMappedType$1,
+	TSMethodSignature: TSMethodSignature$1,
+	TSModuleBlock: TSModuleBlock$1,
+	TSModuleDeclaration: TSModuleDeclaration$1,
+	TSNamedTupleMember: TSNamedTupleMember$1,
+	TSNeverKeyword: TSNeverKeyword$1,
+	TSNonNullExpression: TSNonNullExpression$1,
+	TSNullKeyword: TSNullKeyword$1,
+	TSNumberKeyword: TSNumberKeyword$1,
+	TSObjectKeyword: TSObjectKeyword$1,
+	TSOptionalType: TSOptionalType$1,
+	TSParameterProperty: TSParameterProperty$1,
+	TSParenthesizedType: TSParenthesizedType$1,
+	TSPropertySignature: TSPropertySignature$1,
+	TSQualifiedName: TSQualifiedName$1,
+	TSRestType: TSRestType$1,
+	TSSatisfiesExpression: TSSatisfiesExpression$1,
+	TSStringKeyword: TSStringKeyword$1,
+	TSSymbolKeyword: TSSymbolKeyword$1,
+	TSTemplateLiteralType: TSTemplateLiteralType$1,
+	TSThisType: TSThisType$1,
+	TSTupleType: TSTupleType$1,
+	TSTypeAliasDeclaration: TSTypeAliasDeclaration$1,
+	TSTypeAnnotation: TSTypeAnnotation$1,
+	TSTypeAssertion: TSTypeAssertion$1,
+	TSTypeLiteral: TSTypeLiteral$1,
+	TSTypeOperator: TSTypeOperator$2,
+	TSTypeParameter: TSTypeParameter$1,
+	TSTypeParameterDeclaration: TSTypeParameterDeclaration$1,
+	TSTypeParameterInstantiation: TSTypeParameterInstantiation$1,
+	TSTypePredicate: TSTypePredicate$1,
+	TSTypeQuery: TSTypeQuery$1,
+	TSTypeReference: TSTypeReference$1,
+	TSUndefinedKeyword: TSUndefinedKeyword$1,
+	TSUnionType: TSUnionType$2,
+	TSUnknownKeyword: TSUnknownKeyword$1,
+	TSVoidKeyword: TSVoidKeyword$1,
+	TaggedTemplateExpression: TaggedTemplateExpression$1,
+	TemplateLiteral: TemplateLiteral$1,
+	ThisExpression: ThisExpression$1,
+	ThrowStatement: ThrowStatement$1,
+	TryStatement: TryStatement$1,
+	UnaryExpression: UnaryExpression$1,
+	UpdateExpression: UpdateExpression$2,
+	VariableDeclaration: VariableDeclaration$1,
+	VoidPattern: VoidPattern$1,
+	WhileStatement: WhileStatement$1,
+	WithStatement: WithStatement$1,
+	YieldExpression: YieldExpression$2
+});
 
 const isString$c = (a) => typeof a === 'string';
 const constant = (a) => () => a;
 const {keys: keys$4} = Object;
 
-var rendy$1 = (template, values, modifiers) => {
+var rendy = (template, values, modifiers) => {
     check$e(template, values);
     
     let result = template;
@@ -60016,9 +56785,9 @@ function parseValue$1(key, values, modifiers) {
     return [key, fn(currentValue)];
 }
 
-const {satisfy} = is$4;
+var rendy$1 = rendy.default;
 
-var satisfy_1 = (plugin) => {
+var maybeSatisfy = (plugin) => {
     if (!plugin.afterSatisfy && !plugin.beforeSatisfy && !plugin.satisfy)
         return plugin;
     
@@ -60040,11 +56809,6 @@ const createIf = (getConditions) => {
     return satisfy(conditions);
 };
 
-const rendy = rendy$1;
-
-const {types: types$r} = bundle$1;
-const maybeSatisfy = satisfy_1;
-
 const {
     isProgram: isProgram$4,
     isFile: isFile$2,
@@ -60052,15 +56816,15 @@ const {
     expressionStatement: expressionStatement$4,
     program: program$2,
     file: file$1,
-} = types$r;
+} = lib_exports$1;
 
-const isFn$5 = (a) => typeof a === 'function';
+const isFn$6 = (a) => typeof a === 'function';
 
-maybe.maybeThrow = (a, path, b) => {
+const maybeThrow = (a, path, b) => {
     if (!a)
         return;
     
-    throw Error(rendy(b, {
+    throw Error(rendy$1(b, {
         path,
         type: path.type,
     }));
@@ -60072,10 +56836,10 @@ const maybeProgram = (ast) => isProgram$4(ast) ? ast : program$2([
     maybeStatement(ast),
 ]);
 
-maybe.maybeFile = (ast) => isFile$2(ast) ? ast : file$1(maybeProgram(ast));
+const maybeFile = (ast) => isFile$2(ast) ? ast : file$1(maybeProgram(ast));
 
-maybe.maybeVisitor = (plugin, path, printer, options) => {
-    if (isFn$5(plugin))
+const maybeVisitor = (plugin, path, printer, options) => {
+    if (isFn$6(plugin))
         return plugin(path, printer, options);
     
     return objectPlugin(plugin, path, printer, options);
@@ -60101,11 +56865,233 @@ function objectPlugin(plugin, path, printer, semantics) {
         after(path, printer, semantics);
 }
 
-var debug$8 = {};
+var global$1 = (typeof global !== "undefined" ? global :
+  typeof self !== "undefined" ? self :
+  typeof window !== "undefined" ? window : {});
 
-var require$$0$7 = /*@__PURE__*/getAugmentedNamespace(_polyfillNode_process);
+// shim for using process in browser
+// based off https://github.com/defunctzombie/node-process/blob/master/browser.js
 
-var justSnakeCase = snakeCase;
+function defaultSetTimout() {
+    throw new Error('setTimeout has not been defined');
+}
+function defaultClearTimeout () {
+    throw new Error('clearTimeout has not been defined');
+}
+var cachedSetTimeout = defaultSetTimout;
+var cachedClearTimeout = defaultClearTimeout;
+if (typeof global$1.setTimeout === 'function') {
+    cachedSetTimeout = setTimeout;
+}
+if (typeof global$1.clearTimeout === 'function') {
+    cachedClearTimeout = clearTimeout;
+}
+
+function runTimeout(fun) {
+    if (cachedSetTimeout === setTimeout) {
+        //normal enviroments in sane situations
+        return setTimeout(fun, 0);
+    }
+    // if setTimeout wasn't available but was latter defined
+    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+        cachedSetTimeout = setTimeout;
+        return setTimeout(fun, 0);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedSetTimeout(fun, 0);
+    } catch(e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+            return cachedSetTimeout.call(null, fun, 0);
+        } catch(e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+            return cachedSetTimeout.call(this, fun, 0);
+        }
+    }
+
+
+}
+function runClearTimeout(marker) {
+    if (cachedClearTimeout === clearTimeout) {
+        //normal enviroments in sane situations
+        return clearTimeout(marker);
+    }
+    // if clearTimeout wasn't available but was latter defined
+    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+        cachedClearTimeout = clearTimeout;
+        return clearTimeout(marker);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedClearTimeout(marker);
+    } catch (e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+            return cachedClearTimeout.call(null, marker);
+        } catch (e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+            return cachedClearTimeout.call(this, marker);
+        }
+    }
+
+
+
+}
+var queue = [];
+var draining = false;
+var currentQueue;
+var queueIndex = -1;
+
+function cleanUpNextTick() {
+    if (!draining || !currentQueue) {
+        return;
+    }
+    draining = false;
+    if (currentQueue.length) {
+        queue = currentQueue.concat(queue);
+    } else {
+        queueIndex = -1;
+    }
+    if (queue.length) {
+        drainQueue();
+    }
+}
+
+function drainQueue() {
+    if (draining) {
+        return;
+    }
+    var timeout = runTimeout(cleanUpNextTick);
+    draining = true;
+
+    var len = queue.length;
+    while(len) {
+        currentQueue = queue;
+        queue = [];
+        while (++queueIndex < len) {
+            if (currentQueue) {
+                currentQueue[queueIndex].run();
+            }
+        }
+        queueIndex = -1;
+        len = queue.length;
+    }
+    currentQueue = null;
+    draining = false;
+    runClearTimeout(timeout);
+}
+function nextTick(fun) {
+    var args = new Array(arguments.length - 1);
+    if (arguments.length > 1) {
+        for (var i = 1; i < arguments.length; i++) {
+            args[i - 1] = arguments[i];
+        }
+    }
+    queue.push(new Item(fun, args));
+    if (queue.length === 1 && !draining) {
+        runTimeout(drainQueue);
+    }
+}
+// v8 likes predictible objects
+function Item(fun, array) {
+    this.fun = fun;
+    this.array = array;
+}
+Item.prototype.run = function () {
+    this.fun.apply(null, this.array);
+};
+var title = 'browser';
+var platform = 'browser';
+var browser$1 = true;
+var env = {};
+var argv = [];
+var version = ''; // empty string to avoid regexp issues
+var versions = {};
+var release = {};
+var config = {};
+
+function noop$4() {}
+
+var on = noop$4;
+var addListener = noop$4;
+var once$7 = noop$4;
+var off = noop$4;
+var removeListener = noop$4;
+var removeAllListeners = noop$4;
+var emit = noop$4;
+
+function binding(name) {
+    throw new Error('process.binding is not supported');
+}
+
+function cwd () { return '/' }
+function chdir (dir) {
+    throw new Error('process.chdir is not supported');
+}function umask() { return 0; }
+
+// from https://github.com/kumavis/browser-process-hrtime/blob/master/index.js
+var performance = global$1.performance || {};
+var performanceNow =
+  performance.now        ||
+  performance.mozNow     ||
+  performance.msNow      ||
+  performance.oNow       ||
+  performance.webkitNow  ||
+  function(){ return (new Date()).getTime() };
+
+// generate timestamp or delta
+// see http://nodejs.org/api/process.html#process_process_hrtime
+function hrtime(previousTimestamp){
+  var clocktime = performanceNow.call(performance)*1e-3;
+  var seconds = Math.floor(clocktime);
+  var nanoseconds = Math.floor((clocktime%1)*1e9);
+  if (previousTimestamp) {
+    seconds = seconds - previousTimestamp[0];
+    nanoseconds = nanoseconds - previousTimestamp[1];
+    if (nanoseconds<0) {
+      seconds--;
+      nanoseconds += 1e9;
+    }
+  }
+  return [seconds,nanoseconds]
+}
+
+var startTime = new Date();
+function uptime() {
+  var currentTime = new Date();
+  var dif = currentTime - startTime;
+  return dif / 1000;
+}
+
+var browser$1$1 = {
+  nextTick: nextTick,
+  title: title,
+  browser: browser$1,
+  env: env,
+  argv: argv,
+  version: version,
+  versions: versions,
+  on: on,
+  addListener: addListener,
+  once: once$7,
+  off: off,
+  removeListener: removeListener,
+  removeAllListeners: removeAllListeners,
+  emit: emit,
+  binding: binding,
+  cwd: cwd,
+  chdir: chdir,
+  umask: umask,
+  hrtime: hrtime,
+  platform: platform,
+  release: release,
+  config: config,
+  uptime: uptime
+};
+
+var stringSnakeCase = snakeCase;
 
 /*
   snakeCase('the quick brown fox'); // 'the_quick_brown_fox'
@@ -60134,11 +57120,6 @@ function snakeCase(str) {
     .join('_');
 }
 
-const process = require$$0$7;
-const toSnakeCase = justSnakeCase;
-const {codeFrameColumns: codeFrameColumns$1} = bundle$1;
-const {TYPES: TYPES$3} = types$19;
-
 const {stringify: stringify$7} = JSON;
 const {
     LOG,
@@ -60148,17 +57129,17 @@ const {
     LOG_DEBUG,
 } = {};
 
-debug$8.createDebug = (tokens) => (a) => {
+const createDebug$5 = (tokens) => (a) => {
     if (!LOG_DEBUG)
         return;
     
     tokens.push({
         type: TYPES$3.DEBUG,
-        value: `/*__${toSnakeCase(a)}*/`,
+        value: `/*__${stringSnakeCase(a)}*/`,
     });
 };
 
-debug$8.createLog = ({newline = '\n', store = createStore$1()} = {}) => ({type, value}) => {
+const createLog = ({newline = '\n', store = createStore$1()} = {}) => ({type, value}) => {
     if (LOG_TOKENS) {
         console.log(codeFrameColumns$1(stringify$7({
             type,
@@ -60191,7 +57172,7 @@ debug$8.createLog = ({newline = '\n', store = createStore$1()} = {}) => ({type, 
     }
     
     if (LOG_TERM)
-        process.stdout.write(value);
+        browser$1$1.stdout.write(value);
 };
 
 function createStore$1() {
@@ -60212,10 +57193,6 @@ function createStore$1() {
         return result;
     };
 }
-
-var overrides = {};
-
-var parseRoundBraces$1 = {};
 
 const isObject$7 = (a) => a && typeof a === 'object';
 const isBool$4 = (a) => typeof a === 'boolean';
@@ -60241,7 +57218,7 @@ const ROUND_BRACES_DISABLED = {
     new: false,
 };
 
-parseRoundBraces$1.parseRoundBraces = ({roundBraces}) => {
+const parseRoundBraces = ({roundBraces}) => {
     if (isObject$7(roundBraces))
         return {
             ...ROUND_BRACES_DEFAULTS,
@@ -60257,13 +57234,7 @@ parseRoundBraces$1.parseRoundBraces = ({roundBraces}) => {
     return ROUND_BRACES_DEFAULTS;
 };
 
-parseRoundBraces$1.ROUND_BRACES_DISABLED = ROUND_BRACES_DISABLED;
-parseRoundBraces$1.ROUND_BRACES_ENABLED = ROUND_BRACES_ENABLED;
-parseRoundBraces$1.ROUND_BRACES_DEFAULTS = ROUND_BRACES_DEFAULTS;
-
-var parseQuotes$1 = {};
-
-parseQuotes$1.parseQuotes = ({quote}) => {
+const parseQuotes = ({quote}) => {
     if (quote === '"')
         return {
             escapeSingleQuote: false,
@@ -60276,10 +57247,7 @@ parseQuotes$1.parseQuotes = ({quote}) => {
     };
 };
 
-const {parseRoundBraces} = parseRoundBraces$1;
-const {parseQuotes} = parseQuotes$1;
-
-overrides.parseOverrides = (overrides = {}) => {
+const parseOverrides = (overrides = {}) => {
     const {
         format,
         semantics,
@@ -60321,27 +57289,6 @@ const initSemantics = (format, semantics = {}) => ({
     roundBraces: parseRoundBraces(semantics),
 });
 
-const fullstore$2 = fullstore$3;
-
-const babelTraverse$2 = bundle$1.traverse;
-const {TYPES: TYPES$2} = types$19;
-const baseVisitors = visitors$2;
-
-const {
-    maybeFile,
-    maybeVisitor: maybeVisitor$1,
-    maybeThrow,
-} = maybe;
-
-const {createDebug: createDebug$b, createLog} = debug$8;
-const {maybeMarkAfter} = mark;
-
-const {
-    parseLeadingComments,
-    parseTrailingComments,
-} = comment;
-
-const {parseOverrides} = overrides;
 const isObject$6 = (a) => a && typeof a === 'object';
 const {round} = Math;
 const isString$b = (a) => typeof a === 'string';
@@ -60359,7 +57306,7 @@ const createAddToken = (tokens) => {
     };
 };
 
-tokenize$2.tokenize = (ast, overrides) => {
+const tokenize$1 = (ast, overrides) => {
     const {
         visitors,
         format,
@@ -60368,18 +57315,18 @@ tokenize$2.tokenize = (ast, overrides) => {
     
     const tokens = [];
     const addToken = createAddToken(tokens);
-    const debug = createDebug$b(tokens);
+    const debug = createDebug$5(tokens);
     
     const write = (value) => {
         addToken({
-            type: TYPES$2.TOKEN,
+            type: TYPES$3.TOKEN,
             value,
         });
     };
     
     const indent = () => {
         addToken({
-            type: TYPES$2.INDENT,
+            type: TYPES$3.INDENT,
             value: printIndent(i, format.indent),
         });
     };
@@ -60392,7 +57339,7 @@ tokenize$2.tokenize = (ast, overrides) => {
     
     const newline = () => {
         addToken({
-            type: TYPES$2.NEWLINE,
+            type: TYPES$3.NEWLINE,
             value: format.newline,
         });
     };
@@ -60416,7 +57363,7 @@ tokenize$2.tokenize = (ast, overrides) => {
     
     const space = () => {
         addToken({
-            type: TYPES$2.SPACE,
+            type: TYPES$3.SPACE,
             value: format.space,
         });
     };
@@ -60433,21 +57380,21 @@ tokenize$2.tokenize = (ast, overrides) => {
     
     const splitter = () => {
         addToken({
-            type: TYPES$2.SPLITTER,
+            type: TYPES$3.SPLITTER,
             value: format.splitter,
         });
     };
     
     const quote = () => {
         addToken({
-            type: TYPES$2.QUOTE,
+            type: TYPES$3.QUOTE,
             value: format.quote,
         });
     };
     
     const endOfFile = () => {
         addToken({
-            type: TYPES$2.END_OF_FILE,
+            type: TYPES$3.END_OF_FILE,
             value: format.endOfFile,
         });
     };
@@ -60501,7 +57448,7 @@ tokenize$2.tokenize = (ast, overrides) => {
     if (ast.parentPath)
         pathTraverse(ast, traverse);
     else
-        babelTraverse$2(maybeFile(ast), {
+        traverse3$1(maybeFile(ast), {
             Program(path) {
                 traverse(path);
                 path.stop();
@@ -60551,7 +57498,7 @@ tokenize$2.tokenize = (ast, overrides) => {
         });
         
         // this is main thing
-        maybeVisitor$1(currentTraverse, path, printer, semantics);
+        maybeVisitor(currentTraverse, path, printer, semantics);
         parseTrailingComments(path, printer, semantics, {
             currentTraverse,
         });
@@ -60607,11 +57554,7 @@ function pathTraverse(ast, traverse) {
     });
 }
 
-var printTokens$1 = {};
-
-var cook$1 = {};
-
-cook$1.cook = (tokens) => {
+const cook = (tokens) => {
     const cookedTokens = [];
     
     for (const {value} of tokens) {
@@ -60621,14 +57564,10 @@ cook$1.cook = (tokens) => {
     return cookedTokens;
 };
 
-const {cook} = cook$1;
-
-printTokens$1.printTokens = (tokens) => {
+const printTokens = (tokens) => {
     const cookedTokens = cook(tokens);
     return cookedTokens.join('');
 };
-
-var json$1 = {};
 
 var json = {};
 
@@ -60654,9 +57593,9 @@ var removeBlankLines$1 = function removeBlankLines(input) {
   return input.replace(blankLines, "");
 };
 
-var lib$1 = removeBlankLines$1;
+var lib = removeBlankLines$1;
 
-const removeBlankLines = lib$1;
+const removeBlankLines = lib;
 
 const cut$1 = (a) => a.slice(0, a.indexOf('('));
 const createPrefix = (name) => {
@@ -60671,39 +57610,39 @@ const maybeNewline = (a) => a.at(-1) === '\n' ? a : `${a}\n`;
 
 const __json_name = '__putout_processor_json';
 const __yaml_name = '__putout_processor_yaml';
-const __filesystem_name$3 = '__putout_processor_filesystem';
+const __filesystem_name$2 = '__putout_processor_filesystem';
 const __ignore_name = '__putout_processor_ignore';
 
 const __json = `${__json_name}(__object)`;
 const __yaml = `${__yaml_name}(__object)`;
-const __filesystem = `${__filesystem_name$3}(__object)`;
+const __filesystem = `${__filesystem_name$2}(__object)`;
 const __ignore = `${__ignore_name}(__array)`;
 
 const TYPES$1 = [
     __json_name,
     __yaml_name,
-    __filesystem_name$3,
+    __filesystem_name$2,
     __ignore_name,
 ];
 
-json.__json = __json;
-json.__yaml = __yaml;
-json.__filesystem = __filesystem;
-json.__ignore = __ignore;
+var __json_1 = json.__json = __json;
+var __yaml_1 = json.__yaml = __yaml;
+var __filesystem_1 = json.__filesystem = __filesystem;
+var __ignore_1 = json.__ignore = __ignore;
 
-json.__json_name = __json_name;
-json.__yaml_name = __yaml_name;
-json.__filesystem_name = __filesystem_name$3;
-json.__ignore_name = __ignore_name;
+var __json_name_1 = json.__json_name = __json_name;
+var __yaml_name_1 = json.__yaml_name = __yaml_name;
+var __filesystem_name_1 = json.__filesystem_name = __filesystem_name$2;
+var __ignore_name_1 = json.__ignore_name = __ignore_name;
 
-json.toJS = (source, name = __json) => {
+var toJS$1 = json.toJS = (source, name = __json) => {
     const prefix = createPrefix(name);
     const suffix = createSuffix();
     
     return `${prefix}${source}${suffix}`;
 };
 
-json.fromJS = (source, name = __json) => {
+var fromJS$1 = json.fromJS = (source, name = __json) => {
     source = maybeNewline(source);
     const shortName = cut$1(name);
     
@@ -60717,7 +57656,7 @@ json.fromJS = (source, name = __json) => {
     return maybeNewline(removeBlankLines(sliced));
 };
 
-json.isJSON = (source) => {
+var isJSON = json.isJSON = (source) => {
     for (const type of TYPES$1) {
         if (!source.indexOf(type))
             return true;
@@ -60726,15 +57665,12 @@ json.isJSON = (source) => {
     return false;
 };
 
-const {types: types$q} = bundle$1;
-const {isJSON} = json;
-
 const {
     isCallExpression: isCallExpression$4,
     isIdentifier: isIdentifier$7,
-} = types$q;
+} = lib_exports$1;
 
-json$1.maybeJSON = (ast, overrides) => {
+const maybeJSON = (ast, overrides) => {
     if (isASTJSON(ast))
         return {
             ...overrides,
@@ -60777,14 +57713,7 @@ function isASTJSON(ast) {
     return isJSON(callee.name);
 }
 
-const {tokenize: tokenize$1} = tokenize$2;
-const {printTokens} = printTokens$1;
-const {maybeJSON} = json$1;
-
-const {maybeVisitor} = maybe;
-const visitors$1 = visitors$2;
-
-printer.print = (ast, overrides = {}) => {
+const print$3 = (ast, overrides = {}) => {
     check$d(ast);
     
     const options = maybeJSON(ast, overrides);
@@ -60793,15 +57722,10 @@ printer.print = (ast, overrides = {}) => {
     return printTokens(tokens);
 };
 
-printer.visitors = visitors$1;
-printer.maybeVisitor = maybeVisitor;
-
 function check$d(ast) {
     if (typeof ast !== 'object')
         throw Error('☝️Looks like ast not an object');
 }
-
-var babel$2 = {};
 
 const isString$a = (a) => typeof a === 'string';
 
@@ -60855,20 +57779,19 @@ function check$c(str) {
         throw Error('str should be a string!');
 }
 
-const {generate: generate$6} = bundle$1;
-const align = alignSpaces;
+var align = alignSpaces.default;
 
-const defaultOptions$7 = {
+const defaultOptions$5 = {
     alignSpaces: true,
 };
 
-babel$2.print = (ast, options) => {
+const print$2 = (ast, options) => {
     const {source, alignSpaces} = {
-        ...defaultOptions$7,
+        ...defaultOptions$5,
         ...options,
     };
     
-    let {code} = generate$6(
+    let {code} = generate$2(
         ast,
         source && {
             experimental_preserveFormat: true,
@@ -60888,28 +57811,1998 @@ babel$2.print = (ast, options) => {
     return align(code);
 };
 
-const putoutPrinter = printer;
-const babelPrinter = babel$2;
+const {isArray: isArray$c} = Array;
 
-const {isArray: isArray$b} = Array;
+const maybeArray$4 = (a) => isArray$c(a) ? a : [a, {}];
 
-const maybeArray$7 = (a) => isArray$b(a) ? a : [a, {}];
-
-var print$4 = (ast, options = {}) => {
-    const [printer = 'putout', printerOptions] = maybeArray$7(options.printer);
+const print$1 = (ast, options = {}) => {
+    const [printer = 'putout', printerOptions] = maybeArray$4(options.printer);
     
     if (printer === 'babel')
-        return babelPrinter.print(ast, {
+        return print$2(ast, {
             ...options,
             ...printerOptions,
         });
     
-    return putoutPrinter.print(ast, printerOptions);
+    return print$3(ast, printerOptions);
 };
 
-print$4.default;
+var lookup = [];
+var revLookup = [];
+var Arr = typeof Uint8Array !== 'undefined' ? Uint8Array : Array;
+var inited = false;
+function init$3 () {
+  inited = true;
+  var code = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+  for (var i = 0, len = code.length; i < len; ++i) {
+    lookup[i] = code[i];
+    revLookup[code.charCodeAt(i)] = i;
+  }
 
-var estreeToBabel$1 = {};
+  revLookup['-'.charCodeAt(0)] = 62;
+  revLookup['_'.charCodeAt(0)] = 63;
+}
+
+function toByteArray (b64) {
+  if (!inited) {
+    init$3();
+  }
+  var i, j, l, tmp, placeHolders, arr;
+  var len = b64.length;
+
+  if (len % 4 > 0) {
+    throw new Error('Invalid string. Length must be a multiple of 4')
+  }
+
+  // the number of equal signs (place holders)
+  // if there are two placeholders, than the two characters before it
+  // represent one byte
+  // if there is only one, then the three characters before it represent 2 bytes
+  // this is just a cheap hack to not do indexOf twice
+  placeHolders = b64[len - 2] === '=' ? 2 : b64[len - 1] === '=' ? 1 : 0;
+
+  // base64 is 4/3 + up to two characters of the original data
+  arr = new Arr(len * 3 / 4 - placeHolders);
+
+  // if there are placeholders, only get up to the last complete 4 chars
+  l = placeHolders > 0 ? len - 4 : len;
+
+  var L = 0;
+
+  for (i = 0, j = 0; i < l; i += 4, j += 3) {
+    tmp = (revLookup[b64.charCodeAt(i)] << 18) | (revLookup[b64.charCodeAt(i + 1)] << 12) | (revLookup[b64.charCodeAt(i + 2)] << 6) | revLookup[b64.charCodeAt(i + 3)];
+    arr[L++] = (tmp >> 16) & 0xFF;
+    arr[L++] = (tmp >> 8) & 0xFF;
+    arr[L++] = tmp & 0xFF;
+  }
+
+  if (placeHolders === 2) {
+    tmp = (revLookup[b64.charCodeAt(i)] << 2) | (revLookup[b64.charCodeAt(i + 1)] >> 4);
+    arr[L++] = tmp & 0xFF;
+  } else if (placeHolders === 1) {
+    tmp = (revLookup[b64.charCodeAt(i)] << 10) | (revLookup[b64.charCodeAt(i + 1)] << 4) | (revLookup[b64.charCodeAt(i + 2)] >> 2);
+    arr[L++] = (tmp >> 8) & 0xFF;
+    arr[L++] = tmp & 0xFF;
+  }
+
+  return arr
+}
+
+function tripletToBase64 (num) {
+  return lookup[num >> 18 & 0x3F] + lookup[num >> 12 & 0x3F] + lookup[num >> 6 & 0x3F] + lookup[num & 0x3F]
+}
+
+function encodeChunk (uint8, start, end) {
+  var tmp;
+  var output = [];
+  for (var i = start; i < end; i += 3) {
+    tmp = (uint8[i] << 16) + (uint8[i + 1] << 8) + (uint8[i + 2]);
+    output.push(tripletToBase64(tmp));
+  }
+  return output.join('')
+}
+
+function fromByteArray (uint8) {
+  if (!inited) {
+    init$3();
+  }
+  var tmp;
+  var len = uint8.length;
+  var extraBytes = len % 3; // if we have 1 byte left, pad 2 bytes
+  var output = '';
+  var parts = [];
+  var maxChunkLength = 16383; // must be multiple of 3
+
+  // go through the array every three bytes, we'll deal with trailing stuff later
+  for (var i = 0, len2 = len - extraBytes; i < len2; i += maxChunkLength) {
+    parts.push(encodeChunk(uint8, i, (i + maxChunkLength) > len2 ? len2 : (i + maxChunkLength)));
+  }
+
+  // pad the end with zeros, but make sure to not forget the extra bytes
+  if (extraBytes === 1) {
+    tmp = uint8[len - 1];
+    output += lookup[tmp >> 2];
+    output += lookup[(tmp << 4) & 0x3F];
+    output += '==';
+  } else if (extraBytes === 2) {
+    tmp = (uint8[len - 2] << 8) + (uint8[len - 1]);
+    output += lookup[tmp >> 10];
+    output += lookup[(tmp >> 4) & 0x3F];
+    output += lookup[(tmp << 2) & 0x3F];
+    output += '=';
+  }
+
+  parts.push(output);
+
+  return parts.join('')
+}
+
+function read (buffer, offset, isLE, mLen, nBytes) {
+  var e, m;
+  var eLen = nBytes * 8 - mLen - 1;
+  var eMax = (1 << eLen) - 1;
+  var eBias = eMax >> 1;
+  var nBits = -7;
+  var i = isLE ? (nBytes - 1) : 0;
+  var d = isLE ? -1 : 1;
+  var s = buffer[offset + i];
+
+  i += d;
+
+  e = s & ((1 << (-nBits)) - 1);
+  s >>= (-nBits);
+  nBits += eLen;
+  for (; nBits > 0; e = e * 256 + buffer[offset + i], i += d, nBits -= 8) {}
+
+  m = e & ((1 << (-nBits)) - 1);
+  e >>= (-nBits);
+  nBits += mLen;
+  for (; nBits > 0; m = m * 256 + buffer[offset + i], i += d, nBits -= 8) {}
+
+  if (e === 0) {
+    e = 1 - eBias;
+  } else if (e === eMax) {
+    return m ? NaN : ((s ? -1 : 1) * Infinity)
+  } else {
+    m = m + Math.pow(2, mLen);
+    e = e - eBias;
+  }
+  return (s ? -1 : 1) * m * Math.pow(2, e - mLen)
+}
+
+function write (buffer, value, offset, isLE, mLen, nBytes) {
+  var e, m, c;
+  var eLen = nBytes * 8 - mLen - 1;
+  var eMax = (1 << eLen) - 1;
+  var eBias = eMax >> 1;
+  var rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0);
+  var i = isLE ? 0 : (nBytes - 1);
+  var d = isLE ? 1 : -1;
+  var s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0;
+
+  value = Math.abs(value);
+
+  if (isNaN(value) || value === Infinity) {
+    m = isNaN(value) ? 1 : 0;
+    e = eMax;
+  } else {
+    e = Math.floor(Math.log(value) / Math.LN2);
+    if (value * (c = Math.pow(2, -e)) < 1) {
+      e--;
+      c *= 2;
+    }
+    if (e + eBias >= 1) {
+      value += rt / c;
+    } else {
+      value += rt * Math.pow(2, 1 - eBias);
+    }
+    if (value * c >= 2) {
+      e++;
+      c /= 2;
+    }
+
+    if (e + eBias >= eMax) {
+      m = 0;
+      e = eMax;
+    } else if (e + eBias >= 1) {
+      m = (value * c - 1) * Math.pow(2, mLen);
+      e = e + eBias;
+    } else {
+      m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen);
+      e = 0;
+    }
+  }
+
+  for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8) {}
+
+  e = (e << mLen) | m;
+  eLen += mLen;
+  for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8) {}
+
+  buffer[offset + i - d] |= s * 128;
+}
+
+var toString = {}.toString;
+
+var isArray$b = Array.isArray || function (arr) {
+  return toString.call(arr) == '[object Array]';
+};
+
+/*!
+ * The buffer module from node.js, for the browser.
+ *
+ * @author   Feross Aboukhadijeh <feross@feross.org> <http://feross.org>
+ * @license  MIT
+ */
+/* eslint-disable no-proto */
+
+
+var INSPECT_MAX_BYTES = 50;
+
+/**
+ * If `Buffer.TYPED_ARRAY_SUPPORT`:
+ *   === true    Use Uint8Array implementation (fastest)
+ *   === false   Use Object implementation (most compatible, even IE6)
+ *
+ * Browsers that support typed arrays are IE 10+, Firefox 4+, Chrome 7+, Safari 5.1+,
+ * Opera 11.6+, iOS 4.2+.
+ *
+ * Due to various browser bugs, sometimes the Object implementation will be used even
+ * when the browser supports typed arrays.
+ *
+ * Note:
+ *
+ *   - Firefox 4-29 lacks support for adding new properties to `Uint8Array` instances,
+ *     See: https://bugzilla.mozilla.org/show_bug.cgi?id=695438.
+ *
+ *   - Chrome 9-10 is missing the `TypedArray.prototype.subarray` function.
+ *
+ *   - IE10 has a broken `TypedArray.prototype.subarray` function which returns arrays of
+ *     incorrect length in some situations.
+
+ * We detect these buggy browsers and set `Buffer.TYPED_ARRAY_SUPPORT` to `false` so they
+ * get the Object implementation, which is slower but behaves correctly.
+ */
+Buffer$1.TYPED_ARRAY_SUPPORT = global$1.TYPED_ARRAY_SUPPORT !== undefined
+  ? global$1.TYPED_ARRAY_SUPPORT
+  : true;
+
+/*
+ * Export kMaxLength after typed array support is determined.
+ */
+kMaxLength();
+
+function kMaxLength () {
+  return Buffer$1.TYPED_ARRAY_SUPPORT
+    ? 0x7fffffff
+    : 0x3fffffff
+}
+
+function createBuffer (that, length) {
+  if (kMaxLength() < length) {
+    throw new RangeError('Invalid typed array length')
+  }
+  if (Buffer$1.TYPED_ARRAY_SUPPORT) {
+    // Return an augmented `Uint8Array` instance, for best performance
+    that = new Uint8Array(length);
+    that.__proto__ = Buffer$1.prototype;
+  } else {
+    // Fallback: Return an object instance of the Buffer class
+    if (that === null) {
+      that = new Buffer$1(length);
+    }
+    that.length = length;
+  }
+
+  return that
+}
+
+/**
+ * The Buffer constructor returns instances of `Uint8Array` that have their
+ * prototype changed to `Buffer.prototype`. Furthermore, `Buffer` is a subclass of
+ * `Uint8Array`, so the returned instances will have all the node `Buffer` methods
+ * and the `Uint8Array` methods. Square bracket notation works as expected -- it
+ * returns a single octet.
+ *
+ * The `Uint8Array` prototype remains unmodified.
+ */
+
+function Buffer$1 (arg, encodingOrOffset, length) {
+  if (!Buffer$1.TYPED_ARRAY_SUPPORT && !(this instanceof Buffer$1)) {
+    return new Buffer$1(arg, encodingOrOffset, length)
+  }
+
+  // Common case.
+  if (typeof arg === 'number') {
+    if (typeof encodingOrOffset === 'string') {
+      throw new Error(
+        'If encoding is specified then the first argument must be a string'
+      )
+    }
+    return allocUnsafe(this, arg)
+  }
+  return from(this, arg, encodingOrOffset, length)
+}
+
+Buffer$1.poolSize = 8192; // not used by this implementation
+
+// TODO: Legacy, not needed anymore. Remove in next major version.
+Buffer$1._augment = function (arr) {
+  arr.__proto__ = Buffer$1.prototype;
+  return arr
+};
+
+function from (that, value, encodingOrOffset, length) {
+  if (typeof value === 'number') {
+    throw new TypeError('"value" argument must not be a number')
+  }
+
+  if (typeof ArrayBuffer !== 'undefined' && value instanceof ArrayBuffer) {
+    return fromArrayBuffer(that, value, encodingOrOffset, length)
+  }
+
+  if (typeof value === 'string') {
+    return fromString(that, value, encodingOrOffset)
+  }
+
+  return fromObject(that, value)
+}
+
+/**
+ * Functionally equivalent to Buffer(arg, encoding) but throws a TypeError
+ * if value is a number.
+ * Buffer.from(str[, encoding])
+ * Buffer.from(array)
+ * Buffer.from(buffer)
+ * Buffer.from(arrayBuffer[, byteOffset[, length]])
+ **/
+Buffer$1.from = function (value, encodingOrOffset, length) {
+  return from(null, value, encodingOrOffset, length)
+};
+
+if (Buffer$1.TYPED_ARRAY_SUPPORT) {
+  Buffer$1.prototype.__proto__ = Uint8Array.prototype;
+  Buffer$1.__proto__ = Uint8Array;
+  if (typeof Symbol !== 'undefined' && Symbol.species &&
+      Buffer$1[Symbol.species] === Buffer$1) ;
+}
+
+function assertSize (size) {
+  if (typeof size !== 'number') {
+    throw new TypeError('"size" argument must be a number')
+  } else if (size < 0) {
+    throw new RangeError('"size" argument must not be negative')
+  }
+}
+
+function alloc (that, size, fill, encoding) {
+  assertSize(size);
+  if (size <= 0) {
+    return createBuffer(that, size)
+  }
+  if (fill !== undefined) {
+    // Only pay attention to encoding if it's a string. This
+    // prevents accidentally sending in a number that would
+    // be interpretted as a start offset.
+    return typeof encoding === 'string'
+      ? createBuffer(that, size).fill(fill, encoding)
+      : createBuffer(that, size).fill(fill)
+  }
+  return createBuffer(that, size)
+}
+
+/**
+ * Creates a new filled Buffer instance.
+ * alloc(size[, fill[, encoding]])
+ **/
+Buffer$1.alloc = function (size, fill, encoding) {
+  return alloc(null, size, fill, encoding)
+};
+
+function allocUnsafe (that, size) {
+  assertSize(size);
+  that = createBuffer(that, size < 0 ? 0 : checked(size) | 0);
+  if (!Buffer$1.TYPED_ARRAY_SUPPORT) {
+    for (var i = 0; i < size; ++i) {
+      that[i] = 0;
+    }
+  }
+  return that
+}
+
+/**
+ * Equivalent to Buffer(num), by default creates a non-zero-filled Buffer instance.
+ * */
+Buffer$1.allocUnsafe = function (size) {
+  return allocUnsafe(null, size)
+};
+/**
+ * Equivalent to SlowBuffer(num), by default creates a non-zero-filled Buffer instance.
+ */
+Buffer$1.allocUnsafeSlow = function (size) {
+  return allocUnsafe(null, size)
+};
+
+function fromString (that, string, encoding) {
+  if (typeof encoding !== 'string' || encoding === '') {
+    encoding = 'utf8';
+  }
+
+  if (!Buffer$1.isEncoding(encoding)) {
+    throw new TypeError('"encoding" must be a valid string encoding')
+  }
+
+  var length = byteLength(string, encoding) | 0;
+  that = createBuffer(that, length);
+
+  var actual = that.write(string, encoding);
+
+  if (actual !== length) {
+    // Writing a hex string, for example, that contains invalid characters will
+    // cause everything after the first invalid character to be ignored. (e.g.
+    // 'abxxcd' will be treated as 'ab')
+    that = that.slice(0, actual);
+  }
+
+  return that
+}
+
+function fromArrayLike (that, array) {
+  var length = array.length < 0 ? 0 : checked(array.length) | 0;
+  that = createBuffer(that, length);
+  for (var i = 0; i < length; i += 1) {
+    that[i] = array[i] & 255;
+  }
+  return that
+}
+
+function fromArrayBuffer (that, array, byteOffset, length) {
+  array.byteLength; // this throws if `array` is not a valid ArrayBuffer
+
+  if (byteOffset < 0 || array.byteLength < byteOffset) {
+    throw new RangeError('\'offset\' is out of bounds')
+  }
+
+  if (array.byteLength < byteOffset + (length || 0)) {
+    throw new RangeError('\'length\' is out of bounds')
+  }
+
+  if (byteOffset === undefined && length === undefined) {
+    array = new Uint8Array(array);
+  } else if (length === undefined) {
+    array = new Uint8Array(array, byteOffset);
+  } else {
+    array = new Uint8Array(array, byteOffset, length);
+  }
+
+  if (Buffer$1.TYPED_ARRAY_SUPPORT) {
+    // Return an augmented `Uint8Array` instance, for best performance
+    that = array;
+    that.__proto__ = Buffer$1.prototype;
+  } else {
+    // Fallback: Return an object instance of the Buffer class
+    that = fromArrayLike(that, array);
+  }
+  return that
+}
+
+function fromObject (that, obj) {
+  if (internalIsBuffer(obj)) {
+    var len = checked(obj.length) | 0;
+    that = createBuffer(that, len);
+
+    if (that.length === 0) {
+      return that
+    }
+
+    obj.copy(that, 0, 0, len);
+    return that
+  }
+
+  if (obj) {
+    if ((typeof ArrayBuffer !== 'undefined' &&
+        obj.buffer instanceof ArrayBuffer) || 'length' in obj) {
+      if (typeof obj.length !== 'number' || isnan(obj.length)) {
+        return createBuffer(that, 0)
+      }
+      return fromArrayLike(that, obj)
+    }
+
+    if (obj.type === 'Buffer' && isArray$b(obj.data)) {
+      return fromArrayLike(that, obj.data)
+    }
+  }
+
+  throw new TypeError('First argument must be a string, Buffer, ArrayBuffer, Array, or array-like object.')
+}
+
+function checked (length) {
+  // Note: cannot use `length < kMaxLength()` here because that fails when
+  // length is NaN (which is otherwise coerced to zero.)
+  if (length >= kMaxLength()) {
+    throw new RangeError('Attempt to allocate Buffer larger than maximum ' +
+                         'size: 0x' + kMaxLength().toString(16) + ' bytes')
+  }
+  return length | 0
+}
+Buffer$1.isBuffer = isBuffer;
+function internalIsBuffer (b) {
+  return !!(b != null && b._isBuffer)
+}
+
+Buffer$1.compare = function compare (a, b) {
+  if (!internalIsBuffer(a) || !internalIsBuffer(b)) {
+    throw new TypeError('Arguments must be Buffers')
+  }
+
+  if (a === b) return 0
+
+  var x = a.length;
+  var y = b.length;
+
+  for (var i = 0, len = Math.min(x, y); i < len; ++i) {
+    if (a[i] !== b[i]) {
+      x = a[i];
+      y = b[i];
+      break
+    }
+  }
+
+  if (x < y) return -1
+  if (y < x) return 1
+  return 0
+};
+
+Buffer$1.isEncoding = function isEncoding (encoding) {
+  switch (String(encoding).toLowerCase()) {
+    case 'hex':
+    case 'utf8':
+    case 'utf-8':
+    case 'ascii':
+    case 'latin1':
+    case 'binary':
+    case 'base64':
+    case 'ucs2':
+    case 'ucs-2':
+    case 'utf16le':
+    case 'utf-16le':
+      return true
+    default:
+      return false
+  }
+};
+
+Buffer$1.concat = function concat (list, length) {
+  if (!isArray$b(list)) {
+    throw new TypeError('"list" argument must be an Array of Buffers')
+  }
+
+  if (list.length === 0) {
+    return Buffer$1.alloc(0)
+  }
+
+  var i;
+  if (length === undefined) {
+    length = 0;
+    for (i = 0; i < list.length; ++i) {
+      length += list[i].length;
+    }
+  }
+
+  var buffer = Buffer$1.allocUnsafe(length);
+  var pos = 0;
+  for (i = 0; i < list.length; ++i) {
+    var buf = list[i];
+    if (!internalIsBuffer(buf)) {
+      throw new TypeError('"list" argument must be an Array of Buffers')
+    }
+    buf.copy(buffer, pos);
+    pos += buf.length;
+  }
+  return buffer
+};
+
+function byteLength (string, encoding) {
+  if (internalIsBuffer(string)) {
+    return string.length
+  }
+  if (typeof ArrayBuffer !== 'undefined' && typeof ArrayBuffer.isView === 'function' &&
+      (ArrayBuffer.isView(string) || string instanceof ArrayBuffer)) {
+    return string.byteLength
+  }
+  if (typeof string !== 'string') {
+    string = '' + string;
+  }
+
+  var len = string.length;
+  if (len === 0) return 0
+
+  // Use a for loop to avoid recursion
+  var loweredCase = false;
+  for (;;) {
+    switch (encoding) {
+      case 'ascii':
+      case 'latin1':
+      case 'binary':
+        return len
+      case 'utf8':
+      case 'utf-8':
+      case undefined:
+        return utf8ToBytes(string).length
+      case 'ucs2':
+      case 'ucs-2':
+      case 'utf16le':
+      case 'utf-16le':
+        return len * 2
+      case 'hex':
+        return len >>> 1
+      case 'base64':
+        return base64ToBytes(string).length
+      default:
+        if (loweredCase) return utf8ToBytes(string).length // assume utf8
+        encoding = ('' + encoding).toLowerCase();
+        loweredCase = true;
+    }
+  }
+}
+Buffer$1.byteLength = byteLength;
+
+function slowToString (encoding, start, end) {
+  var loweredCase = false;
+
+  // No need to verify that "this.length <= MAX_UINT32" since it's a read-only
+  // property of a typed array.
+
+  // This behaves neither like String nor Uint8Array in that we set start/end
+  // to their upper/lower bounds if the value passed is out of range.
+  // undefined is handled specially as per ECMA-262 6th Edition,
+  // Section 13.3.3.7 Runtime Semantics: KeyedBindingInitialization.
+  if (start === undefined || start < 0) {
+    start = 0;
+  }
+  // Return early if start > this.length. Done here to prevent potential uint32
+  // coercion fail below.
+  if (start > this.length) {
+    return ''
+  }
+
+  if (end === undefined || end > this.length) {
+    end = this.length;
+  }
+
+  if (end <= 0) {
+    return ''
+  }
+
+  // Force coersion to uint32. This will also coerce falsey/NaN values to 0.
+  end >>>= 0;
+  start >>>= 0;
+
+  if (end <= start) {
+    return ''
+  }
+
+  if (!encoding) encoding = 'utf8';
+
+  while (true) {
+    switch (encoding) {
+      case 'hex':
+        return hexSlice(this, start, end)
+
+      case 'utf8':
+      case 'utf-8':
+        return utf8Slice(this, start, end)
+
+      case 'ascii':
+        return asciiSlice(this, start, end)
+
+      case 'latin1':
+      case 'binary':
+        return latin1Slice(this, start, end)
+
+      case 'base64':
+        return base64Slice(this, start, end)
+
+      case 'ucs2':
+      case 'ucs-2':
+      case 'utf16le':
+      case 'utf-16le':
+        return utf16leSlice(this, start, end)
+
+      default:
+        if (loweredCase) throw new TypeError('Unknown encoding: ' + encoding)
+        encoding = (encoding + '').toLowerCase();
+        loweredCase = true;
+    }
+  }
+}
+
+// The property is used by `Array.isArray` and `is-buffer` (in Safari 5-7) to detect
+// Buffer instances.
+Buffer$1.prototype._isBuffer = true;
+
+function swap (b, n, m) {
+  var i = b[n];
+  b[n] = b[m];
+  b[m] = i;
+}
+
+Buffer$1.prototype.swap16 = function swap16 () {
+  var len = this.length;
+  if (len % 2 !== 0) {
+    throw new RangeError('Buffer size must be a multiple of 16-bits')
+  }
+  for (var i = 0; i < len; i += 2) {
+    swap(this, i, i + 1);
+  }
+  return this
+};
+
+Buffer$1.prototype.swap32 = function swap32 () {
+  var len = this.length;
+  if (len % 4 !== 0) {
+    throw new RangeError('Buffer size must be a multiple of 32-bits')
+  }
+  for (var i = 0; i < len; i += 4) {
+    swap(this, i, i + 3);
+    swap(this, i + 1, i + 2);
+  }
+  return this
+};
+
+Buffer$1.prototype.swap64 = function swap64 () {
+  var len = this.length;
+  if (len % 8 !== 0) {
+    throw new RangeError('Buffer size must be a multiple of 64-bits')
+  }
+  for (var i = 0; i < len; i += 8) {
+    swap(this, i, i + 7);
+    swap(this, i + 1, i + 6);
+    swap(this, i + 2, i + 5);
+    swap(this, i + 3, i + 4);
+  }
+  return this
+};
+
+Buffer$1.prototype.toString = function toString () {
+  var length = this.length | 0;
+  if (length === 0) return ''
+  if (arguments.length === 0) return utf8Slice(this, 0, length)
+  return slowToString.apply(this, arguments)
+};
+
+Buffer$1.prototype.equals = function equals (b) {
+  if (!internalIsBuffer(b)) throw new TypeError('Argument must be a Buffer')
+  if (this === b) return true
+  return Buffer$1.compare(this, b) === 0
+};
+
+Buffer$1.prototype.inspect = function inspect () {
+  var str = '';
+  var max = INSPECT_MAX_BYTES;
+  if (this.length > 0) {
+    str = this.toString('hex', 0, max).match(/.{2}/g).join(' ');
+    if (this.length > max) str += ' ... ';
+  }
+  return '<Buffer ' + str + '>'
+};
+
+Buffer$1.prototype.compare = function compare (target, start, end, thisStart, thisEnd) {
+  if (!internalIsBuffer(target)) {
+    throw new TypeError('Argument must be a Buffer')
+  }
+
+  if (start === undefined) {
+    start = 0;
+  }
+  if (end === undefined) {
+    end = target ? target.length : 0;
+  }
+  if (thisStart === undefined) {
+    thisStart = 0;
+  }
+  if (thisEnd === undefined) {
+    thisEnd = this.length;
+  }
+
+  if (start < 0 || end > target.length || thisStart < 0 || thisEnd > this.length) {
+    throw new RangeError('out of range index')
+  }
+
+  if (thisStart >= thisEnd && start >= end) {
+    return 0
+  }
+  if (thisStart >= thisEnd) {
+    return -1
+  }
+  if (start >= end) {
+    return 1
+  }
+
+  start >>>= 0;
+  end >>>= 0;
+  thisStart >>>= 0;
+  thisEnd >>>= 0;
+
+  if (this === target) return 0
+
+  var x = thisEnd - thisStart;
+  var y = end - start;
+  var len = Math.min(x, y);
+
+  var thisCopy = this.slice(thisStart, thisEnd);
+  var targetCopy = target.slice(start, end);
+
+  for (var i = 0; i < len; ++i) {
+    if (thisCopy[i] !== targetCopy[i]) {
+      x = thisCopy[i];
+      y = targetCopy[i];
+      break
+    }
+  }
+
+  if (x < y) return -1
+  if (y < x) return 1
+  return 0
+};
+
+// Finds either the first index of `val` in `buffer` at offset >= `byteOffset`,
+// OR the last index of `val` in `buffer` at offset <= `byteOffset`.
+//
+// Arguments:
+// - buffer - a Buffer to search
+// - val - a string, Buffer, or number
+// - byteOffset - an index into `buffer`; will be clamped to an int32
+// - encoding - an optional encoding, relevant is val is a string
+// - dir - true for indexOf, false for lastIndexOf
+function bidirectionalIndexOf (buffer, val, byteOffset, encoding, dir) {
+  // Empty buffer means no match
+  if (buffer.length === 0) return -1
+
+  // Normalize byteOffset
+  if (typeof byteOffset === 'string') {
+    encoding = byteOffset;
+    byteOffset = 0;
+  } else if (byteOffset > 0x7fffffff) {
+    byteOffset = 0x7fffffff;
+  } else if (byteOffset < -2147483648) {
+    byteOffset = -2147483648;
+  }
+  byteOffset = +byteOffset;  // Coerce to Number.
+  if (isNaN(byteOffset)) {
+    // byteOffset: it it's undefined, null, NaN, "foo", etc, search whole buffer
+    byteOffset = dir ? 0 : (buffer.length - 1);
+  }
+
+  // Normalize byteOffset: negative offsets start from the end of the buffer
+  if (byteOffset < 0) byteOffset = buffer.length + byteOffset;
+  if (byteOffset >= buffer.length) {
+    if (dir) return -1
+    else byteOffset = buffer.length - 1;
+  } else if (byteOffset < 0) {
+    if (dir) byteOffset = 0;
+    else return -1
+  }
+
+  // Normalize val
+  if (typeof val === 'string') {
+    val = Buffer$1.from(val, encoding);
+  }
+
+  // Finally, search either indexOf (if dir is true) or lastIndexOf
+  if (internalIsBuffer(val)) {
+    // Special case: looking for empty string/buffer always fails
+    if (val.length === 0) {
+      return -1
+    }
+    return arrayIndexOf(buffer, val, byteOffset, encoding, dir)
+  } else if (typeof val === 'number') {
+    val = val & 0xFF; // Search for a byte value [0-255]
+    if (Buffer$1.TYPED_ARRAY_SUPPORT &&
+        typeof Uint8Array.prototype.indexOf === 'function') {
+      if (dir) {
+        return Uint8Array.prototype.indexOf.call(buffer, val, byteOffset)
+      } else {
+        return Uint8Array.prototype.lastIndexOf.call(buffer, val, byteOffset)
+      }
+    }
+    return arrayIndexOf(buffer, [ val ], byteOffset, encoding, dir)
+  }
+
+  throw new TypeError('val must be string, number or Buffer')
+}
+
+function arrayIndexOf (arr, val, byteOffset, encoding, dir) {
+  var indexSize = 1;
+  var arrLength = arr.length;
+  var valLength = val.length;
+
+  if (encoding !== undefined) {
+    encoding = String(encoding).toLowerCase();
+    if (encoding === 'ucs2' || encoding === 'ucs-2' ||
+        encoding === 'utf16le' || encoding === 'utf-16le') {
+      if (arr.length < 2 || val.length < 2) {
+        return -1
+      }
+      indexSize = 2;
+      arrLength /= 2;
+      valLength /= 2;
+      byteOffset /= 2;
+    }
+  }
+
+  function read (buf, i) {
+    if (indexSize === 1) {
+      return buf[i]
+    } else {
+      return buf.readUInt16BE(i * indexSize)
+    }
+  }
+
+  var i;
+  if (dir) {
+    var foundIndex = -1;
+    for (i = byteOffset; i < arrLength; i++) {
+      if (read(arr, i) === read(val, foundIndex === -1 ? 0 : i - foundIndex)) {
+        if (foundIndex === -1) foundIndex = i;
+        if (i - foundIndex + 1 === valLength) return foundIndex * indexSize
+      } else {
+        if (foundIndex !== -1) i -= i - foundIndex;
+        foundIndex = -1;
+      }
+    }
+  } else {
+    if (byteOffset + valLength > arrLength) byteOffset = arrLength - valLength;
+    for (i = byteOffset; i >= 0; i--) {
+      var found = true;
+      for (var j = 0; j < valLength; j++) {
+        if (read(arr, i + j) !== read(val, j)) {
+          found = false;
+          break
+        }
+      }
+      if (found) return i
+    }
+  }
+
+  return -1
+}
+
+Buffer$1.prototype.includes = function includes (val, byteOffset, encoding) {
+  return this.indexOf(val, byteOffset, encoding) !== -1
+};
+
+Buffer$1.prototype.indexOf = function indexOf (val, byteOffset, encoding) {
+  return bidirectionalIndexOf(this, val, byteOffset, encoding, true)
+};
+
+Buffer$1.prototype.lastIndexOf = function lastIndexOf (val, byteOffset, encoding) {
+  return bidirectionalIndexOf(this, val, byteOffset, encoding, false)
+};
+
+function hexWrite (buf, string, offset, length) {
+  offset = Number(offset) || 0;
+  var remaining = buf.length - offset;
+  if (!length) {
+    length = remaining;
+  } else {
+    length = Number(length);
+    if (length > remaining) {
+      length = remaining;
+    }
+  }
+
+  // must be an even number of digits
+  var strLen = string.length;
+  if (strLen % 2 !== 0) throw new TypeError('Invalid hex string')
+
+  if (length > strLen / 2) {
+    length = strLen / 2;
+  }
+  for (var i = 0; i < length; ++i) {
+    var parsed = parseInt(string.substr(i * 2, 2), 16);
+    if (isNaN(parsed)) return i
+    buf[offset + i] = parsed;
+  }
+  return i
+}
+
+function utf8Write (buf, string, offset, length) {
+  return blitBuffer(utf8ToBytes(string, buf.length - offset), buf, offset, length)
+}
+
+function asciiWrite (buf, string, offset, length) {
+  return blitBuffer(asciiToBytes(string), buf, offset, length)
+}
+
+function latin1Write (buf, string, offset, length) {
+  return asciiWrite(buf, string, offset, length)
+}
+
+function base64Write (buf, string, offset, length) {
+  return blitBuffer(base64ToBytes(string), buf, offset, length)
+}
+
+function ucs2Write (buf, string, offset, length) {
+  return blitBuffer(utf16leToBytes(string, buf.length - offset), buf, offset, length)
+}
+
+Buffer$1.prototype.write = function write (string, offset, length, encoding) {
+  // Buffer#write(string)
+  if (offset === undefined) {
+    encoding = 'utf8';
+    length = this.length;
+    offset = 0;
+  // Buffer#write(string, encoding)
+  } else if (length === undefined && typeof offset === 'string') {
+    encoding = offset;
+    length = this.length;
+    offset = 0;
+  // Buffer#write(string, offset[, length][, encoding])
+  } else if (isFinite(offset)) {
+    offset = offset | 0;
+    if (isFinite(length)) {
+      length = length | 0;
+      if (encoding === undefined) encoding = 'utf8';
+    } else {
+      encoding = length;
+      length = undefined;
+    }
+  // legacy write(string, encoding, offset, length) - remove in v0.13
+  } else {
+    throw new Error(
+      'Buffer.write(string, encoding, offset[, length]) is no longer supported'
+    )
+  }
+
+  var remaining = this.length - offset;
+  if (length === undefined || length > remaining) length = remaining;
+
+  if ((string.length > 0 && (length < 0 || offset < 0)) || offset > this.length) {
+    throw new RangeError('Attempt to write outside buffer bounds')
+  }
+
+  if (!encoding) encoding = 'utf8';
+
+  var loweredCase = false;
+  for (;;) {
+    switch (encoding) {
+      case 'hex':
+        return hexWrite(this, string, offset, length)
+
+      case 'utf8':
+      case 'utf-8':
+        return utf8Write(this, string, offset, length)
+
+      case 'ascii':
+        return asciiWrite(this, string, offset, length)
+
+      case 'latin1':
+      case 'binary':
+        return latin1Write(this, string, offset, length)
+
+      case 'base64':
+        // Warning: maxLength not taken into account in base64Write
+        return base64Write(this, string, offset, length)
+
+      case 'ucs2':
+      case 'ucs-2':
+      case 'utf16le':
+      case 'utf-16le':
+        return ucs2Write(this, string, offset, length)
+
+      default:
+        if (loweredCase) throw new TypeError('Unknown encoding: ' + encoding)
+        encoding = ('' + encoding).toLowerCase();
+        loweredCase = true;
+    }
+  }
+};
+
+Buffer$1.prototype.toJSON = function toJSON () {
+  return {
+    type: 'Buffer',
+    data: Array.prototype.slice.call(this._arr || this, 0)
+  }
+};
+
+function base64Slice (buf, start, end) {
+  if (start === 0 && end === buf.length) {
+    return fromByteArray(buf)
+  } else {
+    return fromByteArray(buf.slice(start, end))
+  }
+}
+
+function utf8Slice (buf, start, end) {
+  end = Math.min(buf.length, end);
+  var res = [];
+
+  var i = start;
+  while (i < end) {
+    var firstByte = buf[i];
+    var codePoint = null;
+    var bytesPerSequence = (firstByte > 0xEF) ? 4
+      : (firstByte > 0xDF) ? 3
+      : (firstByte > 0xBF) ? 2
+      : 1;
+
+    if (i + bytesPerSequence <= end) {
+      var secondByte, thirdByte, fourthByte, tempCodePoint;
+
+      switch (bytesPerSequence) {
+        case 1:
+          if (firstByte < 0x80) {
+            codePoint = firstByte;
+          }
+          break
+        case 2:
+          secondByte = buf[i + 1];
+          if ((secondByte & 0xC0) === 0x80) {
+            tempCodePoint = (firstByte & 0x1F) << 0x6 | (secondByte & 0x3F);
+            if (tempCodePoint > 0x7F) {
+              codePoint = tempCodePoint;
+            }
+          }
+          break
+        case 3:
+          secondByte = buf[i + 1];
+          thirdByte = buf[i + 2];
+          if ((secondByte & 0xC0) === 0x80 && (thirdByte & 0xC0) === 0x80) {
+            tempCodePoint = (firstByte & 0xF) << 0xC | (secondByte & 0x3F) << 0x6 | (thirdByte & 0x3F);
+            if (tempCodePoint > 0x7FF && (tempCodePoint < 0xD800 || tempCodePoint > 0xDFFF)) {
+              codePoint = tempCodePoint;
+            }
+          }
+          break
+        case 4:
+          secondByte = buf[i + 1];
+          thirdByte = buf[i + 2];
+          fourthByte = buf[i + 3];
+          if ((secondByte & 0xC0) === 0x80 && (thirdByte & 0xC0) === 0x80 && (fourthByte & 0xC0) === 0x80) {
+            tempCodePoint = (firstByte & 0xF) << 0x12 | (secondByte & 0x3F) << 0xC | (thirdByte & 0x3F) << 0x6 | (fourthByte & 0x3F);
+            if (tempCodePoint > 0xFFFF && tempCodePoint < 0x110000) {
+              codePoint = tempCodePoint;
+            }
+          }
+      }
+    }
+
+    if (codePoint === null) {
+      // we did not generate a valid codePoint so insert a
+      // replacement char (U+FFFD) and advance only 1 byte
+      codePoint = 0xFFFD;
+      bytesPerSequence = 1;
+    } else if (codePoint > 0xFFFF) {
+      // encode to utf16 (surrogate pair dance)
+      codePoint -= 0x10000;
+      res.push(codePoint >>> 10 & 0x3FF | 0xD800);
+      codePoint = 0xDC00 | codePoint & 0x3FF;
+    }
+
+    res.push(codePoint);
+    i += bytesPerSequence;
+  }
+
+  return decodeCodePointsArray(res)
+}
+
+// Based on http://stackoverflow.com/a/22747272/680742, the browser with
+// the lowest limit is Chrome, with 0x10000 args.
+// We go 1 magnitude less, for safety
+var MAX_ARGUMENTS_LENGTH = 0x1000;
+
+function decodeCodePointsArray (codePoints) {
+  var len = codePoints.length;
+  if (len <= MAX_ARGUMENTS_LENGTH) {
+    return String.fromCharCode.apply(String, codePoints) // avoid extra slice()
+  }
+
+  // Decode in chunks to avoid "call stack size exceeded".
+  var res = '';
+  var i = 0;
+  while (i < len) {
+    res += String.fromCharCode.apply(
+      String,
+      codePoints.slice(i, i += MAX_ARGUMENTS_LENGTH)
+    );
+  }
+  return res
+}
+
+function asciiSlice (buf, start, end) {
+  var ret = '';
+  end = Math.min(buf.length, end);
+
+  for (var i = start; i < end; ++i) {
+    ret += String.fromCharCode(buf[i] & 0x7F);
+  }
+  return ret
+}
+
+function latin1Slice (buf, start, end) {
+  var ret = '';
+  end = Math.min(buf.length, end);
+
+  for (var i = start; i < end; ++i) {
+    ret += String.fromCharCode(buf[i]);
+  }
+  return ret
+}
+
+function hexSlice (buf, start, end) {
+  var len = buf.length;
+
+  if (!start || start < 0) start = 0;
+  if (!end || end < 0 || end > len) end = len;
+
+  var out = '';
+  for (var i = start; i < end; ++i) {
+    out += toHex(buf[i]);
+  }
+  return out
+}
+
+function utf16leSlice (buf, start, end) {
+  var bytes = buf.slice(start, end);
+  var res = '';
+  for (var i = 0; i < bytes.length; i += 2) {
+    res += String.fromCharCode(bytes[i] + bytes[i + 1] * 256);
+  }
+  return res
+}
+
+Buffer$1.prototype.slice = function slice (start, end) {
+  var len = this.length;
+  start = ~~start;
+  end = end === undefined ? len : ~~end;
+
+  if (start < 0) {
+    start += len;
+    if (start < 0) start = 0;
+  } else if (start > len) {
+    start = len;
+  }
+
+  if (end < 0) {
+    end += len;
+    if (end < 0) end = 0;
+  } else if (end > len) {
+    end = len;
+  }
+
+  if (end < start) end = start;
+
+  var newBuf;
+  if (Buffer$1.TYPED_ARRAY_SUPPORT) {
+    newBuf = this.subarray(start, end);
+    newBuf.__proto__ = Buffer$1.prototype;
+  } else {
+    var sliceLen = end - start;
+    newBuf = new Buffer$1(sliceLen, undefined);
+    for (var i = 0; i < sliceLen; ++i) {
+      newBuf[i] = this[i + start];
+    }
+  }
+
+  return newBuf
+};
+
+/*
+ * Need to make sure that buffer isn't trying to write out of bounds.
+ */
+function checkOffset (offset, ext, length) {
+  if ((offset % 1) !== 0 || offset < 0) throw new RangeError('offset is not uint')
+  if (offset + ext > length) throw new RangeError('Trying to access beyond buffer length')
+}
+
+Buffer$1.prototype.readUIntLE = function readUIntLE (offset, byteLength, noAssert) {
+  offset = offset | 0;
+  byteLength = byteLength | 0;
+  if (!noAssert) checkOffset(offset, byteLength, this.length);
+
+  var val = this[offset];
+  var mul = 1;
+  var i = 0;
+  while (++i < byteLength && (mul *= 0x100)) {
+    val += this[offset + i] * mul;
+  }
+
+  return val
+};
+
+Buffer$1.prototype.readUIntBE = function readUIntBE (offset, byteLength, noAssert) {
+  offset = offset | 0;
+  byteLength = byteLength | 0;
+  if (!noAssert) {
+    checkOffset(offset, byteLength, this.length);
+  }
+
+  var val = this[offset + --byteLength];
+  var mul = 1;
+  while (byteLength > 0 && (mul *= 0x100)) {
+    val += this[offset + --byteLength] * mul;
+  }
+
+  return val
+};
+
+Buffer$1.prototype.readUInt8 = function readUInt8 (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 1, this.length);
+  return this[offset]
+};
+
+Buffer$1.prototype.readUInt16LE = function readUInt16LE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 2, this.length);
+  return this[offset] | (this[offset + 1] << 8)
+};
+
+Buffer$1.prototype.readUInt16BE = function readUInt16BE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 2, this.length);
+  return (this[offset] << 8) | this[offset + 1]
+};
+
+Buffer$1.prototype.readUInt32LE = function readUInt32LE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 4, this.length);
+
+  return ((this[offset]) |
+      (this[offset + 1] << 8) |
+      (this[offset + 2] << 16)) +
+      (this[offset + 3] * 0x1000000)
+};
+
+Buffer$1.prototype.readUInt32BE = function readUInt32BE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 4, this.length);
+
+  return (this[offset] * 0x1000000) +
+    ((this[offset + 1] << 16) |
+    (this[offset + 2] << 8) |
+    this[offset + 3])
+};
+
+Buffer$1.prototype.readIntLE = function readIntLE (offset, byteLength, noAssert) {
+  offset = offset | 0;
+  byteLength = byteLength | 0;
+  if (!noAssert) checkOffset(offset, byteLength, this.length);
+
+  var val = this[offset];
+  var mul = 1;
+  var i = 0;
+  while (++i < byteLength && (mul *= 0x100)) {
+    val += this[offset + i] * mul;
+  }
+  mul *= 0x80;
+
+  if (val >= mul) val -= Math.pow(2, 8 * byteLength);
+
+  return val
+};
+
+Buffer$1.prototype.readIntBE = function readIntBE (offset, byteLength, noAssert) {
+  offset = offset | 0;
+  byteLength = byteLength | 0;
+  if (!noAssert) checkOffset(offset, byteLength, this.length);
+
+  var i = byteLength;
+  var mul = 1;
+  var val = this[offset + --i];
+  while (i > 0 && (mul *= 0x100)) {
+    val += this[offset + --i] * mul;
+  }
+  mul *= 0x80;
+
+  if (val >= mul) val -= Math.pow(2, 8 * byteLength);
+
+  return val
+};
+
+Buffer$1.prototype.readInt8 = function readInt8 (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 1, this.length);
+  if (!(this[offset] & 0x80)) return (this[offset])
+  return ((0xff - this[offset] + 1) * -1)
+};
+
+Buffer$1.prototype.readInt16LE = function readInt16LE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 2, this.length);
+  var val = this[offset] | (this[offset + 1] << 8);
+  return (val & 0x8000) ? val | 0xFFFF0000 : val
+};
+
+Buffer$1.prototype.readInt16BE = function readInt16BE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 2, this.length);
+  var val = this[offset + 1] | (this[offset] << 8);
+  return (val & 0x8000) ? val | 0xFFFF0000 : val
+};
+
+Buffer$1.prototype.readInt32LE = function readInt32LE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 4, this.length);
+
+  return (this[offset]) |
+    (this[offset + 1] << 8) |
+    (this[offset + 2] << 16) |
+    (this[offset + 3] << 24)
+};
+
+Buffer$1.prototype.readInt32BE = function readInt32BE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 4, this.length);
+
+  return (this[offset] << 24) |
+    (this[offset + 1] << 16) |
+    (this[offset + 2] << 8) |
+    (this[offset + 3])
+};
+
+Buffer$1.prototype.readFloatLE = function readFloatLE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 4, this.length);
+  return read(this, offset, true, 23, 4)
+};
+
+Buffer$1.prototype.readFloatBE = function readFloatBE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 4, this.length);
+  return read(this, offset, false, 23, 4)
+};
+
+Buffer$1.prototype.readDoubleLE = function readDoubleLE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 8, this.length);
+  return read(this, offset, true, 52, 8)
+};
+
+Buffer$1.prototype.readDoubleBE = function readDoubleBE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 8, this.length);
+  return read(this, offset, false, 52, 8)
+};
+
+function checkInt (buf, value, offset, ext, max, min) {
+  if (!internalIsBuffer(buf)) throw new TypeError('"buffer" argument must be a Buffer instance')
+  if (value > max || value < min) throw new RangeError('"value" argument is out of bounds')
+  if (offset + ext > buf.length) throw new RangeError('Index out of range')
+}
+
+Buffer$1.prototype.writeUIntLE = function writeUIntLE (value, offset, byteLength, noAssert) {
+  value = +value;
+  offset = offset | 0;
+  byteLength = byteLength | 0;
+  if (!noAssert) {
+    var maxBytes = Math.pow(2, 8 * byteLength) - 1;
+    checkInt(this, value, offset, byteLength, maxBytes, 0);
+  }
+
+  var mul = 1;
+  var i = 0;
+  this[offset] = value & 0xFF;
+  while (++i < byteLength && (mul *= 0x100)) {
+    this[offset + i] = (value / mul) & 0xFF;
+  }
+
+  return offset + byteLength
+};
+
+Buffer$1.prototype.writeUIntBE = function writeUIntBE (value, offset, byteLength, noAssert) {
+  value = +value;
+  offset = offset | 0;
+  byteLength = byteLength | 0;
+  if (!noAssert) {
+    var maxBytes = Math.pow(2, 8 * byteLength) - 1;
+    checkInt(this, value, offset, byteLength, maxBytes, 0);
+  }
+
+  var i = byteLength - 1;
+  var mul = 1;
+  this[offset + i] = value & 0xFF;
+  while (--i >= 0 && (mul *= 0x100)) {
+    this[offset + i] = (value / mul) & 0xFF;
+  }
+
+  return offset + byteLength
+};
+
+Buffer$1.prototype.writeUInt8 = function writeUInt8 (value, offset, noAssert) {
+  value = +value;
+  offset = offset | 0;
+  if (!noAssert) checkInt(this, value, offset, 1, 0xff, 0);
+  if (!Buffer$1.TYPED_ARRAY_SUPPORT) value = Math.floor(value);
+  this[offset] = (value & 0xff);
+  return offset + 1
+};
+
+function objectWriteUInt16 (buf, value, offset, littleEndian) {
+  if (value < 0) value = 0xffff + value + 1;
+  for (var i = 0, j = Math.min(buf.length - offset, 2); i < j; ++i) {
+    buf[offset + i] = (value & (0xff << (8 * (littleEndian ? i : 1 - i)))) >>>
+      (littleEndian ? i : 1 - i) * 8;
+  }
+}
+
+Buffer$1.prototype.writeUInt16LE = function writeUInt16LE (value, offset, noAssert) {
+  value = +value;
+  offset = offset | 0;
+  if (!noAssert) checkInt(this, value, offset, 2, 0xffff, 0);
+  if (Buffer$1.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value & 0xff);
+    this[offset + 1] = (value >>> 8);
+  } else {
+    objectWriteUInt16(this, value, offset, true);
+  }
+  return offset + 2
+};
+
+Buffer$1.prototype.writeUInt16BE = function writeUInt16BE (value, offset, noAssert) {
+  value = +value;
+  offset = offset | 0;
+  if (!noAssert) checkInt(this, value, offset, 2, 0xffff, 0);
+  if (Buffer$1.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value >>> 8);
+    this[offset + 1] = (value & 0xff);
+  } else {
+    objectWriteUInt16(this, value, offset, false);
+  }
+  return offset + 2
+};
+
+function objectWriteUInt32 (buf, value, offset, littleEndian) {
+  if (value < 0) value = 0xffffffff + value + 1;
+  for (var i = 0, j = Math.min(buf.length - offset, 4); i < j; ++i) {
+    buf[offset + i] = (value >>> (littleEndian ? i : 3 - i) * 8) & 0xff;
+  }
+}
+
+Buffer$1.prototype.writeUInt32LE = function writeUInt32LE (value, offset, noAssert) {
+  value = +value;
+  offset = offset | 0;
+  if (!noAssert) checkInt(this, value, offset, 4, 0xffffffff, 0);
+  if (Buffer$1.TYPED_ARRAY_SUPPORT) {
+    this[offset + 3] = (value >>> 24);
+    this[offset + 2] = (value >>> 16);
+    this[offset + 1] = (value >>> 8);
+    this[offset] = (value & 0xff);
+  } else {
+    objectWriteUInt32(this, value, offset, true);
+  }
+  return offset + 4
+};
+
+Buffer$1.prototype.writeUInt32BE = function writeUInt32BE (value, offset, noAssert) {
+  value = +value;
+  offset = offset | 0;
+  if (!noAssert) checkInt(this, value, offset, 4, 0xffffffff, 0);
+  if (Buffer$1.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value >>> 24);
+    this[offset + 1] = (value >>> 16);
+    this[offset + 2] = (value >>> 8);
+    this[offset + 3] = (value & 0xff);
+  } else {
+    objectWriteUInt32(this, value, offset, false);
+  }
+  return offset + 4
+};
+
+Buffer$1.prototype.writeIntLE = function writeIntLE (value, offset, byteLength, noAssert) {
+  value = +value;
+  offset = offset | 0;
+  if (!noAssert) {
+    var limit = Math.pow(2, 8 * byteLength - 1);
+
+    checkInt(this, value, offset, byteLength, limit - 1, -limit);
+  }
+
+  var i = 0;
+  var mul = 1;
+  var sub = 0;
+  this[offset] = value & 0xFF;
+  while (++i < byteLength && (mul *= 0x100)) {
+    if (value < 0 && sub === 0 && this[offset + i - 1] !== 0) {
+      sub = 1;
+    }
+    this[offset + i] = ((value / mul) >> 0) - sub & 0xFF;
+  }
+
+  return offset + byteLength
+};
+
+Buffer$1.prototype.writeIntBE = function writeIntBE (value, offset, byteLength, noAssert) {
+  value = +value;
+  offset = offset | 0;
+  if (!noAssert) {
+    var limit = Math.pow(2, 8 * byteLength - 1);
+
+    checkInt(this, value, offset, byteLength, limit - 1, -limit);
+  }
+
+  var i = byteLength - 1;
+  var mul = 1;
+  var sub = 0;
+  this[offset + i] = value & 0xFF;
+  while (--i >= 0 && (mul *= 0x100)) {
+    if (value < 0 && sub === 0 && this[offset + i + 1] !== 0) {
+      sub = 1;
+    }
+    this[offset + i] = ((value / mul) >> 0) - sub & 0xFF;
+  }
+
+  return offset + byteLength
+};
+
+Buffer$1.prototype.writeInt8 = function writeInt8 (value, offset, noAssert) {
+  value = +value;
+  offset = offset | 0;
+  if (!noAssert) checkInt(this, value, offset, 1, 0x7f, -128);
+  if (!Buffer$1.TYPED_ARRAY_SUPPORT) value = Math.floor(value);
+  if (value < 0) value = 0xff + value + 1;
+  this[offset] = (value & 0xff);
+  return offset + 1
+};
+
+Buffer$1.prototype.writeInt16LE = function writeInt16LE (value, offset, noAssert) {
+  value = +value;
+  offset = offset | 0;
+  if (!noAssert) checkInt(this, value, offset, 2, 0x7fff, -32768);
+  if (Buffer$1.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value & 0xff);
+    this[offset + 1] = (value >>> 8);
+  } else {
+    objectWriteUInt16(this, value, offset, true);
+  }
+  return offset + 2
+};
+
+Buffer$1.prototype.writeInt16BE = function writeInt16BE (value, offset, noAssert) {
+  value = +value;
+  offset = offset | 0;
+  if (!noAssert) checkInt(this, value, offset, 2, 0x7fff, -32768);
+  if (Buffer$1.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value >>> 8);
+    this[offset + 1] = (value & 0xff);
+  } else {
+    objectWriteUInt16(this, value, offset, false);
+  }
+  return offset + 2
+};
+
+Buffer$1.prototype.writeInt32LE = function writeInt32LE (value, offset, noAssert) {
+  value = +value;
+  offset = offset | 0;
+  if (!noAssert) checkInt(this, value, offset, 4, 0x7fffffff, -2147483648);
+  if (Buffer$1.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value & 0xff);
+    this[offset + 1] = (value >>> 8);
+    this[offset + 2] = (value >>> 16);
+    this[offset + 3] = (value >>> 24);
+  } else {
+    objectWriteUInt32(this, value, offset, true);
+  }
+  return offset + 4
+};
+
+Buffer$1.prototype.writeInt32BE = function writeInt32BE (value, offset, noAssert) {
+  value = +value;
+  offset = offset | 0;
+  if (!noAssert) checkInt(this, value, offset, 4, 0x7fffffff, -2147483648);
+  if (value < 0) value = 0xffffffff + value + 1;
+  if (Buffer$1.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value >>> 24);
+    this[offset + 1] = (value >>> 16);
+    this[offset + 2] = (value >>> 8);
+    this[offset + 3] = (value & 0xff);
+  } else {
+    objectWriteUInt32(this, value, offset, false);
+  }
+  return offset + 4
+};
+
+function checkIEEE754 (buf, value, offset, ext, max, min) {
+  if (offset + ext > buf.length) throw new RangeError('Index out of range')
+  if (offset < 0) throw new RangeError('Index out of range')
+}
+
+function writeFloat (buf, value, offset, littleEndian, noAssert) {
+  if (!noAssert) {
+    checkIEEE754(buf, value, offset, 4);
+  }
+  write(buf, value, offset, littleEndian, 23, 4);
+  return offset + 4
+}
+
+Buffer$1.prototype.writeFloatLE = function writeFloatLE (value, offset, noAssert) {
+  return writeFloat(this, value, offset, true, noAssert)
+};
+
+Buffer$1.prototype.writeFloatBE = function writeFloatBE (value, offset, noAssert) {
+  return writeFloat(this, value, offset, false, noAssert)
+};
+
+function writeDouble (buf, value, offset, littleEndian, noAssert) {
+  if (!noAssert) {
+    checkIEEE754(buf, value, offset, 8);
+  }
+  write(buf, value, offset, littleEndian, 52, 8);
+  return offset + 8
+}
+
+Buffer$1.prototype.writeDoubleLE = function writeDoubleLE (value, offset, noAssert) {
+  return writeDouble(this, value, offset, true, noAssert)
+};
+
+Buffer$1.prototype.writeDoubleBE = function writeDoubleBE (value, offset, noAssert) {
+  return writeDouble(this, value, offset, false, noAssert)
+};
+
+// copy(targetBuffer, targetStart=0, sourceStart=0, sourceEnd=buffer.length)
+Buffer$1.prototype.copy = function copy (target, targetStart, start, end) {
+  if (!start) start = 0;
+  if (!end && end !== 0) end = this.length;
+  if (targetStart >= target.length) targetStart = target.length;
+  if (!targetStart) targetStart = 0;
+  if (end > 0 && end < start) end = start;
+
+  // Copy 0 bytes; we're done
+  if (end === start) return 0
+  if (target.length === 0 || this.length === 0) return 0
+
+  // Fatal error conditions
+  if (targetStart < 0) {
+    throw new RangeError('targetStart out of bounds')
+  }
+  if (start < 0 || start >= this.length) throw new RangeError('sourceStart out of bounds')
+  if (end < 0) throw new RangeError('sourceEnd out of bounds')
+
+  // Are we oob?
+  if (end > this.length) end = this.length;
+  if (target.length - targetStart < end - start) {
+    end = target.length - targetStart + start;
+  }
+
+  var len = end - start;
+  var i;
+
+  if (this === target && start < targetStart && targetStart < end) {
+    // descending copy from end
+    for (i = len - 1; i >= 0; --i) {
+      target[i + targetStart] = this[i + start];
+    }
+  } else if (len < 1000 || !Buffer$1.TYPED_ARRAY_SUPPORT) {
+    // ascending copy from start
+    for (i = 0; i < len; ++i) {
+      target[i + targetStart] = this[i + start];
+    }
+  } else {
+    Uint8Array.prototype.set.call(
+      target,
+      this.subarray(start, start + len),
+      targetStart
+    );
+  }
+
+  return len
+};
+
+// Usage:
+//    buffer.fill(number[, offset[, end]])
+//    buffer.fill(buffer[, offset[, end]])
+//    buffer.fill(string[, offset[, end]][, encoding])
+Buffer$1.prototype.fill = function fill (val, start, end, encoding) {
+  // Handle string cases:
+  if (typeof val === 'string') {
+    if (typeof start === 'string') {
+      encoding = start;
+      start = 0;
+      end = this.length;
+    } else if (typeof end === 'string') {
+      encoding = end;
+      end = this.length;
+    }
+    if (val.length === 1) {
+      var code = val.charCodeAt(0);
+      if (code < 256) {
+        val = code;
+      }
+    }
+    if (encoding !== undefined && typeof encoding !== 'string') {
+      throw new TypeError('encoding must be a string')
+    }
+    if (typeof encoding === 'string' && !Buffer$1.isEncoding(encoding)) {
+      throw new TypeError('Unknown encoding: ' + encoding)
+    }
+  } else if (typeof val === 'number') {
+    val = val & 255;
+  }
+
+  // Invalid ranges are not set to a default, so can range check early.
+  if (start < 0 || this.length < start || this.length < end) {
+    throw new RangeError('Out of range index')
+  }
+
+  if (end <= start) {
+    return this
+  }
+
+  start = start >>> 0;
+  end = end === undefined ? this.length : end >>> 0;
+
+  if (!val) val = 0;
+
+  var i;
+  if (typeof val === 'number') {
+    for (i = start; i < end; ++i) {
+      this[i] = val;
+    }
+  } else {
+    var bytes = internalIsBuffer(val)
+      ? val
+      : utf8ToBytes(new Buffer$1(val, encoding).toString());
+    var len = bytes.length;
+    for (i = 0; i < end - start; ++i) {
+      this[i + start] = bytes[i % len];
+    }
+  }
+
+  return this
+};
+
+// HELPER FUNCTIONS
+// ================
+
+var INVALID_BASE64_RE = /[^+\/0-9A-Za-z-_]/g;
+
+function base64clean (str) {
+  // Node strips out invalid characters like \n and \t from the string, base64-js does not
+  str = stringtrim(str).replace(INVALID_BASE64_RE, '');
+  // Node converts strings with length < 2 to ''
+  if (str.length < 2) return ''
+  // Node allows for non-padded base64 strings (missing trailing ===), base64-js does not
+  while (str.length % 4 !== 0) {
+    str = str + '=';
+  }
+  return str
+}
+
+function stringtrim (str) {
+  if (str.trim) return str.trim()
+  return str.replace(/^\s+|\s+$/g, '')
+}
+
+function toHex (n) {
+  if (n < 16) return '0' + n.toString(16)
+  return n.toString(16)
+}
+
+function utf8ToBytes (string, units) {
+  units = units || Infinity;
+  var codePoint;
+  var length = string.length;
+  var leadSurrogate = null;
+  var bytes = [];
+
+  for (var i = 0; i < length; ++i) {
+    codePoint = string.charCodeAt(i);
+
+    // is surrogate component
+    if (codePoint > 0xD7FF && codePoint < 0xE000) {
+      // last char was a lead
+      if (!leadSurrogate) {
+        // no lead yet
+        if (codePoint > 0xDBFF) {
+          // unexpected trail
+          if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD);
+          continue
+        } else if (i + 1 === length) {
+          // unpaired lead
+          if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD);
+          continue
+        }
+
+        // valid lead
+        leadSurrogate = codePoint;
+
+        continue
+      }
+
+      // 2 leads in a row
+      if (codePoint < 0xDC00) {
+        if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD);
+        leadSurrogate = codePoint;
+        continue
+      }
+
+      // valid surrogate pair
+      codePoint = (leadSurrogate - 0xD800 << 10 | codePoint - 0xDC00) + 0x10000;
+    } else if (leadSurrogate) {
+      // valid bmp char, but last char was a lead
+      if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD);
+    }
+
+    leadSurrogate = null;
+
+    // encode utf8
+    if (codePoint < 0x80) {
+      if ((units -= 1) < 0) break
+      bytes.push(codePoint);
+    } else if (codePoint < 0x800) {
+      if ((units -= 2) < 0) break
+      bytes.push(
+        codePoint >> 0x6 | 0xC0,
+        codePoint & 0x3F | 0x80
+      );
+    } else if (codePoint < 0x10000) {
+      if ((units -= 3) < 0) break
+      bytes.push(
+        codePoint >> 0xC | 0xE0,
+        codePoint >> 0x6 & 0x3F | 0x80,
+        codePoint & 0x3F | 0x80
+      );
+    } else if (codePoint < 0x110000) {
+      if ((units -= 4) < 0) break
+      bytes.push(
+        codePoint >> 0x12 | 0xF0,
+        codePoint >> 0xC & 0x3F | 0x80,
+        codePoint >> 0x6 & 0x3F | 0x80,
+        codePoint & 0x3F | 0x80
+      );
+    } else {
+      throw new Error('Invalid code point')
+    }
+  }
+
+  return bytes
+}
+
+function asciiToBytes (str) {
+  var byteArray = [];
+  for (var i = 0; i < str.length; ++i) {
+    // Node's code seems to be doing this and not & 0x7F..
+    byteArray.push(str.charCodeAt(i) & 0xFF);
+  }
+  return byteArray
+}
+
+function utf16leToBytes (str, units) {
+  var c, hi, lo;
+  var byteArray = [];
+  for (var i = 0; i < str.length; ++i) {
+    if ((units -= 2) < 0) break
+
+    c = str.charCodeAt(i);
+    hi = c >> 8;
+    lo = c % 256;
+    byteArray.push(lo);
+    byteArray.push(hi);
+  }
+
+  return byteArray
+}
+
+
+function base64ToBytes (str) {
+  return toByteArray(base64clean(str))
+}
+
+function blitBuffer (src, dst, offset, length) {
+  for (var i = 0; i < length; ++i) {
+    if ((i + offset >= dst.length) || (i >= src.length)) break
+    dst[i + offset] = src[i];
+  }
+  return i
+}
+
+function isnan (val) {
+  return val !== val // eslint-disable-line no-self-compare
+}
+
+
+// the following is from is-buffer, also by Feross Aboukhadijeh and with same lisence
+// The _isBuffer check is for Safari 5-7 support, because it's missing
+// Object.prototype.constructor. Remove this eventually
+function isBuffer(obj) {
+  return obj != null && (!!obj._isBuffer || isFastBuffer(obj) || isSlowBuffer(obj))
+}
+
+function isFastBuffer (obj) {
+  return !!obj.constructor && typeof obj.constructor.isBuffer === 'function' && obj.constructor.isBuffer(obj)
+}
+
+// For Node v0.10 support. Remove this eventually.
+function isSlowBuffer (obj) {
+  return typeof obj.readFloatLE === 'function' && typeof obj.slice === 'function' && isFastBuffer(obj.slice(0, 0))
+}
 
 var __create = Object.create;
 var __defProp = Object.defineProperty;
@@ -61609,7 +60502,7 @@ var require_jsesc = __commonJS({
         var isArray = Array.isArray;
         
         var isBuffer = (value) => {
-            return typeof Buffer === 'function' && Array.isArray(value);
+            return typeof Buffer$1 === 'function' && Array.isArray(value);
         };
         
         var isObject = (value) => {
@@ -61912,18 +60805,11 @@ var require_browser = () => () => ({
     enabled: false,
 });
 
-// ../babel-babel/node_modules/has-flag/index.js
-var require_node = () => () => ({
-    enabled: false,
-});
-
 // ../babel-babel/node_modules/debug/src/index.js
 var require_src = __commonJS({
     '../babel-babel/node_modules/debug/src/index.js'(exports2, module2) {
-        if (typeof browser$1$1 === 'undefined' || browser$1$1.type === 'renderer' || browser$1$1.browser === true || browser$1$1.__nwjs) {
+        {
             module2.exports = require_browser();
-        } else {
-            module2.exports = require_node();
         }
     },
 });
@@ -61933,10 +60819,10 @@ var index_exports = {};
 
 __export(index_exports, {
     codeFrameColumns: () => codeFrameColumns,
-    generate: () => generate$5,
-    parse: () => parse$6,
+    generate: () => generate$1,
+    parse: () => parse$a,
     parseExpression: () => parseExpression$1,
-    template: () => index$1,
+    template: () => index,
     tokTypes: () => tokTypes,
     traverse: () => traverse3,
     types: () => lib_exports,
@@ -62618,7 +61504,7 @@ __export(lib_exports, {
     classPrivateMethod: () => classPrivateMethod$1,
     classPrivateProperty: () => classPrivateProperty,
     classProperty: () => classProperty,
-    clone: () => clone$2,
+    clone: () => clone,
     cloneDeep: () => cloneDeep,
     cloneDeepWithoutLoc: () => cloneDeepWithoutLoc,
     cloneNode: () => cloneNode,
@@ -62780,7 +61666,7 @@ __export(lib_exports, {
     isExportNamespaceSpecifier: () => isExportNamespaceSpecifier,
     isExportSpecifier: () => isExportSpecifier$1,
     isExpression: () => isExpression$1,
-    isExpressionStatement: () => isExpressionStatement$1,
+    isExpressionStatement: () => isExpressionStatement$2,
     isExpressionWrapper: () => isExpressionWrapper,
     isFile: () => isFile$1,
     isFlow: () => isFlow,
@@ -62928,7 +61814,7 @@ __export(lib_exports, {
     isTSEnumDeclaration: () => isTSEnumDeclaration,
     isTSEnumMember: () => isTSEnumMember,
     isTSExportAssignment: () => isTSExportAssignment,
-    isTSExternalModuleReference: () => isTSExternalModuleReference,
+    isTSExternalModuleReference: () => isTSExternalModuleReference$1,
     isTSFunctionType: () => isTSFunctionType,
     isTSImportEqualsDeclaration: () => isTSImportEqualsDeclaration,
     isTSImportType: () => isTSImportType,
@@ -63108,7 +61994,7 @@ __export(lib_exports, {
     toKeyAlias: () => toKeyAlias,
     toStatement: () => toStatement,
     topicReference: () => topicReference,
-    traverse: () => traverse$9,
+    traverse: () => traverse$5,
     traverseFast: () => traverseFast,
     tryStatement: () => tryStatement,
     tsAnyKeyword: () => tsAnyKeyword,
@@ -64317,7 +63203,7 @@ function isStrictReservedWord(word, inModule) {
     return isReservedWord(word, inModule) || reservedWordsStrictSet.has(word);
 }
 
-function isKeyword(word) {
+function isKeyword$1(word) {
     return keywords$1.has(word);
 }
 
@@ -64834,7 +63720,7 @@ function isEmptyStatement(node, opts) {
     return opts == null || shallowEqual(node, opts);
 }
 
-function isExpressionStatement$1(node, opts) {
+function isExpressionStatement$2(node, opts) {
     if (!node)
         return false;
     
@@ -67104,7 +65990,7 @@ function isTSImportEqualsDeclaration(node, opts) {
     return opts == null || shallowEqual(node, opts);
 }
 
-function isTSExternalModuleReference(node, opts) {
+function isTSExternalModuleReference$1(node, opts) {
     if (!node)
         return false;
     
@@ -68654,7 +67540,7 @@ function isValidIdentifier(name, reserved = true) {
         return false;
     
     if (reserved) {
-        if (isKeyword(name) || isStrictReservedWord(name, true)) {
+        if (isKeyword$1(name) || isStrictReservedWord(name, true)) {
             return false;
         }
     }
@@ -68782,14 +67668,14 @@ function getType$1(val) {
     }
 }
 
-function validate$2$1(validate4) {
+function validate$2(validate4) {
     return {
         validate: validate4,
     };
 }
 
 function validateType(...typeNames) {
-    return validate$2$1(assertNodeType(...typeNames));
+    return validate$2(assertNodeType(...typeNames));
 }
 
 function validateOptional(validate4) {
@@ -68815,7 +67701,7 @@ function arrayOfType(...typeNames) {
 }
 
 function validateArrayOfType(...typeNames) {
-    return validate$2$1(arrayOfType(...typeNames));
+    return validate$2(arrayOfType(...typeNames));
 }
 
 function assertEach(callback) {
@@ -69017,7 +67903,7 @@ var validFieldKeys = /* @__PURE__ */new Set([
     'deprecated',
     'validate',
 ]);
-var store$1 = {};
+var store = {};
 
 function defineAliasedType(...aliases) {
     return (type, opts = {}) => {
@@ -69025,7 +67911,7 @@ function defineAliasedType(...aliases) {
         
         if (!defined) {
             if (opts.inherits)
-                defined = store$1[opts.inherits].aliases?.slice();
+                defined = store[opts.inherits].aliases?.slice();
             
             defined ?? (defined = []);
             opts.aliases = defined;
@@ -69038,7 +67924,7 @@ function defineAliasedType(...aliases) {
 }
 
 function defineType$5(type, opts = {}) {
-    const inherits3 = opts.inherits && store$1[opts.inherits] || {};
+    const inherits3 = opts.inherits && store[opts.inherits] || {};
     let fields = opts.fields;
     
     if (!fields) {
@@ -69127,7 +68013,7 @@ function defineType$5(type, opts = {}) {
         NODE_UNION_SHAPES__PRIVATE[type] = opts.unionShape;
     }
     
-    store$1[type] = opts;
+    store[type] = opts;
 }
 
 var utils$1 = /* @__PURE__ */Object.freeze({
@@ -69153,7 +68039,7 @@ var utils$1 = /* @__PURE__ */Object.freeze({
     chain,
     default: defineType$5,
     defineAliasedType,
-    validate: validate$2$1,
+    validate: validate$2,
     validateArrayOfType,
     validateOptional,
     validateOptionalType,
@@ -69664,7 +68550,7 @@ defineType$4('Identifier', {
 
 
         
-        if ((isKeyword(node.name) || isReservedWord(node.name, false)) && node.name !== 'this') {
+        if ((isKeyword$1(node.name) || isReservedWord(node.name, false)) && node.name !== 'this') {
             throw new TypeError(`"${node.name}" is not a valid identifier`);
         }
     },
@@ -71407,7 +70293,7 @@ defineType$3('BooleanLiteralTypeAnnotation', {
     builder: ['value'],
     aliases: ['FlowType'],
     fields: {
-        value: validate$2$1(assertValueType('boolean')),
+        value: validate$2(assertValueType('boolean')),
     },
 });
 defineType$3('NullLiteralTypeAnnotation', {
@@ -71609,7 +70495,7 @@ defineType$3('IntersectionTypeAnnotation', {
     visitor: ['types'],
     aliases: ['FlowType'],
     fields: {
-        types: validate$2$1(arrayOfType('FlowType')),
+        types: validate$2(arrayOfType('FlowType')),
     },
 });
 defineType$3('MixedTypeAnnotation', {
@@ -71629,7 +70515,7 @@ defineType$3('NumberLiteralTypeAnnotation', {
     builder: ['value'],
     aliases: ['FlowType'],
     fields: {
-        value: validate$2$1(assertValueType('number')),
+        value: validate$2(assertValueType('number')),
     },
 });
 defineType$3('NumberTypeAnnotation', {
@@ -71651,7 +70537,7 @@ defineType$3('ObjectTypeAnnotation', {
         'exact',
     ],
     fields: {
-        properties: validate$2$1(arrayOfType('ObjectTypeProperty', 'ObjectTypeSpreadProperty')),
+        properties: validate$2(arrayOfType('ObjectTypeProperty', 'ObjectTypeSpreadProperty')),
         indexers: {
             validate: arrayOfType('ObjectTypeIndexer'),
             optional: false,
@@ -71687,9 +70573,9 @@ defineType$3('ObjectTypeInternalSlot', {
     fields: {
         id: validateType('Identifier'),
         value: validateType('FlowType'),
-        optional: validate$2$1(assertValueType('boolean')),
-        static: validate$2$1(assertValueType('boolean')),
-        method: validate$2$1(assertValueType('boolean')),
+        optional: validate$2(assertValueType('boolean')),
+        static: validate$2(assertValueType('boolean')),
+        method: validate$2(assertValueType('boolean')),
     },
 });
 defineType$3('ObjectTypeCallProperty', {
@@ -71697,7 +70583,7 @@ defineType$3('ObjectTypeCallProperty', {
     aliases: ['UserWhitespacable'],
     fields: {
         value: validateType('FlowType'),
-        static: validate$2$1(assertValueType('boolean')),
+        static: validate$2(assertValueType('boolean')),
     },
 });
 defineType$3('ObjectTypeIndexer', {
@@ -71718,7 +70604,7 @@ defineType$3('ObjectTypeIndexer', {
         id: validateOptionalType('Identifier'),
         key: validateType('FlowType'),
         value: validateType('FlowType'),
-        static: validate$2$1(assertValueType('boolean')),
+        static: validate$2(assertValueType('boolean')),
         variance: validateOptionalType('Variance'),
     },
 });
@@ -71732,12 +70618,12 @@ defineType$3('ObjectTypeProperty', {
     fields: {
         key: validateType('Identifier', 'StringLiteral'),
         value: validateType('FlowType'),
-        kind: validate$2$1(assertOneOf('init', 'get', 'set')),
-        static: validate$2$1(assertValueType('boolean')),
-        proto: validate$2$1(assertValueType('boolean')),
-        optional: validate$2$1(assertValueType('boolean')),
+        kind: validate$2(assertOneOf('init', 'get', 'set')),
+        static: validate$2(assertValueType('boolean')),
+        proto: validate$2(assertValueType('boolean')),
+        optional: validate$2(assertValueType('boolean')),
         variance: validateOptionalType('Variance'),
-        method: validate$2$1(assertValueType('boolean')),
+        method: validate$2(assertValueType('boolean')),
     },
 });
 defineType$3('ObjectTypeSpreadProperty', {
@@ -71778,7 +70664,7 @@ defineType$3('StringLiteralTypeAnnotation', {
     builder: ['value'],
     aliases: ['FlowType'],
     fields: {
-        value: validate$2$1(assertValueType('string')),
+        value: validate$2(assertValueType('string')),
     },
 });
 defineType$3('StringTypeAnnotation', {
@@ -71794,7 +70680,7 @@ defineType$3('TupleTypeAnnotation', {
     visitor: ['types'],
     aliases: ['FlowType'],
     fields: {
-        types: validate$2$1(arrayOfType('FlowType')),
+        types: validate$2(arrayOfType('FlowType')),
     },
 });
 defineType$3('TypeofTypeAnnotation', {
@@ -71842,7 +70728,7 @@ defineType$3('TypeParameter', {
         'variance',
     ],
     fields: {
-        name: validate$2$1(assertValueType('string')),
+        name: validate$2(assertValueType('string')),
         bound: validateOptionalType('TypeAnnotation'),
         default: validateOptionalType('FlowType'),
         variance: validateOptionalType('Variance'),
@@ -71851,26 +70737,26 @@ defineType$3('TypeParameter', {
 defineType$3('TypeParameterDeclaration', {
     visitor: ['params'],
     fields: {
-        params: validate$2$1(arrayOfType('TypeParameter')),
+        params: validate$2(arrayOfType('TypeParameter')),
     },
 });
 defineType$3('TypeParameterInstantiation', {
     visitor: ['params'],
     fields: {
-        params: validate$2$1(arrayOfType('FlowType')),
+        params: validate$2(arrayOfType('FlowType')),
     },
 });
 defineType$3('UnionTypeAnnotation', {
     visitor: ['types'],
     aliases: ['FlowType'],
     fields: {
-        types: validate$2$1(arrayOfType('FlowType')),
+        types: validate$2(arrayOfType('FlowType')),
     },
 });
 defineType$3('Variance', {
     builder: ['kind'],
     fields: {
-        kind: validate$2$1(assertOneOf('minus', 'plus')),
+        kind: validate$2(assertOneOf('minus', 'plus')),
     },
 });
 defineType$3('VoidTypeAnnotation', {
@@ -71888,27 +70774,27 @@ defineType$3('EnumBooleanBody', {
     aliases: ['EnumBody'],
     visitor: ['members'],
     fields: {
-        explicitType: validate$2$1(assertValueType('boolean')),
+        explicitType: validate$2(assertValueType('boolean')),
         members: validateArrayOfType('EnumBooleanMember'),
-        hasUnknownMembers: validate$2$1(assertValueType('boolean')),
+        hasUnknownMembers: validate$2(assertValueType('boolean')),
     },
 });
 defineType$3('EnumNumberBody', {
     aliases: ['EnumBody'],
     visitor: ['members'],
     fields: {
-        explicitType: validate$2$1(assertValueType('boolean')),
+        explicitType: validate$2(assertValueType('boolean')),
         members: validateArrayOfType('EnumNumberMember'),
-        hasUnknownMembers: validate$2$1(assertValueType('boolean')),
+        hasUnknownMembers: validate$2(assertValueType('boolean')),
     },
 });
 defineType$3('EnumStringBody', {
     aliases: ['EnumBody'],
     visitor: ['members'],
     fields: {
-        explicitType: validate$2$1(assertValueType('boolean')),
+        explicitType: validate$2(assertValueType('boolean')),
         members: validateArrayOfType('EnumStringMember', 'EnumDefaultedMember'),
-        hasUnknownMembers: validate$2$1(assertValueType('boolean')),
+        hasUnknownMembers: validate$2(assertValueType('boolean')),
     },
 });
 defineType$3('EnumSymbolBody', {
@@ -71916,7 +70802,7 @@ defineType$3('EnumSymbolBody', {
     visitor: ['members'],
     fields: {
         members: validateArrayOfType('EnumDefaultedMember'),
-        hasUnknownMembers: validate$2$1(assertValueType('boolean')),
+        hasUnknownMembers: validate$2(assertValueType('boolean')),
     },
 });
 defineType$3('EnumBooleanMember', {
@@ -71965,7 +70851,7 @@ defineType$3('OptionalIndexedAccessType', {
     fields: {
         objectType: validateType('FlowType'),
         indexType: validateType('FlowType'),
-        optional: validate$2$1(assertValueType('boolean')),
+        optional: validate$2(assertValueType('boolean')),
     },
 });
 var defineType$2 = defineAliasedType('JSX');
@@ -73012,7 +71898,7 @@ var _validate = /* @__PURE__ */Object.freeze({
     validateInternal,
 });
 
-var {validateInternal: validate$4} = _validate;
+var {validateInternal: validate$3} = _validate;
 
 var {NODE_FIELDS} = utils$1;
 
@@ -73023,7 +71909,7 @@ function arrayExpression$3(elements) {
     };
     
     const defs = NODE_FIELDS.ArrayExpression;
-    validate$4(defs.elements, node, 'elements', elements, 1);
+    validate$3(defs.elements, node, 'elements', elements, 1);
     return node;
 }
 
@@ -73036,9 +71922,9 @@ function assignmentExpression(operator, left, right) {
     };
     
     const defs = NODE_FIELDS.AssignmentExpression;
-    validate$4(defs.operator, node, 'operator', operator);
-    validate$4(defs.left, node, 'left', left, 1);
-    validate$4(defs.right, node, 'right', right, 1);
+    validate$3(defs.operator, node, 'operator', operator);
+    validate$3(defs.left, node, 'left', left, 1);
+    validate$3(defs.right, node, 'right', right, 1);
     return node;
 }
 
@@ -73051,9 +71937,9 @@ function binaryExpression(operator, left, right) {
     };
     
     const defs = NODE_FIELDS.BinaryExpression;
-    validate$4(defs.operator, node, 'operator', operator);
-    validate$4(defs.left, node, 'left', left, 1);
-    validate$4(defs.right, node, 'right', right, 1);
+    validate$3(defs.operator, node, 'operator', operator);
+    validate$3(defs.left, node, 'left', left, 1);
+    validate$3(defs.right, node, 'right', right, 1);
     return node;
 }
 
@@ -73064,7 +71950,7 @@ function interpreterDirective(value) {
     };
     
     const defs = NODE_FIELDS.InterpreterDirective;
-    validate$4(defs.value, node, 'value', value);
+    validate$3(defs.value, node, 'value', value);
     return node;
 }
 
@@ -73075,7 +71961,7 @@ function directive$1(value) {
     };
     
     const defs = NODE_FIELDS.Directive;
-    validate$4(defs.value, node, 'value', value, 1);
+    validate$3(defs.value, node, 'value', value, 1);
     return node;
 }
 
@@ -73086,7 +71972,7 @@ function directiveLiteral$1(value) {
     };
     
     const defs = NODE_FIELDS.DirectiveLiteral;
-    validate$4(defs.value, node, 'value', value);
+    validate$3(defs.value, node, 'value', value);
     return node;
 }
 
@@ -73098,8 +71984,8 @@ function blockStatement(body, directives = []) {
     };
     
     const defs = NODE_FIELDS.BlockStatement;
-    validate$4(defs.body, node, 'body', body, 1);
-    validate$4(defs.directives, node, 'directives', directives, 1);
+    validate$3(defs.body, node, 'body', body, 1);
+    validate$3(defs.directives, node, 'directives', directives, 1);
     return node;
 }
 
@@ -73110,7 +71996,7 @@ function breakStatement(label = null) {
     };
     
     const defs = NODE_FIELDS.BreakStatement;
-    validate$4(defs.label, node, 'label', label, 1);
+    validate$3(defs.label, node, 'label', label, 1);
     return node;
 }
 
@@ -73122,8 +72008,8 @@ function callExpression(callee, _arguments) {
     };
     
     const defs = NODE_FIELDS.CallExpression;
-    validate$4(defs.callee, node, 'callee', callee, 1);
-    validate$4(defs.arguments, node, 'arguments', _arguments, 1);
+    validate$3(defs.callee, node, 'callee', callee, 1);
+    validate$3(defs.arguments, node, 'arguments', _arguments, 1);
     return node;
 }
 
@@ -73135,8 +72021,8 @@ function catchClause(param = null, body) {
     };
     
     const defs = NODE_FIELDS.CatchClause;
-    validate$4(defs.param, node, 'param', param, 1);
-    validate$4(defs.body, node, 'body', body, 1);
+    validate$3(defs.param, node, 'param', param, 1);
+    validate$3(defs.body, node, 'body', body, 1);
     return node;
 }
 
@@ -73149,9 +72035,9 @@ function conditionalExpression(test, consequent, alternate) {
     };
     
     const defs = NODE_FIELDS.ConditionalExpression;
-    validate$4(defs.test, node, 'test', test, 1);
-    validate$4(defs.consequent, node, 'consequent', consequent, 1);
-    validate$4(defs.alternate, node, 'alternate', alternate, 1);
+    validate$3(defs.test, node, 'test', test, 1);
+    validate$3(defs.consequent, node, 'consequent', consequent, 1);
+    validate$3(defs.alternate, node, 'alternate', alternate, 1);
     return node;
 }
 
@@ -73162,7 +72048,7 @@ function continueStatement(label = null) {
     };
     
     const defs = NODE_FIELDS.ContinueStatement;
-    validate$4(defs.label, node, 'label', label, 1);
+    validate$3(defs.label, node, 'label', label, 1);
     return node;
 }
 
@@ -73180,8 +72066,8 @@ function doWhileStatement(test, body) {
     };
     
     const defs = NODE_FIELDS.DoWhileStatement;
-    validate$4(defs.test, node, 'test', test, 1);
-    validate$4(defs.body, node, 'body', body, 1);
+    validate$3(defs.test, node, 'test', test, 1);
+    validate$3(defs.body, node, 'body', body, 1);
     return node;
 }
 
@@ -73198,7 +72084,7 @@ function expressionStatement(expression2) {
     };
     
     const defs = NODE_FIELDS.ExpressionStatement;
-    validate$4(defs.expression, node, 'expression', expression2, 1);
+    validate$3(defs.expression, node, 'expression', expression2, 1);
     return node;
 }
 
@@ -73211,9 +72097,9 @@ function file(program3, comments = null, tokens = null) {
     };
     
     const defs = NODE_FIELDS.File;
-    validate$4(defs.program, node, 'program', program3, 1);
-    validate$4(defs.comments, node, 'comments', comments, 1);
-    validate$4(defs.tokens, node, 'tokens', tokens);
+    validate$3(defs.program, node, 'program', program3, 1);
+    validate$3(defs.comments, node, 'comments', comments, 1);
+    validate$3(defs.tokens, node, 'tokens', tokens);
     return node;
 }
 
@@ -73226,9 +72112,9 @@ function forInStatement(left, right, body) {
     };
     
     const defs = NODE_FIELDS.ForInStatement;
-    validate$4(defs.left, node, 'left', left, 1);
-    validate$4(defs.right, node, 'right', right, 1);
-    validate$4(defs.body, node, 'body', body, 1);
+    validate$3(defs.left, node, 'left', left, 1);
+    validate$3(defs.right, node, 'right', right, 1);
+    validate$3(defs.body, node, 'body', body, 1);
     return node;
 }
 
@@ -73242,10 +72128,10 @@ function forStatement(init = null, test = null, update = null, body) {
     };
     
     const defs = NODE_FIELDS.ForStatement;
-    validate$4(defs.init, node, 'init', init, 1);
-    validate$4(defs.test, node, 'test', test, 1);
-    validate$4(defs.update, node, 'update', update, 1);
-    validate$4(defs.body, node, 'body', body, 1);
+    validate$3(defs.init, node, 'init', init, 1);
+    validate$3(defs.test, node, 'test', test, 1);
+    validate$3(defs.update, node, 'update', update, 1);
+    validate$3(defs.body, node, 'body', body, 1);
     return node;
 }
 
@@ -73260,11 +72146,11 @@ function functionDeclaration(id = null, params, body, generator = false, async =
     };
     
     const defs = NODE_FIELDS.FunctionDeclaration;
-    validate$4(defs.id, node, 'id', id, 1);
-    validate$4(defs.params, node, 'params', params, 1);
-    validate$4(defs.body, node, 'body', body, 1);
-    validate$4(defs.generator, node, 'generator', generator);
-    validate$4(defs.async, node, 'async', async);
+    validate$3(defs.id, node, 'id', id, 1);
+    validate$3(defs.params, node, 'params', params, 1);
+    validate$3(defs.body, node, 'body', body, 1);
+    validate$3(defs.generator, node, 'generator', generator);
+    validate$3(defs.async, node, 'async', async);
     return node;
 }
 
@@ -73279,11 +72165,11 @@ function functionExpression(id = null, params, body, generator = false, async = 
     };
     
     const defs = NODE_FIELDS.FunctionExpression;
-    validate$4(defs.id, node, 'id', id, 1);
-    validate$4(defs.params, node, 'params', params, 1);
-    validate$4(defs.body, node, 'body', body, 1);
-    validate$4(defs.generator, node, 'generator', generator);
-    validate$4(defs.async, node, 'async', async);
+    validate$3(defs.id, node, 'id', id, 1);
+    validate$3(defs.params, node, 'params', params, 1);
+    validate$3(defs.body, node, 'body', body, 1);
+    validate$3(defs.generator, node, 'generator', generator);
+    validate$3(defs.async, node, 'async', async);
     return node;
 }
 
@@ -73294,7 +72180,7 @@ function identifier$2(name) {
     };
     
     const defs = NODE_FIELDS.Identifier;
-    validate$4(defs.name, node, 'name', name);
+    validate$3(defs.name, node, 'name', name);
     return node;
 }
 
@@ -73307,9 +72193,9 @@ function ifStatement(test, consequent, alternate = null) {
     };
     
     const defs = NODE_FIELDS.IfStatement;
-    validate$4(defs.test, node, 'test', test, 1);
-    validate$4(defs.consequent, node, 'consequent', consequent, 1);
-    validate$4(defs.alternate, node, 'alternate', alternate, 1);
+    validate$3(defs.test, node, 'test', test, 1);
+    validate$3(defs.consequent, node, 'consequent', consequent, 1);
+    validate$3(defs.alternate, node, 'alternate', alternate, 1);
     return node;
 }
 
@@ -73321,8 +72207,8 @@ function labeledStatement(label, body) {
     };
     
     const defs = NODE_FIELDS.LabeledStatement;
-    validate$4(defs.label, node, 'label', label, 1);
-    validate$4(defs.body, node, 'body', body, 1);
+    validate$3(defs.label, node, 'label', label, 1);
+    validate$3(defs.body, node, 'body', body, 1);
     return node;
 }
 
@@ -73333,7 +72219,7 @@ function stringLiteral$5(value) {
     };
     
     const defs = NODE_FIELDS.StringLiteral;
-    validate$4(defs.value, node, 'value', value);
+    validate$3(defs.value, node, 'value', value);
     return node;
 }
 
@@ -73344,7 +72230,7 @@ function numericLiteral(value) {
     };
     
     const defs = NODE_FIELDS.NumericLiteral;
-    validate$4(defs.value, node, 'value', value);
+    validate$3(defs.value, node, 'value', value);
     return node;
 }
 
@@ -73361,7 +72247,7 @@ function booleanLiteral(value) {
     };
     
     const defs = NODE_FIELDS.BooleanLiteral;
-    validate$4(defs.value, node, 'value', value);
+    validate$3(defs.value, node, 'value', value);
     return node;
 }
 
@@ -73373,8 +72259,8 @@ function regExpLiteral(pattern, flags = '') {
     };
     
     const defs = NODE_FIELDS.RegExpLiteral;
-    validate$4(defs.pattern, node, 'pattern', pattern);
-    validate$4(defs.flags, node, 'flags', flags);
+    validate$3(defs.pattern, node, 'pattern', pattern);
+    validate$3(defs.flags, node, 'flags', flags);
     return node;
 }
 
@@ -73387,9 +72273,9 @@ function logicalExpression(operator, left, right) {
     };
     
     const defs = NODE_FIELDS.LogicalExpression;
-    validate$4(defs.operator, node, 'operator', operator);
-    validate$4(defs.left, node, 'left', left, 1);
-    validate$4(defs.right, node, 'right', right, 1);
+    validate$3(defs.operator, node, 'operator', operator);
+    validate$3(defs.left, node, 'left', left, 1);
+    validate$3(defs.right, node, 'right', right, 1);
     return node;
 }
 
@@ -73402,9 +72288,9 @@ function memberExpression(object, property, computed = false) {
     };
     
     const defs = NODE_FIELDS.MemberExpression;
-    validate$4(defs.object, node, 'object', object, 1);
-    validate$4(defs.property, node, 'property', property, 1);
-    validate$4(defs.computed, node, 'computed', computed);
+    validate$3(defs.object, node, 'object', object, 1);
+    validate$3(defs.property, node, 'property', property, 1);
+    validate$3(defs.computed, node, 'computed', computed);
     return node;
 }
 
@@ -73416,8 +72302,8 @@ function newExpression(callee, _arguments) {
     };
     
     const defs = NODE_FIELDS.NewExpression;
-    validate$4(defs.callee, node, 'callee', callee, 1);
-    validate$4(defs.arguments, node, 'arguments', _arguments, 1);
+    validate$3(defs.callee, node, 'callee', callee, 1);
+    validate$3(defs.arguments, node, 'arguments', _arguments, 1);
     return node;
 }
 
@@ -73431,10 +72317,10 @@ function program(body, directives = [], sourceType = 'script', interpreter = nul
     };
     
     const defs = NODE_FIELDS.Program;
-    validate$4(defs.body, node, 'body', body, 1);
-    validate$4(defs.directives, node, 'directives', directives, 1);
-    validate$4(defs.sourceType, node, 'sourceType', sourceType);
-    validate$4(defs.interpreter, node, 'interpreter', interpreter, 1);
+    validate$3(defs.body, node, 'body', body, 1);
+    validate$3(defs.directives, node, 'directives', directives, 1);
+    validate$3(defs.sourceType, node, 'sourceType', sourceType);
+    validate$3(defs.interpreter, node, 'interpreter', interpreter, 1);
     return node;
 }
 
@@ -73445,7 +72331,7 @@ function objectExpression$2(properties) {
     };
     
     const defs = NODE_FIELDS.ObjectExpression;
-    validate$4(defs.properties, node, 'properties', properties, 1);
+    validate$3(defs.properties, node, 'properties', properties, 1);
     return node;
 }
 
@@ -73462,13 +72348,13 @@ function objectMethod$1(kind, key, params, body, computed = false, generator = f
     };
     
     const defs = NODE_FIELDS.ObjectMethod;
-    validate$4(defs.kind, node, 'kind', kind);
-    validate$4(defs.key, node, 'key', key, 1);
-    validate$4(defs.params, node, 'params', params, 1);
-    validate$4(defs.body, node, 'body', body, 1);
-    validate$4(defs.computed, node, 'computed', computed);
-    validate$4(defs.generator, node, 'generator', generator);
-    validate$4(defs.async, node, 'async', async);
+    validate$3(defs.kind, node, 'kind', kind);
+    validate$3(defs.key, node, 'key', key, 1);
+    validate$3(defs.params, node, 'params', params, 1);
+    validate$3(defs.body, node, 'body', body, 1);
+    validate$3(defs.computed, node, 'computed', computed);
+    validate$3(defs.generator, node, 'generator', generator);
+    validate$3(defs.async, node, 'async', async);
     return node;
 }
 
@@ -73482,10 +72368,10 @@ function objectProperty$3(key, value, computed = false, shorthand = false) {
     };
     
     const defs = NODE_FIELDS.ObjectProperty;
-    validate$4(defs.key, node, 'key', key, 1);
-    validate$4(defs.value, node, 'value', value, 1);
-    validate$4(defs.computed, node, 'computed', computed);
-    validate$4(defs.shorthand, node, 'shorthand', shorthand);
+    validate$3(defs.key, node, 'key', key, 1);
+    validate$3(defs.value, node, 'value', value, 1);
+    validate$3(defs.computed, node, 'computed', computed);
+    validate$3(defs.shorthand, node, 'shorthand', shorthand);
     return node;
 }
 
@@ -73496,7 +72382,7 @@ function restElement(argument) {
     };
     
     const defs = NODE_FIELDS.RestElement;
-    validate$4(defs.argument, node, 'argument', argument, 1);
+    validate$3(defs.argument, node, 'argument', argument, 1);
     return node;
 }
 
@@ -73507,7 +72393,7 @@ function returnStatement(argument = null) {
     };
     
     const defs = NODE_FIELDS.ReturnStatement;
-    validate$4(defs.argument, node, 'argument', argument, 1);
+    validate$3(defs.argument, node, 'argument', argument, 1);
     return node;
 }
 
@@ -73518,7 +72404,7 @@ function sequenceExpression(expressions) {
     };
     
     const defs = NODE_FIELDS.SequenceExpression;
-    validate$4(defs.expressions, node, 'expressions', expressions, 1);
+    validate$3(defs.expressions, node, 'expressions', expressions, 1);
     return node;
 }
 
@@ -73529,7 +72415,7 @@ function parenthesizedExpression$2(expression2) {
     };
     
     const defs = NODE_FIELDS.ParenthesizedExpression;
-    validate$4(defs.expression, node, 'expression', expression2, 1);
+    validate$3(defs.expression, node, 'expression', expression2, 1);
     return node;
 }
 
@@ -73541,8 +72427,8 @@ function switchCase(test = null, consequent) {
     };
     
     const defs = NODE_FIELDS.SwitchCase;
-    validate$4(defs.test, node, 'test', test, 1);
-    validate$4(defs.consequent, node, 'consequent', consequent, 1);
+    validate$3(defs.test, node, 'test', test, 1);
+    validate$3(defs.consequent, node, 'consequent', consequent, 1);
     return node;
 }
 
@@ -73554,8 +72440,8 @@ function switchStatement(discriminant, cases) {
     };
     
     const defs = NODE_FIELDS.SwitchStatement;
-    validate$4(defs.discriminant, node, 'discriminant', discriminant, 1);
-    validate$4(defs.cases, node, 'cases', cases, 1);
+    validate$3(defs.discriminant, node, 'discriminant', discriminant, 1);
+    validate$3(defs.cases, node, 'cases', cases, 1);
     return node;
 }
 
@@ -73572,7 +72458,7 @@ function throwStatement(argument) {
     };
     
     const defs = NODE_FIELDS.ThrowStatement;
-    validate$4(defs.argument, node, 'argument', argument, 1);
+    validate$3(defs.argument, node, 'argument', argument, 1);
     return node;
 }
 
@@ -73585,9 +72471,9 @@ function tryStatement(block, handler = null, finalizer = null) {
     };
     
     const defs = NODE_FIELDS.TryStatement;
-    validate$4(defs.block, node, 'block', block, 1);
-    validate$4(defs.handler, node, 'handler', handler, 1);
-    validate$4(defs.finalizer, node, 'finalizer', finalizer, 1);
+    validate$3(defs.block, node, 'block', block, 1);
+    validate$3(defs.handler, node, 'handler', handler, 1);
+    validate$3(defs.finalizer, node, 'finalizer', finalizer, 1);
     return node;
 }
 
@@ -73600,9 +72486,9 @@ function unaryExpression(operator, argument, prefix2 = true) {
     };
     
     const defs = NODE_FIELDS.UnaryExpression;
-    validate$4(defs.operator, node, 'operator', operator);
-    validate$4(defs.argument, node, 'argument', argument, 1);
-    validate$4(defs.prefix, node, 'prefix', prefix2);
+    validate$3(defs.operator, node, 'operator', operator);
+    validate$3(defs.argument, node, 'argument', argument, 1);
+    validate$3(defs.prefix, node, 'prefix', prefix2);
     return node;
 }
 
@@ -73615,9 +72501,9 @@ function updateExpression(operator, argument, prefix2 = false) {
     };
     
     const defs = NODE_FIELDS.UpdateExpression;
-    validate$4(defs.operator, node, 'operator', operator);
-    validate$4(defs.argument, node, 'argument', argument, 1);
-    validate$4(defs.prefix, node, 'prefix', prefix2);
+    validate$3(defs.operator, node, 'operator', operator);
+    validate$3(defs.argument, node, 'argument', argument, 1);
+    validate$3(defs.prefix, node, 'prefix', prefix2);
     return node;
 }
 
@@ -73629,8 +72515,8 @@ function variableDeclaration(kind, declarations) {
     };
     
     const defs = NODE_FIELDS.VariableDeclaration;
-    validate$4(defs.kind, node, 'kind', kind);
-    validate$4(defs.declarations, node, 'declarations', declarations, 1);
+    validate$3(defs.kind, node, 'kind', kind);
+    validate$3(defs.declarations, node, 'declarations', declarations, 1);
     return node;
 }
 
@@ -73642,8 +72528,8 @@ function variableDeclarator(id, init = null) {
     };
     
     const defs = NODE_FIELDS.VariableDeclarator;
-    validate$4(defs.id, node, 'id', id, 1);
-    validate$4(defs.init, node, 'init', init, 1);
+    validate$3(defs.id, node, 'id', id, 1);
+    validate$3(defs.init, node, 'init', init, 1);
     return node;
 }
 
@@ -73655,8 +72541,8 @@ function whileStatement(test, body) {
     };
     
     const defs = NODE_FIELDS.WhileStatement;
-    validate$4(defs.test, node, 'test', test, 1);
-    validate$4(defs.body, node, 'body', body, 1);
+    validate$3(defs.test, node, 'test', test, 1);
+    validate$3(defs.body, node, 'body', body, 1);
     return node;
 }
 
@@ -73668,8 +72554,8 @@ function withStatement(object, body) {
     };
     
     const defs = NODE_FIELDS.WithStatement;
-    validate$4(defs.object, node, 'object', object, 1);
-    validate$4(defs.body, node, 'body', body, 1);
+    validate$3(defs.object, node, 'object', object, 1);
+    validate$3(defs.body, node, 'body', body, 1);
     return node;
 }
 
@@ -73681,8 +72567,8 @@ function assignmentPattern(left, right) {
     };
     
     const defs = NODE_FIELDS.AssignmentPattern;
-    validate$4(defs.left, node, 'left', left, 1);
-    validate$4(defs.right, node, 'right', right, 1);
+    validate$3(defs.left, node, 'left', left, 1);
+    validate$3(defs.right, node, 'right', right, 1);
     return node;
 }
 
@@ -73693,7 +72579,7 @@ function arrayPattern(elements) {
     };
     
     const defs = NODE_FIELDS.ArrayPattern;
-    validate$4(defs.elements, node, 'elements', elements, 1);
+    validate$3(defs.elements, node, 'elements', elements, 1);
     return node;
 }
 
@@ -73707,9 +72593,9 @@ function arrowFunctionExpression(params, body, async = false) {
     };
     
     const defs = NODE_FIELDS.ArrowFunctionExpression;
-    validate$4(defs.params, node, 'params', params, 1);
-    validate$4(defs.body, node, 'body', body, 1);
-    validate$4(defs.async, node, 'async', async);
+    validate$3(defs.params, node, 'params', params, 1);
+    validate$3(defs.body, node, 'body', body, 1);
+    validate$3(defs.async, node, 'async', async);
     return node;
 }
 
@@ -73720,7 +72606,7 @@ function classBody(body) {
     };
     
     const defs = NODE_FIELDS.ClassBody;
-    validate$4(defs.body, node, 'body', body, 1);
+    validate$3(defs.body, node, 'body', body, 1);
     return node;
 }
 
@@ -73734,10 +72620,10 @@ function classExpression(id = null, superClass = null, body, decorators = null) 
     };
     
     const defs = NODE_FIELDS.ClassExpression;
-    validate$4(defs.id, node, 'id', id, 1);
-    validate$4(defs.superClass, node, 'superClass', superClass, 1);
-    validate$4(defs.body, node, 'body', body, 1);
-    validate$4(defs.decorators, node, 'decorators', decorators, 1);
+    validate$3(defs.id, node, 'id', id, 1);
+    validate$3(defs.superClass, node, 'superClass', superClass, 1);
+    validate$3(defs.body, node, 'body', body, 1);
+    validate$3(defs.decorators, node, 'decorators', decorators, 1);
     return node;
 }
 
@@ -73751,10 +72637,10 @@ function classDeclaration(id = null, superClass = null, body, decorators = null)
     };
     
     const defs = NODE_FIELDS.ClassDeclaration;
-    validate$4(defs.id, node, 'id', id, 1);
-    validate$4(defs.superClass, node, 'superClass', superClass, 1);
-    validate$4(defs.body, node, 'body', body, 1);
-    validate$4(defs.decorators, node, 'decorators', decorators, 1);
+    validate$3(defs.id, node, 'id', id, 1);
+    validate$3(defs.superClass, node, 'superClass', superClass, 1);
+    validate$3(defs.body, node, 'body', body, 1);
+    validate$3(defs.decorators, node, 'decorators', decorators, 1);
     return node;
 }
 
@@ -73765,7 +72651,7 @@ function exportAllDeclaration(source) {
     };
     
     const defs = NODE_FIELDS.ExportAllDeclaration;
-    validate$4(defs.source, node, 'source', source, 1);
+    validate$3(defs.source, node, 'source', source, 1);
     return node;
 }
 
@@ -73776,7 +72662,7 @@ function exportDefaultDeclaration(declaration) {
     };
     
     const defs = NODE_FIELDS.ExportDefaultDeclaration;
-    validate$4(defs.declaration, node, 'declaration', declaration, 1);
+    validate$3(defs.declaration, node, 'declaration', declaration, 1);
     return node;
 }
 
@@ -73789,9 +72675,9 @@ function exportNamedDeclaration(declaration = null, specifiers = [], source = nu
     };
     
     const defs = NODE_FIELDS.ExportNamedDeclaration;
-    validate$4(defs.declaration, node, 'declaration', declaration, 1);
-    validate$4(defs.specifiers, node, 'specifiers', specifiers, 1);
-    validate$4(defs.source, node, 'source', source, 1);
+    validate$3(defs.declaration, node, 'declaration', declaration, 1);
+    validate$3(defs.specifiers, node, 'specifiers', specifiers, 1);
+    validate$3(defs.source, node, 'source', source, 1);
     return node;
 }
 
@@ -73803,8 +72689,8 @@ function exportSpecifier(local, exported) {
     };
     
     const defs = NODE_FIELDS.ExportSpecifier;
-    validate$4(defs.local, node, 'local', local, 1);
-    validate$4(defs.exported, node, 'exported', exported, 1);
+    validate$3(defs.local, node, 'local', local, 1);
+    validate$3(defs.exported, node, 'exported', exported, 1);
     return node;
 }
 
@@ -73818,10 +72704,10 @@ function forOfStatement(left, right, body, _await = false) {
     };
     
     const defs = NODE_FIELDS.ForOfStatement;
-    validate$4(defs.left, node, 'left', left, 1);
-    validate$4(defs.right, node, 'right', right, 1);
-    validate$4(defs.body, node, 'body', body, 1);
-    validate$4(defs.await, node, 'await', _await);
+    validate$3(defs.left, node, 'left', left, 1);
+    validate$3(defs.right, node, 'right', right, 1);
+    validate$3(defs.body, node, 'body', body, 1);
+    validate$3(defs.await, node, 'await', _await);
     return node;
 }
 
@@ -73833,8 +72719,8 @@ function importDeclaration(specifiers, source) {
     };
     
     const defs = NODE_FIELDS.ImportDeclaration;
-    validate$4(defs.specifiers, node, 'specifiers', specifiers, 1);
-    validate$4(defs.source, node, 'source', source, 1);
+    validate$3(defs.specifiers, node, 'specifiers', specifiers, 1);
+    validate$3(defs.source, node, 'source', source, 1);
     return node;
 }
 
@@ -73845,7 +72731,7 @@ function importDefaultSpecifier(local) {
     };
     
     const defs = NODE_FIELDS.ImportDefaultSpecifier;
-    validate$4(defs.local, node, 'local', local, 1);
+    validate$3(defs.local, node, 'local', local, 1);
     return node;
 }
 
@@ -73856,7 +72742,7 @@ function importNamespaceSpecifier(local) {
     };
     
     const defs = NODE_FIELDS.ImportNamespaceSpecifier;
-    validate$4(defs.local, node, 'local', local, 1);
+    validate$3(defs.local, node, 'local', local, 1);
     return node;
 }
 
@@ -73868,8 +72754,8 @@ function importSpecifier(local, imported) {
     };
     
     const defs = NODE_FIELDS.ImportSpecifier;
-    validate$4(defs.local, node, 'local', local, 1);
-    validate$4(defs.imported, node, 'imported', imported, 1);
+    validate$3(defs.local, node, 'local', local, 1);
+    validate$3(defs.imported, node, 'imported', imported, 1);
     return node;
 }
 
@@ -73881,8 +72767,8 @@ function importExpression(source, options = null) {
     };
     
     const defs = NODE_FIELDS.ImportExpression;
-    validate$4(defs.source, node, 'source', source, 1);
-    validate$4(defs.options, node, 'options', options, 1);
+    validate$3(defs.source, node, 'source', source, 1);
+    validate$3(defs.options, node, 'options', options, 1);
     return node;
 }
 
@@ -73894,8 +72780,8 @@ function metaProperty(meta, property) {
     };
     
     const defs = NODE_FIELDS.MetaProperty;
-    validate$4(defs.meta, node, 'meta', meta, 1);
-    validate$4(defs.property, node, 'property', property, 1);
+    validate$3(defs.meta, node, 'meta', meta, 1);
+    validate$3(defs.property, node, 'property', property, 1);
     return node;
 }
 
@@ -73913,14 +72799,14 @@ function classMethod$1(kind = 'method', key, params, body, computed = false, _st
     };
     
     const defs = NODE_FIELDS.ClassMethod;
-    validate$4(defs.kind, node, 'kind', kind);
-    validate$4(defs.key, node, 'key', key, 1);
-    validate$4(defs.params, node, 'params', params, 1);
-    validate$4(defs.body, node, 'body', body, 1);
-    validate$4(defs.computed, node, 'computed', computed);
-    validate$4(defs.static, node, 'static', _static);
-    validate$4(defs.generator, node, 'generator', generator);
-    validate$4(defs.async, node, 'async', async);
+    validate$3(defs.kind, node, 'kind', kind);
+    validate$3(defs.key, node, 'key', key, 1);
+    validate$3(defs.params, node, 'params', params, 1);
+    validate$3(defs.body, node, 'body', body, 1);
+    validate$3(defs.computed, node, 'computed', computed);
+    validate$3(defs.static, node, 'static', _static);
+    validate$3(defs.generator, node, 'generator', generator);
+    validate$3(defs.async, node, 'async', async);
     return node;
 }
 
@@ -73931,7 +72817,7 @@ function objectPattern$1(properties) {
     };
     
     const defs = NODE_FIELDS.ObjectPattern;
-    validate$4(defs.properties, node, 'properties', properties, 1);
+    validate$3(defs.properties, node, 'properties', properties, 1);
     return node;
 }
 
@@ -73942,7 +72828,7 @@ function spreadElement(argument) {
     };
     
     const defs = NODE_FIELDS.SpreadElement;
-    validate$4(defs.argument, node, 'argument', argument, 1);
+    validate$3(defs.argument, node, 'argument', argument, 1);
     return node;
 }
 
@@ -73960,8 +72846,8 @@ function taggedTemplateExpression(tag, quasi) {
     };
     
     const defs = NODE_FIELDS.TaggedTemplateExpression;
-    validate$4(defs.tag, node, 'tag', tag, 1);
-    validate$4(defs.quasi, node, 'quasi', quasi, 1);
+    validate$3(defs.tag, node, 'tag', tag, 1);
+    validate$3(defs.quasi, node, 'quasi', quasi, 1);
     return node;
 }
 
@@ -73973,8 +72859,8 @@ function templateElement$1(value, tail = false) {
     };
     
     const defs = NODE_FIELDS.TemplateElement;
-    validate$4(defs.value, node, 'value', value);
-    validate$4(defs.tail, node, 'tail', tail);
+    validate$3(defs.value, node, 'value', value);
+    validate$3(defs.tail, node, 'tail', tail);
     return node;
 }
 
@@ -73986,8 +72872,8 @@ function templateLiteral(quasis, expressions) {
     };
     
     const defs = NODE_FIELDS.TemplateLiteral;
-    validate$4(defs.quasis, node, 'quasis', quasis, 1);
-    validate$4(defs.expressions, node, 'expressions', expressions, 1);
+    validate$3(defs.quasis, node, 'quasis', quasis, 1);
+    validate$3(defs.expressions, node, 'expressions', expressions, 1);
     return node;
 }
 
@@ -73999,8 +72885,8 @@ function yieldExpression(argument = null, delegate = false) {
     };
     
     const defs = NODE_FIELDS.YieldExpression;
-    validate$4(defs.argument, node, 'argument', argument, 1);
-    validate$4(defs.delegate, node, 'delegate', delegate);
+    validate$3(defs.argument, node, 'argument', argument, 1);
+    validate$3(defs.delegate, node, 'delegate', delegate);
     return node;
 }
 
@@ -74011,7 +72897,7 @@ function awaitExpression(argument) {
     };
     
     const defs = NODE_FIELDS.AwaitExpression;
-    validate$4(defs.argument, node, 'argument', argument, 1);
+    validate$3(defs.argument, node, 'argument', argument, 1);
     return node;
 }
 
@@ -74028,7 +72914,7 @@ function bigIntLiteral(value) {
     };
     
     const defs = NODE_FIELDS.BigIntLiteral;
-    validate$4(defs.value, node, 'value', value);
+    validate$3(defs.value, node, 'value', value);
     return node;
 }
 
@@ -74039,7 +72925,7 @@ function exportNamespaceSpecifier(exported) {
     };
     
     const defs = NODE_FIELDS.ExportNamespaceSpecifier;
-    validate$4(defs.exported, node, 'exported', exported, 1);
+    validate$3(defs.exported, node, 'exported', exported, 1);
     return node;
 }
 
@@ -74053,10 +72939,10 @@ function optionalMemberExpression(object, property, computed = false, optional) 
     };
     
     const defs = NODE_FIELDS.OptionalMemberExpression;
-    validate$4(defs.object, node, 'object', object, 1);
-    validate$4(defs.property, node, 'property', property, 1);
-    validate$4(defs.computed, node, 'computed', computed);
-    validate$4(defs.optional, node, 'optional', optional);
+    validate$3(defs.object, node, 'object', object, 1);
+    validate$3(defs.property, node, 'property', property, 1);
+    validate$3(defs.computed, node, 'computed', computed);
+    validate$3(defs.optional, node, 'optional', optional);
     return node;
 }
 
@@ -74069,9 +72955,9 @@ function optionalCallExpression(callee, _arguments, optional) {
     };
     
     const defs = NODE_FIELDS.OptionalCallExpression;
-    validate$4(defs.callee, node, 'callee', callee, 1);
-    validate$4(defs.arguments, node, 'arguments', _arguments, 1);
-    validate$4(defs.optional, node, 'optional', optional);
+    validate$3(defs.callee, node, 'callee', callee, 1);
+    validate$3(defs.arguments, node, 'arguments', _arguments, 1);
+    validate$3(defs.optional, node, 'optional', optional);
     return node;
 }
 
@@ -74087,12 +72973,12 @@ function classProperty(key, value = null, typeAnnotation2 = null, decorators = n
     };
     
     const defs = NODE_FIELDS.ClassProperty;
-    validate$4(defs.key, node, 'key', key, 1);
-    validate$4(defs.value, node, 'value', value, 1);
-    validate$4(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
-    validate$4(defs.decorators, node, 'decorators', decorators, 1);
-    validate$4(defs.computed, node, 'computed', computed);
-    validate$4(defs.static, node, 'static', _static);
+    validate$3(defs.key, node, 'key', key, 1);
+    validate$3(defs.value, node, 'value', value, 1);
+    validate$3(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
+    validate$3(defs.decorators, node, 'decorators', decorators, 1);
+    validate$3(defs.computed, node, 'computed', computed);
+    validate$3(defs.static, node, 'static', _static);
     return node;
 }
 
@@ -74108,12 +72994,12 @@ function classAccessorProperty(key, value = null, typeAnnotation2 = null, decora
     };
     
     const defs = NODE_FIELDS.ClassAccessorProperty;
-    validate$4(defs.key, node, 'key', key, 1);
-    validate$4(defs.value, node, 'value', value, 1);
-    validate$4(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
-    validate$4(defs.decorators, node, 'decorators', decorators, 1);
-    validate$4(defs.computed, node, 'computed', computed);
-    validate$4(defs.static, node, 'static', _static);
+    validate$3(defs.key, node, 'key', key, 1);
+    validate$3(defs.value, node, 'value', value, 1);
+    validate$3(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
+    validate$3(defs.decorators, node, 'decorators', decorators, 1);
+    validate$3(defs.computed, node, 'computed', computed);
+    validate$3(defs.static, node, 'static', _static);
     return node;
 }
 
@@ -74127,10 +73013,10 @@ function classPrivateProperty(key, value = null, decorators = null, _static = fa
     };
     
     const defs = NODE_FIELDS.ClassPrivateProperty;
-    validate$4(defs.key, node, 'key', key, 1);
-    validate$4(defs.value, node, 'value', value, 1);
-    validate$4(defs.decorators, node, 'decorators', decorators, 1);
-    validate$4(defs.static, node, 'static', _static);
+    validate$3(defs.key, node, 'key', key, 1);
+    validate$3(defs.value, node, 'value', value, 1);
+    validate$3(defs.decorators, node, 'decorators', decorators, 1);
+    validate$3(defs.static, node, 'static', _static);
     return node;
 }
 
@@ -74145,11 +73031,11 @@ function classPrivateMethod$1(kind = 'method', key, params, body, _static = fals
     };
     
     const defs = NODE_FIELDS.ClassPrivateMethod;
-    validate$4(defs.kind, node, 'kind', kind);
-    validate$4(defs.key, node, 'key', key, 1);
-    validate$4(defs.params, node, 'params', params, 1);
-    validate$4(defs.body, node, 'body', body, 1);
-    validate$4(defs.static, node, 'static', _static);
+    validate$3(defs.kind, node, 'kind', kind);
+    validate$3(defs.key, node, 'key', key, 1);
+    validate$3(defs.params, node, 'params', params, 1);
+    validate$3(defs.body, node, 'body', body, 1);
+    validate$3(defs.static, node, 'static', _static);
     return node;
 }
 
@@ -74160,7 +73046,7 @@ function privateName$1(id) {
     };
     
     const defs = NODE_FIELDS.PrivateName;
-    validate$4(defs.id, node, 'id', id, 1);
+    validate$3(defs.id, node, 'id', id, 1);
     return node;
 }
 
@@ -74171,7 +73057,7 @@ function staticBlock(body) {
     };
     
     const defs = NODE_FIELDS.StaticBlock;
-    validate$4(defs.body, node, 'body', body, 1);
+    validate$3(defs.body, node, 'body', body, 1);
     return node;
 }
 
@@ -74183,8 +73069,8 @@ function importAttribute(key, value) {
     };
     
     const defs = NODE_FIELDS.ImportAttribute;
-    validate$4(defs.key, node, 'key', key, 1);
-    validate$4(defs.value, node, 'value', value, 1);
+    validate$3(defs.key, node, 'key', key, 1);
+    validate$3(defs.value, node, 'value', value, 1);
     return node;
 }
 
@@ -74201,7 +73087,7 @@ function arrayTypeAnnotation(elementType) {
     };
     
     const defs = NODE_FIELDS.ArrayTypeAnnotation;
-    validate$4(defs.elementType, node, 'elementType', elementType, 1);
+    validate$3(defs.elementType, node, 'elementType', elementType, 1);
     return node;
 }
 
@@ -74218,7 +73104,7 @@ function booleanLiteralTypeAnnotation(value) {
     };
     
     const defs = NODE_FIELDS.BooleanLiteralTypeAnnotation;
-    validate$4(defs.value, node, 'value', value);
+    validate$3(defs.value, node, 'value', value);
     return node;
 }
 
@@ -74236,8 +73122,8 @@ function classImplements(id, typeParameters = null) {
     };
     
     const defs = NODE_FIELDS.ClassImplements;
-    validate$4(defs.id, node, 'id', id, 1);
-    validate$4(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
+    validate$3(defs.id, node, 'id', id, 1);
+    validate$3(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
     return node;
 }
 
@@ -74251,10 +73137,10 @@ function declareClass(id, typeParameters = null, _extends = null, body) {
     };
     
     const defs = NODE_FIELDS.DeclareClass;
-    validate$4(defs.id, node, 'id', id, 1);
-    validate$4(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
-    validate$4(defs.extends, node, 'extends', _extends, 1);
-    validate$4(defs.body, node, 'body', body, 1);
+    validate$3(defs.id, node, 'id', id, 1);
+    validate$3(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
+    validate$3(defs.extends, node, 'extends', _extends, 1);
+    validate$3(defs.body, node, 'body', body, 1);
     return node;
 }
 
@@ -74265,7 +73151,7 @@ function declareFunction(id) {
     };
     
     const defs = NODE_FIELDS.DeclareFunction;
-    validate$4(defs.id, node, 'id', id, 1);
+    validate$3(defs.id, node, 'id', id, 1);
     return node;
 }
 
@@ -74279,10 +73165,10 @@ function declareInterface(id, typeParameters = null, _extends = null, body) {
     };
     
     const defs = NODE_FIELDS.DeclareInterface;
-    validate$4(defs.id, node, 'id', id, 1);
-    validate$4(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
-    validate$4(defs.extends, node, 'extends', _extends, 1);
-    validate$4(defs.body, node, 'body', body, 1);
+    validate$3(defs.id, node, 'id', id, 1);
+    validate$3(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
+    validate$3(defs.extends, node, 'extends', _extends, 1);
+    validate$3(defs.body, node, 'body', body, 1);
     return node;
 }
 
@@ -74295,9 +73181,9 @@ function declareModule(id, body, kind = null) {
     };
     
     const defs = NODE_FIELDS.DeclareModule;
-    validate$4(defs.id, node, 'id', id, 1);
-    validate$4(defs.body, node, 'body', body, 1);
-    validate$4(defs.kind, node, 'kind', kind);
+    validate$3(defs.id, node, 'id', id, 1);
+    validate$3(defs.body, node, 'body', body, 1);
+    validate$3(defs.kind, node, 'kind', kind);
     return node;
 }
 
@@ -74308,7 +73194,7 @@ function declareModuleExports(typeAnnotation2) {
     };
     
     const defs = NODE_FIELDS.DeclareModuleExports;
-    validate$4(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
+    validate$3(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
     return node;
 }
 
@@ -74321,9 +73207,9 @@ function declareTypeAlias(id, typeParameters = null, right) {
     };
     
     const defs = NODE_FIELDS.DeclareTypeAlias;
-    validate$4(defs.id, node, 'id', id, 1);
-    validate$4(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
-    validate$4(defs.right, node, 'right', right, 1);
+    validate$3(defs.id, node, 'id', id, 1);
+    validate$3(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
+    validate$3(defs.right, node, 'right', right, 1);
     return node;
 }
 
@@ -74336,9 +73222,9 @@ function declareOpaqueType(id, typeParameters = null, supertype = null) {
     };
     
     const defs = NODE_FIELDS.DeclareOpaqueType;
-    validate$4(defs.id, node, 'id', id, 1);
-    validate$4(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
-    validate$4(defs.supertype, node, 'supertype', supertype, 1);
+    validate$3(defs.id, node, 'id', id, 1);
+    validate$3(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
+    validate$3(defs.supertype, node, 'supertype', supertype, 1);
     return node;
 }
 
@@ -74349,7 +73235,7 @@ function declareVariable(id) {
     };
     
     const defs = NODE_FIELDS.DeclareVariable;
-    validate$4(defs.id, node, 'id', id, 1);
+    validate$3(defs.id, node, 'id', id, 1);
     return node;
 }
 
@@ -74363,10 +73249,10 @@ function declareExportDeclaration(declaration = null, specifiers = null, source 
     };
     
     const defs = NODE_FIELDS.DeclareExportDeclaration;
-    validate$4(defs.declaration, node, 'declaration', declaration, 1);
-    validate$4(defs.specifiers, node, 'specifiers', specifiers, 1);
-    validate$4(defs.source, node, 'source', source, 1);
-    validate$4(defs.attributes, node, 'attributes', attributes, 1);
+    validate$3(defs.declaration, node, 'declaration', declaration, 1);
+    validate$3(defs.specifiers, node, 'specifiers', specifiers, 1);
+    validate$3(defs.source, node, 'source', source, 1);
+    validate$3(defs.attributes, node, 'attributes', attributes, 1);
     return node;
 }
 
@@ -74378,8 +73264,8 @@ function declareExportAllDeclaration(source, attributes = null) {
     };
     
     const defs = NODE_FIELDS.DeclareExportAllDeclaration;
-    validate$4(defs.source, node, 'source', source, 1);
-    validate$4(defs.attributes, node, 'attributes', attributes, 1);
+    validate$3(defs.source, node, 'source', source, 1);
+    validate$3(defs.attributes, node, 'attributes', attributes, 1);
     return node;
 }
 
@@ -74390,7 +73276,7 @@ function declaredPredicate(value) {
     };
     
     const defs = NODE_FIELDS.DeclaredPredicate;
-    validate$4(defs.value, node, 'value', value, 1);
+    validate$3(defs.value, node, 'value', value, 1);
     return node;
 }
 
@@ -74410,10 +73296,10 @@ function functionTypeAnnotation(typeParameters = null, params, rest = null, retu
     };
     
     const defs = NODE_FIELDS.FunctionTypeAnnotation;
-    validate$4(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
-    validate$4(defs.params, node, 'params', params, 1);
-    validate$4(defs.rest, node, 'rest', rest, 1);
-    validate$4(defs.returnType, node, 'returnType', returnType, 1);
+    validate$3(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
+    validate$3(defs.params, node, 'params', params, 1);
+    validate$3(defs.rest, node, 'rest', rest, 1);
+    validate$3(defs.returnType, node, 'returnType', returnType, 1);
     return node;
 }
 
@@ -74425,8 +73311,8 @@ function functionTypeParam(name = null, typeAnnotation2) {
     };
     
     const defs = NODE_FIELDS.FunctionTypeParam;
-    validate$4(defs.name, node, 'name', name, 1);
-    validate$4(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
+    validate$3(defs.name, node, 'name', name, 1);
+    validate$3(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
     return node;
 }
 
@@ -74438,8 +73324,8 @@ function genericTypeAnnotation(id, typeParameters = null) {
     };
     
     const defs = NODE_FIELDS.GenericTypeAnnotation;
-    validate$4(defs.id, node, 'id', id, 1);
-    validate$4(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
+    validate$3(defs.id, node, 'id', id, 1);
+    validate$3(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
     return node;
 }
 
@@ -74457,8 +73343,8 @@ function interfaceExtends(id, typeParameters = null) {
     };
     
     const defs = NODE_FIELDS.InterfaceExtends;
-    validate$4(defs.id, node, 'id', id, 1);
-    validate$4(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
+    validate$3(defs.id, node, 'id', id, 1);
+    validate$3(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
     return node;
 }
 
@@ -74472,10 +73358,10 @@ function interfaceDeclaration(id, typeParameters = null, _extends = null, body) 
     };
     
     const defs = NODE_FIELDS.InterfaceDeclaration;
-    validate$4(defs.id, node, 'id', id, 1);
-    validate$4(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
-    validate$4(defs.extends, node, 'extends', _extends, 1);
-    validate$4(defs.body, node, 'body', body, 1);
+    validate$3(defs.id, node, 'id', id, 1);
+    validate$3(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
+    validate$3(defs.extends, node, 'extends', _extends, 1);
+    validate$3(defs.body, node, 'body', body, 1);
     return node;
 }
 
@@ -74487,8 +73373,8 @@ function interfaceTypeAnnotation(_extends = null, body) {
     };
     
     const defs = NODE_FIELDS.InterfaceTypeAnnotation;
-    validate$4(defs.extends, node, 'extends', _extends, 1);
-    validate$4(defs.body, node, 'body', body, 1);
+    validate$3(defs.extends, node, 'extends', _extends, 1);
+    validate$3(defs.body, node, 'body', body, 1);
     return node;
 }
 
@@ -74499,7 +73385,7 @@ function intersectionTypeAnnotation(types2) {
     };
     
     const defs = NODE_FIELDS.IntersectionTypeAnnotation;
-    validate$4(defs.types, node, 'types', types2, 1);
+    validate$3(defs.types, node, 'types', types2, 1);
     return node;
 }
 
@@ -74522,7 +73408,7 @@ function nullableTypeAnnotation(typeAnnotation2) {
     };
     
     const defs = NODE_FIELDS.NullableTypeAnnotation;
-    validate$4(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
+    validate$3(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
     return node;
 }
 
@@ -74533,7 +73419,7 @@ function numberLiteralTypeAnnotation(value) {
     };
     
     const defs = NODE_FIELDS.NumberLiteralTypeAnnotation;
-    validate$4(defs.value, node, 'value', value);
+    validate$3(defs.value, node, 'value', value);
     return node;
 }
 
@@ -74554,11 +73440,11 @@ function objectTypeAnnotation(properties, indexers = [], callProperties = [], in
     };
     
     const defs = NODE_FIELDS.ObjectTypeAnnotation;
-    validate$4(defs.properties, node, 'properties', properties, 1);
-    validate$4(defs.indexers, node, 'indexers', indexers, 1);
-    validate$4(defs.callProperties, node, 'callProperties', callProperties, 1);
-    validate$4(defs.internalSlots, node, 'internalSlots', internalSlots, 1);
-    validate$4(defs.exact, node, 'exact', exact);
+    validate$3(defs.properties, node, 'properties', properties, 1);
+    validate$3(defs.indexers, node, 'indexers', indexers, 1);
+    validate$3(defs.callProperties, node, 'callProperties', callProperties, 1);
+    validate$3(defs.internalSlots, node, 'internalSlots', internalSlots, 1);
+    validate$3(defs.exact, node, 'exact', exact);
     return node;
 }
 
@@ -74573,11 +73459,11 @@ function objectTypeInternalSlot(id, value, optional, _static, method) {
     };
     
     const defs = NODE_FIELDS.ObjectTypeInternalSlot;
-    validate$4(defs.id, node, 'id', id, 1);
-    validate$4(defs.value, node, 'value', value, 1);
-    validate$4(defs.optional, node, 'optional', optional);
-    validate$4(defs.static, node, 'static', _static);
-    validate$4(defs.method, node, 'method', method);
+    validate$3(defs.id, node, 'id', id, 1);
+    validate$3(defs.value, node, 'value', value, 1);
+    validate$3(defs.optional, node, 'optional', optional);
+    validate$3(defs.static, node, 'static', _static);
+    validate$3(defs.method, node, 'method', method);
     return node;
 }
 
@@ -74589,7 +73475,7 @@ function objectTypeCallProperty(value) {
     };
     
     const defs = NODE_FIELDS.ObjectTypeCallProperty;
-    validate$4(defs.value, node, 'value', value, 1);
+    validate$3(defs.value, node, 'value', value, 1);
     return node;
 }
 
@@ -74604,10 +73490,10 @@ function objectTypeIndexer(id = null, key, value, variance2 = null) {
     };
     
     const defs = NODE_FIELDS.ObjectTypeIndexer;
-    validate$4(defs.id, node, 'id', id, 1);
-    validate$4(defs.key, node, 'key', key, 1);
-    validate$4(defs.value, node, 'value', value, 1);
-    validate$4(defs.variance, node, 'variance', variance2, 1);
+    validate$3(defs.id, node, 'id', id, 1);
+    validate$3(defs.key, node, 'key', key, 1);
+    validate$3(defs.value, node, 'value', value, 1);
+    validate$3(defs.variance, node, 'variance', variance2, 1);
     return node;
 }
 
@@ -74625,9 +73511,9 @@ function objectTypeProperty(key, value, variance2 = null) {
     };
     
     const defs = NODE_FIELDS.ObjectTypeProperty;
-    validate$4(defs.key, node, 'key', key, 1);
-    validate$4(defs.value, node, 'value', value, 1);
-    validate$4(defs.variance, node, 'variance', variance2, 1);
+    validate$3(defs.key, node, 'key', key, 1);
+    validate$3(defs.value, node, 'value', value, 1);
+    validate$3(defs.variance, node, 'variance', variance2, 1);
     return node;
 }
 
@@ -74638,7 +73524,7 @@ function objectTypeSpreadProperty(argument) {
     };
     
     const defs = NODE_FIELDS.ObjectTypeSpreadProperty;
-    validate$4(defs.argument, node, 'argument', argument, 1);
+    validate$3(defs.argument, node, 'argument', argument, 1);
     return node;
 }
 
@@ -74652,10 +73538,10 @@ function opaqueType(id, typeParameters = null, supertype = null, impltype) {
     };
     
     const defs = NODE_FIELDS.OpaqueType;
-    validate$4(defs.id, node, 'id', id, 1);
-    validate$4(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
-    validate$4(defs.supertype, node, 'supertype', supertype, 1);
-    validate$4(defs.impltype, node, 'impltype', impltype, 1);
+    validate$3(defs.id, node, 'id', id, 1);
+    validate$3(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
+    validate$3(defs.supertype, node, 'supertype', supertype, 1);
+    validate$3(defs.impltype, node, 'impltype', impltype, 1);
     return node;
 }
 
@@ -74667,8 +73553,8 @@ function qualifiedTypeIdentifier(id, qualification) {
     };
     
     const defs = NODE_FIELDS.QualifiedTypeIdentifier;
-    validate$4(defs.id, node, 'id', id, 1);
-    validate$4(defs.qualification, node, 'qualification', qualification, 1);
+    validate$3(defs.id, node, 'id', id, 1);
+    validate$3(defs.qualification, node, 'qualification', qualification, 1);
     return node;
 }
 
@@ -74679,7 +73565,7 @@ function stringLiteralTypeAnnotation(value) {
     };
     
     const defs = NODE_FIELDS.StringLiteralTypeAnnotation;
-    validate$4(defs.value, node, 'value', value);
+    validate$3(defs.value, node, 'value', value);
     return node;
 }
 
@@ -74708,7 +73594,7 @@ function tupleTypeAnnotation(types2) {
     };
     
     const defs = NODE_FIELDS.TupleTypeAnnotation;
-    validate$4(defs.types, node, 'types', types2, 1);
+    validate$3(defs.types, node, 'types', types2, 1);
     return node;
 }
 
@@ -74719,7 +73605,7 @@ function typeofTypeAnnotation(argument) {
     };
     
     const defs = NODE_FIELDS.TypeofTypeAnnotation;
-    validate$4(defs.argument, node, 'argument', argument, 1);
+    validate$3(defs.argument, node, 'argument', argument, 1);
     return node;
 }
 
@@ -74732,9 +73618,9 @@ function typeAlias(id, typeParameters = null, right) {
     };
     
     const defs = NODE_FIELDS.TypeAlias;
-    validate$4(defs.id, node, 'id', id, 1);
-    validate$4(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
-    validate$4(defs.right, node, 'right', right, 1);
+    validate$3(defs.id, node, 'id', id, 1);
+    validate$3(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
+    validate$3(defs.right, node, 'right', right, 1);
     return node;
 }
 
@@ -74745,7 +73631,7 @@ function typeAnnotation(typeAnnotation2) {
     };
     
     const defs = NODE_FIELDS.TypeAnnotation;
-    validate$4(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
+    validate$3(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
     return node;
 }
 
@@ -74757,8 +73643,8 @@ function typeCastExpression(expression2, typeAnnotation2) {
     };
     
     const defs = NODE_FIELDS.TypeCastExpression;
-    validate$4(defs.expression, node, 'expression', expression2, 1);
-    validate$4(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
+    validate$3(defs.expression, node, 'expression', expression2, 1);
+    validate$3(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
     return node;
 }
 
@@ -74772,9 +73658,9 @@ function typeParameter(bound = null, _default = null, variance2 = null) {
     };
     
     const defs = NODE_FIELDS.TypeParameter;
-    validate$4(defs.bound, node, 'bound', bound, 1);
-    validate$4(defs.default, node, 'default', _default, 1);
-    validate$4(defs.variance, node, 'variance', variance2, 1);
+    validate$3(defs.bound, node, 'bound', bound, 1);
+    validate$3(defs.default, node, 'default', _default, 1);
+    validate$3(defs.variance, node, 'variance', variance2, 1);
     return node;
 }
 
@@ -74785,7 +73671,7 @@ function typeParameterDeclaration(params) {
     };
     
     const defs = NODE_FIELDS.TypeParameterDeclaration;
-    validate$4(defs.params, node, 'params', params, 1);
+    validate$3(defs.params, node, 'params', params, 1);
     return node;
 }
 
@@ -74796,7 +73682,7 @@ function typeParameterInstantiation(params) {
     };
     
     const defs = NODE_FIELDS.TypeParameterInstantiation;
-    validate$4(defs.params, node, 'params', params, 1);
+    validate$3(defs.params, node, 'params', params, 1);
     return node;
 }
 
@@ -74807,7 +73693,7 @@ function unionTypeAnnotation(types2) {
     };
     
     const defs = NODE_FIELDS.UnionTypeAnnotation;
-    validate$4(defs.types, node, 'types', types2, 1);
+    validate$3(defs.types, node, 'types', types2, 1);
     return node;
 }
 
@@ -74818,7 +73704,7 @@ function variance(kind) {
     };
     
     const defs = NODE_FIELDS.Variance;
-    validate$4(defs.kind, node, 'kind', kind);
+    validate$3(defs.kind, node, 'kind', kind);
     return node;
 }
 
@@ -74836,8 +73722,8 @@ function enumDeclaration(id, body) {
     };
     
     const defs = NODE_FIELDS.EnumDeclaration;
-    validate$4(defs.id, node, 'id', id, 1);
-    validate$4(defs.body, node, 'body', body, 1);
+    validate$3(defs.id, node, 'id', id, 1);
+    validate$3(defs.body, node, 'body', body, 1);
     return node;
 }
 
@@ -74850,7 +73736,7 @@ function enumBooleanBody(members) {
     };
     
     const defs = NODE_FIELDS.EnumBooleanBody;
-    validate$4(defs.members, node, 'members', members, 1);
+    validate$3(defs.members, node, 'members', members, 1);
     return node;
 }
 
@@ -74863,7 +73749,7 @@ function enumNumberBody(members) {
     };
     
     const defs = NODE_FIELDS.EnumNumberBody;
-    validate$4(defs.members, node, 'members', members, 1);
+    validate$3(defs.members, node, 'members', members, 1);
     return node;
 }
 
@@ -74876,7 +73762,7 @@ function enumStringBody(members) {
     };
     
     const defs = NODE_FIELDS.EnumStringBody;
-    validate$4(defs.members, node, 'members', members, 1);
+    validate$3(defs.members, node, 'members', members, 1);
     return node;
 }
 
@@ -74888,7 +73774,7 @@ function enumSymbolBody(members) {
     };
     
     const defs = NODE_FIELDS.EnumSymbolBody;
-    validate$4(defs.members, node, 'members', members, 1);
+    validate$3(defs.members, node, 'members', members, 1);
     return node;
 }
 
@@ -74900,7 +73786,7 @@ function enumBooleanMember(id) {
     };
     
     const defs = NODE_FIELDS.EnumBooleanMember;
-    validate$4(defs.id, node, 'id', id, 1);
+    validate$3(defs.id, node, 'id', id, 1);
     return node;
 }
 
@@ -74912,8 +73798,8 @@ function enumNumberMember(id, init) {
     };
     
     const defs = NODE_FIELDS.EnumNumberMember;
-    validate$4(defs.id, node, 'id', id, 1);
-    validate$4(defs.init, node, 'init', init, 1);
+    validate$3(defs.id, node, 'id', id, 1);
+    validate$3(defs.init, node, 'init', init, 1);
     return node;
 }
 
@@ -74925,8 +73811,8 @@ function enumStringMember(id, init) {
     };
     
     const defs = NODE_FIELDS.EnumStringMember;
-    validate$4(defs.id, node, 'id', id, 1);
-    validate$4(defs.init, node, 'init', init, 1);
+    validate$3(defs.id, node, 'id', id, 1);
+    validate$3(defs.init, node, 'init', init, 1);
     return node;
 }
 
@@ -74937,7 +73823,7 @@ function enumDefaultedMember(id) {
     };
     
     const defs = NODE_FIELDS.EnumDefaultedMember;
-    validate$4(defs.id, node, 'id', id, 1);
+    validate$3(defs.id, node, 'id', id, 1);
     return node;
 }
 
@@ -74949,8 +73835,8 @@ function indexedAccessType(objectType, indexType) {
     };
     
     const defs = NODE_FIELDS.IndexedAccessType;
-    validate$4(defs.objectType, node, 'objectType', objectType, 1);
-    validate$4(defs.indexType, node, 'indexType', indexType, 1);
+    validate$3(defs.objectType, node, 'objectType', objectType, 1);
+    validate$3(defs.indexType, node, 'indexType', indexType, 1);
     return node;
 }
 
@@ -74963,8 +73849,8 @@ function optionalIndexedAccessType(objectType, indexType) {
     };
     
     const defs = NODE_FIELDS.OptionalIndexedAccessType;
-    validate$4(defs.objectType, node, 'objectType', objectType, 1);
-    validate$4(defs.indexType, node, 'indexType', indexType, 1);
+    validate$3(defs.objectType, node, 'objectType', objectType, 1);
+    validate$3(defs.indexType, node, 'indexType', indexType, 1);
     return node;
 }
 
@@ -74976,8 +73862,8 @@ function jsxAttribute$1(name, value = null) {
     };
     
     const defs = NODE_FIELDS.JSXAttribute;
-    validate$4(defs.name, node, 'name', name, 1);
-    validate$4(defs.value, node, 'value', value, 1);
+    validate$3(defs.name, node, 'name', name, 1);
+    validate$3(defs.value, node, 'value', value, 1);
     return node;
 }
 
@@ -74988,7 +73874,7 @@ function jsxClosingElement(name) {
     };
     
     const defs = NODE_FIELDS.JSXClosingElement;
-    validate$4(defs.name, node, 'name', name, 1);
+    validate$3(defs.name, node, 'name', name, 1);
     return node;
 }
 
@@ -75001,9 +73887,9 @@ function jsxElement(openingElement, closingElement = null, children) {
     };
     
     const defs = NODE_FIELDS.JSXElement;
-    validate$4(defs.openingElement, node, 'openingElement', openingElement, 1);
-    validate$4(defs.closingElement, node, 'closingElement', closingElement, 1);
-    validate$4(defs.children, node, 'children', children, 1);
+    validate$3(defs.openingElement, node, 'openingElement', openingElement, 1);
+    validate$3(defs.closingElement, node, 'closingElement', closingElement, 1);
+    validate$3(defs.children, node, 'children', children, 1);
     return node;
 }
 
@@ -75020,7 +73906,7 @@ function jsxExpressionContainer(expression2) {
     };
     
     const defs = NODE_FIELDS.JSXExpressionContainer;
-    validate$4(defs.expression, node, 'expression', expression2, 1);
+    validate$3(defs.expression, node, 'expression', expression2, 1);
     return node;
 }
 
@@ -75031,7 +73917,7 @@ function jsxSpreadChild(expression2) {
     };
     
     const defs = NODE_FIELDS.JSXSpreadChild;
-    validate$4(defs.expression, node, 'expression', expression2, 1);
+    validate$3(defs.expression, node, 'expression', expression2, 1);
     return node;
 }
 
@@ -75042,7 +73928,7 @@ function jsxIdentifier$1(name) {
     };
     
     const defs = NODE_FIELDS.JSXIdentifier;
-    validate$4(defs.name, node, 'name', name);
+    validate$3(defs.name, node, 'name', name);
     return node;
 }
 
@@ -75054,8 +73940,8 @@ function jsxMemberExpression(object, property) {
     };
     
     const defs = NODE_FIELDS.JSXMemberExpression;
-    validate$4(defs.object, node, 'object', object, 1);
-    validate$4(defs.property, node, 'property', property, 1);
+    validate$3(defs.object, node, 'object', object, 1);
+    validate$3(defs.property, node, 'property', property, 1);
     return node;
 }
 
@@ -75067,8 +73953,8 @@ function jsxNamespacedName(namespace, name) {
     };
     
     const defs = NODE_FIELDS.JSXNamespacedName;
-    validate$4(defs.namespace, node, 'namespace', namespace, 1);
-    validate$4(defs.name, node, 'name', name, 1);
+    validate$3(defs.namespace, node, 'namespace', namespace, 1);
+    validate$3(defs.name, node, 'name', name, 1);
     return node;
 }
 
@@ -75081,9 +73967,9 @@ function jsxOpeningElement(name, attributes, selfClosing = false) {
     };
     
     const defs = NODE_FIELDS.JSXOpeningElement;
-    validate$4(defs.name, node, 'name', name, 1);
-    validate$4(defs.attributes, node, 'attributes', attributes, 1);
-    validate$4(defs.selfClosing, node, 'selfClosing', selfClosing);
+    validate$3(defs.name, node, 'name', name, 1);
+    validate$3(defs.attributes, node, 'attributes', attributes, 1);
+    validate$3(defs.selfClosing, node, 'selfClosing', selfClosing);
     return node;
 }
 
@@ -75094,7 +73980,7 @@ function jsxSpreadAttribute(argument) {
     };
     
     const defs = NODE_FIELDS.JSXSpreadAttribute;
-    validate$4(defs.argument, node, 'argument', argument, 1);
+    validate$3(defs.argument, node, 'argument', argument, 1);
     return node;
 }
 
@@ -75105,7 +73991,7 @@ function jsxText(value) {
     };
     
     const defs = NODE_FIELDS.JSXText;
-    validate$4(defs.value, node, 'value', value);
+    validate$3(defs.value, node, 'value', value);
     return node;
 }
 
@@ -75118,9 +74004,9 @@ function jsxFragment(openingFragment, closingFragment, children) {
     };
     
     const defs = NODE_FIELDS.JSXFragment;
-    validate$4(defs.openingFragment, node, 'openingFragment', openingFragment, 1);
-    validate$4(defs.closingFragment, node, 'closingFragment', closingFragment, 1);
-    validate$4(defs.children, node, 'children', children, 1);
+    validate$3(defs.openingFragment, node, 'openingFragment', openingFragment, 1);
+    validate$3(defs.closingFragment, node, 'closingFragment', closingFragment, 1);
+    validate$3(defs.children, node, 'children', children, 1);
     return node;
 }
 
@@ -75144,8 +74030,8 @@ function placeholder(expectedNode, name) {
     };
     
     const defs = NODE_FIELDS.Placeholder;
-    validate$4(defs.expectedNode, node, 'expectedNode', expectedNode);
-    validate$4(defs.name, node, 'name', name, 1);
+    validate$3(defs.expectedNode, node, 'expectedNode', expectedNode);
+    validate$3(defs.name, node, 'name', name, 1);
     return node;
 }
 
@@ -75156,7 +74042,7 @@ function v8IntrinsicIdentifier(name) {
     };
     
     const defs = NODE_FIELDS.V8IntrinsicIdentifier;
-    validate$4(defs.name, node, 'name', name);
+    validate$3(defs.name, node, 'name', name);
     return node;
 }
 
@@ -75174,8 +74060,8 @@ function bindExpression(object, callee) {
     };
     
     const defs = NODE_FIELDS.BindExpression;
-    validate$4(defs.object, node, 'object', object, 1);
-    validate$4(defs.callee, node, 'callee', callee, 1);
+    validate$3(defs.object, node, 'object', object, 1);
+    validate$3(defs.callee, node, 'callee', callee, 1);
     return node;
 }
 
@@ -75186,7 +74072,7 @@ function decorator(expression2) {
     };
     
     const defs = NODE_FIELDS.Decorator;
-    validate$4(defs.expression, node, 'expression', expression2, 1);
+    validate$3(defs.expression, node, 'expression', expression2, 1);
     return node;
 }
 
@@ -75198,8 +74084,8 @@ function doExpression(body, async = false) {
     };
     
     const defs = NODE_FIELDS.DoExpression;
-    validate$4(defs.body, node, 'body', body, 1);
-    validate$4(defs.async, node, 'async', async);
+    validate$3(defs.body, node, 'body', body, 1);
+    validate$3(defs.async, node, 'async', async);
     return node;
 }
 
@@ -75210,7 +74096,7 @@ function exportDefaultSpecifier(exported) {
     };
     
     const defs = NODE_FIELDS.ExportDefaultSpecifier;
-    validate$4(defs.exported, node, 'exported', exported, 1);
+    validate$3(defs.exported, node, 'exported', exported, 1);
     return node;
 }
 
@@ -75221,7 +74107,7 @@ function moduleExpression(body) {
     };
     
     const defs = NODE_FIELDS.ModuleExpression;
-    validate$4(defs.body, node, 'body', body, 1);
+    validate$3(defs.body, node, 'body', body, 1);
     return node;
 }
 
@@ -75238,7 +74124,7 @@ function pipelineTopicExpression(expression2) {
     };
     
     const defs = NODE_FIELDS.PipelineTopicExpression;
-    validate$4(defs.expression, node, 'expression', expression2, 1);
+    validate$3(defs.expression, node, 'expression', expression2, 1);
     return node;
 }
 
@@ -75249,7 +74135,7 @@ function pipelineBareFunction(callee) {
     };
     
     const defs = NODE_FIELDS.PipelineBareFunction;
-    validate$4(defs.callee, node, 'callee', callee, 1);
+    validate$3(defs.callee, node, 'callee', callee, 1);
     return node;
 }
 
@@ -75272,7 +74158,7 @@ function tsParameterProperty(parameter) {
     };
     
     const defs = NODE_FIELDS.TSParameterProperty;
-    validate$4(defs.parameter, node, 'parameter', parameter, 1);
+    validate$3(defs.parameter, node, 'parameter', parameter, 1);
     return node;
 }
 
@@ -75286,10 +74172,10 @@ function tsDeclareFunction(id = null, typeParameters = null, params, returnType 
     };
     
     const defs = NODE_FIELDS.TSDeclareFunction;
-    validate$4(defs.id, node, 'id', id, 1);
-    validate$4(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
-    validate$4(defs.params, node, 'params', params, 1);
-    validate$4(defs.returnType, node, 'returnType', returnType, 1);
+    validate$3(defs.id, node, 'id', id, 1);
+    validate$3(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
+    validate$3(defs.params, node, 'params', params, 1);
+    validate$3(defs.returnType, node, 'returnType', returnType, 1);
     return node;
 }
 
@@ -75304,11 +74190,11 @@ function tsDeclareMethod(decorators = null, key, typeParameters = null, params, 
     };
     
     const defs = NODE_FIELDS.TSDeclareMethod;
-    validate$4(defs.decorators, node, 'decorators', decorators, 1);
-    validate$4(defs.key, node, 'key', key, 1);
-    validate$4(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
-    validate$4(defs.params, node, 'params', params, 1);
-    validate$4(defs.returnType, node, 'returnType', returnType, 1);
+    validate$3(defs.decorators, node, 'decorators', decorators, 1);
+    validate$3(defs.key, node, 'key', key, 1);
+    validate$3(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
+    validate$3(defs.params, node, 'params', params, 1);
+    validate$3(defs.returnType, node, 'returnType', returnType, 1);
     return node;
 }
 
@@ -75320,8 +74206,8 @@ function tsQualifiedName(left, right) {
     };
     
     const defs = NODE_FIELDS.TSQualifiedName;
-    validate$4(defs.left, node, 'left', left, 1);
-    validate$4(defs.right, node, 'right', right, 1);
+    validate$3(defs.left, node, 'left', left, 1);
+    validate$3(defs.right, node, 'right', right, 1);
     return node;
 }
 
@@ -75334,9 +74220,9 @@ function tsCallSignatureDeclaration(typeParameters = null, params, returnType = 
     };
     
     const defs = NODE_FIELDS.TSCallSignatureDeclaration;
-    validate$4(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
-    validate$4(defs.params, node, 'params', params, 1);
-    validate$4(defs.returnType, node, 'returnType', returnType, 1);
+    validate$3(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
+    validate$3(defs.params, node, 'params', params, 1);
+    validate$3(defs.returnType, node, 'returnType', returnType, 1);
     return node;
 }
 
@@ -75349,9 +74235,9 @@ function tsConstructSignatureDeclaration(typeParameters = null, params, returnTy
     };
     
     const defs = NODE_FIELDS.TSConstructSignatureDeclaration;
-    validate$4(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
-    validate$4(defs.params, node, 'params', params, 1);
-    validate$4(defs.returnType, node, 'returnType', returnType, 1);
+    validate$3(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
+    validate$3(defs.params, node, 'params', params, 1);
+    validate$3(defs.returnType, node, 'returnType', returnType, 1);
     return node;
 }
 
@@ -75363,8 +74249,8 @@ function tsPropertySignature(key, typeAnnotation2 = null) {
     };
     
     const defs = NODE_FIELDS.TSPropertySignature;
-    validate$4(defs.key, node, 'key', key, 1);
-    validate$4(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
+    validate$3(defs.key, node, 'key', key, 1);
+    validate$3(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
     return node;
 }
 
@@ -75379,10 +74265,10 @@ function tsMethodSignature(key, typeParameters = null, params, returnType = null
     };
     
     const defs = NODE_FIELDS.TSMethodSignature;
-    validate$4(defs.key, node, 'key', key, 1);
-    validate$4(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
-    validate$4(defs.params, node, 'params', params, 1);
-    validate$4(defs.returnType, node, 'returnType', returnType, 1);
+    validate$3(defs.key, node, 'key', key, 1);
+    validate$3(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
+    validate$3(defs.params, node, 'params', params, 1);
+    validate$3(defs.returnType, node, 'returnType', returnType, 1);
     return node;
 }
 
@@ -75394,8 +74280,8 @@ function tsIndexSignature(parameters, typeAnnotation2 = null) {
     };
     
     const defs = NODE_FIELDS.TSIndexSignature;
-    validate$4(defs.parameters, node, 'parameters', parameters, 1);
-    validate$4(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
+    validate$3(defs.parameters, node, 'parameters', parameters, 1);
+    validate$3(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
     return node;
 }
 
@@ -75492,9 +74378,9 @@ function tsFunctionType(typeParameters = null, params, returnType = null) {
     };
     
     const defs = NODE_FIELDS.TSFunctionType;
-    validate$4(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
-    validate$4(defs.params, node, 'params', params, 1);
-    validate$4(defs.returnType, node, 'returnType', returnType, 1);
+    validate$3(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
+    validate$3(defs.params, node, 'params', params, 1);
+    validate$3(defs.returnType, node, 'returnType', returnType, 1);
     return node;
 }
 
@@ -75507,9 +74393,9 @@ function tsConstructorType(typeParameters = null, params, returnType = null) {
     };
     
     const defs = NODE_FIELDS.TSConstructorType;
-    validate$4(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
-    validate$4(defs.params, node, 'params', params, 1);
-    validate$4(defs.returnType, node, 'returnType', returnType, 1);
+    validate$3(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
+    validate$3(defs.params, node, 'params', params, 1);
+    validate$3(defs.returnType, node, 'returnType', returnType, 1);
     return node;
 }
 
@@ -75521,8 +74407,8 @@ function tsTypeReference(typeName, typeArguments = null) {
     };
     
     const defs = NODE_FIELDS.TSTypeReference;
-    validate$4(defs.typeName, node, 'typeName', typeName, 1);
-    validate$4(defs.typeArguments, node, 'typeArguments', typeArguments, 1);
+    validate$3(defs.typeName, node, 'typeName', typeName, 1);
+    validate$3(defs.typeArguments, node, 'typeArguments', typeArguments, 1);
     return node;
 }
 
@@ -75535,9 +74421,9 @@ function tsTypePredicate(parameterName, typeAnnotation2 = null, asserts = null) 
     };
     
     const defs = NODE_FIELDS.TSTypePredicate;
-    validate$4(defs.parameterName, node, 'parameterName', parameterName, 1);
-    validate$4(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
-    validate$4(defs.asserts, node, 'asserts', asserts);
+    validate$3(defs.parameterName, node, 'parameterName', parameterName, 1);
+    validate$3(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
+    validate$3(defs.asserts, node, 'asserts', asserts);
     return node;
 }
 
@@ -75549,8 +74435,8 @@ function tsTypeQuery(exprName, typeArguments = null) {
     };
     
     const defs = NODE_FIELDS.TSTypeQuery;
-    validate$4(defs.exprName, node, 'exprName', exprName, 1);
-    validate$4(defs.typeArguments, node, 'typeArguments', typeArguments, 1);
+    validate$3(defs.exprName, node, 'exprName', exprName, 1);
+    validate$3(defs.typeArguments, node, 'typeArguments', typeArguments, 1);
     return node;
 }
 
@@ -75561,7 +74447,7 @@ function tsTypeLiteral(members) {
     };
     
     const defs = NODE_FIELDS.TSTypeLiteral;
-    validate$4(defs.members, node, 'members', members, 1);
+    validate$3(defs.members, node, 'members', members, 1);
     return node;
 }
 
@@ -75572,7 +74458,7 @@ function tsArrayType(elementType) {
     };
     
     const defs = NODE_FIELDS.TSArrayType;
-    validate$4(defs.elementType, node, 'elementType', elementType, 1);
+    validate$3(defs.elementType, node, 'elementType', elementType, 1);
     return node;
 }
 
@@ -75583,7 +74469,7 @@ function tsTupleType(elementTypes) {
     };
     
     const defs = NODE_FIELDS.TSTupleType;
-    validate$4(defs.elementTypes, node, 'elementTypes', elementTypes, 1);
+    validate$3(defs.elementTypes, node, 'elementTypes', elementTypes, 1);
     return node;
 }
 
@@ -75594,7 +74480,7 @@ function tsOptionalType(typeAnnotation2) {
     };
     
     const defs = NODE_FIELDS.TSOptionalType;
-    validate$4(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
+    validate$3(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
     return node;
 }
 
@@ -75605,7 +74491,7 @@ function tsRestType(typeAnnotation2) {
     };
     
     const defs = NODE_FIELDS.TSRestType;
-    validate$4(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
+    validate$3(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
     return node;
 }
 
@@ -75618,9 +74504,9 @@ function tsNamedTupleMember(label, elementType, optional = false) {
     };
     
     const defs = NODE_FIELDS.TSNamedTupleMember;
-    validate$4(defs.label, node, 'label', label, 1);
-    validate$4(defs.elementType, node, 'elementType', elementType, 1);
-    validate$4(defs.optional, node, 'optional', optional);
+    validate$3(defs.label, node, 'label', label, 1);
+    validate$3(defs.elementType, node, 'elementType', elementType, 1);
+    validate$3(defs.optional, node, 'optional', optional);
     return node;
 }
 
@@ -75631,7 +74517,7 @@ function tsUnionType(types2) {
     };
     
     const defs = NODE_FIELDS.TSUnionType;
-    validate$4(defs.types, node, 'types', types2, 1);
+    validate$3(defs.types, node, 'types', types2, 1);
     return node;
 }
 
@@ -75642,7 +74528,7 @@ function tsIntersectionType(types2) {
     };
     
     const defs = NODE_FIELDS.TSIntersectionType;
-    validate$4(defs.types, node, 'types', types2, 1);
+    validate$3(defs.types, node, 'types', types2, 1);
     return node;
 }
 
@@ -75656,10 +74542,10 @@ function tsConditionalType(checkType, extendsType, trueType, falseType) {
     };
     
     const defs = NODE_FIELDS.TSConditionalType;
-    validate$4(defs.checkType, node, 'checkType', checkType, 1);
-    validate$4(defs.extendsType, node, 'extendsType', extendsType, 1);
-    validate$4(defs.trueType, node, 'trueType', trueType, 1);
-    validate$4(defs.falseType, node, 'falseType', falseType, 1);
+    validate$3(defs.checkType, node, 'checkType', checkType, 1);
+    validate$3(defs.extendsType, node, 'extendsType', extendsType, 1);
+    validate$3(defs.trueType, node, 'trueType', trueType, 1);
+    validate$3(defs.falseType, node, 'falseType', falseType, 1);
     return node;
 }
 
@@ -75670,7 +74556,7 @@ function tsInferType(typeParameter2) {
     };
     
     const defs = NODE_FIELDS.TSInferType;
-    validate$4(defs.typeParameter, node, 'typeParameter', typeParameter2, 1);
+    validate$3(defs.typeParameter, node, 'typeParameter', typeParameter2, 1);
     return node;
 }
 
@@ -75681,7 +74567,7 @@ function tsParenthesizedType$2(typeAnnotation2) {
     };
     
     const defs = NODE_FIELDS.TSParenthesizedType;
-    validate$4(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
+    validate$3(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
     return node;
 }
 
@@ -75693,8 +74579,8 @@ function tsTypeOperator(typeAnnotation2, operator) {
     };
     
     const defs = NODE_FIELDS.TSTypeOperator;
-    validate$4(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
-    validate$4(defs.operator, node, 'operator', operator);
+    validate$3(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
+    validate$3(defs.operator, node, 'operator', operator);
     return node;
 }
 
@@ -75706,8 +74592,8 @@ function tsIndexedAccessType(objectType, indexType) {
     };
     
     const defs = NODE_FIELDS.TSIndexedAccessType;
-    validate$4(defs.objectType, node, 'objectType', objectType, 1);
-    validate$4(defs.indexType, node, 'indexType', indexType, 1);
+    validate$3(defs.objectType, node, 'objectType', objectType, 1);
+    validate$3(defs.indexType, node, 'indexType', indexType, 1);
     return node;
 }
 
@@ -75721,10 +74607,10 @@ function tsMappedType(key, constraint, nameType = null, typeAnnotation2 = null) 
     };
     
     const defs = NODE_FIELDS.TSMappedType;
-    validate$4(defs.key, node, 'key', key, 1);
-    validate$4(defs.constraint, node, 'constraint', constraint, 1);
-    validate$4(defs.nameType, node, 'nameType', nameType, 1);
-    validate$4(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
+    validate$3(defs.key, node, 'key', key, 1);
+    validate$3(defs.constraint, node, 'constraint', constraint, 1);
+    validate$3(defs.nameType, node, 'nameType', nameType, 1);
+    validate$3(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
     return node;
 }
 
@@ -75736,8 +74622,8 @@ function tsTemplateLiteralType(quasis, types2) {
     };
     
     const defs = NODE_FIELDS.TSTemplateLiteralType;
-    validate$4(defs.quasis, node, 'quasis', quasis, 1);
-    validate$4(defs.types, node, 'types', types2, 1);
+    validate$3(defs.quasis, node, 'quasis', quasis, 1);
+    validate$3(defs.types, node, 'types', types2, 1);
     return node;
 }
 
@@ -75748,7 +74634,7 @@ function tsLiteralType(literal) {
     };
     
     const defs = NODE_FIELDS.TSLiteralType;
-    validate$4(defs.literal, node, 'literal', literal, 1);
+    validate$3(defs.literal, node, 'literal', literal, 1);
     return node;
 }
 
@@ -75760,8 +74646,8 @@ function tsClassImplements(expression2, typeArguments = null) {
     };
     
     const defs = NODE_FIELDS.TSClassImplements;
-    validate$4(defs.expression, node, 'expression', expression2, 1);
-    validate$4(defs.typeArguments, node, 'typeArguments', typeArguments, 1);
+    validate$3(defs.expression, node, 'expression', expression2, 1);
+    validate$3(defs.typeArguments, node, 'typeArguments', typeArguments, 1);
     return node;
 }
 
@@ -75773,8 +74659,8 @@ function tsInterfaceHeritage(expression2, typeArguments = null) {
     };
     
     const defs = NODE_FIELDS.TSInterfaceHeritage;
-    validate$4(defs.expression, node, 'expression', expression2, 1);
-    validate$4(defs.typeArguments, node, 'typeArguments', typeArguments, 1);
+    validate$3(defs.expression, node, 'expression', expression2, 1);
+    validate$3(defs.typeArguments, node, 'typeArguments', typeArguments, 1);
     return node;
 }
 
@@ -75788,10 +74674,10 @@ function tsInterfaceDeclaration(id, typeParameters = null, _extends = null, body
     };
     
     const defs = NODE_FIELDS.TSInterfaceDeclaration;
-    validate$4(defs.id, node, 'id', id, 1);
-    validate$4(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
-    validate$4(defs.extends, node, 'extends', _extends, 1);
-    validate$4(defs.body, node, 'body', body, 1);
+    validate$3(defs.id, node, 'id', id, 1);
+    validate$3(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
+    validate$3(defs.extends, node, 'extends', _extends, 1);
+    validate$3(defs.body, node, 'body', body, 1);
     return node;
 }
 
@@ -75802,7 +74688,7 @@ function tsInterfaceBody(body) {
     };
     
     const defs = NODE_FIELDS.TSInterfaceBody;
-    validate$4(defs.body, node, 'body', body, 1);
+    validate$3(defs.body, node, 'body', body, 1);
     return node;
 }
 
@@ -75815,9 +74701,9 @@ function tsTypeAliasDeclaration(id, typeParameters = null, typeAnnotation2) {
     };
     
     const defs = NODE_FIELDS.TSTypeAliasDeclaration;
-    validate$4(defs.id, node, 'id', id, 1);
-    validate$4(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
-    validate$4(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
+    validate$3(defs.id, node, 'id', id, 1);
+    validate$3(defs.typeParameters, node, 'typeParameters', typeParameters, 1);
+    validate$3(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
     return node;
 }
 
@@ -75829,8 +74715,8 @@ function tsInstantiationExpression(expression2, typeArguments = null) {
     };
     
     const defs = NODE_FIELDS.TSInstantiationExpression;
-    validate$4(defs.expression, node, 'expression', expression2, 1);
-    validate$4(defs.typeArguments, node, 'typeArguments', typeArguments, 1);
+    validate$3(defs.expression, node, 'expression', expression2, 1);
+    validate$3(defs.typeArguments, node, 'typeArguments', typeArguments, 1);
     return node;
 }
 
@@ -75842,8 +74728,8 @@ function tsAsExpression(expression2, typeAnnotation2) {
     };
     
     const defs = NODE_FIELDS.TSAsExpression;
-    validate$4(defs.expression, node, 'expression', expression2, 1);
-    validate$4(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
+    validate$3(defs.expression, node, 'expression', expression2, 1);
+    validate$3(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
     return node;
 }
 
@@ -75855,8 +74741,8 @@ function tsSatisfiesExpression(expression2, typeAnnotation2) {
     };
     
     const defs = NODE_FIELDS.TSSatisfiesExpression;
-    validate$4(defs.expression, node, 'expression', expression2, 1);
-    validate$4(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
+    validate$3(defs.expression, node, 'expression', expression2, 1);
+    validate$3(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
     return node;
 }
 
@@ -75868,8 +74754,8 @@ function tsTypeAssertion(typeAnnotation2, expression2) {
     };
     
     const defs = NODE_FIELDS.TSTypeAssertion;
-    validate$4(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
-    validate$4(defs.expression, node, 'expression', expression2, 1);
+    validate$3(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
+    validate$3(defs.expression, node, 'expression', expression2, 1);
     return node;
 }
 
@@ -75880,7 +74766,7 @@ function tsEnumBody(members) {
     };
     
     const defs = NODE_FIELDS.TSEnumBody;
-    validate$4(defs.members, node, 'members', members, 1);
+    validate$3(defs.members, node, 'members', members, 1);
     return node;
 }
 
@@ -75892,8 +74778,8 @@ function tsEnumDeclaration(id, body) {
     };
     
     const defs = NODE_FIELDS.TSEnumDeclaration;
-    validate$4(defs.id, node, 'id', id, 1);
-    validate$4(defs.body, node, 'body', body, 1);
+    validate$3(defs.id, node, 'id', id, 1);
+    validate$3(defs.body, node, 'body', body, 1);
     return node;
 }
 
@@ -75905,8 +74791,8 @@ function tsEnumMember(id, initializer = null) {
     };
     
     const defs = NODE_FIELDS.TSEnumMember;
-    validate$4(defs.id, node, 'id', id, 1);
-    validate$4(defs.initializer, node, 'initializer', initializer, 1);
+    validate$3(defs.id, node, 'id', id, 1);
+    validate$3(defs.initializer, node, 'initializer', initializer, 1);
     return node;
 }
 
@@ -75919,8 +74805,8 @@ function tsModuleDeclaration(id, body) {
     };
     
     const defs = NODE_FIELDS.TSModuleDeclaration;
-    validate$4(defs.id, node, 'id', id, 1);
-    validate$4(defs.body, node, 'body', body, 1);
+    validate$3(defs.id, node, 'id', id, 1);
+    validate$3(defs.body, node, 'body', body, 1);
     return node;
 }
 
@@ -75931,7 +74817,7 @@ function tsModuleBlock(body) {
     };
     
     const defs = NODE_FIELDS.TSModuleBlock;
-    validate$4(defs.body, node, 'body', body, 1);
+    validate$3(defs.body, node, 'body', body, 1);
     return node;
 }
 
@@ -75944,9 +74830,9 @@ function tsImportType(argument, qualifier = null, typeArguments = null) {
     };
     
     const defs = NODE_FIELDS.TSImportType;
-    validate$4(defs.argument, node, 'argument', argument, 1);
-    validate$4(defs.qualifier, node, 'qualifier', qualifier, 1);
-    validate$4(defs.typeArguments, node, 'typeArguments', typeArguments, 1);
+    validate$3(defs.argument, node, 'argument', argument, 1);
+    validate$3(defs.qualifier, node, 'qualifier', qualifier, 1);
+    validate$3(defs.typeArguments, node, 'typeArguments', typeArguments, 1);
     return node;
 }
 
@@ -75958,8 +74844,8 @@ function tsImportEqualsDeclaration(id, moduleReference) {
     };
     
     const defs = NODE_FIELDS.TSImportEqualsDeclaration;
-    validate$4(defs.id, node, 'id', id, 1);
-    validate$4(defs.moduleReference, node, 'moduleReference', moduleReference, 1);
+    validate$3(defs.id, node, 'id', id, 1);
+    validate$3(defs.moduleReference, node, 'moduleReference', moduleReference, 1);
     return node;
 }
 
@@ -75970,7 +74856,7 @@ function tsExternalModuleReference(expression2) {
     };
     
     const defs = NODE_FIELDS.TSExternalModuleReference;
-    validate$4(defs.expression, node, 'expression', expression2, 1);
+    validate$3(defs.expression, node, 'expression', expression2, 1);
     return node;
 }
 
@@ -75981,7 +74867,7 @@ function tsNonNullExpression(expression2) {
     };
     
     const defs = NODE_FIELDS.TSNonNullExpression;
-    validate$4(defs.expression, node, 'expression', expression2, 1);
+    validate$3(defs.expression, node, 'expression', expression2, 1);
     return node;
 }
 
@@ -75992,7 +74878,7 @@ function tsExportAssignment(expression2) {
     };
     
     const defs = NODE_FIELDS.TSExportAssignment;
-    validate$4(defs.expression, node, 'expression', expression2, 1);
+    validate$3(defs.expression, node, 'expression', expression2, 1);
     return node;
 }
 
@@ -76003,7 +74889,7 @@ function tsNamespaceExportDeclaration(id) {
     };
     
     const defs = NODE_FIELDS.TSNamespaceExportDeclaration;
-    validate$4(defs.id, node, 'id', id, 1);
+    validate$3(defs.id, node, 'id', id, 1);
     return node;
 }
 
@@ -76014,7 +74900,7 @@ function tsTypeAnnotation(typeAnnotation2) {
     };
     
     const defs = NODE_FIELDS.TSTypeAnnotation;
-    validate$4(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
+    validate$3(defs.typeAnnotation, node, 'typeAnnotation', typeAnnotation2, 1);
     return node;
 }
 
@@ -76025,7 +74911,7 @@ function tsTypeParameterInstantiation(params) {
     };
     
     const defs = NODE_FIELDS.TSTypeParameterInstantiation;
-    validate$4(defs.params, node, 'params', params, 1);
+    validate$3(defs.params, node, 'params', params, 1);
     return node;
 }
 
@@ -76036,7 +74922,7 @@ function tsTypeParameterDeclaration(params) {
     };
     
     const defs = NODE_FIELDS.TSTypeParameterDeclaration;
-    validate$4(defs.params, node, 'params', params, 1);
+    validate$3(defs.params, node, 'params', params, 1);
     return node;
 }
 
@@ -76049,9 +74935,9 @@ function tsTypeParameter(constraint = null, _default = null, name) {
     };
     
     const defs = NODE_FIELDS.TSTypeParameter;
-    validate$4(defs.constraint, node, 'constraint', constraint, 1);
-    validate$4(defs.default, node, 'default', _default, 1);
-    validate$4(defs.name, node, 'name', name, 1);
+    validate$3(defs.constraint, node, 'constraint', constraint, 1);
+    validate$3(defs.default, node, 'default', _default, 1);
+    validate$3(defs.name, node, 'name', name, 1);
     return node;
 }
 
@@ -78223,7 +77109,7 @@ function maybeCloneComments(comments, deep, withoutLoc, commentsCache) {
     });
 }
 
-function clone$2(node) {
+function clone(node) {
     return cloneNode(node, false);
 }
 
@@ -78419,7 +77305,7 @@ function toComputedKey(node, key = node.key || node.property) {
 }
 
 function toExpression(node) {
-    if (isExpressionStatement$1(node)) {
+    if (isExpressionStatement$2(node)) {
         node = node.expression;
     }
     
@@ -78970,7 +77856,7 @@ function getFunctionName(node, parent) {
     };
 }
 
-function traverse$9(node, handlers, state) {
+function traverse$5(node, handlers, state) {
     if (typeof handlers === 'function') {
         handlers = {
             enter: handlers,
@@ -80250,7 +79136,7 @@ var TokContext = class {
     }
 };
 
-var types$p = {
+var types$j = {
     brace: new TokContext('{'),
     j_oTag: new TokContext('<tag'),
     j_cTag: new TokContext('</tag'),
@@ -82715,9 +81601,9 @@ var jsx$1 = (superClass) => class JSXParserMixin extends superClass {
         switch(this.state.type) {
         case 5:
             node = this.startNode();
-            this.setContext(types$p.brace);
+            this.setContext(types$j.brace);
             this.next();
-            node = this.jsxParseExpressionContainer(node, types$p.j_oTag);
+            node = this.jsxParseExpressionContainer(node, types$j.j_oTag);
             
             if (node.expression.type === 'JSXEmptyExpression') {
                 this.raise(JsxErrors.AttributeIsEmpty, node);
@@ -82742,7 +81628,7 @@ var jsx$1 = (superClass) => class JSXParserMixin extends superClass {
     jsxParseSpreadChild(node) {
         this.next();
         node.expression = this.parseExpression();
-        this.setContext(types$p.j_expr);
+        this.setContext(types$j.j_expr);
         this.state.canStartJSXElement = true;
         this.expect(8);
         return this.finishNode(node, 'JSXSpreadChild');
@@ -82771,11 +81657,11 @@ var jsx$1 = (superClass) => class JSXParserMixin extends superClass {
         const node = this.startNode();
         
         if (this.match(5)) {
-            this.setContext(types$p.brace);
+            this.setContext(types$j.brace);
             this.next();
             this.expect(21);
             node.argument = this.parseMaybeAssignAllowIn();
-            this.setContext(types$p.j_oTag);
+            this.setContext(types$j.j_oTag);
             this.state.canStartJSXElement = true;
             this.expect(8);
             return this.finishNode(node, 'JSXSpreadAttribute');
@@ -82849,13 +81735,13 @@ var jsx$1 = (superClass) => class JSXParserMixin extends superClass {
                 
                 case 5: {
                     const node2 = this.startNode();
-                    this.setContext(types$p.brace);
+                    this.setContext(types$j.brace);
                     this.next();
                     
                     if (this.match(21)) {
                         children.push(this.jsxParseSpreadChild(node2));
                     } else {
-                        children.push(this.jsxParseExpressionContainer(node2, types$p.j_expr));
+                        children.push(this.jsxParseExpressionContainer(node2, types$j.j_expr));
                     }
                     
                     break;
@@ -82931,12 +81817,12 @@ var jsx$1 = (superClass) => class JSXParserMixin extends superClass {
     getTokenFromCode(code2) {
         const context = this.curContext();
         
-        if (context === types$p.j_expr) {
+        if (context === types$j.j_expr) {
             this.jsxReadToken();
             return;
         }
         
-        if (context === types$p.j_oTag || context === types$p.j_cTag) {
+        if (context === types$j.j_oTag || context === types$j.j_cTag) {
             if (isIdentifierStart2(code2)) {
                 this.jsxReadWord();
                 return;
@@ -82948,7 +81834,7 @@ var jsx$1 = (superClass) => class JSXParserMixin extends superClass {
                 return;
             }
             
-            if ((code2 === 34 || code2 === 39) && context === types$p.j_oTag) {
+            if ((code2 === 34 || code2 === 39) && context === types$j.j_oTag) {
                 this.jsxReadString(code2);
                 return;
             }
@@ -82967,18 +81853,18 @@ var jsx$1 = (superClass) => class JSXParserMixin extends superClass {
         const {context, type} = this.state;
         
         if (type === 56 && prevType === 143) {
-            context.splice(-2, 2, types$p.j_cTag);
+            context.splice(-2, 2, types$j.j_cTag);
             this.state.canStartJSXElement = false;
         } else if (type === 143) {
-            context.push(types$p.j_oTag);
+            context.push(types$j.j_oTag);
         } else if (type === 144) {
             const out = context[context.length - 1];
             
-            if (out === types$p.j_oTag && prevType === 56 || out === types$p.j_cTag) {
+            if (out === types$j.j_oTag && prevType === 56 || out === types$j.j_cTag) {
                 context.pop();
-                this.state.canStartJSXElement = context[context.length - 1] === types$p.j_expr;
+                this.state.canStartJSXElement = context[context.length - 1] === types$j.j_expr;
             } else {
-                this.setContext(types$p.j_expr);
+                this.setContext(types$j.j_expr);
                 this.state.canStartJSXElement = true;
             }
         } else {
@@ -83455,7 +82341,7 @@ var State$2 = class _State {
         __publicField(this, 'end', 0);
         __publicField(this, 'lastTokEndLoc', null);
         __publicField(this, 'lastTokStartLoc', null);
-        __publicField(this, 'context', [types$p.brace]);
+        __publicField(this, 'context', [types$j.brace]);
         __publicField(this, 'firstInvalidTemplateEscapePos', null);
         __publicField(this, 'strictErrors',         /* @__PURE__ */new Map());
         __publicField(this, 'tokensLength', 0);
@@ -87968,7 +86854,7 @@ var typescript$1 = (superClass) => class TypeScriptParserMixin extends superClas
     }
     
     tsInTopLevelContext(cb) {
-        if (this.curContext() !== types$p.brace) {
+        if (this.curContext() !== types$j.brace) {
             const oldContext = this.state.context;
             
             this.state.context = [oldContext[0]];
@@ -88361,7 +87247,7 @@ var typescript$1 = (superClass) => class TypeScriptParserMixin extends superClas
         
         if (node.params.length === 0) {
             this.raise(TSErrors.EmptyTypeArguments, node);
-        } else if (!this.state.inType && this.curContext() === types$p.brace) {
+        } else if (!this.state.inType && this.curContext() === types$j.brace) {
             this.reScan_lt_gt();
         }
         
@@ -89271,7 +88157,7 @@ var typescript$1 = (superClass) => class TypeScriptParserMixin extends superClas
             
             const currentContext = context[context.length - 1];
             
-            if (currentContext === types$p.j_oTag || currentContext === types$p.j_expr) {
+            if (currentContext === types$j.j_oTag || currentContext === types$j.j_expr) {
                 context.pop();
             }
         }
@@ -95060,7 +93946,7 @@ var Parser = class extends StatementParser {
     }
 };
 
-function parse$6(input, options) {
+function parse$a(input, options) {
     if (options?.sourceType === 'unambiguous') {
         options = Object.assign({}, options);
         try {
@@ -95221,7 +94107,7 @@ var getTokenType = function(token) {
     if (token.type === 'IdentifierName') {
         const tokenValue = token.value;
         
-        if (isKeyword(tokenValue) || isStrictReservedWord(tokenValue, true) || sometimesKeywords.has(tokenValue)) {
+        if (isKeyword$1(tokenValue) || isStrictReservedWord(tokenValue, true) || sometimesKeywords.has(tokenValue)) {
             return 'keyword';
         }
         
@@ -95802,7 +94688,7 @@ function parseWithCodeFrame(code2, parserOpts, syntacticPlaceholders) {
         plugins,
     });
     try {
-        return parse$6(code2, parserOpts);
+        return parse$a(code2, parserOpts);
     } catch(err) {
         const loc = err.loc;
         
@@ -96151,7 +95037,7 @@ var statements$2 = createTemplateBuilder(statements$1);
 var expression = createTemplateBuilder(expression$1);
 var program2 = createTemplateBuilder(program$1);
 
-var index$1 = Object.assign(smart.bind(void 0), {
+var index = Object.assign(smart.bind(void 0), {
     smart,
     statement,
     statements: statements$2,
@@ -96224,9 +95110,9 @@ function hasMoreVlq(reader, max) {
 
 var bufLength = 1024 * 16;
 
-var td = typeof TextDecoder !== 'undefined' ? /* @__PURE__ */new TextDecoder() : typeof Buffer !== 'undefined' ? {
+var td = typeof TextDecoder !== 'undefined' ? /* @__PURE__ */new TextDecoder() : typeof Buffer$1 !== 'undefined' ? {
     decode(buf) {
-        const out = Buffer.from(buf.buffer, buf.byteOffset, buf.byteLength);
+        const out = Buffer$1.from(buf.buffer, buf.byteOffset, buf.byteLength);
         return out.toString();
     },
 } : {
@@ -98217,7 +97103,7 @@ function Identifier$1(node, parent, tokenContext, getRawIdentifier) {
     });
 }
 
-var parens$1 = /* @__PURE__ */Object.freeze({
+var parens = /* @__PURE__ */Object.freeze({
     __proto__: null,
     ArrowFunctionExpression: ConditionalExpression$1,
     AssignmentExpression: AssignmentExpression$1,
@@ -98305,7 +97191,7 @@ function expandAliases(obj) {
     return map;
 }
 
-var expandedParens = expandAliases(parens$1);
+var expandedParens = expandAliases(parens);
 var expandedWhitespaceNodes = expandAliases(nodes);
 
 function isOrHasCallExpression(node) {
@@ -103301,7 +102187,7 @@ function normalizeOptions(code2, opts, ast) {
     return format;
 }
 
-function generate$5(ast, opts = {}, code2) {
+function generate$1(ast, opts = {}, code2) {
     const format = normalizeOptions(code2, opts, ast);
     const map = opts.sourceMaps ? new SourceMap(opts, code2) : null;
     const printer = new Printer(format, map, ast.tokens, typeof code2 === 'string' ? code2 : null);
@@ -106278,7 +105164,7 @@ var hooks = [
     },
 ];
 
-function remove$1() {
+function remove() {
     _assertUnremoved.call(this);
     resync.call(this);
     
@@ -106639,7 +105525,7 @@ function replaceWithSourceString(replacement) {
     
     try {
         replacement = `(${replacement})`;
-        ast = parse$6(replacement);
+        ast = parse$a(replacement);
     } catch(err) {
         const loc = err.loc;
         
@@ -106662,7 +105548,7 @@ function replaceWithSourceString(replacement) {
     return this.replaceWith(expressionAST);
 }
 
-function replaceWith$4(replacementPath) {
+function replaceWith$3(replacementPath) {
     resync.call(this);
     
     if (this.removed) {
@@ -108101,7 +106987,7 @@ function ensureFunctionName(supportUnicodeId) {
         params.push(scope2.generateUidIdentifier('x'));
     }
     
-    const call2 = index$1.expression.ast`
+    const call2 = index.expression.ast`
     (function (${key}) {
       function ${id}(${params}) {
         return ${cloneNode3(key)}.apply(this, arguments);
@@ -109099,7 +107985,7 @@ function addComments2(type, comments) {
 
 var {validate: validate3} = lib_exports;
 
-var debug$7 = (0, import_debug.default)('babel');
+var debug$6 = (0, import_debug.default)('babel');
 var REMOVED = 1 << 0;
 var SHOULD_STOP = 1 << 1;
 var SHOULD_SKIP = 1 << 2;
@@ -109241,14 +108127,14 @@ var NodePath_Final = class NodePath {
     }
     
     debug(message) {
-        if (!debug$7.enabled)
+        if (!debug$6.enabled)
             return;
         
-        debug$7(`${this.getPathLocation()} ${this.type}: ${message}`);
+        debug$6(`${this.getPathLocation()} ${this.type}: ${message}`);
     }
     
     toString() {
-        return generate$5(this.node).code;
+        return generate$1(this.node).code;
     }
     
     get inList() {
@@ -109284,7 +108170,7 @@ var methods = {
     isGenericType,
     replaceWithMultiple,
     replaceWithSourceString,
-    replaceWith: replaceWith$4,
+    replaceWith: replaceWith$3,
     replaceExpressionWithStatements,
     replaceInline,
     evaluateTruthy,
@@ -109317,7 +108203,7 @@ var methods = {
     setContext,
     requeue,
     requeueComputedKeyAndDecorators,
-    remove: remove$1,
+    remove,
     insertBefore,
     insertAfter: insertAfter$1,
     unshiftContainer,
@@ -109594,7 +108480,7 @@ function _visit(ctx, path) {
             return path.shouldStop;
     }
     
-    path.shouldStop = _traverse$1(path.node, opts, path.scope, ctx.state, path, path.skipKeys);
+    path.shouldStop = _traverse(path.node, opts, path.scope, ctx.state, path, path.skipKeys);
     
     if (path.node) {
         if (_call.call(path, opts.exit))
@@ -109608,7 +108494,7 @@ function _visit(ctx, path) {
     return path.shouldStop;
 }
 
-function _traverse$1(node, opts, scope2, state, path, skipKeys, visitSelf) {
+function _traverse(node, opts, scope2, state, path, skipKeys, visitSelf) {
     const keys2 = VISITOR_KEYS$12[node.type];
     
     if (!keys2?.length)
@@ -109665,7 +108551,7 @@ function _traverse$1(node, opts, scope2, state, path, skipKeys, visitSelf) {
 }
 
 function traverseNode(node, opts, scope2, state, path, skipKeys, visitSelf) {
-    return _traverse$1(node, opts, scope2, state, path, skipKeys, visitSelf);
+    return _traverse(node, opts, scope2, state, path, skipKeys, visitSelf);
 }
 
 function call(key) {
@@ -110023,11 +108909,11 @@ traverse3.cache = cache;
 
 bundle.default;
 
-const {types: types$o} = bundle;
+const {types: types$i} = bundle;
 const {
     isFunctionExpression,
     objectMethod,
-} = types$o;
+} = types$i;
 
 const {assign: assign$8} = Object;
 
@@ -110065,13 +108951,13 @@ function getObjectMethodLoc(key, value) {
     return null;
 }
 
-const {types: types$n} = bundle;
+const {types: types$h} = bundle;
 const {
     classPrivateMethod,
     classMethod,
     privateName,
     identifier: identifier$1,
-} = types$n;
+} = types$h;
 
 const {assign: assign$7} = Object;
 
@@ -110127,8 +109013,8 @@ var setClassPrivateProperty$1 = (path) => {
     path.node.type = 'ClassPrivateProperty';
 };
 
-const {types: types$m} = bundle;
-const {identifier} = types$m;
+const {types: types$g} = bundle;
+const {identifier} = types$g;
 
 // acorn stores name in PrivateName.name
 // babel stores name in PrivateName.id.name
@@ -110147,11 +109033,11 @@ var setClassPrivateName$1 = ({node}) => {
     delete node.name;
 };
 
-const {types: types$l} = bundle;
+const {types: types$f} = bundle;
 const {
     directive,
     directiveLiteral,
-} = types$l;
+} = types$f;
 
 var setDirectives$1 = (path) => {
     const {node} = path;
@@ -110433,7 +109319,7 @@ const createPrivateName = (node) => ({
     loc: node.loc,
 });
 
-const {traverse: traverse$8, types: types$k} = bundle;
+const {traverse: traverse$4, types: types$e} = bundle;
 const traverseObjectExpression = traverseObjectExpression$1;
 const setClassMethod = setClassMethod$1;
 const setClassPrivateProperty = setClassPrivateProperty$1;
@@ -110458,21 +109344,21 @@ const {
 const {
     isObjectExpression,
     isExportDeclaration,
-} = types$k;
+} = types$e;
 
-const defaultOptions$6 = {
+const defaultOptions$4 = {
     convertParens: true,
 };
 
-estreeToBabel$1.estreeToBabel = (node, options) => {
+var estreeToBabel_1 = (node, options) => {
     const ast = getAST(node);
     
     const allOptions = {
-        ...defaultOptions$6,
+        ...defaultOptions$4,
         ...options,
     };
     
-    traverse$8(ast, {
+    traverse$4(ast, {
         noScope: true,
         ParenthesizedExpression: convertParenthesizedExpression(allOptions),
         TSParenthesizedType: convertTSParenthesizedType(allOptions),
@@ -110553,13 +109439,9 @@ function setEsprimaRaw(node) {
     };
 }
 
-function commonjsRequire(path) {
-	throw new Error('Could not dynamically require "' + path + '". Please configure the dynamicRequireTargets or/and ignoreDynamicRequires option of @rollup/plugin-commonjs appropriately for this require call to work.');
-}
+var _module = {};
 
-var acorn$1 = {};
-
-var once$8 = {exports: {}};
+var once$6 = {exports: {}};
 
 // Returns a wrapper function that returns a wrapped callback
 // The wrapper function should do some stuff, and return a
@@ -110596,13 +109478,13 @@ function wrappy$1 (fn, cb) {
 }
 
 var wrappy = wrappy_1;
-once$8.exports = wrappy(once$7);
-once$8.exports.strict = wrappy(onceStrict);
+once$6.exports = wrappy(once$5);
+once$6.exports.strict = wrappy(onceStrict);
 
-once$7.proto = once$7(function () {
+once$5.proto = once$5(function () {
   Object.defineProperty(Function.prototype, 'once', {
     value: function () {
-      return once$7(this)
+      return once$5(this)
     },
     configurable: true
   });
@@ -110615,7 +109497,7 @@ once$7.proto = once$7(function () {
   });
 });
 
-function once$7 (fn) {
+function once$5 (fn) {
   var f = function () {
     if (f.called) return f.value
     f.called = true;
@@ -110638,7 +109520,7 @@ function onceStrict (fn) {
   return f
 }
 
-var onceExports = once$8.exports;
+var onceExports = once$6.exports;
 
 const noop$3 = () => {};
 
@@ -110698,9 +109580,9 @@ function requireAcornStage3 () {
 	return acornStage3;
 }
 
-const once$6 = onceExports;
+const once$4 = onceExports;
 
-const initAcorn = once$6(() => {
+const initAcorn = once$4(() => {
     const {Parser} = require$$1$1;
     
     const stage3 = requireAcornStage3();
@@ -110709,7 +109591,7 @@ const initAcorn = once$6(() => {
     return Parser.extend(typescript(), stage3);
 });
 
-acorn$1.parse = function acornParse(source) {
+var parse$9 = (source) => {
     const parser = initAcorn();
     const options = {
         locations: true,
@@ -110731,9 +109613,7 @@ acorn$1.parse = function acornParse(source) {
     };
 };
 
-var babel$1 = {};
-
-var plugins$1 = [
+var plugins = [
     'importMeta',
     'importAttributes',
     'dynamicImport',
@@ -110754,22 +109634,22 @@ var plugins$1 = [
     }],
 ];
 
-var options$1 = {
-    allowReturnOutsideFunction: true,
-    allowUndeclaredExports: true,
-    allowImportExportEverywhere: true,
-};
+const allowReturnOutsideFunction = true;
+const allowUndeclaredExports = true;
+const allowImportExportEverywhere = true;
 
-const once$5 = onceExports;
+var options = /*#__PURE__*/Object.freeze({
+	__proto__: null,
+	allowImportExportEverywhere: allowImportExportEverywhere,
+	allowReturnOutsideFunction: allowReturnOutsideFunction,
+	allowUndeclaredExports: allowUndeclaredExports
+});
 
-const plugins = plugins$1;
-const options = options$1;
 const {assign: assign$5} = Object;
 const getFlow = (a) => !a.indexOf('// @flow');
 const clean = (a) => a.filter(Boolean);
-const initBabel = once$5(() => bundle$1);
 
-babel$1.parse = function babelParse(source, overrides) {
+const parse$8 = (source, overrides) => {
     const {
         sourceFileName,
         isTS,
@@ -110779,7 +109659,6 @@ babel$1.parse = function babelParse(source, overrides) {
         printer,
     } = overrides;
     
-    const {parse} = initBabel();
     const parserOptions = {
         sourceFileName,
         sourceType: 'module',
@@ -110801,7 +109680,7 @@ babel$1.parse = function babelParse(source, overrides) {
             tokens: true,
         });
     
-    const ast = parse(source, parserOptions);
+    const ast = parse$b(source, parserOptions);
     
     ast.program.extra.__putout_printer = printer;
     return ast;
@@ -110818,12 +109697,11 @@ function getBabelLangExts({isTS, isFlow, isJSX}) {
     return langs;
 }
 
-var espree$1 = {};
+const once$3 = onceExports;
 
-const once$4 = onceExports;
-const initEspree = once$4(() => require$$1$1);
+const initEspree = once$3(() => require$$1$1);
 
-espree$1.parse = function espreeParse(source) {
+var parse$7 = (source) => {
     const {parse} = initEspree();
     const preventUsingEsprima = true;
     
@@ -110839,12 +109717,11 @@ espree$1.parse = function espreeParse(source) {
     });
 };
 
-var esprima$1 = {};
+const once$2 = onceExports;
 
-const once$3 = onceExports;
-const initEsprima = once$3(() => require$$1$1);
+const initEsprima = once$2(() => require$$1$1);
 
-esprima$1.parse = function esprimaParse(source) {
+var parse$6 = (source) => {
     const {parse} = initEsprima();
     
     return parse(source, {
@@ -110856,14 +109733,12 @@ esprima$1.parse = function esprimaParse(source) {
     });
 };
 
-var tenko$1 = {};
+const once$1 = onceExports;
 
-const once$2 = onceExports;
-const initTenko = once$2(() => require$$1$1);
+const initTenko = once$1(() => require$$1$1);
 
-tenko$1.parse = (source) => {
+var parse$5 = (source) => {
     const {Tenko} = initTenko();
-    
     const {ast} = Tenko(source, {
         goalMode: 'module',
         allowGlobalReturn: true,
@@ -110873,14 +109748,11 @@ tenko$1.parse = (source) => {
     return ast;
 };
 
-var hermes$1 = {};
+const once = onceExports;
+const initHermes = once(() => require$$1$1);
 
-const once$1 = onceExports;
-const initHermes = once$1(() => require$$1$1);
-
-hermes$1.parse = function hermesParse(source) {
+var parse$4 = (source) => {
     const parser = initHermes();
-    
     const options = {
         babel: true,
         allowReturnOutsideFunction: true,
@@ -110892,9 +109764,9 @@ hermes$1.parse = function hermesParse(source) {
     return parser.parse(source, options);
 };
 
-var tryCatch$l = {exports: {}};
+var tryCatch$4 = {exports: {}};
 
-const tryCatch$j = (fn, ...args) => {
+const tryCatch$2 = (fn, ...args) => {
     try {
         return [null, fn(...args)];
     } catch(e) {
@@ -110902,26 +109774,24 @@ const tryCatch$j = (fn, ...args) => {
     }
 };
 
-var tryCatch$k = /*#__PURE__*/Object.freeze({
+var tryCatch$3 = /*#__PURE__*/Object.freeze({
 	__proto__: null,
-	default: tryCatch$j,
-	tryCatch: tryCatch$j
+	default: tryCatch$2,
+	tryCatch: tryCatch$2
 });
 
-var require$$0$6 = /*@__PURE__*/getAugmentedNamespace(tryCatch$k);
+var require$$0$3 = /*@__PURE__*/getAugmentedNamespace(tryCatch$3);
 
-const {tryCatch: tryCatch$i} = require$$0$6;
+const {tryCatch: tryCatch$1} = require$$0$3;
 
-tryCatch$l.exports = tryCatch$i;
-tryCatch$l.exports.tryCatch = tryCatch$i;
+tryCatch$4.exports = tryCatch$1;
+var tryCatch_2 = tryCatch$4.exports.tryCatch = tryCatch$1;
 
-var tryCatchExports$2 = tryCatch$l.exports;
+var tryCatchExports = tryCatch$4.exports;
 
-const tryCatch$h = tryCatchExports$2;
-
-var secondChance$1 = (fn, source, messages, args) => {
+const secondChance = (fn, source, messages, args) => {
     const [a, ...others] = args;
-    const [errorA, resultA] = tryCatch$h(fn, source, a);
+    const [errorA, resultA] = tryCatch_2(fn, source, a);
     
     if (!errorA)
         return resultA;
@@ -110930,7 +109800,7 @@ var secondChance$1 = (fn, source, messages, args) => {
         throw errorA;
     
     for (const b of others) {
-        const [errorB, resultB] = tryCatch$h(fn, source, b);
+        const [errorB, resultB] = tryCatch_2(fn, source, b);
         
         if (!errorB)
             return resultB;
@@ -110948,20 +109818,13 @@ function checkError(error, messages) {
     return false;
 }
 
-const acorn = acorn$1;
-const babel = babel$1;
-const espree = espree$1;
-const esprima = esprima$1;
-const tenko = tenko$1;
-const hermes = hermes$1;
-const secondChance = secondChance$1;
 const isObject$5 = (a) => typeof a === 'object';
 
 const MESSAGES = [
     'has already been declared',
 ];
 
-var customParser$1 = (source, parser, {isTS, isJSX, printer}) => {
+var customParser = (source, parser, {isTS, isJSX, printer}) => {
     const options = {
         parser,
         printer,
@@ -110988,7 +109851,7 @@ var customParser$1 = (source, parser, {isTS, isJSX, printer}) => {
 
 function customParse(source, {parser, printer, isTS, isJSX, isRecovery}) {
     if (parser === 'babel')
-        return babel.parse(source, {
+        return parse$8(source, {
             isTS,
             isJSX,
             isRecovery,
@@ -111002,29 +109865,27 @@ function customParse(source, {parser, printer, isTS, isJSX, isRecovery}) {
         });
     
     if (parser === 'espree')
-        return espree.parse(source);
+        return parse$7(source);
     
     if (parser === 'acorn')
-        return acorn.parse(source);
+        return parse$9(source);
     
     if (parser === 'esprima')
-        return esprima.parse(source);
+        return parse$6(source);
     
     if (parser === 'tenko')
-        return tenko.parse(source);
+        return parse$5(source);
     
     if (parser === 'hermes')
-        return hermes.parse(source);
+        return parse$4(source);
     
-    return commonjsRequire(parser).parse(source);
+    const require = _module.createRequire(import.meta.url);
+    
+    return require(parser).parse(source);
 }
 
-var tryThrowWithReason$3 = {};
-
-const tryCatch$g = tryCatchExports$2;
-
-tryThrowWithReason$3.tryThrowWithReason = (fn, ...args) => {
-    const [error, result] = tryCatch$g(fn, ...args);
+const tryThrowWithReason$1 = (fn, ...args) => {
+    const [error, result] = tryCatch_2(fn, ...args);
     
     if (error) {
         error.reason = 'parse';
@@ -111034,13 +109895,10 @@ tryThrowWithReason$3.tryThrowWithReason = (fn, ...args) => {
     return result;
 };
 
-const {estreeToBabel} = estreeToBabel$1;
-const customParser = customParser$1;
-const {tryThrowWithReason: tryThrowWithReason$2} = tryThrowWithReason$3;
 const {assign: assign$4} = Object;
 const isString$8 = (a) => typeof a === 'string';
 
-var parse$5 = (source, options) => {
+const parse$3 = (source, options) => {
     check$b(source);
     
     const {
@@ -111057,7 +109915,7 @@ var parse$5 = (source, options) => {
         isJSX,
     });
     
-    return tryThrowWithReason$2(parse, source);
+    return tryThrowWithReason$1(parse, source);
 };
 
 const getParser = ({parser = 'babel', isTS, isJSX, printer}) => ({
@@ -111069,7 +109927,7 @@ const getParser = ({parser = 'babel', isTS, isJSX, printer}) => ({
                 convertParens: false,
             });
         
-        const ast = estreeToBabel(customParser(source, parser, {
+        const ast = estreeToBabel_1(customParser(source, parser, {
             isTS,
             isJSX,
             printer,
@@ -111084,20 +109942,12 @@ function check$b(source) {
         throw Error(`☝️ Looks like type of 'source' is not 'string', but '${typeof source}'`);
 }
 
-parse$5.default;
-
-const {generate: generate$4} = bundle$1;
-
-var generate_1$1 = (node, options, sourceMaps) => {
-    return generate$4(node, {
+const generate = (node, options, sourceMaps) => {
+    return generate$2(node, {
         comments: false,
         ...options,
     }, sourceMaps);
 };
-
-generate_1$1.default;
-
-var template$a = {exports: {}};
 
 /*
 MIT License
@@ -111198,117 +110048,100 @@ function $cf838c15c8b009ba$export$22f15dd4e5be7e52(fn, o) {
     return f;
 }
 
-var nanoMemoize = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	default: $cf838c15c8b009ba$export$22f15dd4e5be7e52,
-	nanomemoize: $cf838c15c8b009ba$export$22f15dd4e5be7e52
+const {
+    nanomemoize = $cf838c15c8b009ba$export$22f15dd4e5be7e52,
+} = $cf838c15c8b009ba$export$22f15dd4e5be7e52;
+
+const defaults = {
+    ...options,
+    plugins: [
+        ...plugins,
+        'typescript',
+        'jsx',
+    ],
+};
+
+const {
+    isExpressionStatement: isExpressionStatement$1,
+    isTSExternalModuleReference,
+} = lib_exports$1;
+
+const extractExpression$2 = (a) => {
+    if (isExpressionStatement$1(a))
+        return a.expression;
+    
+    if (isTSExternalModuleReference(a))
+        return a.expression;
+    
+    return a;
+};
+
+const template$6 = nanomemoize((value, options) => {
+    const fn = index$1(value, {
+        ...defaults,
+        ...options,
+    });
+    
+    return (...a) => {
+        const result = fn(...a);
+        return extractExpression$2(result);
+    };
 });
 
-var require$$1 = /*@__PURE__*/getAugmentedNamespace(nanoMemoize);
+template$6.extractExpression = extractExpression$2;
 
-(function (module) {
+template$6.ast = nanomemoize((value, options) => {
+    const result = index$1.ast(value, {
+        ...defaults,
+        ...options,
+    });
+    
+    return extractExpression$2(result);
+});
 
-	const {types, template} = bundle$1;
-	const {nanomemoize} = require$$1;
-	const plugins = plugins$1;
-	const options = options$1;
+template$6.program = nanomemoize((value, options) => {
+    const result = index$1.program(value, {
+        ...defaults,
+        ...options,
+    });
+    
+    return result;
+});
 
-	const defaults = {
-	    ...options,
-	    plugins: [
-	        ...plugins,
-	        'typescript',
-	        'jsx',
-	    ],
-	};
+template$6.program.ast = nanomemoize((value, options) => {
+    const result = index$1.program.ast(value, {
+        ...defaults,
+        ...options,
+    });
+    
+    return result;
+});
 
-	const {
-	    isExpressionStatement,
-	    isTSExternalModuleReference,
-	} = types;
+template$6.ast.fresh = (value, options) => {
+    const result = index$1.ast(value, {
+        ...defaults,
+        ...options,
+    });
+    
+    return extractExpression$2(result);
+};
 
-	const extractExpression = (a) => {
-	    if (isExpressionStatement(a))
-	        return a.expression;
-	    
-	    if (isTSExternalModuleReference(a))
-	        return a.expression;
-	    
-	    return a;
-	};
+var parser$1 = /*#__PURE__*/Object.freeze({
+	__proto__: null,
+	generate: generate,
+	parse: parse$3,
+	print: print$1,
+	template: template$6
+});
 
-	module.exports = nanomemoize((value, options) => {
-	    const fn = template(value, {
-	        ...defaults,
-	        ...options,
-	    });
-	    
-	    return (...a) => {
-	        const result = fn(...a);
-	        return extractExpression(result);
-	    };
-	});
-
-	module.exports.ast = nanomemoize((value, options) => {
-	    const result = template.ast(value, {
-	        ...defaults,
-	        ...options,
-	    });
-	    
-	    return extractExpression(result);
-	});
-
-	module.exports.program = nanomemoize((value, options) => {
-	    const result = template.program(value, {
-	        ...defaults,
-	        ...options,
-	    });
-	    
-	    return result;
-	});
-
-	module.exports.program.ast = nanomemoize((value, options) => {
-	    const result = template.program.ast(value, {
-	        ...defaults,
-	        ...options,
-	    });
-	    
-	    return result;
-	});
-
-	module.exports.ast.fresh = (value, options) => {
-	    const result = template.ast(value, {
-	        ...defaults,
-	        ...options,
-	    });
-	    
-	    return extractExpression(result);
-	};
-
-	module.exports.extractExpression = extractExpression; 
-} (template$a));
-
-var templateExports$1 = template$a.exports;
-templateExports$1.default;
-
-const print$3 = print$4;
-const parse$4 = parse$5;
-const generate$3 = generate_1$1;
-const template$9 = templateExports$1;
-
-parser$5.print = print$3;
-parser$5.parse = parse$4;
-parser$5.generate = generate$3;
-parser$5.template = template$9;
-
-const mergeShebang$1 = (shebang, source) => {
+const mergeShebang = (shebang, source) => {
     if (!shebang)
         return source;
     
     return `${shebang}\n${source}`;
 };
 
-const cutShebang$1 = (source) => {
+const cutShebang = (source) => {
     if (source.indexOf('#'))
         return [source, ''];
     
@@ -111325,14 +110158,6 @@ const cutShebang$1 = (source) => {
         `${shebang}\n`,
     ];
 };
-
-var shebang = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	cutShebang: cutShebang$1,
-	mergeShebang: mergeShebang$1
-});
-
-var require$$2 = /*@__PURE__*/getAugmentedNamespace(shebang);
 
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -111582,7 +110407,11 @@ var _polyfillNode_path$1 = /*#__PURE__*/Object.freeze({
 	sep: sep
 });
 
-var tryToCatch = async (fn, ...args) => {
+var tryToCatch$3 = {exports: {}};
+
+const isFn$5 = (a) => typeof a === 'function';
+
+const tryToCatch$1 = async (fn, ...args) => {
     check$a(fn);
     
     try {
@@ -111593,13 +110422,22 @@ var tryToCatch = async (fn, ...args) => {
 };
 
 function check$a(fn) {
-    if (typeof fn !== 'function')
+    if (!isFn$5(fn))
         throw Error('fn should be a function!');
 }
 
-var tryToCatch$1 = tryToCatch.default;
+var tryToCatch$2 = /*#__PURE__*/Object.freeze({
+	__proto__: null,
+	default: tryToCatch$1,
+	tryToCatch: tryToCatch$1
+});
 
-var _module = {};
+var require$$0$2 = /*@__PURE__*/getAugmentedNamespace(tryToCatch$2);
+
+const {tryToCatch} = require$$0$2;
+
+tryToCatch$3.exports = tryToCatch;
+var tryToCatch_2 = tryToCatch$3.exports.tryToCatch = tryToCatch;
 
 const returns$1 = (a) => () => a;
 const noop$2 = () => {};
@@ -111666,7 +110504,7 @@ async function cleverLoad(names, overrides) {
     let reporter;
     
     for (const name of names) {
-        [e, reporter] = await tryToCatch$1(simpleImport, name);
+        [e, reporter] = await tryToCatch_2(simpleImport, name);
         
         if (!e)
             return reporter;
@@ -111674,7 +110512,7 @@ async function cleverLoad(names, overrides) {
         if (e.code === 'ERR_UNSUPPORTED_DIR_IMPORT') {
             const fullName = require.resolve(name);
             
-            [e, reporter] = await tryToCatch$1(simpleImport, fullName);
+            [e, reporter] = await tryToCatch_2(simpleImport, fullName);
             
             if (!e)
                 return reporter;
@@ -111748,7 +110586,7 @@ const {stringify: stringify$6} = JSON;
 const notSupportedError = (a) => Error(`☝️ Rule format not supported ${a}: ${typeof a}`);
 const rulesUsedInsteadOfMatchError = (a) => Error(`☝️ Looks like you need to change "rules" to "match" for ${stringify$6(a)}`);
 const stateOptionError = ({rule, value}) => Error(`☝️ ${rule}: state option can be "on" or "off" only, when used as string, received: "${value}"`);
-const defaultOptions$5 = () => Object.create(null);
+const defaultOptions$3 = () => Object.create(null);
 
 const parseState = (rule, value) => {
     validateState(rule, value);
@@ -111776,7 +110614,7 @@ const parseRules = (rules) => {
                 state: parseState(rule, value),
                 plugin,
                 msg,
-                options: defaultOptions$5(),
+                options: defaultOptions$3(),
             });
             continue;
         }
@@ -111787,7 +110625,7 @@ const parseRules = (rules) => {
                 state: value,
                 plugin,
                 msg,
-                options: defaultOptions$5(),
+                options: defaultOptions$3(),
             });
             continue;
         }
@@ -111874,7 +110712,7 @@ function check$9(rules) {
         throw Error(`☝️Looks like type of 'rules' passed to @putout/engine-loader is 'array', expected: 'object'.`);
 }
 
-const defaultOptions$4 = () => Object.create(null);
+const defaultOptions$2 = () => Object.create(null);
 
 const mergeRules = ([rule, plugin], rules) => {
     for (const currentRule of rules) {
@@ -111895,7 +110733,7 @@ const mergeRules = ([rule, plugin], rules) => {
         rule,
         plugin,
         msg: '',
-        options: defaultOptions$4(),
+        options: defaultOptions$2(),
     };
 };
 
@@ -112257,10 +111095,6 @@ function loadOnePlugin({name, namespace}) {
     });
 }
 
-var lib = {};
-
-var debug$6 = {};
-
 function coerce(value) {
 	if (value instanceof Error) return value.stack || value.message;
 	return value;
@@ -112302,7 +111136,7 @@ let globalNamespaces = "";
 function namespaces() {
 	return globalNamespaces;
 }
-function createDebug$a(namespace, options) {
+function createDebug$4(namespace, options) {
 	let prevTime;
 	let enableOverride;
 	let namespacesCache;
@@ -112331,7 +111165,7 @@ function createDebug$a(namespace, options) {
 		debug.log(...args);
 	};
 	debug.extend = function(namespace$1, delimiter = ":") {
-		return createDebug$a(this.namespace + delimiter + namespace$1, {
+		return createDebug$4(this.namespace + delimiter + namespace$1, {
 			useColors: this.useColors,
 			color: this.color,
 			formatArgs: this.formatArgs,
@@ -112476,7 +111310,7 @@ function formatArgs(diff, args) {
 }
 const log$6 = console.debug || console.log || (() => {});
 const storage = localstorage();
-const defaultOptions$3 = {
+const defaultOptions$1 = {
 	useColors: true,
 	formatArgs,
 	formatters: { j(v) {
@@ -112490,10 +111324,10 @@ const defaultOptions$3 = {
 	humanize,
 	log: log$6
 };
-function createDebug$9(namespace, options) {
+function createDebug$3(namespace, options) {
 	var _ref;
 	const color = (_ref = options && options.color) !== null && _ref !== void 0 ? _ref : selectColor(colors, namespace);
-	return createDebug$a(namespace, Object.assign(defaultOptions$3, { color }, options));
+	return createDebug$4(namespace, Object.assign(defaultOptions$1, { color }, options));
 }
 function localstorage() {
 	try {
@@ -112522,19 +111356,15 @@ enable$1(load());
 
 var browser = /*#__PURE__*/Object.freeze({
 	__proto__: null,
-	createDebug: createDebug$9,
+	createDebug: createDebug$3,
 	disable: disable,
 	enable: enable,
 	enabled: enabled,
 	namespaces: namespaces
 });
 
-var require$$0$5 = /*@__PURE__*/getAugmentedNamespace(browser);
-
-const {createDebug: createDebug$8} = require$$0$5;
-
-debug$6.createDebug = (namespace) => {
-    const log = createDebug$8(namespace, {
+const createDebug$2 = (namespace) => {
+    const log = createDebug$3(namespace, {
         useColors: true,
     });
     
@@ -112552,39 +111382,11 @@ debug$6.createDebug = (namespace) => {
     });
 };
 
-var tryCatch$f = {exports: {}};
-
-const tryCatch$d = (fn, ...args) => {
-    try {
-        return [null, fn(...args)];
-    } catch(e) {
-        return [e];
-    }
-};
-
-var tryCatch$e = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	default: tryCatch$d,
-	tryCatch: tryCatch$d
-});
-
-var require$$0$4 = /*@__PURE__*/getAugmentedNamespace(tryCatch$e);
-
-const {tryCatch: tryCatch$c} = require$$0$4;
-
-tryCatch$f.exports = tryCatch$c;
-tryCatch$f.exports.tryCatch = tryCatch$c;
-
-var tryCatchExports$1 = tryCatch$f.exports;
-
-const tryCatch$b = tryCatchExports$1;
-const {createDebug: createDebug$7} = debug$6;
-
 const {stringify: stringify$5} = JSON;
 
 const isFn$4 = (a) => typeof a === 'function';
-const getPath$2 = (path) => path.path || path;
-const debug$5 = createDebug$7('putout:runner:fix');
+const getPath$1 = (path) => path.path || path;
+const debug$5 = createDebug$2('putout:runner:fix');
 
 const chooseFixArgs = ({path, pathOptions, options}) => {
     if (pathOptions)
@@ -112603,7 +111405,7 @@ const chooseFixArgs = ({path, pathOptions, options}) => {
 };
 
 const tryToFix = (fix, {path, pathOptions, position, options}) => {
-    const [e] = tryCatch$b(fix, ...chooseFixArgs({
+    const [e] = tryCatch_2(fix, ...chooseFixArgs({
         path,
         pathOptions,
         options,
@@ -112625,14 +111427,14 @@ const tryToFix = (fix, {path, pathOptions, position, options}) => {
     throw e;
 };
 
-var runFix$3 = (is, fix, {path, pathOptions, rule, position, options}) => {
+var runFix$1 = (is, fix, {path, pathOptions, rule, position, options}) => {
     if (!is)
         return;
     
     if (debug$5.enabled)
-        debug$5(`${rule}:`, position, getPath$2(path).toString());
+        debug$5(`${rule}:`, position, getPath$1(path).toString());
     
-    validate$3('fix', fix);
+    validate$1('fix', fix);
     
     tryToFix(fix, {
         path,
@@ -112642,18 +111444,15 @@ var runFix$3 = (is, fix, {path, pathOptions, rule, position, options}) => {
     });
 };
 
-function validate$3(name, fn) {
+function validate$1(name, fn) {
     if (!isFn$4(fn))
         throw Error(`☝️ Looks like '${name}' is not a 'function' but '${typeof fn}' with value: '${stringify$5(fn)}'. More on writing 🐊Putout Plugins: https://git.io/JqcMn`);
 }
 
-var getPosition$2 = {};
+const getPath = (item) => item.path || item[0] || item;
 
-const getPath$1 = (item) => item.path || item[0] || item;
-
-getPosition$2.getPath = getPath$1;
-getPosition$2.getPosition = (path, shebang) => {
-    const parsedPath = getPath$1(path);
+const getPosition = (path, shebang) => {
+    const parsedPath = getPath(path);
     
     validatePath(parsedPath);
     
@@ -112680,26 +111479,22 @@ function validatePath(path) {
 }
 
 const {isArray: isArray$6} = Array;
-const maybeArray$6 = (a) => isArray$6(a) ? a : [a];
+const maybeArray$2 = (a) => isArray$6(a) ? a : [a];
 
-var maybeArray_1 = (a) => {
+var maybeArray$3 = (a) => {
     if (!a)
         return [];
     
-    return maybeArray$6(a);
+    return maybeArray$2(a);
 };
-
-var validate$2 = {};
 
 const isFn$3 = (a) => typeof a === 'function';
 const {stringify: stringify$4} = JSON;
 
-validate$2.validate = (name, fn) => {
+const validate = (name, fn) => {
     if (!isFn$3(fn))
         throw Error(`☝️ Looks like '${name}' is not a 'function' but '${typeof fn}' with value: '${stringify$4(fn)}'. More on using Includer: https://git.io/JqcMn`);
 };
-
-var store = {};
 
 const {
     values,
@@ -112712,10 +111507,10 @@ const isNotRemoved = (a) => a.node;
 const notRemoved = (a) => toArray(a).filter(isNotRemoved);
 const id = (a) => a;
 
-store.listStore = createListStore();
-store.pathStore = createListStore(notRemoved);
+const listStore = createListStore();
+const pathStore = createListStore(notRemoved);
 
-store.mapStore = createStore({
+const mapStore = createStore({
     get(map) {
         return values(map);
     },
@@ -112724,7 +111519,7 @@ store.mapStore = createStore({
     },
 });
 
-store.upStore = createStore({
+const upStore = createStore({
     get(map) {
         return values(map);
     },
@@ -112734,7 +111529,7 @@ store.upStore = createStore({
     },
 });
 
-store.upListStore = createStore({
+const upListStore = createStore({
     get(map) {
         return values(map).map(notRemoved);
     },
@@ -112790,40 +111585,24 @@ function createListStore(returns = id) {
     };
 }
 
-const {traverse: traverse$7} = bundle$1;
-const {generate: generate$2} = parser$5;
-
-const runFix$2 = runFix$3;
-const {getPosition: getPosition$1} = getPosition$2;
-const maybeArray$5 = maybeArray_1;
-const {validate: validate$1} = validate$2;
-
-const {
-    listStore,
-    mapStore,
-    upStore,
-    upListStore,
-    pathStore,
-} = store;
-
-const {merge: merge$2} = traverse$7.visitors;
+const {merge: merge$2} = traverse3$1.visitors;
 const {assign: assign$1} = Object;
 
-const parse$3 = (name, plugin, options) => {
+const parse$2 = (name, plugin, options) => {
     const list = [];
     
     if (plugin[name]) {
-        validate$1(name, plugin[name]);
-        list.push(...maybeArray$5(plugin[name]()));
+        validate(name, plugin[name]);
+        list.push(...maybeArray$3(plugin[name]()));
     }
     
     if (options[name])
-        list.push(...maybeArray$5(options[name]));
+        list.push(...maybeArray$3(options[name]));
     
     return list;
 };
 
-var mergeVisitors$1 = (pluginsToMerge, {fix, shebang, template}) => {
+var mergeVisitors = (pluginsToMerge, {fix, shebang, template}) => {
     const mergeItems = [];
     const pushed = {};
     
@@ -112853,7 +111632,7 @@ var mergeVisitors$1 = (pluginsToMerge, {fix, shebang, template}) => {
             pathStore,
             upstore,
             uplist,
-            generate: generate$2,
+            generate,
             options,
         });
         
@@ -112861,8 +111640,8 @@ var mergeVisitors$1 = (pluginsToMerge, {fix, shebang, template}) => {
             throw Error(`☝️ Visitors cannot be empty in "${rule}"`);
         
         assign$1(options, {
-            include: parse$3('include', plugin, options),
-            exclude: parse$3('exclude', plugin, options),
+            include: parse$2('include', plugin, options),
+            exclude: parse$2('exclude', plugin, options),
         });
         
         mergeItems.push(...template({
@@ -112891,7 +111670,7 @@ function getStore(plugin, {fix, rule, shebang, msg, options}) {
     const paths = pathStore();
     
     const push = (path, pathOptions) => {
-        const position = getPosition$1(path, shebang);
+        const position = getPosition(path, shebang);
         const message = msg || plugin.report(path, pathOptions);
         
         placesStore({
@@ -112899,7 +111678,7 @@ function getStore(plugin, {fix, rule, shebang, msg, options}) {
             position,
         });
         
-        runFix$2(fix, plugin.fix, {
+        runFix$1(fix, plugin.fix, {
             path,
             pathOptions,
             rule,
@@ -112929,14 +111708,9 @@ function getStore(plugin, {fix, rule, shebang, msg, options}) {
     };
 }
 
-mergeVisitors$1.default;
+const {merge: merge$1} = traverse3$1.visitors;
 
-const {traverse: babelTraverse$1, types: types$j} = bundle$1;
-
-const {generate: generate$1} = parser$5;
-const {merge: merge$1} = babelTraverse$1.visitors;
-
-var superFind$1 = function superFind({rule, find, ast, options, template, traverse = babelTraverse$1}) {
+function superFind({rule, find, ast, options, template, traverse = traverse3$1}) {
     const pushItems = [];
     
     const push = (a) => {
@@ -112950,8 +111724,8 @@ var superFind$1 = function superFind({rule, find, ast, options, template, traver
             template,
             traverse,
         }),
-        generate: generate$1,
-        types: types$j,
+        generate,
+        types: lib_exports$1,
         push,
         options,
     });
@@ -112960,7 +111734,7 @@ var superFind$1 = function superFind({rule, find, ast, options, template, traver
         ...pushItems,
         ...returnItems || [],
     ];
-};
+}
 
 const createTraverse$1 = ({rule, options, template, traverse}) => (ast, visitor) => {
     const templateVisitors = merge$1(template({
@@ -112972,11 +111746,9 @@ const createTraverse$1 = ({rule, options, template, traverse}) => (ast, visitor)
     return traverse(ast, templateVisitors);
 };
 
-superFind$1.default;
+var compare$3 = {};
 
-var template$8 = {exports: {}};
-
-var compare$5 = {};
+var require$$1 = /*@__PURE__*/getAugmentedNamespace(parser$1);
 
 var vars = {};
 
@@ -113090,8 +111862,8 @@ prepareBodyWay$1.prepareBodyWay = (way) => {
 
 var is$2 = {};
 
-const {template: template$7} = parser$5;
-const {types: types$i} = bundle$1;
+const {template: template$5} = require$$1;
+const {types: types$d} = require$$2$2;
 const {
     isBlockStatement: isBlockStatement$1,
     isTSModuleBlock,
@@ -113108,7 +111880,7 @@ const {
     isJSXAttribute: isJSXAttribute$1,
     isTSTypeReference: isTSTypeReference$1,
     isTSTypeParameterDeclaration,
-} = types$i;
+} = types$d;
 
 const isStr$1 = (a) => typeof a === 'string';
 
@@ -113438,8 +112210,8 @@ is$2.isLinkedNode = (a) => {
 };
 
 is$2.parseTemplate = (tmpl, {program} = {}) => {
-    const parse = !program ? template$7.ast : template$7.program.ast;
-    const node = parse(tmpl) || template$7.ast.fresh(tmpl);
+    const parse = !program ? template$5.ast : template$5.program.ast;
+    const node = parse(tmpl) || template$5.ast.fresh(tmpl);
     
     if (tmpl === ANY_OBJECT)
         return [node, __OBJECT_TYPE];
@@ -113457,10 +112229,10 @@ is$2.isInsideTypeParameter = (path) => path.isIdentifier() && path.parentPath?.i
 
 const jessy = jessy$1;
 const nessy = nessy$1;
-const {traverse: traverse$6, types: types$h} = bundle$1;
-const {template: template$6} = parser$5;
+const {traverse: traverse$3, types: types$c} = require$$2$2;
+const {template: template$4} = require$$1;
 
-const {replaceWith: replaceWith$3, extract} = operate;
+const {replaceWith: replaceWith$2, extract} = operate;
 
 const {prepareBodyWay} = prepareBodyWay$1;
 const {
@@ -113484,9 +112256,9 @@ const {
     isStringLiteral: isStringLiteral$3,
     isTemplateLiteral: isTemplateLiteral$1,
     templateElement,
-} = types$h;
+} = types$c;
 
-const {extractExpression: extractExpression$1} = template$6;
+const {extractExpression: extractExpression$1} = template$4;
 
 const {entries: entries$6} = Object;
 const isNumber = (a) => typeof a === 'number';
@@ -113501,18 +112273,18 @@ vars.getTemplateValues = (node, str) => {
     
     node = parseNode$1(node);
     
-    const templateNode = template$6.ast(str);
-    const waysFrom = findVarsWays$2(templateNode);
+    const templateNode = template$4.ast(str);
+    const waysFrom = findVarsWays$1(templateNode);
     
-    return getValues$2({
+    return getValues$1({
         node,
         waysFrom,
     });
 };
 
-vars.findVarsWays = findVarsWays$2;
+vars.findVarsWays = findVarsWays$1;
 
-function findVarsWays$2(node) {
+function findVarsWays$1(node) {
     if (isIdentifier$3(node) && is$1(node.name))
         return {
             [node.name]: [''],
@@ -113520,7 +112292,7 @@ function findVarsWays$2(node) {
     
     const vars = {};
     
-    traverse$6(node, {
+    traverse$3(node, {
         noScope: true,
         'Identifier|JSXIdentifier|BooleanLiteral|StringLiteral|TemplateElement|RegExpLiteral|JSXText|JSXAttribute|TSTypeReference|TSTypeParameter'(path) {
             if (isInsideTypeReference(path))
@@ -113557,9 +112329,9 @@ function findVarsWays$2(node) {
     return vars;
 }
 
-vars.getValues = getValues$2;
+vars.getValues = getValues$1;
 
-function getValues$2({waysFrom, node}) {
+function getValues$1({waysFrom, node}) {
     const result = {};
     
     for (const [name, ways] of entries$6(waysFrom)) {
@@ -113584,15 +112356,15 @@ function getValues$2({waysFrom, node}) {
 
 const makeRaw = (a) => a.replace('`', '\\`');
 
-vars.setValues = setValues$2;
+vars.setValues = setValues$1;
 
-function setValues$2({waysTo, values, path}) {
+function setValues$1({waysTo, values, path}) {
     const node = extractExpression$1(path.node);
     
     for (const [name, ways] of entries$6(waysTo)) {
         for (let way of ways) {
             if (!way) {
-                replaceWith$3(path, values[name]);
+                replaceWith$2(path, values[name]);
                 continue;
             }
             
@@ -113641,10 +112413,12 @@ var log$5 = {exports: {}};
 
 var debug$4 = {};
 
-const {createDebug: createDebug$6} = require$$0$5;
+var require$$0$1 = /*@__PURE__*/getAugmentedNamespace(browser);
+
+const {createDebug: createDebug$1} = require$$0$1;
 
 debug$4.createDebug = (namespace) => {
-    const log = createDebug$6(namespace);
+    const log = createDebug$1(namespace);
     
     return new Proxy(log, {
         apply(target, thisArg, args) {
@@ -113660,8 +112434,8 @@ debug$4.createDebug = (namespace) => {
     });
 };
 
-const {createDebug: createDebug$5} = debug$4;
-const debug$3 = createDebug$5('putout:compare');
+const {createDebug} = debug$4;
+const debug$3 = createDebug('putout:compare');
 
 const {isArray: isArray$4} = Array;
 const isObject$4 = (a) => a && typeof a === 'object';
@@ -113705,7 +112479,7 @@ var logExports = log$5.exports;
 
 var link$1 = {exports: {}};
 
-const {types: types$g} = bundle$1;
+const {types: types$b} = require$$2$2;
 const {
     isIdentifier: isIdentifier$2,
     isLiteral,
@@ -113714,7 +112488,7 @@ const {
     isTSTypeReference,
     isJSXText: isJSXText$1,
     isJSXIdentifier,
-} = types$g;
+} = types$b;
 
 const parseName = (node) => {
     node = node[0] || node;
@@ -113775,11 +112549,11 @@ comparePrimitives$2.comparePrimitives = (node, template) => {
     return isPrimitive(template) && !is(template) && template === node;
 };
 
-const {types: types$f} = bundle$1;
+const {types: types$a} = require$$2$2;
 const {isObject: isObject$3, isArrays: isArrays$1} = is$2;
 const {comparePrimitives: comparePrimitives$1} = comparePrimitives$2;
 
-const {isIdentifier: isIdentifier$1} = types$f;
+const {isIdentifier: isIdentifier$1} = types$a;
 
 comparePlain$1.comparePlain = (node, template, {add}) => {
     if (!node && node === template)
@@ -113807,7 +112581,7 @@ comparePlain$1.comparePlain = (node, template, {add}) => {
     return false;
 };
 
-const {types: types$e} = bundle$1;
+const {types: types$9} = require$$2$2;
 
 const log$4 = logExports;
 const link = linkExports;
@@ -113845,7 +112619,7 @@ const {
     isBlock,
     isJSXText,
     isTemplateElement,
-} = types$e;
+} = types$9;
 
 const isEmptyBlock = (a) => isBlock(a) && !a.body.length;
 
@@ -113960,7 +112734,7 @@ function compareJSXTexts(node, template) {
 
 var topLevelComparators = {};
 
-const {types: types$d} = bundle$1;
+const {types: types$8} = require$$2$2;
 const {
     isEqualBody,
     isEqualAnyObject,
@@ -113974,7 +112748,7 @@ const {
 const {
     isIdentifier,
     isStringLiteral: isStringLiteral$1,
-} = types$d;
+} = types$8;
 
 const comparators = [
     isEqualAnyObject,
@@ -114009,12 +112783,12 @@ function isLinkedAndStringLiteral(node, templateNode) {
     return isStringLiteral$1(node) && isLinkedNode(templateNode);
 }
 
-const {template: template$5} = parser$5;
+const {template: template$3} = require$$1;
 
 const {
-    findVarsWays: findVarsWays$1,
-    getValues: getValues$1,
-    setValues: setValues$1,
+    findVarsWays,
+    getValues,
+    setValues,
     getTemplateValues: getTemplateValues$1,
 } = vars;
 
@@ -114026,11 +112800,11 @@ const {
     isId,
     isPath: isPath$1,
     isEqualType,
-    isTemplate: isTemplate$2,
-    parseTemplate: parseTemplate$2,
+    isTemplate: isTemplate$1,
+    parseTemplate: parseTemplate$1,
 } = is$2;
 
-const {extractExpression} = template$5;
+const {extractExpression} = template$3;
 const addWaterMark = (a) => a;
 
 const {keys: keys$2} = Object;
@@ -114040,7 +112814,7 @@ const isEmptyArray = (a) => isArray$3(a) && !a.length;
 
 const compareType = (type) => (path) => path.type === type;
 const superPush = (array) => (a, b, c = {}) => array.push([a, b, c]);
-const maybeArray$4 = (a) => isArray$3(a) ? a : [a];
+const maybeArray$1 = (a) => isArray$3(a) ? a : [a];
 
 const findParent = (path, type) => {
     const newPathNode = path.findParent(compareType(type));
@@ -114053,7 +112827,7 @@ const findParent = (path, type) => {
 
 function parseNode(a) {
     if (isStr(a))
-        return template$5.ast(a);
+        return template$3.ast(a);
     
     if (!a.node)
         return a;
@@ -114061,16 +112835,16 @@ function parseNode(a) {
     return a.node;
 }
 
-compare$5.compare = compare$4;
-compare$5.parseTemplate = parseTemplate$2;
-compare$5.isTemplate = isTemplate$2;
+var compare_2 = compare$3.compare = compare$2;
+var parseTemplate_1 = compare$3.parseTemplate = parseTemplate$1;
+var isTemplate_1 = compare$3.isTemplate = isTemplate$1;
 
-compare$5.findVarsWays = findVarsWays$1;
-compare$5.getValues = getValues$1;
-compare$5.setValues = setValues$1;
-compare$5.getTemplateValues = getTemplateValues$1;
+var findVarsWays_1 = compare$3.findVarsWays = findVarsWays;
+var getValues_1 = compare$3.getValues = getValues;
+var setValues_1 = compare$3.setValues = setValues;
+var getTemplateValues_1 = compare$3.getTemplateValues = getTemplateValues$1;
 
-function compare$4(path, template, options = {}, equal = noop$1) {
+function compare$2(path, template, options = {}, equal = noop$1) {
     const {findUp = true} = options;
     
     if (!path && !template)
@@ -114106,22 +112880,22 @@ function compare$4(path, template, options = {}, equal = noop$1) {
     return superCompareIterate(node, templateNode);
 }
 
-compare$5.compareAny = (path, templateNodes, options) => {
-    templateNodes = maybeArray$4(templateNodes);
+var compareAny$1 = compare$3.compareAny = (path, templateNodes, options) => {
+    templateNodes = maybeArray$1(templateNodes);
     
     for (const template of templateNodes) {
-        if (compare$4(path, template, options))
+        if (compare$2(path, template, options))
             return true;
     }
     
     return false;
 };
 
-compare$5.compareAll = (path, templateNodes, options) => {
-    templateNodes = maybeArray$4(templateNodes);
+var compareAll = compare$3.compareAll = (path, templateNodes, options) => {
+    templateNodes = maybeArray$1(templateNodes);
     
     for (const template of templateNodes) {
-        if (!compare$4(path, template, options))
+        if (!compare$2(path, template, options))
             return false;
     }
     
@@ -114183,18 +112957,7 @@ function superCompareIterate(node, template) {
     return true;
 }
 
-const tryCatch$a = tryCatchExports$1;
-
-const {
-    compareAny: compareAny$1,
-    compareAll,
-    parseTemplate: parseTemplate$1,
-    isTemplate: isTemplate$1,
-} = compare$5;
-
-const maybeArray$3 = maybeArray_1;
-const {createDebug: createDebug$4} = debug$6;
-const debug$2 = createDebug$4('putout:runner:template');
+const debug$2 = createDebug$2('putout:runner:template');
 
 const {entries: entries$5} = Object;
 const isFn$2 = (a) => typeof a === 'function';
@@ -114204,8 +112967,6 @@ const log$3 = (rule, path) => {
 };
 
 const {stringify: stringify$2} = JSON;
-
-template$8.exports._log = log$3;
 
 const exclude = ({rule, tmpl, fn, nodesExclude}) => {
     if (!isFn$2(fn) || !nodesExclude.length)
@@ -114225,7 +112986,7 @@ const exclude = ({rule, tmpl, fn, nodesExclude}) => {
     };
 };
 
-template$8.exports = ({rule, visitor, options}) => {
+var template$2 = ({rule, visitor, options}) => {
     const parsed = [];
     const nodesExclude = maybeArray$3(options.exclude);
     const nodesInclude = maybeArray$3(options.include);
@@ -114234,7 +112995,7 @@ template$8.exports = ({rule, visitor, options}) => {
         if (!tmpl)
             continue;
         
-        if (!isTemplate$1(tmpl)) {
+        if (!isTemplate_1(tmpl)) {
             parsed.push(exclude({
                 rule,
                 tmpl,
@@ -114244,7 +113005,7 @@ template$8.exports = ({rule, visitor, options}) => {
             continue;
         }
         
-        const [node, type] = parseTemplate$1(tmpl);
+        const [node, type] = parseTemplate_1(tmpl);
         
         const visit = wrapWithCheck({
             rule,
@@ -114264,8 +113025,6 @@ template$8.exports = ({rule, visitor, options}) => {
     return parsed;
 };
 
-template$8.exports._log = log$3;
-
 const wrapWithCheck = ({rule, nodesInclude, nodesExclude, fn}) => (path) => {
     log$3(rule, path);
     
@@ -114278,17 +113037,13 @@ const wrapWithCheck = ({rule, nodesInclude, nodesExclude, fn}) => (path) => {
     if (!isFn$2(fn))
         throw Error(`☝️ Looks like provided visitor is not a function: ${stringify$2(fn)}. More on using Traverser: https://git.io/JqcMn`);
     
-    const [e] = tryCatch$a(fn, path);
+    const [e] = tryCatch_2(fn, path);
     
     if (e) {
         e.rule = rule;
         throw e;
     }
 };
-
-var templateExports = template$8.exports;
-
-var progress = {};
 
 var domain;
 
@@ -114298,27 +113053,27 @@ var domain;
 function EventHandlers() {}
 EventHandlers.prototype = Object.create(null);
 
-function EventEmitter$1() {
-  EventEmitter$1.init.call(this);
+function EventEmitter() {
+  EventEmitter.init.call(this);
 }
 
 // nodejs oddity
 // require('events') === require('events').EventEmitter
-EventEmitter$1.EventEmitter = EventEmitter$1;
+EventEmitter.EventEmitter = EventEmitter;
 
-EventEmitter$1.usingDomains = false;
+EventEmitter.usingDomains = false;
 
-EventEmitter$1.prototype.domain = undefined;
-EventEmitter$1.prototype._events = undefined;
-EventEmitter$1.prototype._maxListeners = undefined;
+EventEmitter.prototype.domain = undefined;
+EventEmitter.prototype._events = undefined;
+EventEmitter.prototype._maxListeners = undefined;
 
 // By default EventEmitters will print a warning if more than 10 listeners are
 // added to it. This is a useful default which helps finding memory leaks.
-EventEmitter$1.defaultMaxListeners = 10;
+EventEmitter.defaultMaxListeners = 10;
 
-EventEmitter$1.init = function() {
+EventEmitter.init = function() {
   this.domain = null;
-  if (EventEmitter$1.usingDomains) {
+  if (EventEmitter.usingDomains) {
     // if there is an active domain, then attach to it.
     if (domain.active && !(this instanceof domain.Domain)) {
       this.domain = domain.active;
@@ -114335,7 +113090,7 @@ EventEmitter$1.init = function() {
 
 // Obviously not all Emitters should be limited to 10. This function allows
 // that to be increased. Set to zero for unlimited.
-EventEmitter$1.prototype.setMaxListeners = function setMaxListeners(n) {
+EventEmitter.prototype.setMaxListeners = function setMaxListeners(n) {
   if (typeof n !== 'number' || n < 0 || isNaN(n))
     throw new TypeError('"n" argument must be a positive number');
   this._maxListeners = n;
@@ -114344,11 +113099,11 @@ EventEmitter$1.prototype.setMaxListeners = function setMaxListeners(n) {
 
 function $getMaxListeners(that) {
   if (that._maxListeners === undefined)
-    return EventEmitter$1.defaultMaxListeners;
+    return EventEmitter.defaultMaxListeners;
   return that._maxListeners;
 }
 
-EventEmitter$1.prototype.getMaxListeners = function getMaxListeners() {
+EventEmitter.prototype.getMaxListeners = function getMaxListeners() {
   return $getMaxListeners(this);
 };
 
@@ -114409,7 +113164,7 @@ function emitMany(handler, isFn, self, args) {
   }
 }
 
-EventEmitter$1.prototype.emit = function emit(type) {
+EventEmitter.prototype.emit = function emit(type) {
   var er, handler, len, args, i, events, domain;
   var doError = (type === 'error');
 
@@ -114540,13 +113295,13 @@ function _addListener(target, type, listener, prepend) {
 function emitWarning(e) {
   typeof console.warn === 'function' ? console.warn(e) : console.log(e);
 }
-EventEmitter$1.prototype.addListener = function addListener(type, listener) {
+EventEmitter.prototype.addListener = function addListener(type, listener) {
   return _addListener(this, type, listener, false);
 };
 
-EventEmitter$1.prototype.on = EventEmitter$1.prototype.addListener;
+EventEmitter.prototype.on = EventEmitter.prototype.addListener;
 
-EventEmitter$1.prototype.prependListener =
+EventEmitter.prototype.prependListener =
     function prependListener(type, listener) {
       return _addListener(this, type, listener, true);
     };
@@ -114564,14 +113319,14 @@ function _onceWrap(target, type, listener) {
   return g;
 }
 
-EventEmitter$1.prototype.once = function once(type, listener) {
+EventEmitter.prototype.once = function once(type, listener) {
   if (typeof listener !== 'function')
     throw new TypeError('"listener" argument must be a function');
   this.on(type, _onceWrap(this, type, listener));
   return this;
 };
 
-EventEmitter$1.prototype.prependOnceListener =
+EventEmitter.prototype.prependOnceListener =
     function prependOnceListener(type, listener) {
       if (typeof listener !== 'function')
         throw new TypeError('"listener" argument must be a function');
@@ -114580,7 +113335,7 @@ EventEmitter$1.prototype.prependOnceListener =
     };
 
 // emits a 'removeListener' event iff the listener was removed
-EventEmitter$1.prototype.removeListener =
+EventEmitter.prototype.removeListener =
     function removeListener(type, listener) {
       var list, events, position, i, originalListener;
 
@@ -114639,11 +113394,11 @@ EventEmitter$1.prototype.removeListener =
     
 // Alias for removeListener added in NodeJS 10.0
 // https://nodejs.org/api/events.html#events_emitter_off_eventname_listener
-EventEmitter$1.prototype.off = function(type, listener){
+EventEmitter.prototype.off = function(type, listener){
     return this.removeListener(type, listener);
 };
 
-EventEmitter$1.prototype.removeAllListeners =
+EventEmitter.prototype.removeAllListeners =
     function removeAllListeners(type) {
       var listeners, events;
 
@@ -114693,7 +113448,7 @@ EventEmitter$1.prototype.removeAllListeners =
       return this;
     };
 
-EventEmitter$1.prototype.listeners = function listeners(type) {
+EventEmitter.prototype.listeners = function listeners(type) {
   var evlistener;
   var ret;
   var events = this._events;
@@ -114713,7 +113468,7 @@ EventEmitter$1.prototype.listeners = function listeners(type) {
   return ret;
 };
 
-EventEmitter$1.listenerCount = function(emitter, type) {
+EventEmitter.listenerCount = function(emitter, type) {
   if (typeof emitter.listenerCount === 'function') {
     return emitter.listenerCount(type);
   } else {
@@ -114721,7 +113476,7 @@ EventEmitter$1.listenerCount = function(emitter, type) {
   }
 };
 
-EventEmitter$1.prototype.listenerCount = listenerCount;
+EventEmitter.prototype.listenerCount = listenerCount;
 function listenerCount(type) {
   var events = this._events;
 
@@ -114738,7 +113493,7 @@ function listenerCount(type) {
   return 0;
 }
 
-EventEmitter$1.prototype.eventNames = function eventNames() {
+EventEmitter.prototype.eventNames = function eventNames() {
   return this._eventsCount > 0 ? Reflect.ownKeys(this._events) : [];
 };
 
@@ -114764,17 +113519,7 @@ function unwrapListeners(arr) {
   return ret;
 }
 
-var _polyfillNode_events = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	EventEmitter: EventEmitter$1,
-	default: EventEmitter$1
-});
-
-var require$$0$3 = /*@__PURE__*/getAugmentedNamespace(_polyfillNode_events);
-
-const {EventEmitter} = require$$0$3;
-
-var createProgress$1 = progress.createProgress = () => {
+const createProgress = () => {
     let pluginsCount = 0;
     let pluginsIndex = 0;
     
@@ -114826,12 +113571,8 @@ var createProgress$1 = progress.createProgress = () => {
     return progress;
 };
 
-var tryThrowWithReason$1 = {};
-
-const tryCatch$9 = tryCatchExports$1;
-
-tryThrowWithReason$1.tryThrowWithReason = (fn, ...args) => {
-    const [error, result] = tryCatch$9(fn, ...args);
+const tryThrowWithReason = (fn, ...args) => {
+    const [error, result] = tryCatch_2(fn, ...args);
     
     if (error) {
         error.reason ??= 'traverse';
@@ -114841,17 +113582,11 @@ tryThrowWithReason$1.tryThrowWithReason = (fn, ...args) => {
     return result;
 };
 
-var includer = {};
-
-const {createDebug: createDebug$3} = debug$6;
-
-const maybeArray$2 = maybeArray_1;
-const {validate} = validate$2;
-const log$2 = createDebug$3('putout:runner:include');
+const log$2 = createDebug$2('putout:runner:include');
 const stub$1 = () => [];
 const good = () => true;
 
-includer.include = ({rule, plugin, msg, options}) => {
+const include$1 = ({rule, plugin, msg, options}) => {
     const {
         fix,
         report,
@@ -114872,7 +113607,7 @@ includer.include = ({rule, plugin, msg, options}) => {
             ...options,
             exclude: [
                 ...exclude(),
-                ...maybeArray$2(options.exclude),
+                ...maybeArray$3(options.exclude),
             ],
         },
         plugin: {
@@ -114907,13 +113642,9 @@ const getTraverse$1 = (include, filter, rule) => ({push, options}) => {
     return result;
 };
 
-var replacer = {};
-
-var watermark$1 = {exports: {}};
-
 const wrap = (fn) => (...a) => (...b) => fn(...a, ...b);
 
-var wraptile$1 = (fn, ...a) => {
+var wraptile = (fn, ...a) => {
     check$4(fn);
     
     if (a.length)
@@ -114927,10 +113658,12 @@ function check$4(fn) {
         throw Error('fn should be a function!');
 }
 
+var wraptile$1 = wraptile.default;
+
 const {entries: entries$4} = Object;
 const {isArray: isArray$2} = Array;
 
-var findPath$1 = (parentPath) => {
+var findPath = (parentPath) => {
     let current = {
         parentPath,
     };
@@ -114966,16 +113699,11 @@ function findKey(path, parent) {
     return key;
 }
 
-const wraptile = wraptile$1;
-
-const {types: types$c} = bundle$1;
-const findPath = findPath$1;
-
-const {isProgram: isProgram$2} = types$c;
+const {isProgram: isProgram$2} = lib_exports$1;
 const name = '__putout_runner_replace';
 const hasWatermark = (watermark) => (path) => path.node?.[name]?.has(watermark);
 
-watermark$1.exports = (from, to, path) => {
+const watermark = (from, to, path) => {
     const {watermark, highWatermark} = create(from, to, path);
     const program = path.findParent(isProgram$2);
     const options = {
@@ -114986,15 +113714,14 @@ watermark$1.exports = (from, to, path) => {
     };
     
     return {
-        init: wraptile(init$1, options),
-        has: wraptile(has, options),
-        add: wraptile(add, options),
+        init: wraptile$1(init$2, options),
+        has: wraptile$1(has, options),
+        add: wraptile$1(add, options),
     };
 };
 
-watermark$1.exports.REPLACE_WATERMARK = name;
+const REPLACE_WATERMARK = name;
 
-watermark$1.exports.create = create;
 function create(from, to, path) {
     const watermark = `${from} -> ${to}`;
     const highWatermark = `${findPath(path)}: ${watermark}`;
@@ -115005,17 +113732,15 @@ function create(from, to, path) {
     };
 }
 
-watermark$1.exports.init = init$1;
-function init$1({path, program}) {
+function init$2({path, program}) {
     if (path.node)
         path.node[name] = path.node[name] || new Set();
     
     program.node[name] = program.node[name] || new Set();
 }
 
-watermark$1.exports.add = add;
 function add({path, program, watermark, highWatermark}) {
-    init$1({
+    init$2({
         path,
         program,
     });
@@ -115024,7 +113749,6 @@ function add({path, program, watermark, highWatermark}) {
     program.node[name].add(highWatermark);
 }
 
-watermark$1.exports.has = has;
 function has({path, program, watermark, highWatermark}) {
     const {node} = path;
     const {loc} = node;
@@ -115035,22 +113759,6 @@ function has({path, program, watermark, highWatermark}) {
     return program.node[name].has(highWatermark);
 }
 
-var watermarkExports = watermark$1.exports;
-
-const {template: template$4, print: print$2} = parser$5;
-const {remove, replaceWith: replaceWith$2} = operate;
-const {types: types$b} = bundle$1;
-
-const {
-    compare: compare$3,
-    findVarsWays,
-    getValues,
-    setValues,
-} = compare$5;
-
-const maybeArray$1 = maybeArray_1;
-const watermark = watermarkExports;
-const {createDebug: createDebug$2} = debug$6;
 const debug$1 = createDebug$2('putout:runner:replace');
 
 const log$1 = (from, path) => {
@@ -115061,7 +113769,7 @@ const {
     isExpression,
     isStatement,
     isExpressionStatement,
-} = types$b;
+} = lib_exports$1;
 
 const PRINT_OPTIONS = {
     printer: ['putout', {
@@ -115084,7 +113792,7 @@ const stubMatch = () => ({});
 const packKeys = (a) => () => keys$1(a);
 const isObject$1 = (a) => typeof a === 'object';
 
-replacer.replace = ({rule, plugin, msg, options}) => {
+const replace = ({rule, plugin, msg, options}) => {
     const maybeMatch = plugin.match || stubMatch;
     const match = maybeMatch({
         options,
@@ -115111,7 +113819,7 @@ replacer.replace = ({rule, plugin, msg, options}) => {
             ...options,
             exclude: [
                 ...exclude(),
-                ...maybeArray$1(options.exclude),
+                ...maybeArray$3(options.exclude),
             ],
         },
         plugin: {
@@ -115123,8 +113831,8 @@ replacer.replace = ({rule, plugin, msg, options}) => {
     };
 };
 
-replacer.clearWatermark = (ast) => {
-    delete ast.program[watermark.REPLACE_WATERMARK];
+const clearWatermark = (ast) => {
+    delete ast.program[REPLACE_WATERMARK];
 };
 
 const isFn$1 = (a) => typeof a === 'function';
@@ -115137,7 +113845,7 @@ const parseExpression = (nodeFrom, {node}) => {
 };
 
 const fix$4 = (from, to, path) => {
-    const nodeFrom = template$4.ast(from);
+    const nodeFrom = template$6.ast(from);
     const mark = watermark(from, to, path);
     
     mark.init();
@@ -115145,10 +113853,10 @@ const fix$4 = (from, to, path) => {
     if (mark.has())
         return;
     
-    const waysFrom = findVarsWays(nodeFrom);
+    const waysFrom = findVarsWays_1(nodeFrom);
     const node = parseExpression(nodeFrom, path);
     
-    const values = getValues({
+    const values = getValues_1({
         waysFrom,
         node,
     });
@@ -115157,18 +113865,18 @@ const fix$4 = (from, to, path) => {
     
     if (!nodeTo) {
         log$1(from, `''`);
-        return remove(path);
+        return remove_1(path);
     }
     
     checkExpressionStatement(nodeFrom, nodeTo, path);
     
-    const waysTo = findVarsWays(nodeTo);
-    const newPath = replaceWith$2(path, nodeTo);
+    const waysTo = findVarsWays_1(nodeTo);
+    const newPath = replaceWith_1(path, nodeTo);
     
     if (!nodeTo.__putout_replace_cooked) {
         validateTemplateValues(waysTo, waysFrom);
         
-        setValues({
+        setValues_1({
             waysTo,
             values,
             path: newPath,
@@ -115185,9 +113893,9 @@ const fix$4 = (from, to, path) => {
 
 const getFix = (items, match) => (path) => {
     for (const [from, to] of entries$3(items)) {
-        const nodeFrom = template$4.ast(from);
+        const nodeFrom = template$6.ast(from);
         
-        if (compare$3(path, nodeFrom, {findUp: false})) {
+        if (compare_2(path, nodeFrom, {findUp: false})) {
             const matchFn = match[from];
             
             if (!matchFn || runMatch(path, nodeFrom, matchFn))
@@ -115200,9 +113908,9 @@ const getFilter = (match) => (path) => {
     const all = entries$3(match);
     
     for (const [from, matchProperty] of all) {
-        const nodeFrom = template$4.ast(from);
+        const nodeFrom = template$6.ast(from);
         
-        if (!compare$3(path.node, nodeFrom, {findUp: false}))
+        if (!compare_2(path.node, nodeFrom, {findUp: false}))
             continue;
         
         return runMatch(path, nodeFrom, matchProperty);
@@ -115212,10 +113920,10 @@ const getFilter = (match) => (path) => {
 };
 
 function runMatch(path, nodeFrom, matchProperty) {
-    const waysFrom = findVarsWays(nodeFrom);
+    const waysFrom = findVarsWays_1(nodeFrom);
     const {node} = path;
     
-    const values = getValues({
+    const values = getValues_1({
         waysFrom,
         node,
     });
@@ -115239,7 +113947,7 @@ function parseTo(to, values, path) {
     if (!isString$3(toStr))
         throw Error(`☝️ Looks like you passed 'replace' value with a wrong type. Allowed: 'string', 'node' and 'path'. Received: '${typeof toStr}' with value '${toStr}'.`);
     
-    return template$4.ast.fresh(toStr);
+    return template$6.ast.fresh(toStr);
 }
 
 function validateMatchProperty(match) {
@@ -115264,16 +113972,14 @@ function checkExpressionStatement(nodeFrom, nodeTo, path) {
     if (isExpressionStatement(path) || isExpressionStatement(path.parentPath))
         return;
     
-    throw Error(`☝️ Looks like a try to put Statement in place of Expression, use 'match' to filter out such cases: '${print$2(nodeFrom, PRINT_OPTIONS)} -> ${print$2(nodeTo, PRINT_OPTIONS)}'. For code: '${path}'`);
+    throw Error(`☝️ Looks like a try to put Statement in place of Expression, use 'match' to filter out such cases: '${print$1(nodeFrom, PRINT_OPTIONS)} -> ${print$1(nodeTo, PRINT_OPTIONS)}'. For code: '${path}'`);
 }
-
-var declarator = {};
 
 var declare$1 = {};
 
 var record = {};
 
-const prefix = '__putout_declare_undefined_variables';
+const prefix = '__putout_declare';
 const getProgramParentPath = (path) => path.scope.getProgramParent().path;
 
 const maybeInit = (a, b) => b[a] = b[a] || {};
@@ -115308,12 +114014,12 @@ record.getModuleType = (path) => {
     return programPath[prefix].__putout_module_type;
 };
 
-const {template: template$3} = parser$5;
+const {template: template$1} = require$$1;
 const {isESM, insertAfter} = operate;
 
-const {compare: compare$2} = compare$5;
+const {compare: compare$1} = compare$3;
 
-const {types: types$a} = bundle$1;
+const {types: types$7} = require$$2$2;
 
 const {
     addDeclarationForESLint,
@@ -115325,7 +114031,7 @@ const {
 const {
     isImportDeclaration,
     isVariableDeclaration,
-} = types$a;
+} = types$7;
 
 const {keys} = Object;
 const isString$2 = (a) => typeof a === 'string';
@@ -115353,9 +114059,9 @@ const TS_EXCLUDE = [
     'TSQualifiedName',
 ];
 
-declare$1.declare = (declarations) => ({
+var declare_1 = declare$1.declare = (declarations) => ({
     report: report$3,
-    include: include$1,
+    include,
     fix: fix$3(declarations),
     filter: filter(declarations),
 });
@@ -115367,7 +114073,7 @@ const report$3 = (path) => {
     return `Declare '${peaceOfName}', it referenced but not defined`;
 };
 
-const include$1 = () => [
+const include = () => [
     'ReferencedIdentifier',
 ];
 
@@ -115415,7 +114121,7 @@ const fix$3 = (declarations) => (path, {options}) => {
     const programPath = scope.path;
     const bodyPath = programPath.get('body');
     
-    const node = template$3.ast.fresh(code);
+    const node = template$1.ast.fresh(code);
     
     insert(node, bodyPath);
     addDeclarationForESLint(name, path);
@@ -115444,7 +114150,7 @@ function getInsertionPath(node, bodyPath) {
     return null;
 }
 
-const isRequire = (node) => compare$2(node, 'const __a = require(__b)');
+const isRequire = (node) => compare$1(node, 'const __a = require(__b)');
 
 function insert(node, bodyPath) {
     const insertionPath = getInsertionPath(node, bodyPath);
@@ -115500,17 +114206,15 @@ function computeType(path, type) {
     return setModuleType(parseType(path), path);
 }
 
-const {declare: index} = declare$1;
-
 const {stringify} = JSON;
 const isFn = (a) => typeof a === 'function';
 
-declarator.declare = ({rule, plugin, msg, options}) => {
+const declare = ({rule, plugin, msg, options}) => {
     validateDeclare(plugin.declare);
     
     return {
         rule,
-        plugin: index(plugin.declare()),
+        plugin: declare_1(plugin.declare()),
         msg,
         options,
     };
@@ -115521,41 +114225,14 @@ function validateDeclare(declare) {
         throw Error(`☝️ Looks like 'declare' property value is not a 'function', but '${typeof declare}' with value '${stringify(declare)}'.`);
 }
 
-var scanner = {};
-
 var filesystem = {};
 
-var require$$0$2 = /*@__PURE__*/getAugmentedNamespace(_polyfillNode_path$1);
-
-var tryCatch$8 = {exports: {}};
-
-const tryCatch$6 = (fn, ...args) => {
-    try {
-        return [null, fn(...args)];
-    } catch(e) {
-        return [e];
-    }
-};
-
-var tryCatch$7 = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	default: tryCatch$6,
-	tryCatch: tryCatch$6
-});
-
-var require$$0$1 = /*@__PURE__*/getAugmentedNamespace(tryCatch$7);
-
-const {tryCatch: tryCatch$5} = require$$0$1;
-
-tryCatch$8.exports = tryCatch$5;
-tryCatch$8.exports.tryCatch = tryCatch$5;
-
-var tryCatchExports = tryCatch$8.exports;
+var require$$0 = /*@__PURE__*/getAugmentedNamespace(_polyfillNode_path$1);
 
 var maybeFs = {};
 
-const fullstore$1 = fullstore$3;
-const driverStore = fullstore$1();
+const fullstore = fullstore$1;
+const driverStore = fullstore();
 
 const {assign} = Object;
 const noop = () => {};
@@ -115596,35 +114273,35 @@ maybeFs.writeFileContent = (name, content) => {
     maybeFS$1.writeFileContent(name, content);
 };
 
-maybeFs.init = init;
+maybeFs.init = init$1;
 
-function init(fsDriver) {
+function init$1(fsDriver) {
     assign(maybeFS$1, fsDriver);
 }
 
 maybeFs.pause = () => {
     driverStore(maybeFS$1);
-    deinit();
+    deinit$1();
 };
 
 maybeFs.start = () => {
-    init(driverStore());
+    init$1(driverStore());
 };
 
-maybeFs.deinit = deinit;
+maybeFs.deinit = deinit$1;
 
-function deinit() {
+function deinit$1() {
     assign(maybeFS$1, defaultFS);
 }
 
 var property = {};
 
-const {types: types$9} = bundle$1;
+const {types: types$6} = require$$2$2;
 const {
     arrayExpression: arrayExpression$2,
     stringLiteral: stringLiteral$4,
     objectProperty: objectProperty$2,
-} = types$9;
+} = types$6;
 
 property.createTypeProperty = (type) => {
     const value = stringLiteral$4(type);
@@ -115655,15 +114332,15 @@ const {
     join: join$2,
     basename: basename$1,
     dirname: dirname$1,
-} = require$$0$2;
+} = require$$0;
 
-const {types: types$8} = bundle$1;
-const tryCatch$4 = tryCatchExports;
+const {types: types$5} = require$$2$2;
+const tryCatch = tryCatchExports;
 
 const {
     setLiteralValue: setLiteralValue$1,
     getProperty: getProperty$2,
-    traverseProperties: traverseProperties$1,
+    traverseProperties,
 } = operate;
 
 const maybeFS = maybeFs;
@@ -115678,14 +114355,14 @@ const {
 const {
     isProgram: isProgram$1,
     objectExpression: objectExpression$1,
-} = types$8;
+} = types$5;
 
 const isString$1 = (a) => typeof a === 'string';
 const {isArray: isArray$1} = Array;
 const maybeArray = (a) => isArray$1(a) ? a : [a];
 
 const toBase64 = (content) => {
-    const [e, result] = tryCatch$4(btoa, content);
+    const [e, result] = tryCatch(btoa, content);
     
     if (e)
         return btoa(escape(content));
@@ -115697,7 +114374,7 @@ const fromBase64 = (content) => {
     if (content.includes(' '))
         return content;
     
-    const [e, decoded] = tryCatch$4(atob, content);
+    const [e, decoded] = tryCatch(atob, content);
     
     if (!e)
         return unescape(decoded);
@@ -115714,7 +114391,7 @@ const getRegExp = (wildcard) => {
     return RegExp(`^${escaped}$`);
 };
 
-filesystem.getParentDirectory = getParentDirectory$2;
+var getParentDirectory_1 = filesystem.getParentDirectory = getParentDirectory$2;
 
 function getParentDirectory$2(filePath) {
     if (!filePath.parentPath)
@@ -115728,7 +114405,7 @@ function getParentDirectory$2(filePath) {
     return parentPath;
 }
 
-filesystem.findFile = findFile$5;
+var findFile_1 = filesystem.findFile = findFile$4;
 
 function isExcluded({name, base, exclude}) {
     for (const currentExclude of exclude) {
@@ -115739,13 +114416,13 @@ function isExcluded({name, base, exclude}) {
     return false;
 }
 
-function findFile$5(node, name, exclude = []) {
+function findFile$4(node, name, exclude = []) {
     checkName(name);
     
     const filePaths = [];
     const names = maybeArray(name);
     
-    for (const filenamePath of traverseProperties$1(node, 'filename')) {
+    for (const filenamePath of traverseProperties(node, 'filename')) {
         const {value} = filenamePath.node.value;
         const base = basename$1(value);
         
@@ -115784,14 +114461,14 @@ function getFilename$4(filePath) {
     return value;
 }
 
-filesystem.getFileType = getFileType$2;
+var getFileType_1 = filesystem.getFileType = getFileType$2;
 
 function getFileType$2(filePath) {
     const typePath = getProperty$2(filePath, 'type');
     return typePath.node.value.value;
 }
 
-filesystem.getFileContent = getFileContent;
+var getFileContent_1 = filesystem.getFileContent = getFileContent;
 
 function getFileContent(filePath) {
     const content = getProperty$2(filePath, 'content');
@@ -115802,9 +114479,9 @@ function getFileContent(filePath) {
     ];
 }
 
-filesystem.getFilename = getFilename$4;
+var getFilename_1 = filesystem.getFilename = getFilename$4;
 
-filesystem.renameFile = (filePath, name) => {
+var renameFile$1 = filesystem.renameFile = (filePath, name) => {
     const oldName = getFilename$4(filePath);
     const valuePath = getFilenamePath(filePath);
     const baseName = oldName
@@ -115821,7 +114498,7 @@ filesystem.renameFile = (filePath, name) => {
     maybeFS.renameFile(oldName, newFilename);
 };
 
-filesystem.removeFile = removeFile$1;
+var removeFile_1 = filesystem.removeFile = removeFile$1;
 function removeFile$1(filePath) {
     const filename = getFilename$4(filePath);
     
@@ -115832,7 +114509,7 @@ function removeFile$1(filePath) {
     maybeFS.removeFile(filename);
 }
 
-filesystem.removeEmptyDirectory = (dirPath) => {
+var removeEmptyDirectory = filesystem.removeEmptyDirectory = (dirPath) => {
     const type = getFileType$2(dirPath);
     
     if (type !== 'directory')
@@ -115856,7 +114533,7 @@ filesystem.removeEmptyDirectory = (dirPath) => {
     }
 };
 
-filesystem.moveFile = (filePath, dirPath) => {
+var moveFile = filesystem.moveFile = (filePath, dirPath) => {
     if (filePath === dirPath)
         return;
     
@@ -115880,7 +114557,7 @@ filesystem.moveFile = (filePath, dirPath) => {
     maybeFS.renameFile(filename, newFilename);
 };
 
-filesystem.copyFile = (filePath, dirPath) => {
+var copyFile = filesystem.copyFile = (filePath, dirPath) => {
     const dirname = getFilename$4(dirPath);
     const filename = getFilename$4(filePath);
     
@@ -115915,7 +114592,7 @@ function maybeRemoveFile(dirPath, filename) {
     
     const dirPathFiles = getProperty$2(dirPath, 'files');
     const name = join$2(getFilename$4(dirPath), basename$1(filename));
-    const [fileToOverwrite] = findFile$5(dirPathFiles, name);
+    const [fileToOverwrite] = findFile$4(dirPathFiles, name);
     
     if (!fileToOverwrite)
         return;
@@ -115923,7 +114600,7 @@ function maybeRemoveFile(dirPath, filename) {
     fileToOverwrite.remove();
 }
 
-filesystem.createFile = (dirPath, name, content) => {
+var createFile$1 = filesystem.createFile = (dirPath, name, content) => {
     maybeRemoveFile(dirPath, name);
     
     const dirPathFiles = getFiles$1(dirPath);
@@ -115951,7 +114628,7 @@ filesystem.createFile = (dirPath, name, content) => {
 
 const getFiles$1 = (dirPath) => getProperty$2(dirPath, 'files');
 
-filesystem.readDirectory = readDirectory;
+var readDirectory_1 = filesystem.readDirectory = readDirectory;
 function readDirectory(dirPath) {
     const fileType = getFileType$2(dirPath);
     
@@ -115961,7 +114638,7 @@ function readDirectory(dirPath) {
     return getFiles$1(dirPath).get('value.elements');
 }
 
-filesystem.createDirectory = createDirectory$1;
+var createDirectory_1 = filesystem.createDirectory = createDirectory$1;
 
 function createDirectory$1(dirPath, name) {
     const dirPathFiles = getFiles$1(dirPath);
@@ -115983,7 +114660,7 @@ function createDirectory$1(dirPath, name) {
     return dirPathFiles.get('value.elements').at(-1);
 }
 
-filesystem.readFileContent = (filePath) => {
+var readFileContent$2 = filesystem.readFileContent = (filePath) => {
     const fileType = getFileType$2(filePath);
     
     if (fileType === 'directory')
@@ -116004,7 +114681,7 @@ filesystem.readFileContent = (filePath) => {
     return fileContent;
 };
 
-filesystem.writeFileContent = writeFileContent$1;
+var writeFileContent_1 = filesystem.writeFileContent = writeFileContent$1;
 
 function writeFileContent$1(filePath, content) {
     const fileType = getFileType$2(filePath);
@@ -116027,7 +114704,7 @@ function writeFileContent$1(filePath, content) {
     filePath.node.properties.push(property);
 }
 
-filesystem.createNestedDirectory = (path, name) => {
+var createNestedDirectory = filesystem.createNestedDirectory = (path, name) => {
     const rootPath = getRootDirectory(path);
     const dir = dirname$1(name);
     
@@ -116057,7 +114734,7 @@ filesystem.createNestedDirectory = (path, name) => {
         }
     }
     
-    let lastDirectoryPath = findFile$5(rootPath, directories).at(-1) || rootPath;
+    let lastDirectoryPath = findFile$4(rootPath, directories).at(-1) || rootPath;
     const lastDirectoryName = getFilename$4(lastDirectoryPath);
     
     const n = directories.length;
@@ -116072,7 +114749,7 @@ filesystem.createNestedDirectory = (path, name) => {
     return lastDirectoryPath;
 };
 
-filesystem.getRootDirectory = getRootDirectory;
+var getRootDirectory_1 = filesystem.getRootDirectory = getRootDirectory;
 function getRootDirectory(path) {
     let currentDirPath = getParentDirectory$2(path);
     
@@ -116088,24 +114765,24 @@ function getRootDirectory(path) {
     return prevPath;
 }
 
-filesystem.init = maybeFS.init;
-filesystem.deinit = maybeFS.deinit;
+var init = filesystem.init = maybeFS.init;
+var deinit = filesystem.deinit = maybeFS.deinit;
 
-filesystem.pause = maybeFS.pause;
-filesystem.start = maybeFS.start;
+var pause = filesystem.pause = maybeFS.pause;
+var start = filesystem.start = maybeFS.start;
 
 var convertSimpleFilesystemToFilesystem = {};
 
-const {basename, dirname} = require$$0$2;
-const {types: types$7} = bundle$1;
+const {basename, dirname} = require$$0;
+const {types: types$4} = require$$2$2;
 const {
     createDirectory,
     getFileType: getFileType$1,
     getFilename: getFilename$3,
-    findFile: findFile$4,
+    findFile: findFile$3,
 } = filesystem;
 
-const {__filesystem_name: __filesystem_name$2} = json;
+const {__filesystem_name: __filesystem_name$1} = json;
 const {replaceWith: replaceWith$1, getProperty: getProperty$1} = operate;
 
 const {
@@ -116116,7 +114793,7 @@ const {
     isStringLiteral,
     isTemplateLiteral,
     objectProperty: objectProperty$1,
-} = types$7;
+} = types$4;
 
 convertSimpleFilesystemToFilesystem.report = () => `Convert Simple Filesystem to Filesystem`;
 
@@ -116188,7 +114865,7 @@ convertSimpleFilesystemToFilesystem.fix = (path) => {
 };
 
 convertSimpleFilesystemToFilesystem.traverse = ({push}) => ({
-    [`${__filesystem_name$2}(__array)`]: (path) => {
+    [`${__filesystem_name$1}(__array)`]: (path) => {
         const root = path.get('arguments.0');
         push(root);
     },
@@ -116202,7 +114879,7 @@ const noTrailingSlash = (a) => {
 };
 
 function buildTree(path, list) {
-    const [root, ...files] = findFile$4(list, '*');
+    const [root, ...files] = findFile$3(list, '*');
     
     for (const filePath of files) {
         const filename = getFilename$3(filePath);
@@ -116212,7 +114889,7 @@ function buildTree(path, list) {
         const type = getFileType$1(filePath);
         const dir = dirname(filename);
         const name = basename(filename);
-        const [dirPath] = findFile$4(root, dir);
+        const [dirPath] = findFile$3(root, dir);
         
         if (!dirPath || getFileType$1(dirPath) !== 'directory')
             throw Error(`☝️ Looks like directory '${dir}/' is missing`);
@@ -116236,12 +114913,12 @@ function check$3(filename) {
 
 var convertFilesystemToSimpleFilesystem = {};
 
-const {types: types$6} = bundle$1;
+const {types: types$3} = require$$2$2;
 const {replaceWith, getProperty} = operate;
-const {__filesystem_name: __filesystem_name$1} = json;
+const {__filesystem_name} = json;
 
 const {
-    findFile: findFile$3,
+    findFile: findFile$2,
     getFilename: getFilename$2,
     getFileType,
 } = filesystem;
@@ -116249,7 +114926,7 @@ const {
 const {
     stringLiteral: stringLiteral$2,
     arrayExpression,
-} = types$6;
+} = types$3;
 
 const {isArray} = Array;
 const maybeAddSlash = (a) => a === '/' ? a : `${a}/`;
@@ -116296,9 +114973,9 @@ convertFilesystemToSimpleFilesystem.fix = (root, {files}) => {
 };
 
 convertFilesystemToSimpleFilesystem.traverse = ({push}) => ({
-    [`${__filesystem_name$1}(__object)`]: (path) => {
+    [`${__filesystem_name}(__object)`]: (path) => {
         const root = path.get('arguments.0');
-        const files = findFile$3(root, '*');
+        const files = findFile$2(root, '*');
         
         push(root, {
             files,
@@ -116306,22 +114983,9 @@ convertFilesystemToSimpleFilesystem.traverse = ({push}) => ({
     },
 });
 
-const fullstore = fullstore$3;
-const {compare: compare$1} = compare$5;
-const {__filesystem_name} = json;
+const log = createDebug$2('putout:runner:scanner');
 
-const {
-    findFile: findFile$2,
-    pause,
-    start,
-} = filesystem;
-
-const fromSimple = convertSimpleFilesystemToFilesystem;
-const toSimple = convertFilesystemToSimpleFilesystem;
-const {createDebug: createDebug$1} = debug$6;
-const log = createDebug$1('putout:runner:scanner');
-
-scanner.scan = ({rule, plugin, msg, options}, {progress}) => {
+const scan$1 = ({rule, plugin, msg, options}, {progress}) => {
     const {
         scan,
         report,
@@ -116366,7 +115030,7 @@ const createFileProgress = ({rule, progress}) => ({i, n}) => {
 };
 
 const createTrackFile = (fileProgress) => function*(...a) {
-    const files = findFile$2(...a);
+    const files = findFile_1(...a);
     const n = files.length;
     
     for (const [i, file] of files.entries()) {
@@ -116379,12 +115043,12 @@ const createTrackFile = (fileProgress) => function*(...a) {
 };
 
 const getTraverse = ({scan, rule, progress}) => ({push, options}) => ({
-    [`${__filesystem_name}(__)`](path) {
+    [`${__filesystem_name_1}(__)`](path) {
         log(rule);
         progress.start(rule);
         
         const rootPath = path.get('arguments.0');
-        const isSimple = fullstore(false);
+        const isSimple = fullstore$2(false);
         
         const fileProgress = createFileProgress({
             rule,
@@ -116393,7 +115057,7 @@ const getTraverse = ({scan, rule, progress}) => ({push, options}) => ({
         
         const trackFile = createTrackFile(fileProgress);
         
-        runSimple(fromSimple, {
+        runSimple(convertSimpleFilesystemToFilesystem, {
             shouldConvert: true,
             path,
             isSimple,
@@ -116410,7 +115074,7 @@ const getTraverse = ({scan, rule, progress}) => ({push, options}) => ({
             options,
         });
         
-        runSimple(toSimple, {
+        runSimple(convertFilesystemToSimpleFilesystem, {
             shouldConvert: isSimple(),
             path,
             isSimple,
@@ -116420,7 +115084,7 @@ const getTraverse = ({scan, rule, progress}) => ({push, options}) => ({
     },
 });
 
-const runFix$1 = ({fix, isSimple}) => (...a) => {
+const runFix = ({fix, isSimple}) => (...a) => {
     isSimple(true);
     return fix(...a);
 };
@@ -116431,7 +115095,7 @@ function runSimple(plugin, {path, isSimple, shouldConvert = true}) {
     if (!shouldConvert)
         return;
     
-    const push = runFix$1({
+    const push = runFix({
         fix,
         isSimple,
     });
@@ -116442,7 +115106,7 @@ function runSimple(plugin, {path, isSimple, shouldConvert = true}) {
     
     const [visit, template] = parseVisitor(visitors);
     
-    if (compare$1(path, template)) {
+    if (compare_2(path, template)) {
         pause();
         visit(path);
         start();
@@ -116450,45 +115114,28 @@ function runSimple(plugin, {path, isSimple, shouldConvert = true}) {
 }
 
 function parseVisitor(visitors) {
-    const to = visitors[`${__filesystem_name}(__object)`];
-    const from = visitors[`${__filesystem_name}(__array)`];
+    const to = visitors[`${__filesystem_name_1}(__object)`];
+    const from = visitors[`${__filesystem_name_1}(__array)`];
     
     if (to)
         return [
             to,
-            `${__filesystem_name}(__object)`,
+            `${__filesystem_name_1}(__object)`,
         ];
     
     return [
         from,
-        `${__filesystem_name}(__array)`,
+        `${__filesystem_name_1}(__array)`,
     ];
 }
 
-const {traverse: defaultTraverse} = bundle$1;
-const once = onceExports;
-const {createDebug} = debug$6;
-
-const runFix = runFix$3;
-const mergeVisitors = mergeVisitors$1;
-const superFind = superFind$1;
-const template$2 = templateExports;
-const {createProgress} = progress;
-const {tryThrowWithReason} = tryThrowWithReason$1;
-
-const {include} = includer;
-const {replace, clearWatermark} = replacer;
-const {declare} = declarator;
-const {scan: scan$1} = scanner;
-
-const {getPath, getPosition} = getPosition$2;
-const debug = createDebug('putout:runner:find');
+const debug = createDebug$2('putout:runner:find');
 const isRemoved = (a) => a?.removed;
 
-lib.runPlugins = ({ast, shebang, fix, fixCount = 2, plugins, progress = createProgress(), traverse = defaultTraverse}) => {
+const runPlugins = ({ast, shebang, fix, fixCount = 2, plugins, progress = createProgress(), traverse = traverse3$1}) => {
     let places = [];
     
-    const merge = once(mergeVisitors);
+    const merge = onceExports(mergeVisitors);
     const {
         pluginsFind,
         pluginsTraverse,
@@ -116518,8 +115165,6 @@ lib.runPlugins = ({ast, shebang, fix, fixCount = 2, plugins, progress = createPr
     
     return places;
 };
-
-lib.getPosition = getPosition;
 
 const run = ({ast, fix, shebang, pluginsFind, pluginsTraverse, template, merge, traverse}) => [
     ...runWithoutMerge({
@@ -116603,7 +115248,7 @@ function runWithoutMerge({ast, fix, shebang, template, pluginsFind, traverse}) {
             if (isRemoved(parentPath))
                 continue;
             
-            runFix(fix, plugin.fix, {
+            runFix$1(fix, plugin.fix, {
                 path: item,
                 rule,
                 position,
@@ -116633,17 +115278,17 @@ function splitPlugins(plugins, {progress}) {
         }
         
         if (plugin.replace) {
-            pluginsTraverse.push(include(replace(item)));
+            pluginsTraverse.push(include$1(replace(item)));
             continue;
         }
         
         if (plugin.declare) {
-            pluginsTraverse.push(include(declare(item)));
+            pluginsTraverse.push(include$1(declare(item)));
             continue;
         }
         
         if (plugin.include) {
-            pluginsTraverse.push(include(item));
+            pluginsTraverse.push(include$1(item));
             continue;
         }
         
@@ -116661,16 +115306,16 @@ function splitPlugins(plugins, {progress}) {
     };
 }
 
-const defaultOptions$1 = (opts = {}) => {
+const defaultOptions = (opts = {}) => {
     const {
         parser = 'babel',
         printer = opts.printer || 'putout',
         fix = true,
-        fixCount = 3,
+        fixCount = 4,
         loadPlugins: loadPlugins$1 = loadPlugins,
         loadPluginsAsync: loadPluginsAsync$1 = loadPluginsAsync,
-        runPlugins = lib.runPlugins,
-        progress = createProgress$1(),
+        runPlugins: runPlugins$1 = runPlugins,
+        progress = createProgress(),
     } = opts;
     
     return {
@@ -116681,40 +115326,10 @@ const defaultOptions$1 = (opts = {}) => {
         fixCount,
         loadPlugins: loadPlugins$1,
         loadPluginsAsync: loadPluginsAsync$1,
-        runPlugins,
+        runPlugins: runPlugins$1,
         progress,
     };
 };
-
-var defaultOptions$2 = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	defaultOptions: defaultOptions$1
-});
-
-var require$$3 = /*@__PURE__*/getAugmentedNamespace(defaultOptions$2);
-
-var tryCatch$3 = {exports: {}};
-
-const tryCatch$1 = (fn, ...args) => {
-    try {
-        return [null, fn(...args)];
-    } catch(e) {
-        return [e];
-    }
-};
-
-var tryCatch$2 = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	default: tryCatch$1,
-	tryCatch: tryCatch$1
-});
-
-var require$$0 = /*@__PURE__*/getAugmentedNamespace(tryCatch$2);
-
-const {tryCatch} = require$$0;
-
-tryCatch$3.exports = tryCatch;
-var tryCatch_2 = tryCatch$3.exports.tryCatch = tryCatch;
 
 const parseError$1 = (e, type = 'parser') => {
     const {line, column} = e.loc || {
@@ -116748,8 +115363,8 @@ const maybeParseError = (a) => !a ? [] : parseError$1(a, 'loader');
 // 27         column,¬
 // 28     };¬
 //
-const transform$4 = (ast, source, opts) => {
-    opts = defaultOptions$1(opts);
+const transform$1 = (ast, source, opts) => {
+    opts = defaultOptions(opts);
     
     const {
         plugins: pluginNames,
@@ -116762,7 +115377,7 @@ const transform$4 = (ast, source, opts) => {
         progress,
     } = opts;
     
-    const [, shebang] = cutShebang$1(source);
+    const [, shebang] = cutShebang(source);
     
     const [validationError] = tryCatch_2(validateRulesRelations, {
         rules,
@@ -116790,8 +115405,8 @@ const transform$4 = (ast, source, opts) => {
     ];
 };
 
-const transformAsync$1 = async (ast, source, opts) => {
-    opts = defaultOptions$1(opts);
+const transformAsync = async (ast, source, opts) => {
+    opts = defaultOptions(opts);
     
     const {
         plugins: pluginNames,
@@ -116804,7 +115419,7 @@ const transformAsync$1 = async (ast, source, opts) => {
         progress,
     } = opts;
     
-    const [, shebang] = cutShebang$1(source);
+    const [, shebang] = cutShebang(source);
     
     const [validationError] = tryCatch_2(validateRulesRelations, {
         rules,
@@ -116832,52 +115447,116 @@ const transformAsync$1 = async (ast, source, opts) => {
     ];
 };
 
-var transform$5 = /*#__PURE__*/Object.freeze({
+var transform$2 = /*#__PURE__*/Object.freeze({
 	__proto__: null,
-	transform: transform$4,
-	transformAsync: transformAsync$1
+	transform: transform$1,
+	transformAsync: transformAsync
 });
 
-var require$$4$1 = /*@__PURE__*/getAugmentedNamespace(transform$5);
-
-const findPlaces$2 = (ast, source, opts) => {
-    return transform$4(ast, source, {
-        ...opts,
-        fix: false,
+const putout = (source, opts) => {
+    check$2(source);
+    opts = defaultOptions(opts);
+    
+    const {
+        parser,
+        isTS,
+        isJSX,
+        printer,
+    } = opts;
+    
+    const [clearSource, shebang] = cutShebang(source);
+    
+    const ast = parse$3(clearSource, {
+        parser,
+        isTS,
+        isJSX,
+        printer,
     });
+    
+    const places = transform$1(ast, source, opts);
+    
+    if (!opts.fix)
+        return {
+            code: source,
+            places,
+        };
+    
+    const printed = print$1(ast, {
+        printer,
+        source,
+    });
+    
+    const code = mergeShebang(shebang, printed);
+    
+    return {
+        code,
+        places,
+    };
 };
 
-const findPlacesAsync$1 = async (ast, source, opts) => {
-    return await transformAsync$1(ast, source, {
-        ...opts,
-        fix: false,
+const putoutAsync = async (source, opts) => {
+    check$2(source);
+    opts = defaultOptions(opts);
+    
+    const {
+        parser,
+        isTS,
+        isJSX,
+        printer,
+    } = opts;
+    
+    const [clearSource, shebang] = cutShebang(source);
+    
+    const ast = parse$3(clearSource, {
+        parser,
+        isTS,
+        isJSX,
+        printer,
     });
+    
+    const places = await transformAsync(ast, source, opts);
+    
+    if (!opts.fix)
+        return {
+            code: source,
+            places,
+        };
+    
+    const printed = print$1(ast, {
+        printer,
+    });
+    
+    const code = mergeShebang(shebang, printed);
+    
+    return {
+        code,
+        places,
+    };
 };
 
-var findPlaces$3 = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	findPlaces: findPlaces$2,
-	findPlacesAsync: findPlacesAsync$1
-});
+const isString = (a) => typeof a === 'string';
 
-var require$$5 = /*@__PURE__*/getAugmentedNamespace(findPlaces$3);
+function check$2(source) {
+    if (!isString(source))
+        throw Error(`☝️ Looks like 'source' has type '${typeof source}', expected: 'string'`);
+}
 
-var traverse$5 = {};
+var traverse$2 = {};
 
-const {types: types$5, traverse: babelTraverse} = bundle$1;
+const {types: types$2, traverse: babelTraverse} = require$$2$2;
 
 const {
     compare,
     parseTemplate,
     isTemplate,
     getTemplateValues,
-} = compare$5;
+} = compare$3;
 
-const {isFile, isProgram} = types$5;
+const {isFile, isProgram} = types$2;
 const {merge} = babelTraverse.visitors;
 const {entries: entries$2} = Object;
 
-traverse$5.traverse = traverse$4;
+var traverse_2 = traverse$2.traverse = traverse$1;
 
 const isPath = (path) => Boolean(path.node);
 const createTraverse = (path) => {
@@ -116896,7 +115575,7 @@ const createTraverse = (path) => {
 
 const getTemplate = ([a]) => a;
 
-function traverse$4(basePath, visitor) {
+function traverse$1(basePath, visitor) {
     const traverse = createTraverse(basePath);
     const items = [];
     const parsedVisitors = entries$2(visitor);
@@ -116938,7 +115617,7 @@ const getVisit = ({fn, node, tmpl}) => (path) => {
     fn(path, getTemplateValues(path.node, tmpl));
 };
 
-traverse$5.contains = (path, items) => {
+var contains = traverse$2.contains = (path, items) => {
     let found = false;
     
     const visit = (path) => {
@@ -116952,7 +115631,7 @@ traverse$5.contains = (path, items) => {
         visitors[item] = visit;
     }
     
-    traverse$4(path, visitors);
+    traverse$1(path, visitors);
     
     return found;
 };
@@ -116960,17 +115639,17 @@ traverse$5.contains = (path, items) => {
 var jsx = {};
 
 const {setLiteralValue} = operate;
-const {types: types$4} = bundle$1;
+const {types: types$1} = require$$2$2;
 const {
     isJSXElement,
     jsxAttribute,
     jsxIdentifier,
     stringLiteral: stringLiteral$1,
-} = types$4;
+} = types$1;
 
 const getNode = (a) => a.node || a;
 
-jsx.hasTagName = (path, name) => {
+var hasTagName = jsx.hasTagName = (path, name) => {
     const node = getNode(path);
     
     if (!isJSXElement(path))
@@ -116979,7 +115658,7 @@ jsx.hasTagName = (path, name) => {
     return node.openingElement.name.name === name;
 };
 
-jsx.getAttributePath = (path, name) => {
+var getAttributePath = jsx.getAttributePath = (path, name) => {
     const attributes = path.get('openingElement.attributes');
     
     for (const attr of attributes) {
@@ -116990,7 +115669,7 @@ jsx.getAttributePath = (path, name) => {
     return null;
 };
 
-jsx.getAttributeNode = getAttributeNode;
+var getAttributeNode_1 = jsx.getAttributeNode = getAttributeNode;
 function getAttributeNode(path, name) {
     let result = null;
     const node = getNode(path);
@@ -117006,7 +115685,7 @@ function getAttributeNode(path, name) {
     return result;
 }
 
-jsx.getAttributeValue = getAttributeValue;
+var getAttributeValue_1 = jsx.getAttributeValue = getAttributeValue;
 function getAttributeValue(path, attributeName) {
     const attribute = getAttributeNode(path, attributeName);
     
@@ -117016,7 +115695,7 @@ function getAttributeValue(path, attributeName) {
     return attribute.value.value;
 }
 
-jsx.addAttributeValue = addAttributeValue;
+var addAttributeValue_1 = jsx.addAttributeValue = addAttributeValue;
 function addAttributeValue(path, name, value) {
     const attributeNode = getAttributeNode(path, name);
     
@@ -117029,7 +115708,7 @@ function addAttributeValue(path, name, value) {
     setLiteralValue(attributeNode.value, `${attributeNode.value.value} ${value}`);
 }
 
-jsx.addAttribute = addAttribute;
+var addAttribute_1 = jsx.addAttribute = addAttribute;
 function addAttribute(path, name, value) {
     const node = getNode(path);
     let attributeNode = getAttributeNode(node, name);
@@ -117040,7 +115719,7 @@ function addAttribute(path, name, value) {
     }
 }
 
-jsx.removeAttributeValue = removeAttributeValue;
+var removeAttributeValue_1 = jsx.removeAttributeValue = removeAttributeValue;
 function removeAttributeValue(path, name, attributeValue) {
     if (!path)
         return;
@@ -117060,7 +115739,7 @@ function removeAttributeValue(path, name, attributeValue) {
     setLiteralValue(classAttribute.value, newValue);
 }
 
-jsx.setAttributeValue = (path, name, value) => {
+var setAttributeValue = jsx.setAttributeValue = (path, name, value) => {
     const attributeNode = getAttributeNode(path, name);
     
     if (!attributeNode)
@@ -117069,202 +115748,32 @@ jsx.setAttributeValue = (path, name, value) => {
     setLiteralValue(attributeNode.value, value);
 };
 
-jsx.addClassName = (path, name) => {
+var addClassName = jsx.addClassName = (path, name) => {
     addAttributeValue(path, 'className', name);
 };
 
-jsx.getClassName = getClassName;
+var getClassName_1 = jsx.getClassName = getClassName;
 function getClassName(path) {
     return getAttributeValue(path, 'className');
 }
 
-jsx.removeClassName = (path, name) => {
+var removeClassName = jsx.removeClassName = (path, name) => {
     removeAttributeValue(path, 'className', name);
 };
 
-jsx.containsClassName = (path, className) => {
+var containsClassName = jsx.containsClassName = (path, className) => {
     const classNameValue = getClassName(path);
     return classNameValue.includes(className);
 };
 
-jsx.hasDataName = (path, value = '') => {
+var hasDataName = jsx.hasDataName = (path, value = '') => {
     const attribute = getAttributeValue(path, 'data-name');
     return attribute === value;
 };
 
-jsx.hasAttributeValue = (path, name, value = '') => {
+var hasAttributeValue = jsx.hasAttributeValue = (path, name, value = '') => {
     const attribute = getAttributeValue(path, name);
     return attribute === value;
-};
-
-/**
- * The MIT License (MIT)
- * Copyright (c) 2017-present Dmitry Soshnikov <dmitry.soshnikov@gmail.com>
- */
-
-/**
- * A regexp-tree plugin to translate `/./s` to `/[\0-\uFFFF]/`.
- */
-
-var compatDotallSTransform = {
-
-  // Whether `u` flag present. In which case we transform to
-  // \u{10FFFF} instead of \uFFFF.
-  _hasUFlag: false,
-
-  // Only run this plugin if we have `s` flag.
-  shouldRun: function shouldRun(ast) {
-    var shouldRun = ast.flags.includes('s');
-
-    if (!shouldRun) {
-      return false;
-    }
-
-    // Strip the `s` flag.
-    ast.flags = ast.flags.replace('s', '');
-
-    // Whether we have also `u`.
-    this._hasUFlag = ast.flags.includes('u');
-
-    return true;
-  },
-  Char: function Char(path) {
-    var node = path.node;
-
-
-    if (node.kind !== 'meta' || node.value !== '.') {
-      return;
-    }
-
-    var toValue = '\\uFFFF';
-    var toSymbol = '\uFFFF';
-
-    if (this._hasUFlag) {
-      toValue = '\\u{10FFFF}';
-      toSymbol = '\uDBFF\uDFFF';
-    }
-
-    path.replace({
-      type: 'CharacterClass',
-      expressions: [{
-        type: 'ClassRange',
-        from: {
-          type: 'Char',
-          value: '\\0',
-          kind: 'decimal',
-          symbol: '\0'
-        },
-        to: {
-          type: 'Char',
-          value: toValue,
-          kind: 'unicode',
-          symbol: toSymbol
-        }
-      }]
-    });
-  }
-};
-
-compatDotallSTransform.default;
-
-/**
- * The MIT License (MIT)
- * Copyright (c) 2017-present Dmitry Soshnikov <dmitry.soshnikov@gmail.com>
- */
-
-/**
- * A regexp-tree plugin to translate `/(?<name>a)\k<name>/` to `/(a)\1/`.
- */
-
-var compatNamedCapturingGroupsTransform = {
-  // To track the names of the groups, and return them
-  // in the transform result state.
-  //
-  // A map from name to number: {foo: 2, bar: 4}
-  _groupNames: {},
-
-  /**
-   * Initialises the trasnform.
-   */
-  init: function init() {
-    this._groupNames = {};
-  },
-
-
-  /**
-   * Returns extra state, which eventually is returned to
-   */
-  getExtra: function getExtra() {
-    return this._groupNames;
-  },
-  Group: function Group(path) {
-    var node = path.node;
-
-
-    if (!node.name) {
-      return;
-    }
-
-    // Record group name.
-    this._groupNames[node.name] = node.number;
-
-    delete node.name;
-    delete node.nameRaw;
-  },
-  Backreference: function Backreference(path) {
-    var node = path.node;
-
-
-    if (node.kind !== 'name') {
-      return;
-    }
-
-    node.kind = 'number';
-    node.reference = node.number;
-    delete node.referenceRaw;
-  }
-};
-
-compatNamedCapturingGroupsTransform.default;
-
-/**
- * The MIT License (MIT)
- * Copyright (c) 2017-present Dmitry Soshnikov <dmitry.soshnikov@gmail.com>
- */
-
-/**
- * A regexp-tree plugin to remove `x` flag `/foo/x` to `/foo/`.
- *
- * Note: other features of `x` flags (whitespace, comments) are
- * already removed at parsing stage.
- */
-
-var compatXFlagTransform = {
-  RegExp: function RegExp(_ref) {
-    var node = _ref.node;
-
-    if (node.flags.includes('x')) {
-      node.flags = node.flags.replace('x', '');
-    }
-  }
-};
-
-compatXFlagTransform.default;
-
-/**
- * The MIT License (MIT)
- * Copyright (c) 2017-present Dmitry Soshnikov <dmitry.soshnikov@gmail.com>
- */
-
-var transforms$1 = {
-  // "dotAll" `s` flag
-  dotAll: compatDotallSTransform,
-
-  // Named capturing groups.
-  namedCapturingGroups: compatNamedCapturingGroupsTransform,
-
-  // `x` flag
-  xFlag: compatXFlagTransform
 };
 
 /**
@@ -117276,25 +115785,25 @@ var transforms$1 = {
  * Helper `gen` function calls node type handler.
  */
 
-function gen$1(node) {
-  return node ? generator$3[node.type](node) : '';
+function gen(node) {
+  return node ? generator$1[node.type](node) : '';
 }
 
 /**
  * AST handler.
  */
-var generator$3 = {
+var generator$1 = {
   RegExp: function RegExp(node) {
-    return '/' + gen$1(node.body) + '/' + node.flags;
+    return '/' + gen(node.body) + '/' + node.flags;
   },
   Alternative: function Alternative(node) {
-    return (node.expressions || []).map(gen$1).join('');
+    return (node.expressions || []).map(gen).join('');
   },
   Disjunction: function Disjunction(node) {
-    return gen$1(node.left) + '|' + gen$1(node.right);
+    return gen(node.left) + '|' + gen(node.right);
   },
   Group: function Group(node) {
-    var expression = gen$1(node.expression);
+    var expression = gen(node.expression);
 
     if (node.capturing) {
       // A named group.
@@ -117327,7 +115836,7 @@ var generator$3 = {
 
       case 'Lookahead':
         {
-          var assertion = gen$1(node.assertion);
+          var assertion = gen(node.assertion);
 
           if (node.negative) {
             return '(?!' + assertion + ')';
@@ -117338,7 +115847,7 @@ var generator$3 = {
 
       case 'Lookbehind':
         {
-          var _assertion = gen$1(node.assertion);
+          var _assertion = gen(node.assertion);
 
           if (node.negative) {
             return '(?<!' + _assertion + ')';
@@ -117352,7 +115861,7 @@ var generator$3 = {
     }
   },
   CharacterClass: function CharacterClass(node) {
-    var expressions = node.expressions.map(gen$1).join('');
+    var expressions = node.expressions.map(gen).join('');
 
     if (node.negative) {
       return '[^' + expressions + ']';
@@ -117361,10 +115870,10 @@ var generator$3 = {
     return '[' + expressions + ']';
   },
   ClassRange: function ClassRange(node) {
-    return gen$1(node.from) + '-' + gen$1(node.to);
+    return gen(node.from) + '-' + gen(node.to);
   },
   Repetition: function Repetition(node) {
-    return '' + gen$1(node.expression) + gen$1(node.quantifier);
+    return '' + gen(node.expression) + gen(node.quantifier);
   },
   Quantifier: function Quantifier(node) {
     var quantifier = void 0;
@@ -117440,7 +115949,7 @@ var generator_1 = {
    *
    * @param Object ast - an AST node
    */
-  generate: gen$1
+  generate: gen
 };
 
 /**
@@ -117844,7 +116353,7 @@ var parserUnicodeProperties = {
 
 var _slicedToArray$2 = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
-function _toConsumableArray$8(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+function _toConsumableArray$7(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 var yytext = void 0;
 
@@ -118408,7 +116917,7 @@ tokenizer = {
           if (tokensToQueue.length > 0) {
             var _tokensQueue;
 
-            (_tokensQueue = this._tokensQueue).unshift.apply(_tokensQueue, _toConsumableArray$8(tokensToQueue));
+            (_tokensQueue = this._tokensQueue).unshift.apply(_tokensQueue, _toConsumableArray$7(tokensToQueue));
           }
         }
 
@@ -118658,7 +117167,7 @@ var yyparse = {
 
             var semanticActionArgs = locationArgs !== null ? semanticValueArgs.concat(locationArgs) : semanticValueArgs;
 
-            production[2].apply(production, _toConsumableArray$8(semanticActionArgs));
+            production[2].apply(production, _toConsumableArray$7(semanticActionArgs));
 
             reduceStackEntry.semanticValue = __;
 
@@ -119217,16 +117726,16 @@ function parseError(message) {
   throw new SyntaxError(message);
 }
 
-var regexpTree$4 = yyparse;
+var regexpTree$3 = yyparse;
 
-regexpTree$4.default;
+regexpTree$3.default;
 
 /**
  * The MIT License (MIT)
  * Copyright (c) 2017-present Dmitry Soshnikov <dmitry.soshnikov@gmail.com>
  */
 
-var regexpTreeParser = regexpTree$4;
+var regexpTreeParser = regexpTree$3;
 
 /**
  * Original parse function.
@@ -119246,9 +117755,9 @@ regexpTreeParser.parse = function (regexp, options) {
 // By default do not capture locations; callers may override.
 regexpTreeParser.setOptions({ captureLocations: false });
 
-var parser$4 = regexpTreeParser;
+var parser = regexpTreeParser;
 
-parser$4.default;
+parser.default;
 
 /**
  * The MIT License (MIT)
@@ -119269,7 +117778,7 @@ var DEFAULT_SINGLE_PROP = 'expression';
  * It also provides set of methods for AST manipulation.
  */
 
-var NodePath$3 = function () {
+var NodePath$2 = function () {
   /**
    * NodePath constructor.
    *
@@ -119656,14 +118165,14 @@ var NodePath$3 = function () {
   return NodePath;
 }();
 
-NodePath$3.initRegistry();
+NodePath$2.initRegistry();
 
 /**
  * Index of a currently traversing collection is stored on top of the
  * `NodePath.traversingIndexStack`. Remove/insert methods can adjust
  * this index.
  */
-NodePath$3.traversingIndexStack = [];
+NodePath$2.traversingIndexStack = [];
 
 // Helper function used to skip `loc` in JSON operations.
 function jsonSkipLoc(prop, value) {
@@ -119673,321 +118182,9 @@ function jsonSkipLoc(prop, value) {
   return value;
 }
 
-var nodePath = NodePath$3;
+var nodePath = NodePath$2;
 
 nodePath.default;
-
-/**
- * The MIT License (MIT)
- * Copyright (c) 2017-present Dmitry Soshnikov <dmitry.soshnikov@gmail.com>
- */
-
-var NodePath$2 = nodePath;
-
-/**
- * Does an actual AST traversal, using visitor pattern,
- * and calling set of callbacks.
- *
- * Based on https://github.com/olov/ast-traverse
- *
- * Expects AST in Mozilla Parser API: nodes which are supposed to be
- * handled should have `type` property.
- *
- * @param Object root - a root node to start traversal from.
- *
- * @param Object options - an object with set of callbacks:
- *
- *   - `pre(node, parent, prop, index)` - a hook called on node enter
- *   - `post`(node, parent, prop, index) - a hook called on node exit
- *   - `skipProperty(prop)` - a predicated whether a property should be skipped
- */
-function astTraverse(root) {
-  var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-  var pre = options.pre;
-  var post = options.post;
-  var skipProperty = options.skipProperty;
-
-  function visit(node, parent, prop, idx) {
-    if (!node || typeof node.type !== 'string') {
-      return;
-    }
-
-    var res = undefined;
-    if (pre) {
-      res = pre(node, parent, prop, idx);
-    }
-
-    if (res !== false) {
-
-      // A node can be replaced during traversal, so we have to
-      // recalculate it from the parent, to avoid traversing "dead" nodes.
-      if (parent && parent[prop]) {
-        if (!isNaN(idx)) {
-          node = parent[prop][idx];
-        } else {
-          node = parent[prop];
-        }
-      }
-
-      for (var _prop in node) {
-        if (node.hasOwnProperty(_prop)) {
-          if (skipProperty ? skipProperty(_prop, node) : _prop[0] === '$') {
-            continue;
-          }
-
-          var child = node[_prop];
-
-          // Collection node.
-          //
-          // NOTE: a node (or several nodes) can be removed or inserted
-          // during traversal.
-          //
-          // Current traversing index is stored on top of the
-          // `NodePath.traversingIndexStack`. The stack is used to support
-          // recursive nature of the traversal.
-          //
-          // In this case `NodePath.traversingIndex` (which we use here) is
-          // updated in the NodePath remove/insert methods.
-          //
-          if (Array.isArray(child)) {
-            var index = 0;
-            NodePath$2.traversingIndexStack.push(index);
-            while (index < child.length) {
-              visit(child[index], node, _prop, index);
-              index = NodePath$2.updateTraversingIndex(1);
-            }
-            NodePath$2.traversingIndexStack.pop();
-          }
-
-          // Simple node.
-          else {
-              visit(child, node, _prop);
-            }
-        }
-      }
-    }
-
-    if (post) {
-      post(node, parent, prop, idx);
-    }
-  }
-
-  visit(root, null);
-}
-
-var traverse$3 = {
-  /**
-   * Traverses an AST.
-   *
-   * @param Object ast - an AST node
-   *
-   * @param Object | Array<Object> handlers:
-   *
-   *   an object (or an array of objects)
-   *
-   *   Each such object contains a handler function per node.
-   *   In case of an array of handlers, they are applied in order.
-   *   A handler may return a transformed node (or a different type).
-   *
-   *   The per-node function may instead be an object with functions pre and post.
-   *   pre is called before visiting the node, post after.
-   *   If a handler is a function, it is treated as the pre function, with an empty post.
-   *
-   * @param Object options:
-   *
-   *   a config object, specifying traversal options:
-   *
-   *   `asNodes`: boolean - whether handlers should receives raw AST nodes
-   *   (false by default), instead of a `NodePath` wrapper. Note, by default
-   *   `NodePath` wrapper provides a set of convenient method to manipulate
-   *   a traversing AST, and also has access to all parents list. A raw
-   *   nodes traversal should be used in rare cases, when no `NodePath`
-   *   features are needed.
-   *
-   * Special hooks:
-   *
-   *   - `shouldRun(ast)` - a predicate determining whether the handler
-   *                        should be applied.
-   *
-   * NOTE: Multiple handlers are used as an optimization of applying all of
-   * them in one AST traversal pass.
-   */
-  traverse: function traverse(ast, handlers) {
-    var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : { asNodes: false };
-
-
-    if (!Array.isArray(handlers)) {
-      handlers = [handlers];
-    }
-
-    // Filter out handlers by result of `shouldRun`, if the method is present.
-    handlers = handlers.filter(function (handler) {
-      if (typeof handler.shouldRun !== 'function') {
-        return true;
-      }
-      return handler.shouldRun(ast);
-    });
-
-    NodePath$2.initRegistry();
-
-    // Allow handlers to initializer themselves.
-    handlers.forEach(function (handler) {
-      if (typeof handler.init === 'function') {
-        handler.init(ast);
-      }
-    });
-
-    function getPathFor(node, parent, prop, index) {
-      var parentPath = NodePath$2.getForNode(parent);
-      var nodePath = NodePath$2.getForNode(node, parentPath, prop, index);
-
-      return nodePath;
-    }
-
-    // Handle actual nodes.
-    astTraverse(ast, {
-      /**
-       * Handler on node enter.
-       */
-      pre: function pre(node, parent, prop, index) {
-        var nodePath = void 0;
-        if (!options.asNodes) {
-          nodePath = getPathFor(node, parent, prop, index);
-        }
-
-        var _iteratorNormalCompletion = true;
-        var _didIteratorError = false;
-        var _iteratorError = undefined;
-
-        try {
-          for (var _iterator = handlers[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-            var handler = _step.value;
-
-            // "Catch-all" `*` handler.
-            if (typeof handler['*'] === 'function') {
-              if (nodePath) {
-                // A path/node can be removed by some previous handler.
-                if (!nodePath.isRemoved()) {
-                  var handlerResult = handler['*'](nodePath);
-                  // Explicitly stop traversal.
-                  if (handlerResult === false) {
-                    return false;
-                  }
-                }
-              } else {
-                handler['*'](node, parent, prop, index);
-              }
-            }
-
-            // Per-node handler.
-            var handlerFuncPre = void 0;
-            if (typeof handler[node.type] === 'function') {
-              handlerFuncPre = handler[node.type];
-            } else if (typeof handler[node.type] === 'object' && typeof handler[node.type].pre === 'function') {
-              handlerFuncPre = handler[node.type].pre;
-            }
-
-            if (handlerFuncPre) {
-              if (nodePath) {
-                // A path/node can be removed by some previous handler.
-                if (!nodePath.isRemoved()) {
-                  var _handlerResult = handlerFuncPre.call(handler, nodePath);
-                  // Explicitly stop traversal.
-                  if (_handlerResult === false) {
-                    return false;
-                  }
-                }
-              } else {
-                handlerFuncPre.call(handler, node, parent, prop, index);
-              }
-            }
-          } // Loop over handlers
-        } catch (err) {
-          _didIteratorError = true;
-          _iteratorError = err;
-        } finally {
-          try {
-            if (!_iteratorNormalCompletion && _iterator.return) {
-              _iterator.return();
-            }
-          } finally {
-            if (_didIteratorError) {
-              throw _iteratorError;
-            }
-          }
-        }
-      },
-      // pre func
-
-      /**
-       * Handler on node exit.
-       */
-      post: function post(node, parent, prop, index) {
-        if (!node) {
-          return;
-        }
-
-        var nodePath = void 0;
-        if (!options.asNodes) {
-          nodePath = getPathFor(node, parent, prop, index);
-        }
-
-        var _iteratorNormalCompletion2 = true;
-        var _didIteratorError2 = false;
-        var _iteratorError2 = undefined;
-
-        try {
-          for (var _iterator2 = handlers[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-            var handler = _step2.value;
-
-            // Per-node handler.
-            var handlerFuncPost = void 0;
-            if (typeof handler[node.type] === 'object' && typeof handler[node.type].post === 'function') {
-              handlerFuncPost = handler[node.type].post;
-            }
-
-            if (handlerFuncPost) {
-              if (nodePath) {
-                // A path/node can be removed by some previous handler.
-                if (!nodePath.isRemoved()) {
-                  var handlerResult = handlerFuncPost.call(handler, nodePath);
-                  // Explicitly stop traversal.
-                  if (handlerResult === false) {
-                    return false;
-                  }
-                }
-              } else {
-                handlerFuncPost.call(handler, node, parent, prop, index);
-              }
-            }
-          } // Loop over handlers
-        } catch (err) {
-          _didIteratorError2 = true;
-          _iteratorError2 = err;
-        } finally {
-          try {
-            if (!_iteratorNormalCompletion2 && _iterator2.return) {
-              _iterator2.return();
-            }
-          } finally {
-            if (_didIteratorError2) {
-              throw _iteratorError2;
-            }
-          }
-        }
-      },
-      // post func
-
-      /**
-       * Skip locations by default.
-       */
-      skipProperty: function skipProperty(prop) {
-        return prop === 'loc';
-      }
-    });
-  }
-};
 
 /**
  * The MIT License (MIT)
@@ -119998,15 +118195,13 @@ var _createClass$5 = function () { function defineProperties(target, props) { fo
 
 function _classCallCheck$5(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var generator$2 = generator_1;
-var parser$3 = parser$4;
-var traverse$2 = traverse$3;
+var generator = generator_1;
 
 /**
  * Transform result.
  */
 
-var TransformResult = function () {
+(function () {
   /**
    * Initializes a transform result for an AST.
    *
@@ -120052,7 +118247,7 @@ var TransformResult = function () {
     key: 'getSource',
     value: function getSource() {
       if (!this._source) {
-        this._source = generator$2.generate(this._ast.body);
+        this._source = generator.generate(this._ast.body);
       }
       return this._source;
     }
@@ -120065,143 +118260,14 @@ var TransformResult = function () {
     key: 'toString',
     value: function toString() {
       if (!this._string) {
-        this._string = generator$2.generate(this._ast);
+        this._string = generator.generate(this._ast);
       }
       return this._string;
     }
   }]);
 
   return TransformResult;
-}();
-
-var transform$3 = {
-  /**
-   * Expose `TransformResult`.
-   */
-  TransformResult: TransformResult,
-
-  /**
-   * Transforms a regular expression applying a set of
-   * transformation handlers.
-   *
-   * @param string | AST | RegExp:
-   *
-   *   a regular expression in different representations: a string,
-   *   a RegExp object, or an AST.
-   *
-   * @param Object | Array<Object>:
-   *
-   *   a handler (or a list of handlers) from `traverse` API.
-   *
-   * @return TransformResult instance.
-   *
-   * Example:
-   *
-   *   transform(/[a-z]/i, {
-   *     onChar(path) {
-   *       const {node} = path;
-   *
-   *       if (...) {
-   *         path.remove();
-   *       }
-   *     }
-   *   });
-   */
-  transform: function transform(regexp, handlers) {
-    var ast = regexp;
-
-    if (regexp instanceof RegExp) {
-      regexp = '' + regexp;
-    }
-
-    if (typeof regexp === 'string') {
-      ast = parser$3.parse(regexp, {
-        captureLocations: true
-      });
-    }
-
-    traverse$2.traverse(ast, handlers);
-
-    return new TransformResult(ast);
-  }
-};
-
-/**
- * The MIT License (MIT)
- * Copyright (c) 2017-present Dmitry Soshnikov <dmitry.soshnikov@gmail.com>
- */
-
-var compatTransforms = transforms$1;
-var _transform$1 = transform$3;
-
-var compatTranspiler$1 = {
-  /**
-   * Translates a regexp in new syntax to equivalent regexp in old syntax.
-   *
-   * @param string|RegExp|AST - regexp
-   * @param Array transformsWhitelist - names of the transforms to apply
-   */
-  transform: function transform(regexp) {
-    var transformsWhitelist = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
-
-    var transformToApply = transformsWhitelist.length > 0 ? transformsWhitelist : Object.keys(compatTransforms);
-
-    var result = void 0;
-
-    // Collect extra data per transform.
-    var extra = {};
-
-    transformToApply.forEach(function (transformName) {
-
-      if (!compatTransforms.hasOwnProperty(transformName)) {
-        throw new Error('Unknown compat-transform: ' + transformName + '. ' + 'Available transforms are: ' + Object.keys(compatTransforms).join(', '));
-      }
-
-      var handler = compatTransforms[transformName];
-
-      result = _transform$1.transform(regexp, handler);
-      regexp = result.getAST();
-
-      // Collect `extra` transform result.
-      if (typeof handler.getExtra === 'function') {
-        extra[transformName] = handler.getExtra();
-      }
-    });
-
-    // Set the final extras for all transforms.
-    result.setExtra(extra);
-
-    return result;
-  }
-};
-
-/**
- * The MIT License (MIT)
- * Copyright (c) 2017-present Dmitry Soshnikov <dmitry.soshnikov@gmail.com>
- */
-
-/**
- * Performs a deep copy of an simple object.
- * Only handles scalar values, arrays and objects.
- *
- * @param obj Object
- */
-
-var clone$1 = function clone(obj) {
-  if (obj === null || typeof obj !== 'object') {
-    return obj;
-  }
-  var res = void 0;
-  if (Array.isArray(obj)) {
-    res = [];
-  } else {
-    res = {};
-  }
-  for (var i in obj) {
-    res[i] = clone(obj[i]);
-  }
-  return res;
-};
+})();
 
 /**
  * The MIT License (MIT)
@@ -120466,7 +118532,7 @@ var charClassRemoveDuplicatesTransform = {
  * {{{a, b}, c}, d} -> [a, b, c, d]
  */
 
-function _toConsumableArray$7(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+function _toConsumableArray$6(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 function disjunctionToList$1(node) {
   if (node.type !== 'Disjunction') {
@@ -120476,7 +118542,7 @@ function disjunctionToList$1(node) {
   var list = [];
 
   if (node.left && node.left.type === 'Disjunction') {
-    list.push.apply(list, _toConsumableArray$7(disjunctionToList$1(node.left)).concat([node.right]));
+    list.push.apply(list, _toConsumableArray$6(disjunctionToList$1(node.left)).concat([node.right]));
   } else {
     list.push(node.left, node.right);
   }
@@ -120545,8 +118611,8 @@ var utils = {
  * Copyright (c) 2017-present Dmitry Soshnikov <dmitry.soshnikov@gmail.com>
  */
 
-var _require$8 = utils,
-    increaseQuantifierByOne$1 = _require$8.increaseQuantifierByOne;
+var _require$5 = utils,
+    increaseQuantifierByOne$1 = _require$5.increaseQuantifierByOne;
 
 /**
  * A regexp-tree plugin to merge quantifiers
@@ -120764,7 +118830,7 @@ var charClassClassrangesToCharsTransform = {
  * their meta symbols equivalents.
  */
 
-function _toConsumableArray$6(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+function _toConsumableArray$5(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 var charClassToMetaTransform = {
   _hasIFlag: false,
@@ -120876,11 +118942,11 @@ function rewriteWordRanges(path, hasIFlag, hasUFlag) {
  */
 var whitespaceRangeTests = [function (node) {
   return isChar(node, ' ');
-}].concat(_toConsumableArray$6(['\\f', '\\n', '\\r', '\\t', '\\v'].map(function (char) {
+}].concat(_toConsumableArray$5(['\\f', '\\n', '\\r', '\\t', '\\v'].map(function (char) {
   return function (node) {
     return isMetaChar(node, char);
   };
-})), _toConsumableArray$6([0x00a0, 0x1680, 0x2028, 0x2029, 0x202f, 0x205f, 0x3000, 0xfeff].map(function (codePoint) {
+})), _toConsumableArray$5([0x00a0, 0x1680, 0x2028, 0x2029, 0x202f, 0x205f, 0x3000, 0xfeff].map(function (codePoint) {
   return function (node) {
     return isCodePoint(node, codePoint);
   };
@@ -121543,9 +119609,9 @@ function isMetaWCharOrCode(expression) {
 
 var NodePath$1 = nodePath;
 
-var _require$7 = utils,
-    disjunctionToList = _require$7.disjunctionToList,
-    listToDisjunction = _require$7.listToDisjunction;
+var _require$4 = utils,
+    disjunctionToList = _require$4.disjunctionToList,
+    listToDisjunction = _require$4.listToDisjunction;
 
 /**
  * Removes duplicates from a disjunction sequence:
@@ -121718,7 +119784,7 @@ var removeEmptyGroupTransform = {
  * /(?:a)/ -> /a/
  */
 
-function _toConsumableArray$5(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+function _toConsumableArray$4(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 var ungroupTransform = {
   Group: function Group(path) {
@@ -121756,7 +119822,7 @@ var ungroupTransform = {
 
         parentPath.replace({
           type: 'Alternative',
-          expressions: [].concat(_toConsumableArray$5(parent.expressions.slice(0, path.index)), _toConsumableArray$5(childPath.node.expressions), _toConsumableArray$5(parent.expressions.slice(path.index + 1)))
+          expressions: [].concat(_toConsumableArray$4(parent.expressions.slice(0, path.index)), _toConsumableArray$4(childPath.node.expressions), _toConsumableArray$4(parent.expressions.slice(path.index + 1)))
         });
       }
     } else {
@@ -121797,12 +119863,12 @@ function hasAppropriateSiblings(path) {
  * Copyright (c) 2017-present Dmitry Soshnikov <dmitry.soshnikov@gmail.com>
  */
 
-function _toConsumableArray$4(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+function _toConsumableArray$3(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 var NodePath = nodePath;
 
-var _require$6 = utils,
-    increaseQuantifierByOne = _require$6.increaseQuantifierByOne;
+var _require$3 = utils,
+    increaseQuantifierByOne = _require$3.increaseQuantifierByOne;
 
 /**
  * A regexp-tree plugin to combine repeating patterns.
@@ -121861,12 +119927,12 @@ function combineRepeatingPatternLeft(alternative, child, index) {
     } else {
       right = NodePath.getForNode({
         type: 'Alternative',
-        expressions: [].concat(_toConsumableArray$4(node.expressions.slice(index - i, index)), [child.node])
+        expressions: [].concat(_toConsumableArray$3(node.expressions.slice(index - i, index)), [child.node])
       });
 
       left = NodePath.getForNode({
         type: 'Alternative',
-        expressions: [].concat(_toConsumableArray$4(node.expressions.slice(startIndex, index - i)))
+        expressions: [].concat(_toConsumableArray$3(node.expressions.slice(startIndex, index - i)))
       });
     }
 
@@ -121924,7 +119990,7 @@ function combineWithPreviousRepetition(alternative, child, index) {
       } else {
         right = NodePath.getForNode({
           type: 'Alternative',
-          expressions: [].concat(_toConsumableArray$4(node.expressions.slice(i + 1, index + 1)))
+          expressions: [].concat(_toConsumableArray$3(node.expressions.slice(i + 1, index + 1)))
         });
       }
 
@@ -121962,7 +120028,7 @@ function combineRepetitionWithPrevious(alternative, child, index) {
       rightLength = right.node.expressions.length;
       left = NodePath.getForNode({
         type: 'Alternative',
-        expressions: [].concat(_toConsumableArray$4(node.expressions.slice(index - rightLength, index)))
+        expressions: [].concat(_toConsumableArray$3(node.expressions.slice(index - rightLength, index)))
       });
     } else {
       rightLength = 1;
@@ -122046,109 +120112,19 @@ transforms.default;
  * Copyright (c) 2017-present Dmitry Soshnikov <dmitry.soshnikov@gmail.com>
  */
 
-var clone = clone$1;
-var parser$2 = parser$4;
-var transform$2 = transform$3;
-var optimizationTransforms = transforms;
-
-var optimizer$1 = {
-  /**
-   * Optimizer transforms a regular expression into an optimized version,
-   * replacing some sub-expressions with their idiomatic patterns.
-   *
-   * @param string | RegExp | AST - a regexp to optimize.
-   *
-   * @return TransformResult - an optimized regexp.
-   *
-   * Example:
-   *
-   *   /[a-zA-Z_0-9][a-zA-Z_0-9]*\e{1,}/
-   *
-   * Optimized to:
-   *
-   *   /\w+e+/
-   */
-  optimize: function optimize(regexp) {
-    var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-        _ref$whitelist = _ref.whitelist,
-        whitelist = _ref$whitelist === undefined ? [] : _ref$whitelist,
-        _ref$blacklist = _ref.blacklist,
-        blacklist = _ref$blacklist === undefined ? [] : _ref$blacklist;
-
-    var transformsRaw = whitelist.length > 0 ? whitelist : Array.from(optimizationTransforms.keys());
-
-    var transformToApply = transformsRaw.filter(function (transform) {
-      return !blacklist.includes(transform);
-    });
-
-    var ast = regexp;
-    if (regexp instanceof RegExp) {
-      regexp = '' + regexp;
-    }
-
-    if (typeof regexp === 'string') {
-      ast = parser$2.parse(regexp);
-    }
-
-    var result = new transform$2.TransformResult(ast);
-    var prevResultString = void 0;
-
-    do {
-      // Get a copy of the current state here so
-      // we can compare it with the state at the
-      // end of the loop.
-      prevResultString = result.toString();
-      ast = clone(result.getAST());
-
-      transformToApply.forEach(function (transformName) {
-        if (!optimizationTransforms.has(transformName)) {
-          throw new Error('Unknown optimization-transform: ' + transformName + '. ' + 'Available transforms are: ' + Array.from(optimizationTransforms.keys()).join(', '));
-        }
-
-        var transformer = optimizationTransforms.get(transformName);
-
-        // Don't override result just yet since we
-        // might want to rollback the transform
-        var newResult = transform$2.transform(ast, transformer);
-
-        if (newResult.toString() !== result.toString()) {
-          if (newResult.toString().length <= result.toString().length) {
-            result = newResult;
-          } else {
-            // Result has changed but is not shorter:
-            // restore ast to its previous state.
-
-            ast = clone(result.getAST());
-          }
-        }
-      });
-
-      // Keep running the optimizer until it stops
-      // making any change to the regexp.
-    } while (result.toString() !== prevResultString);
-
-    return result;
-  }
-};
-
-/**
- * The MIT License (MIT)
- * Copyright (c) 2017-present Dmitry Soshnikov <dmitry.soshnikov@gmail.com>
- */
-
 /**
  * Epsilon, the empty string.
  */
 
-var EPSILON$3 = 'ε';
+var EPSILON$2 = 'ε';
 
 /**
  * Epsilon-closure.
  */
-var EPSILON_CLOSURE$2 = EPSILON$3 + '*';
+var EPSILON_CLOSURE$2 = EPSILON$2 + '*';
 
 var specialSymbols = {
-  EPSILON: EPSILON$3,
+  EPSILON: EPSILON$2,
   EPSILON_CLOSURE: EPSILON_CLOSURE$2
 };
 
@@ -122161,13 +120137,13 @@ var _slicedToArray$1 = function () { function sliceIterator(arr, i) { var _arr =
 
 var _createClass$4 = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-function _toConsumableArray$3(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+function _toConsumableArray$2(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 function _classCallCheck$4(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var _require$5 = specialSymbols,
-    EPSILON$2 = _require$5.EPSILON,
-    EPSILON_CLOSURE$1 = _require$5.EPSILON_CLOSURE;
+var _require$2 = specialSymbols,
+    EPSILON$1 = _require$2.EPSILON,
+    EPSILON_CLOSURE$1 = _require$2.EPSILON_CLOSURE;
 
 /**
  * NFA fragment.
@@ -122182,7 +120158,7 @@ var _require$5 = specialSymbols,
  */
 
 
-var NFA$2 = function () {
+var NFA = function () {
   function NFA(inState, outState) {
     _classCallCheck$4(this, NFA);
 
@@ -122369,8 +120345,8 @@ var NFA$2 = function () {
 
         // Append epsilon-closure column.
         visited.forEach(function (state) {
-          delete _this._transitionTable[state.number][EPSILON$2];
-          _this._transitionTable[state.number][EPSILON_CLOSURE$1] = [].concat(_toConsumableArray$3(state.getEpsilonClosure())).map(function (s) {
+          delete _this._transitionTable[state.number][EPSILON$1];
+          _this._transitionTable[state.number][EPSILON_CLOSURE$1] = [].concat(_toConsumableArray$2(state.getEpsilonClosure())).map(function (s) {
             return s.number;
           });
         });
@@ -122383,7 +120359,7 @@ var NFA$2 = function () {
   return NFA;
 }();
 
-var nfa = NFA$2;
+var nfa = NFA;
 
 nfa.default;
 
@@ -122402,7 +120378,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
 function _toArray(arr) { return Array.isArray(arr) ? arr : Array.from(arr); }
 
-function _toConsumableArray$2(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+function _toConsumableArray$1(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 var currentTransitionMap = null;
 
@@ -122561,7 +120537,7 @@ function minimize(dfa) {
       return newTransitionMap[state];
     }));
 
-    all.push([].concat(_toConsumableArray$2(newSets)));
+    all.push([].concat(_toConsumableArray$1(newSets)));
 
     // Top of the stack is the current.
     current = all[all.length - 1];
@@ -122731,7 +120707,7 @@ function sameRow(r1, r2) {
       return false;
     }
 
-    if ([].concat(_toConsumableArray$2(s1)).sort().join(',') !== [].concat(_toConsumableArray$2(s2)).sort().join(',')) {
+    if ([].concat(_toConsumableArray$1(s1)).sort().join(',') !== [].concat(_toConsumableArray$1(s2)).sort().join(',')) {
       return false;
     }
   }
@@ -122805,21 +120781,21 @@ var dfaMinimizer = {
 
 var _createClass$3 = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-function _toConsumableArray$1(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 function _classCallCheck$3(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var DFAMinimizer = dfaMinimizer;
 
-var _require$4 = specialSymbols,
-    EPSILON_CLOSURE = _require$4.EPSILON_CLOSURE;
+var _require$1 = specialSymbols,
+    EPSILON_CLOSURE = _require$1.EPSILON_CLOSURE;
 
 /**
  * DFA is build by converting from NFA (subset construction).
  */
 
 
-var DFA$1 = function () {
+var DFA = function () {
   function DFA(nfa) {
     _classCallCheck$3(this, DFA);
 
@@ -123007,7 +120983,7 @@ var DFA$1 = function () {
                     if (!nfaTable[nfaStateOnSymbol]) {
                       continue;
                     }
-                    onSymbol.push.apply(onSymbol, _toConsumableArray$1(nfaTable[nfaStateOnSymbol][EPSILON_CLOSURE]));
+                    onSymbol.push.apply(onSymbol, _toConsumableArray(nfaTable[nfaStateOnSymbol][EPSILON_CLOSURE]));
                   }
                 } catch (err) {
                   _didIteratorError4 = true;
@@ -123040,7 +121016,7 @@ var DFA$1 = function () {
             }
 
             var dfaStatesOnSymbolSet = new Set(onSymbol);
-            var dfaStatesOnSymbol = [].concat(_toConsumableArray$1(dfaStatesOnSymbolSet));
+            var dfaStatesOnSymbol = [].concat(_toConsumableArray(dfaStatesOnSymbolSet));
 
             if (dfaStatesOnSymbol.length > 0) {
               var dfaOnSymbolStr = dfaStatesOnSymbol.join(',');
@@ -123175,7 +121151,7 @@ var DFA$1 = function () {
   return DFA;
 }();
 
-var dfa = DFA$1;
+var dfa = DFA;
 
 dfa.default;
 
@@ -123276,8 +121252,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 var State = state;
 
-var _require$3 = specialSymbols,
-    EPSILON$1 = _require$3.EPSILON;
+var _require = specialSymbols,
+    EPSILON = _require.EPSILON;
 
 /**
  * NFA state.
@@ -123287,7 +121263,7 @@ var _require$3 = specialSymbols,
  */
 
 
-var NFAState$1 = function (_State) {
+var NFAState = function (_State) {
   _inherits(NFAState, _State);
 
   function NFAState() {
@@ -123333,7 +121309,7 @@ var NFAState$1 = function (_State) {
         var _iteratorError = undefined;
 
         try {
-          for (var _iterator = this.getTransitionsOnSymbol(EPSILON$1)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          for (var _iterator = this.getTransitionsOnSymbol(EPSILON)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
             var nextState = _step.value;
 
             if (nextState.matches('', visited)) {
@@ -123398,7 +121374,7 @@ var NFAState$1 = function (_State) {
       var _iteratorError3 = undefined;
 
       try {
-        for (var _iterator3 = this.getTransitionsOnSymbol(EPSILON$1)[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+        for (var _iterator3 = this.getTransitionsOnSymbol(EPSILON)[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
           var _nextState2 = _step3.value;
 
           if (_nextState2.matches(string, visited)) {
@@ -123435,7 +121411,7 @@ var NFAState$1 = function (_State) {
 
       if (!this._epsilonClosure) {
         (function () {
-          var epsilonTransitions = _this2.getTransitionsOnSymbol(EPSILON$1);
+          var epsilonTransitions = _this2.getTransitionsOnSymbol(EPSILON);
           var closure = _this2._epsilonClosure = new Set();
           closure.add(_this2);
           var _iteratorNormalCompletion4 = true;
@@ -123478,386 +121454,9 @@ var NFAState$1 = function (_State) {
   return NFAState;
 }(State);
 
-var nfaState = NFAState$1;
+var nfaState = NFAState;
 
 nfaState.default;
-
-/**
- * The MIT License (MIT)
- * Copyright (c) 2017-present Dmitry Soshnikov <dmitry.soshnikov@gmail.com>
- */
-
-var NFA$1 = nfa;
-var NFAState = nfaState;
-
-var _require$2 = specialSymbols,
-    EPSILON = _require$2.EPSILON;
-
-// -----------------------------------------------------------------------------
-// Char NFA fragment: `c`
-
-/**
- * Char factory.
- *
- * Creates an NFA fragment for a single char.
- *
- * [in] --c--> [out]
- */
-
-
-function char$1(c) {
-  var inState = new NFAState();
-  var outState = new NFAState({
-    accepting: true
-  });
-
-  return new NFA$1(inState.addTransition(c, outState), outState);
-}
-
-// -----------------------------------------------------------------------------
-// Epsilon NFA fragment
-
-/**
- * Epsilon factory.
- *
- * Creates an NFA fragment for ε (recognizes an empty string).
- *
- * [in] --ε--> [out]
- */
-function e() {
-  return char$1(EPSILON);
-}
-
-// -----------------------------------------------------------------------------
-// Alteration NFA fragment: `abc`
-
-/**
- * Creates a connection between two NFA fragments on epsilon transition.
- *
- * [in-a] --a--> [out-a] --ε--> [in-b] --b--> [out-b]
- */
-function altPair(first, second) {
-  first.out.accepting = false;
-  second.out.accepting = true;
-
-  first.out.addTransition(EPSILON, second.in);
-
-  return new NFA$1(first.in, second.out);
-}
-
-/**
- * Alteration factory.
- *
- * Creates a alteration NFA for (at least) two NFA-fragments.
- */
-function alt$1(first) {
-  for (var _len = arguments.length, fragments = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-    fragments[_key - 1] = arguments[_key];
-  }
-
-  var _iteratorNormalCompletion = true;
-  var _didIteratorError = false;
-  var _iteratorError = undefined;
-
-  try {
-    for (var _iterator = fragments[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-      var fragment = _step.value;
-
-      first = altPair(first, fragment);
-    }
-  } catch (err) {
-    _didIteratorError = true;
-    _iteratorError = err;
-  } finally {
-    try {
-      if (!_iteratorNormalCompletion && _iterator.return) {
-        _iterator.return();
-      }
-    } finally {
-      if (_didIteratorError) {
-        throw _iteratorError;
-      }
-    }
-  }
-
-  return first;
-}
-
-// -----------------------------------------------------------------------------
-// Disjunction NFA fragment: `a|b`
-
-/**
- * Creates a disjunction choice between two fragments.
- */
-function orPair(first, second) {
-  var inState = new NFAState();
-  var outState = new NFAState();
-
-  inState.addTransition(EPSILON, first.in);
-  inState.addTransition(EPSILON, second.in);
-
-  outState.accepting = true;
-  first.out.accepting = false;
-  second.out.accepting = false;
-
-  first.out.addTransition(EPSILON, outState);
-  second.out.addTransition(EPSILON, outState);
-
-  return new NFA$1(inState, outState);
-}
-
-/**
- * Disjunction factory.
- *
- * Creates a disjunction NFA for (at least) two NFA-fragments.
- */
-function or$1(first) {
-  for (var _len2 = arguments.length, fragments = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-    fragments[_key2 - 1] = arguments[_key2];
-  }
-
-  var _iteratorNormalCompletion2 = true;
-  var _didIteratorError2 = false;
-  var _iteratorError2 = undefined;
-
-  try {
-    for (var _iterator2 = fragments[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-      var fragment = _step2.value;
-
-      first = orPair(first, fragment);
-    }
-  } catch (err) {
-    _didIteratorError2 = true;
-    _iteratorError2 = err;
-  } finally {
-    try {
-      if (!_iteratorNormalCompletion2 && _iterator2.return) {
-        _iterator2.return();
-      }
-    } finally {
-      if (_didIteratorError2) {
-        throw _iteratorError2;
-      }
-    }
-  }
-
-  return first;
-}
-
-// -----------------------------------------------------------------------------
-// Kleene-closure
-
-/**
- * Kleene star/closure.
- *
- * a*
- */
-function repExplicit(fragment) {
-  var inState = new NFAState();
-  var outState = new NFAState({
-    accepting: true
-  });
-
-  // 0 or more.
-  inState.addTransition(EPSILON, fragment.in);
-  inState.addTransition(EPSILON, outState);
-
-  fragment.out.accepting = false;
-  fragment.out.addTransition(EPSILON, outState);
-  outState.addTransition(EPSILON, fragment.in);
-
-  return new NFA$1(inState, outState);
-}
-
-/**
- * Optimized Kleene-star: just adds ε-transitions from
- * input to the output, and back.
- */
-function rep$1(fragment) {
-  fragment.in.addTransition(EPSILON, fragment.out);
-  fragment.out.addTransition(EPSILON, fragment.in);
-  return fragment;
-}
-
-/**
- * Optimized Plus: just adds ε-transitions from
- * the output to the input.
- */
-function plusRep$1(fragment) {
-  fragment.out.addTransition(EPSILON, fragment.in);
-  return fragment;
-}
-
-/**
- * Optimized ? repetition: just adds ε-transitions from
- * the input to the output.
- */
-function questionRep$1(fragment) {
-  fragment.in.addTransition(EPSILON, fragment.out);
-  return fragment;
-}
-
-var builders$1 = {
-  alt: alt$1,
-  char: char$1,
-  e: e,
-  or: or$1,
-  rep: rep$1,
-  repExplicit: repExplicit,
-  plusRep: plusRep$1,
-  questionRep: questionRep$1
-};
-
-/**
- * The MIT License (MIT)
- * Copyright (c) 2017-present Dmitry Soshnikov <dmitry.soshnikov@gmail.com>
- */
-
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-
-var parser$1 = parser$4;
-
-var _require$1 = builders$1,
-    alt = _require$1.alt,
-    char = _require$1.char,
-    or = _require$1.or,
-    rep = _require$1.rep,
-    plusRep = _require$1.plusRep,
-    questionRep = _require$1.questionRep;
-
-/**
- * Helper `gen` function calls node type handler.
- */
-
-
-function gen(node) {
-  if (node && !generator$1[node.type]) {
-    throw new Error(node.type + ' is not supported in NFA/DFA interpreter.');
-  }
-
-  return node ? generator$1[node.type](node) : '';
-}
-
-/**
- * AST handler.
- */
-var generator$1 = {
-  RegExp: function RegExp(node) {
-    if (node.flags !== '') {
-      throw new Error('NFA/DFA: Flags are not supported yet.');
-    }
-
-    return gen(node.body);
-  },
-  Alternative: function Alternative(node) {
-    var fragments = (node.expressions || []).map(gen);
-    return alt.apply(undefined, _toConsumableArray(fragments));
-  },
-  Disjunction: function Disjunction(node) {
-    return or(gen(node.left), gen(node.right));
-  },
-  Repetition: function Repetition(node) {
-    switch (node.quantifier.kind) {
-      case '*':
-        return rep(gen(node.expression));
-      case '+':
-        return plusRep(gen(node.expression));
-      case '?':
-        return questionRep(gen(node.expression));
-      default:
-        throw new Error('Unknown repeatition: ' + node.quantifier.kind + '.');
-    }
-  },
-  Char: function Char(node) {
-    if (node.kind !== 'simple') {
-      throw new Error('NFA/DFA: Only simple chars are supported yet.');
-    }
-
-    return char(node.value);
-  },
-  Group: function Group(node) {
-    return gen(node.expression);
-  }
-};
-
-var nfaFromRegexp = {
-  /**
-   * Builds an NFA from the passed regexp.
-   */
-  build: function build(regexp) {
-    var ast = regexp;
-
-    if (regexp instanceof RegExp) {
-      regexp = '' + regexp;
-    }
-
-    if (typeof regexp === 'string') {
-      ast = parser$1.parse(regexp, {
-        captureLocations: true
-      });
-    }
-
-    return gen(ast);
-  }
-};
-
-/**
- * The MIT License (MIT)
- * Copyright (c) 2017-present Dmitry Soshnikov <dmitry.soshnikov@gmail.com>
- */
-
-var NFA = nfa;
-var DFA = dfa;
-
-var nfaFromRegExp = nfaFromRegexp;
-var builders = builders$1;
-
-var finiteAutomaton = {
-
-  /**
-   * Export NFA and DFA classes.
-   */
-  NFA: NFA,
-  DFA: DFA,
-
-  /**
-   * Expose builders.
-   */
-  builders: builders,
-
-  /**
-   * Builds an NFA for the passed regexp.
-   *
-   * @param string | AST | RegExp:
-   *
-   *   a regular expression in different representations: a string,
-   *   a RegExp object, or an AST.
-   */
-  toNFA: function toNFA(regexp) {
-    return nfaFromRegExp.build(regexp);
-  },
-
-
-  /**
-   * Builds DFA for the passed regexp.
-   *
-   * @param string | AST | RegExp:
-   *
-   *   a regular expression in different representations: a string,
-   *   a RegExp object, or an AST.
-   */
-  toDFA: function toDFA(regexp) {
-    return new DFA(this.toNFA(regexp));
-  },
-
-
-  /**
-   * Returns true if regexp accepts the string.
-   */
-  test: function test(regexp, string) {
-    return this.toDFA(regexp).matches(string);
-  }
-};
 
 /**
  * The MIT License (MIT)
@@ -123878,7 +121477,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var RegExpTree$1 = function () {
+(function () {
   /**
    * Initializes a `RegExpTree` instance.
    *
@@ -123975,204 +121574,35 @@ var RegExpTree$1 = function () {
   }]);
 
   return RegExpTree;
-}();
-
-var runtime = {
-  RegExpTree: RegExpTree$1
-};
+})();
 
 /**
  * The MIT License (MIT)
  * Copyright (c) 2017-present Dmitry Soshnikov <dmitry.soshnikov@gmail.com>
  */
-
-var compatTranspiler = compatTranspiler$1;
-var generator = generator_1;
-var optimizer = optimizer$1;
-var parser = parser$4;
-var _transform = transform$3;
-var _traverse = traverse$3;
-var fa = finiteAutomaton;
-
-var _require = runtime,
-    RegExpTree = _require.RegExpTree;
 
 /**
  * An API object for RegExp processing (parsing/transform/generation).
  */
 
 
-var regexpTree$3 = {
-  /**
-   * Parser module exposed.
-   */
-  parser: parser,
+var regexpTree$2 = {
+  };
 
-  /**
-   * Expose finite-automaton module.
-   */
-  fa: fa,
-
-  /**
-   * `TransformResult` exposed.
-   */
-  TransformResult: _transform.TransformResult,
-
-  /**
-   * Parses a regexp string, producing an AST.
-   *
-   * @param string regexp
-   *
-   *   a regular expression in different formats: string, AST, RegExp.
-   *
-   * @param Object options
-   *
-   *   parsing options for this parse call. Default are:
-   *
-   *     - captureLocations: boolean
-   *     - any other custom options
-   *
-   * @return Object AST
-   */
-  parse: function parse(regexp, options) {
-    return parser.parse('' + regexp, options);
-  },
-
-
-  /**
-   * Traverses a RegExp AST.
-   *
-   * @param Object ast
-   * @param Object | Array<Object> handlers
-   *
-   * Each `handler` is an object containing handler function for needed
-   * node types. Example:
-   *
-   *   regexpTree.traverse(ast, {
-   *     onChar(node) {
-   *       ...
-   *     },
-   *   });
-   *
-   * The value for a node type may also be an object with functions pre and post.
-   * This enables more context-aware analyses, e.g. measuring star height.
-   */
-  traverse: function traverse(ast, handlers, options) {
-    return _traverse.traverse(ast, handlers, options);
-  },
-
-
-  /**
-   * Transforms a regular expression.
-   *
-   * A regexp can be passed in different formats (string, regexp or AST),
-   * applying a set of transformations. It is a convenient wrapper
-   * on top of "parse-traverse-generate" tool chain.
-   *
-   * @param string | AST | RegExp regexp - a regular expression;
-   * @param Object | Array<Object> handlers - a list of handlers.
-   *
-   * @return TransformResult - a transformation result.
-   */
-  transform: function transform(regexp, handlers) {
-    return _transform.transform(regexp, handlers);
-  },
-
-
-  /**
-   * Generates a RegExp string from an AST.
-   *
-   * @param Object ast
-   *
-   * Invariant:
-   *
-   *   regexpTree.generate(regexpTree.parse('/[a-z]+/i')); // '/[a-z]+/i'
-   */
-  generate: function generate(ast) {
-    return generator.generate(ast);
-  },
-
-
-  /**
-   * Creates a RegExp object from a regexp string.
-   *
-   * @param string regexp
-   */
-  toRegExp: function toRegExp(regexp) {
-    var compat = this.compatTranspile(regexp);
-    return new RegExp(compat.getSource(), compat.getFlags());
-  },
-
-
-  /**
-   * Optimizes a regular expression by replacing some
-   * sub-expressions with their idiomatic patterns.
-   *
-   * @param string regexp
-   *
-   * @return TransformResult object
-   */
-  optimize: function optimize(regexp, whitelist) {
-    var _ref = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
-        blacklist = _ref.blacklist;
-
-    return optimizer.optimize(regexp, { whitelist: whitelist, blacklist: blacklist });
-  },
-
-
-  /**
-   * Translates a regular expression in new syntax or in new format
-   * into equivalent expressions in old syntax.
-   *
-   * @param string regexp
-   *
-   * @return TransformResult object
-   */
-  compatTranspile: function compatTranspile(regexp, whitelist) {
-    return compatTranspiler.transform(regexp, whitelist);
-  },
-
-
-  /**
-   * Executes a regular expression on a string.
-   *
-   * @param RegExp|string re - a regular expression.
-   * @param string string - a testing string.
-   */
-  exec: function exec(re, string) {
-    if (typeof re === 'string') {
-      var compat = this.compatTranspile(re);
-      var extra = compat.getExtra();
-
-      if (extra.namedCapturingGroups) {
-        re = new RegExpTree(compat.toRegExp(), {
-          flags: compat.getFlags(),
-          source: compat.getSource(),
-          groups: extra.namedCapturingGroups
-        });
-      } else {
-        re = compat.toRegExp();
-      }
-    }
-
-    return re.exec(string);
-  }
-};
-
-var regexpTree_1 = regexpTree$3;
+var regexpTree_1 = regexpTree$2;
 
 /**
  * The MIT License (MIT)
  * Copyright (c) 2017-present Dmitry Soshnikov <dmitry.soshnikov@gmail.com>
  */
 
-var regexpTree$2 = regexpTree_1;
+var regexpTree = regexpTree_1;
 
-const regexpTree$1 = regexpTree$2;
+var regexpTree$1 = regexpTree.default;
 
 const notSimpleChar = ({type, kind}) => type !== 'Char' || kind !== 'simple';
 
-var isSimpleRegexp = (regexp) => {
+const isSimpleRegExp = (regexp) => {
     let containsMoreThenSimpleChars = false;
     const ast = regexpTree$1.parse(regexp);
     
@@ -124189,21 +121619,16 @@ var isSimpleRegexp = (regexp) => {
     return !containsMoreThenSimpleChars;
 };
 
-isSimpleRegexp.default;
-
-var transformRegexp = {};
-
-const regexpTree = regexpTree$2;
-
-transformRegexp.transformRegExp = (str, regExpTransformer) => {
-    check$2(regExpTransformer);
+const transformRegExp = (str, regExpTransformer) => {
+    check$1(regExpTransformer);
     
     const {
         report,
         traverse,
         fix,
     } = regExpTransformer;
-    const ast = regexpTree.parse(str, {
+    
+    const ast = regexpTree$1.parse(str, {
         captureLocations: true,
     });
     
@@ -124220,34 +121645,26 @@ transformRegexp.transformRegExp = (str, regExpTransformer) => {
         fix(path);
     };
     
-    regexpTree.traverse(ast, traverse({
+    regexpTree$1.traverse(ast, traverse({
         push,
     }));
     
     return [
-        regexpTree.generate(ast),
+        regexpTree$1.generate(ast),
         places,
     ];
 };
 
-function check$2(regExpTransformer) {
+function check$1(regExpTransformer) {
     if (!regExpTransformer)
         throw Error('☝️ Looks like RegExpTransformer is missing');
 }
 
-const isSimpleRegExp = isSimpleRegexp;
-const {transformRegExp} = transformRegexp;
-
-var regexp = {
-    isSimpleRegExp,
-    transformRegExp,
-};
-
 var addArgs = {};
 
-const {compareAny} = compare$5;
-const {template: template$1} = parser$5;
-const {types: types$3} = bundle$1;
+const {compareAny} = compare$3;
+const {template} = require$$1;
+const {types} = require$$2$2;
 const {
     isBlockStatement,
     isFunction,
@@ -124256,7 +121673,7 @@ const {
     isCallExpression,
     objectPattern,
     objectProperty,
-} = types$3;
+} = types;
 
 const {entries: entries$1} = Object;
 const SHORTHAND = true;
@@ -124269,14 +121686,14 @@ const isCall = (path) => {
 
 const report$2 = ({name}) => `Argument '${name}' is missing`;
 
-addArgs.addArgs = (args) => ({
+var addArgs_1 = addArgs.addArgs = (args) => ({
     report: report$2,
     fix: fix$2,
-    traverse: traverse$1(args),
+    traverse: traverse(args),
 });
 
 const fix$2 = ({declaration, path, pattern, params, index}) => {
-    const declarationNode = template$1.ast.fresh(declaration);
+    const declarationNode = template.ast.fresh(declaration);
     
     if (isBlockStatement(declarationNode)) {
         const prop = createProperty(declarationNode.body[0]);
@@ -124293,7 +121710,7 @@ const fix$2 = ({declaration, path, pattern, params, index}) => {
     ];
 };
 
-const traverse$1 = (args) => ({push, options}) => {
+const traverse = (args) => ({push, options}) => {
     const allArgs = {
         ...options.args,
         ...args,
@@ -124378,8 +121795,6 @@ function getObjectPattern(params) {
     ];
 }
 
-var keyword = {};
-
 const moduleDeclarations = [
     'import',
     'export',
@@ -124425,6 +121840,7 @@ const statements = [
     'async',
     'break',
     'continue',
+    'debugger',
     'for',
     'else',
     'from',
@@ -124442,27 +121858,27 @@ const keywords = [
     ...expressions,
 ];
 
-keyword.isKeyword = (name) => {
+const isKeyword = (name) => {
     return keywords.includes(name);
 };
 
-keyword.isDeclarationKeyword = (name) => {
+const isDeclarationKeyword = (name) => {
     return declarations.includes(name);
 };
 
-keyword.isModuleDeclarationKeyword = (name) => {
+const isModuleDeclarationKeyword = (name) => {
     return moduleDeclarations.includes(name);
 };
 
-keyword.isConditionKeyword = (name) => {
+const isConditionKeyword = (name) => {
     return conditions.includes(name);
 };
 
-keyword.isStatementKeyword = (name) => {
+const isStatementKeyword = (name) => {
     return statements.includes(name);
 };
 
-keyword.isTSKeyword = (name) => {
+const isTSKeyword = (name) => {
     const ts = typescript.includes(name);
     const tsReserved = typescriptReserved.includes(name);
     
@@ -124470,6 +121886,30 @@ keyword.isTSKeyword = (name) => {
 };
 
 var matchFiles = {};
+
+var require$$2 = /*@__PURE__*/getAugmentedNamespace(transform$2);
+
+const findPlaces$1 = (ast, source, opts) => {
+    return transform$1(ast, source, {
+        ...opts,
+        fix: false,
+    });
+};
+
+const findPlacesAsync = async (ast, source, opts) => {
+    return await transformAsync(ast, source, {
+        ...opts,
+        fix: false,
+    });
+};
+
+var findPlaces$2 = /*#__PURE__*/Object.freeze({
+	__proto__: null,
+	findPlaces: findPlaces$1,
+	findPlacesAsync: findPlacesAsync
+});
+
+var require$$3 = /*@__PURE__*/getAugmentedNamespace(findPlaces$2);
 
 const isNegative = (a) => !a.indexOf('!');
 const positive = (a) => a.replace(/^!/, '');
@@ -124504,11 +121944,11 @@ var ignores$2 = /*#__PURE__*/Object.freeze({
 
 var require$$4 = /*@__PURE__*/getAugmentedNamespace(ignores$2);
 
-const path = require$$0$2;
+const path = require$$0;
 
-const {parse: parse$2, print: print$1} = parser$5;
-const {transform: transform$1} = require$$4$1;
-const {findPlaces: findPlaces$1} = require$$5;
+const {parse: parse$1, print} = require$$1;
+const {transform} = require$$2;
+const {findPlaces} = require$$3;
 const {ignores} = require$$4;
 
 const {toJS, fromJS} = json;
@@ -124529,12 +121969,12 @@ const isObject = (a) => a && typeof a === 'object';
 const {entries} = Object;
 const report$1 = (path, {message}) => message;
 
-matchFiles.matchFiles = (options) => {
+var matchFiles_1 = matchFiles.matchFiles = (options) => {
     const {filename} = options;
     const files = options.files ?? options;
     const exclude = options.exclude ?? [];
     
-    check$1(files);
+    check(files);
     
     const scan = createScan({
         defaultFilename: filename,
@@ -124550,7 +121990,7 @@ matchFiles.matchFiles = (options) => {
 };
 
 function fix$1(inputFile, {dirPath, matchInputFilename, outputFilename, matchedJS, matchedAST, options}) {
-    transform$1(matchedAST, matchedJS, options);
+    transform(matchedAST, matchedJS, options);
     
     const matchedJSON = magicPrint(outputFilename, matchedAST);
     const outputFile = getOutputFile({
@@ -124619,7 +122059,7 @@ const createScan = ({files, exclude, defaultFilename}) => (mainPath, {push, prog
         const [matchedJS, matchedAST] = magicParse(inputFilename, fileContent);
         
         const options = parseOptions(inputFilename, rawOptions);
-        const places = findPlaces$1(matchedAST, matchedJS, options);
+        const places = findPlaces(matchedAST, matchedJS, options);
         
         if (!places.length)
             continue;
@@ -124643,33 +122083,33 @@ const createScan = ({files, exclude, defaultFilename}) => (mainPath, {push, prog
 function magicParse(name, content) {
     if (name.endsWith('.json')) {
         const js = toJS(content);
-        const ast = parse$2(js);
+        const ast = parse$1(js);
         
         return [js, ast];
     }
     
     if (/\.(c|m)?ts(x)?$/.test(name)) {
-        const ast = parse$2(content, {
+        const ast = parse$1(content, {
             isTS: true,
         });
         
         return [content, ast];
     }
     
-    return [content, parse$2(content)];
+    return [content, parse$1(content)];
 }
 
 function magicPrint(name, ast) {
     if (name.endsWith('.json')) {
-        const js = print$1(ast);
+        const js = print(ast);
         
         return fromJS(js);
     }
     
-    return print$1(ast);
+    return print(ast);
 }
 
-function check$1(files) {
+function check(files) {
     for (const [, plugin] of entries(files)) {
         if (!isObject(plugin))
             throw Error(`☝️ Looks like provided to 'matchFiles()' typeof of plugin is not an 'object' but '${typeof plugin}'`);
@@ -124720,7 +122160,7 @@ function parseOptions(inputFilename, rawOptions) {
 
 var renameFiles = {};
 
-const {join} = require$$0$2;
+const {join} = require$$0;
 
 const {
     getParentDirectory,
@@ -124730,9 +122170,9 @@ const {
     renameFile,
 } = filesystem;
 
-const {parse: parse$1} = JSON;
+const {parse} = JSON;
 
-renameFiles.renameFiles = ({type, mask, rename}) => ({
+var renameFiles_1 = renameFiles.renameFiles = ({type, mask, rename}) => ({
     report,
     fix,
     scan: scan({
@@ -124777,7 +122217,7 @@ function checkType(type, file) {
     if (!packageContent)
         return false;
     
-    const info = parse$1(packageContent);
+    const info = parse(packageContent);
     const infoType = info.type || 'commonjs';
     
     return infoType === type;
@@ -124795,14 +122235,10 @@ function findUpPackage(file) {
     return packageJSON;
 }
 
-var ignore = {};
-
-const {types: types$2} = bundle$1;
-const {traverseProperties} = operate;
-const {stringLiteral} = types$2;
+const {stringLiteral} = lib_exports$1;
 const getValue = ({value}) => value;
 
-ignore.ignore = (type, {name, property, list}) => {
+const ignore = (type, {name, property, list}) => {
     const [, collector] = type.split(/[()]/);
     
     return {
@@ -124892,7 +122328,7 @@ function parseElements(vars, {property, collector}) {
     if (!property)
         return node.elements;
     
-    const [prop] = traverseProperties(node, property);
+    const [prop] = traverseProperties_1(node, property);
     
     if (!prop)
         return null;
@@ -124900,17 +122336,12 @@ function parseElements(vars, {property, collector}) {
     return prop.node.value.elements;
 }
 
-var parens = {};
-
-const {types: types$1} = bundle$1;
 const {
     parenthesizedExpression,
     tsParenthesizedType,
-} = types$1;
+} = lib_exports$1;
 
-parens.hasParens = hasParens;
-
-parens.addParens = (path) => {
+const addParens = (path) => {
     const printer = getPrinter(path);
     
     if (hasParens(path, printer))
@@ -124935,7 +122366,7 @@ parens.addParens = (path) => {
     return path;
 };
 
-parens.removeParens = (path) => {
+const removeParens = (path) => {
     const printer = getPrinter(path);
     
     if (!hasParens(path, printer))
@@ -124968,7 +122399,108 @@ function hasParens(path, printer = getPrinter(path)) {
     return /^(TS)?Parenthesized(Expression|Type)?$/.test(type);
 }
 
-const codeframe$1 = ({source, error, highlightCode = true}) => {
+var operator = /*#__PURE__*/_mergeNamespaces({
+	__proto__: null,
+	__filesystem: __filesystem_1,
+	__filesystem_name: __filesystem_name_1,
+	__ignore: __ignore_1,
+	__ignore_name: __ignore_name_1,
+	__json: __json_1,
+	__json_name: __json_name_1,
+	__yaml: __yaml_1,
+	__yaml_name: __yaml_name_1,
+	addArgs: addArgs_1,
+	addAttribute: addAttribute_1,
+	addAttributeValue: addAttributeValue_1,
+	addClassName: addClassName,
+	addParens: addParens,
+	compare: compare_2,
+	compareAll: compareAll,
+	compareAny: compareAny$1,
+	compute: compute_1,
+	contains: contains,
+	containsClassName: containsClassName,
+	copyFile: copyFile,
+	createDirectory: createDirectory_1,
+	createFile: createFile$1,
+	createNestedDirectory: createNestedDirectory,
+	declare: declare_1,
+	deinit: deinit,
+	extract: extract_1,
+	findBinding: findBinding,
+	findFile: findFile_1,
+	findVarsWays: findVarsWays_1,
+	fromJS: fromJS$1,
+	getAttributeNode: getAttributeNode_1,
+	getAttributePath: getAttributePath,
+	getAttributeValue: getAttributeValue_1,
+	getBinding: getBinding_1,
+	getBindingPath: getBindingPath_1,
+	getClassName: getClassName_1,
+	getExportDefault: getExportDefault_1,
+	getFileContent: getFileContent_1,
+	getFileType: getFileType_1,
+	getFilename: getFilename_1,
+	getLiteralRaw: getLiteralRaw_1,
+	getParentDirectory: getParentDirectory_1,
+	getPathAfterImports: getPathAfterImports,
+	getPathAfterRequires: getPathAfterRequires_1,
+	getProperties: getProperties_1,
+	getProperty: getProperty_1,
+	getRootDirectory: getRootDirectory_1,
+	getTemplateValues: getTemplateValues_1,
+	getValues: getValues_1,
+	hasAttributeValue: hasAttributeValue,
+	hasDataName: hasDataName,
+	hasParens: hasParens,
+	hasTagName: hasTagName,
+	ignore: ignore,
+	init: init,
+	insertAfter: insertAfter$2,
+	insertBefore: insertBefore$1,
+	isConditionKeyword: isConditionKeyword,
+	isDeclarationKeyword: isDeclarationKeyword,
+	isESM: isESM$1,
+	isJSON: isJSON,
+	isKeyword: isKeyword,
+	isModuleDeclarationKeyword: isModuleDeclarationKeyword,
+	isModuleExports: isModuleExports,
+	isSimple: isSimple_1,
+	isSimpleRegExp: isSimpleRegExp,
+	isStatementKeyword: isStatementKeyword,
+	isTSKeyword: isTSKeyword,
+	isTemplate: isTemplate_1,
+	matchFiles: matchFiles_1,
+	moveFile: moveFile,
+	parseTemplate: parseTemplate_1,
+	pause: pause,
+	readDirectory: readDirectory_1,
+	readFileContent: readFileContent$2,
+	remove: remove_1,
+	removeAttributeValue: removeAttributeValue_1,
+	removeClassName: removeClassName,
+	removeEmptyDirectory: removeEmptyDirectory,
+	removeFile: removeFile_1,
+	removeParens: removeParens,
+	rename: rename_1,
+	renameFile: renameFile$1,
+	renameFiles: renameFiles_1,
+	renameProperty: renameProperty_1,
+	replaceWith: replaceWith_1,
+	replaceWithMultiple: replaceWithMultiple_1,
+	setAttributeValue: setAttributeValue,
+	setLiteralValue: setLiteralValue_1,
+	setValues: setValues_1,
+	start: start,
+	toExpression: toExpression_1,
+	toJS: toJS$1,
+	transformRegExp: transformRegExp,
+	traverse: traverse_2,
+	traverseProperties: traverseProperties_1,
+	writeFileContent: writeFileContent_1
+}, [operate, compare$3, traverse$2, json, jsx, declare$1, addArgs, filesystem, matchFiles, renameFiles]);
+
+const codeframe = ({source, error, highlightCode = true}) => {
     const {message, loc} = error;
     
     if (!loc)
@@ -124978,158 +122510,10 @@ const codeframe$1 = ({source, error, highlightCode = true}) => {
         start: loc,
     };
     
-    return bundle$1.codeFrameColumns(source, location, {
+    return codeFrameColumns$1(source, location, {
         highlightCode,
         message,
     });
 };
 
-var codeframe$2 = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	codeframe: codeframe$1
-});
-
-var require$$20 = /*@__PURE__*/getAugmentedNamespace(codeframe$2);
-
-const {traverse, types} = bundle$1;
-const {
-    parse,
-    print,
-    generate,
-    template,
-} = parser$5;
-
-const {cutShebang, mergeShebang} = require$$2;
-const {defaultOptions} = require$$3;
-const {transform, transformAsync} = require$$4$1;
-
-const {
-    findPlaces,
-    findPlacesAsync,
-} = require$$5;
-
-putout$1.exports = putout;
-var putout_2 = putout$1.exports.putout = putout;
-
-function putout(source, opts) {
-    check(source);
-    opts = defaultOptions(opts);
-    
-    const {
-        parser,
-        isTS,
-        isJSX,
-        printer,
-    } = opts;
-    
-    const [clearSource, shebang] = cutShebang(source);
-    
-    const ast = parse(clearSource, {
-        parser,
-        isTS,
-        isJSX,
-        printer,
-    });
-    
-    const places = transform(ast, source, opts);
-    
-    if (!opts.fix)
-        return {
-            code: source,
-            places,
-        };
-    
-    const printed = print(ast, {
-        printer,
-        source,
-    });
-    
-    const code = mergeShebang(shebang, printed);
-    
-    return {
-        code,
-        places,
-    };
-}
-
-var putoutAsync = putout$1.exports.putoutAsync = async (source, opts) => {
-    check(source);
-    opts = defaultOptions(opts);
-    
-    const {
-        parser,
-        isTS,
-        isJSX,
-        printer,
-    } = opts;
-    
-    const [clearSource, shebang] = cutShebang(source);
-    
-    const ast = parse(clearSource, {
-        parser,
-        isTS,
-        isJSX,
-        printer,
-    });
-    
-    const places = await transformAsync(ast, source, opts);
-    
-    if (!opts.fix)
-        return {
-            code: source,
-            places,
-        };
-    
-    const printed = print(ast, {
-        printer,
-    });
-    
-    const code = mergeShebang(shebang, printed);
-    
-    return {
-        code,
-        places,
-    };
-};
-
-var transform_1 = putout$1.exports.transform = transform;
-var transformAsync_1 = putout$1.exports.transformAsync = transformAsync;
-
-var findPlaces_1 = putout$1.exports.findPlaces = findPlaces;
-var findPlacesAsync_1 = putout$1.exports.findPlacesAsync = findPlacesAsync;
-
-var parse_1 = putout$1.exports.parse = parse;
-var print_1 = putout$1.exports.print = print;
-var traverse_1 = putout$1.exports.traverse = traverse;
-var types_1 = putout$1.exports.types = types;
-var template_1 = putout$1.exports.template = template;
-var generate_1 = putout$1.exports.generate = generate;
-
-var operator = putout$1.exports.operator = {
-    ...operate,
-    ...compare$5,
-    ...traverse$5,
-    ...json,
-    ...jsx,
-    ...declare$1,
-    ...regexp,
-    ...addArgs,
-    ...filesystem,
-    ...keyword,
-    ...matchFiles,
-    ...renameFiles,
-    ...ignore,
-    ...parens,
-};
-
-const {codeframe} = require$$20;
-const isString = (a) => typeof a === 'string';
-
-var codeframe_1 = putout$1.exports.codeframe = codeframe;
-
-function check(source) {
-    if (!isString(source))
-        throw Error(`☝️ Looks like 'source' has type '${typeof source}', expected: 'string'`);
-}
-
-export { codeframe_1 as codeframe, putout_2 as default, findPlaces_1 as findPlaces, findPlacesAsync_1 as findPlacesAsync, generate_1 as generate, operator, parse_1 as parse, print_1 as print, putout_2 as putout, putoutAsync, template_1 as template, transform_1 as transform, transformAsync_1 as transformAsync, traverse_1 as traverse, types_1 as types };
+export { codeframe, putout as default, findPlaces$1 as findPlaces, findPlacesAsync, generate, operator, parse$3 as parse, print$1 as print, putout, putoutAsync, template$6 as template, transform$1 as transform, transformAsync, traverse3$1 as traverse, lib_exports$1 as types };
