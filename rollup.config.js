@@ -98,6 +98,9 @@ export default {
         replace({
             preventAssignment: true,
             values: {
+                'var regexpTree$1 = regexpTree.default': 'var regexpTree$1 = regexpTreeParser',
+                'var wraptile$1 = wraptile.default': 'var wraptile$1 = wraptile',
+                'var fullstore$2 = fullstore$1.default': 'var fullstore$2 = fullstore$1',
                 'process.env.BABEL_TYPES_8_BREAKING': true,
                 'Buffer.isBuffer': 'Array.isArray',
                 'process.platform': '"unix"',
