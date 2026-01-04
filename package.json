@@ -7,7 +7,7 @@
   "homepage": "https://github.com/putoutjs/bundle",
   "main": "bundle/putout.js",
   "exports": {
-    ".": "./bundle/putout.min.js",
+    ".": "./bundle/putout.js",
     "./dev": "./bundle/putout.js",
     "./slim": "./bundle/putout.slim.js"
   },
