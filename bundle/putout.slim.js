@@ -61945,7 +61945,7 @@ const isString$6 = (a) => typeof a === 'string';
 const isUndefined = (a) => typeof a === 'undefined';
 const isEmpty = (obj) => !Object.keys(obj).length;
 
-var jessy = (selector, divider, value) => {
+function jessy(selector, divider, value) {
     if (!value) {
         value = divider;
         divider = '.';
@@ -61982,7 +61982,7 @@ var jessy = (selector, divider, value) => {
     }
     
     return value;
-};
+}
 
 function check$7(selector, obj) {
     if (!isString$6(selector))
@@ -61992,14 +61992,12 @@ function check$7(selector, obj) {
         throw Error('obj should be object!');
 }
 
-var jessy$1 = jessy.default;
-
 const isNumber$1 = (a) => !Number.isNaN(a) && typeof a === 'number';
 const isNumberLike = (a, b = Number(a)) => isNumber$1(b);
 const isString$5 = (a) => typeof a === 'string';
 const notSecure = (a) => /__proto__|prototype/.test(a);
 
-var nessy = (selector, value, divider, obj) => {
+function nessy(selector, value, divider, obj) {
     if (!obj) {
         obj = divider || {};
         divider = '.';
@@ -62012,6 +62010,7 @@ var nessy = (selector, value, divider, obj) => {
     const array = selector
         .split(divider)
         .filter(Boolean);
+    
     const n = array.length - 1;
     
     for (const [i, name] of array.entries()) {
@@ -62025,20 +62024,16 @@ var nessy = (selector, value, divider, obj) => {
             
             obj[name] = isNumberLike(nextKey) ? [] : {};
         }
-
         
         obj = obj[name];
     }
     
     return result;
-};
-
+}
 function check$6(selector) {
     if (!isString$5(selector))
         throw Error('selector should be string!');
 }
-
-var nessy$1 = nessy.default;
 
 const TS_MODULE_REG = /\.body\.0\.expression$/;
 const CLASS_BODY_REG = /\.body\.0\.key$/;
@@ -62499,7 +62494,7 @@ function getValues({waysFrom, node}) {
             if (isBodyStr(name))
                 way = prepareBodyWay(way);
             
-            result[name] = result[name] || extractExpression$1(jessy$1(way, node));
+            result[name] = result[name] || extractExpression$1(jessy(way, node));
         }
     }
     
@@ -62534,14 +62529,14 @@ function setValues({waysTo, values, path}) {
                     raw: makeRaw(value),
                 });
                 
-                nessy$1(way, element, node);
+                nessy(way, element, node);
                 continue;
             }
             
             if (isBodyStr(name))
                 way = prepareBodyWay(way);
             
-            const {extra} = jessy$1(way, node);
+            const {extra} = jessy(way, node);
             
             if (extra) {
                 const valueExtra = values[name].extra;
@@ -62552,7 +62547,7 @@ function setValues({waysTo, values, path}) {
                 };
             }
             
-            nessy$1(way, values[name], node);
+            nessy(way, values[name], node);
         }
     }
 }
