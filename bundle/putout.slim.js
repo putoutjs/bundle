@@ -27,7 +27,7 @@ function getAugmentedNamespace(n) {
 	return a;
 }
 
-var fullstore = (value) => {
+var fullstore$1 = (value) => {
     const data = {
         value,
     };
@@ -44,7 +44,7 @@ var fullstore = (value) => {
     };
 };
 
-var fullstore$1 = fullstore.default;
+var fullstore$2 = fullstore$1;
 
 var global$1 = (typeof global !== "undefined" ? global :
   typeof self !== "undefined" ? self :
@@ -59106,7 +59106,7 @@ const tokenize = (ast, overrides) => {
         traverse,
         maybe,
         quote,
-        store: fullstore$1(),
+        store: fullstore$2(),
     });
     
     const currentTraversers = {
@@ -59266,13 +59266,13 @@ var removeBlankLines$1 = lib.default;
 
 const __json_name$1 = '__putout_processor_json';
 const __yaml_name$1 = '__putout_processor_yaml';
-const __filesystem_name$4 = '__putout_processor_filesystem';
+const __filesystem_name$3 = '__putout_processor_filesystem';
 const __ignore_name$1 = '__putout_processor_ignore';
 
 const TYPES$1 = [
     __json_name$1,
     __yaml_name$1,
-    __filesystem_name$4,
+    __filesystem_name$3,
     __ignore_name$1,
 ];
 
@@ -64250,10 +64250,101 @@ function validateDeclare(declare) {
         throw Error(`☝️ Looks like 'declare' property value is not a 'function', but '${typeof declare}' with value '${stringify(declare)}'.`);
 }
 
-const __filesystem_name$3 = '__putout_processor_filesystem';
-var __filesystem_name_1 = __filesystem_name$3;
+function fullstore(value) {
+    const data = {
+        value,
+    };
+    
+    return (...args) => {
+        const [value] = args;
+        
+        if (!args.length)
+            return data.value;
+        
+        data.value = value;
+        
+        return value;
+    };
+}
 
-const driverStore = fullstore$1();
+const cut = (a) => a.slice(0, a.indexOf('('));
+const createPrefix = (name) => {
+    if (name.includes('('))
+        return `${cut(name)}(`;
+    
+    return `${name}(`;
+};
+
+const createSuffix = () => ');\n';
+const maybeNewline = (a) => a.at(-1) === '\n' ? a : `${a}\n`;
+
+const __json_name = '__putout_processor_json';
+const __yaml_name = '__putout_processor_yaml';
+const __toml_name = '__putout_processor_toml';
+const __filesystem_name$2 = '__putout_processor_filesystem';
+const __ignore_name = '__putout_processor_ignore';
+
+const __json = `${__json_name}(__object)`;
+const __yaml = `${__yaml_name}(__object)`;
+const __toml = `${__toml_name}(__object)`;
+const __filesystem = `${__filesystem_name$2}(__object)`;
+const __ignore = `${__ignore_name}(__array)`;
+
+const TYPES = [
+    __json_name,
+    __yaml_name,
+    __filesystem_name$2,
+    __ignore_name,
+];
+
+const toJS = (source, name = __json) => {
+    const prefix = createPrefix(name);
+    const suffix = createSuffix();
+    
+    return `${prefix}${source}${suffix}`;
+};
+
+const fromJS = (source, name = __json) => {
+    source = maybeNewline(source);
+    const shortName = cut(name);
+    
+    source = source.slice(source.indexOf(shortName));
+    
+    const prefix = createPrefix(name);
+    const suffix = createSuffix();
+    const length = source.length - suffix.length;
+    const sliced = source.slice(prefix.length, length);
+    
+    return maybeNewline(removeBlankLines$1(sliced));
+};
+
+const isJSON = (source) => {
+    for (const type of TYPES) {
+        if (!source.indexOf(type))
+            return true;
+    }
+    
+    return false;
+};
+
+var json = /*#__PURE__*/Object.freeze({
+	__proto__: null,
+	__filesystem: __filesystem,
+	__filesystem_name: __filesystem_name$2,
+	__ignore: __ignore,
+	__ignore_name: __ignore_name,
+	__json: __json,
+	__json_name: __json_name,
+	__toml: __toml,
+	__toml_name: __toml_name,
+	__yaml: __yaml,
+	__yaml_name: __yaml_name,
+	fromJS: fromJS,
+	isJSON: isJSON,
+	toJS: toJS
+});
+
+const driverStore = fullstore();
 
 const {assign} = Object;
 const noop = () => {};
@@ -64792,83 +64883,6 @@ var require$$0 = /*@__PURE__*/getAugmentedNamespace(bundle);
 
 var require$$3 = /*@__PURE__*/getAugmentedNamespace(filesystem);
 
-const cut = (a) => a.slice(0, a.indexOf('('));
-const createPrefix = (name) => {
-    if (name.includes('('))
-        return `${cut(name)}(`;
-    
-    return `${name}(`;
-};
-
-const createSuffix = () => ');\n';
-const maybeNewline = (a) => a.at(-1) === '\n' ? a : `${a}\n`;
-
-const __json_name = '__putout_processor_json';
-const __yaml_name = '__putout_processor_yaml';
-const __toml_name = '__putout_processor_toml';
-const __filesystem_name$2 = '__putout_processor_filesystem';
-const __ignore_name = '__putout_processor_ignore';
-
-const __json = `${__json_name}(__object)`;
-const __yaml = `${__yaml_name}(__object)`;
-const __toml = `${__toml_name}(__object)`;
-const __filesystem = `${__filesystem_name$2}(__object)`;
-const __ignore = `${__ignore_name}(__array)`;
-
-const TYPES = [
-    __json_name,
-    __yaml_name,
-    __filesystem_name$2,
-    __ignore_name,
-];
-
-const toJS = (source, name = __json) => {
-    const prefix = createPrefix(name);
-    const suffix = createSuffix();
-    
-    return `${prefix}${source}${suffix}`;
-};
-
-const fromJS = (source, name = __json) => {
-    source = maybeNewline(source);
-    const shortName = cut(name);
-    
-    source = source.slice(source.indexOf(shortName));
-    
-    const prefix = createPrefix(name);
-    const suffix = createSuffix();
-    const length = source.length - suffix.length;
-    const sliced = source.slice(prefix.length, length);
-    
-    return maybeNewline(removeBlankLines$1(sliced));
-};
-
-const isJSON = (source) => {
-    for (const type of TYPES) {
-        if (!source.indexOf(type))
-            return true;
-    }
-    
-    return false;
-};
-
-var json = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	__filesystem: __filesystem,
-	__filesystem_name: __filesystem_name$2,
-	__ignore: __ignore,
-	__ignore_name: __ignore_name,
-	__json: __json,
-	__json_name: __json_name,
-	__toml: __toml,
-	__toml_name: __toml_name,
-	__yaml: __yaml,
-	__yaml_name: __yaml_name,
-	fromJS: fromJS,
-	isJSON: isJSON,
-	toJS: toJS
-});
-
 var require$$2 = /*@__PURE__*/getAugmentedNamespace(json);
 
 var require$$1 = /*@__PURE__*/getAugmentedNamespace(operate);
@@ -65143,12 +65157,12 @@ const createTrackFile = (fileProgress) => function*(...a) {
 };
 
 const getTraverse = ({scan, rule, progress}) => ({push, options}) => ({
-    [`${__filesystem_name_1}(__)`](path) {
+    [`${__filesystem_name$2}(__)`](path) {
         log(rule);
         progress.start(rule);
         
         const rootPath = path.get('arguments.0');
-        const isSimple = fullstore$1(false);
+        const isSimple = fullstore(false);
         
         const fileProgress = createFileProgress({
             rule,
@@ -65214,18 +65228,18 @@ function runSimple(plugin, {path, isSimple, shouldConvert = true}) {
 }
 
 function parseVisitor(visitors) {
-    const to = visitors[`${__filesystem_name_1}(__object)`];
-    const from = visitors[`${__filesystem_name_1}(__array)`];
+    const to = visitors[`${__filesystem_name$2}(__object)`];
+    const from = visitors[`${__filesystem_name$2}(__array)`];
     
     if (to)
         return [
             to,
-            `${__filesystem_name_1}(__object)`,
+            `${__filesystem_name$2}(__object)`,
         ];
     
     return [
         from,
-        `${__filesystem_name_1}(__array)`,
+        `${__filesystem_name$2}(__array)`,
     ];
 }
 
