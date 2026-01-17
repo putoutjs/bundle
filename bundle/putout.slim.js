@@ -1,33 +1,4 @@
-function getAugmentedNamespace(n) {
-  if (Object.prototype.hasOwnProperty.call(n, '__esModule')) return n;
-  var f = n.default;
-	if (typeof f == "function") {
-		var a = function a () {
-			var isInstance = false;
-      try {
-        isInstance = this instanceof a;
-      } catch {}
-			if (isInstance) {
-        return Reflect.construct(f, arguments, this.constructor);
-			}
-			return f.apply(this, arguments);
-		};
-		a.prototype = f.prototype;
-  } else a = {};
-  Object.defineProperty(a, '__esModule', {value: true});
-	Object.keys(n).forEach(function (k) {
-		var d = Object.getOwnPropertyDescriptor(n, k);
-		Object.defineProperty(a, k, d.get ? d : {
-			enumerable: true,
-			get: function () {
-				return n[k];
-			}
-		});
-	});
-	return a;
-}
-
-var fullstore$1 = (value) => {
+function fullstore(value) {
     const data = {
         value,
     };
@@ -42,9 +13,7 @@ var fullstore$1 = (value) => {
         
         return value;
     };
-};
-
-var fullstore$2 = fullstore$1;
+}
 
 var global$1 = (typeof global !== "undefined" ? global :
   typeof self !== "undefined" ? self :
@@ -2820,7 +2789,7 @@ __export(lib_exports, {
     TSUnionType: () => TSUnionType$1,
     TSUnknownKeyword: () => TSUnknownKeyword$1,
     TSVoidKeyword: () => TSVoidKeyword$1,
-    TYPES: () => TYPES$4,
+    TYPES: () => TYPES$3,
     TYPESCRIPT_TYPES: () => TYPESCRIPT_TYPES,
     TaggedTemplateExpression: () => TaggedTemplateExpression$1,
     TemplateElement: () => TemplateElement,
@@ -3686,7 +3655,7 @@ __export(lib_exports, {
     toKeyAlias: () => toKeyAlias,
     toStatement: () => toStatement$1,
     topicReference: () => topicReference,
-    traverse: () => traverse$2,
+    traverse: () => traverse$4,
     traverseFast: () => traverseFast,
     tryStatement: () => tryStatement,
     tsAnyKeyword: () => tsAnyKeyword,
@@ -13568,7 +13537,7 @@ for (const {types: types2, set} of allExpandedTypes) {
     }
 }
 
-var TYPES$4 = [].concat(Object.keys(VISITOR_KEYS), Object.keys(FLIPPED_ALIAS_KEYS), Object.keys(DEPRECATED_KEYS));
+var TYPES$3 = [].concat(Object.keys(VISITOR_KEYS), Object.keys(FLIPPED_ALIAS_KEYS), Object.keys(DEPRECATED_KEYS));
 
 function validate$1$1(node, key, val) {
     if (!node)
@@ -19591,7 +19560,7 @@ function getFunctionName(node, parent) {
     };
 }
 
-function traverse$2(node, handlers, state) {
+function traverse$4(node, handlers, state) {
     if (typeof handlers === 'function') {
         handlers = {
             enter: handlers,
@@ -21375,7 +21344,7 @@ var TokContext = class {
     preserveSpace;
 };
 
-var types$2 = {
+var types = {
     brace: new TokContext('{'),
     j_oTag: new TokContext('<tag'),
     j_cTag: new TokContext('</tag'),
@@ -23289,9 +23258,9 @@ var jsx = (superClass) => class JSXParserMixin extends superClass {
         switch(this.state.type) {
         case 2:
             node = this.startNode();
-            this.setContext(types$2.brace);
+            this.setContext(types.brace);
             this.next();
-            node = this.jsxParseExpressionContainer(node, types$2.j_oTag);
+            node = this.jsxParseExpressionContainer(node, types.j_oTag);
             
             if (node.expression.type === 'JSXEmptyExpression') {
                 this.raise(JsxErrors.AttributeIsEmpty, node);
@@ -23316,7 +23285,7 @@ var jsx = (superClass) => class JSXParserMixin extends superClass {
     jsxParseSpreadChild(node) {
         this.next();
         node.expression = this.parseExpression();
-        this.setContext(types$2.j_expr);
+        this.setContext(types.j_expr);
         this.state.canStartJSXElement = true;
         this.expect(4);
         return this.finishNode(node, 'JSXSpreadChild');
@@ -23345,11 +23314,11 @@ var jsx = (superClass) => class JSXParserMixin extends superClass {
         const node = this.startNode();
         
         if (this.match(2)) {
-            this.setContext(types$2.brace);
+            this.setContext(types.brace);
             this.next();
             this.expect(17);
             node.argument = this.parseMaybeAssignAllowIn();
-            this.setContext(types$2.j_oTag);
+            this.setContext(types.j_oTag);
             this.state.canStartJSXElement = true;
             this.expect(4);
             return this.finishNode(node, 'JSXSpreadAttribute');
@@ -23423,13 +23392,13 @@ var jsx = (superClass) => class JSXParserMixin extends superClass {
                 
                 case 2: {
                     const node2 = this.startNode();
-                    this.setContext(types$2.brace);
+                    this.setContext(types.brace);
                     this.next();
                     
                     if (this.match(17)) {
                         children.push(this.jsxParseSpreadChild(node2));
                     } else {
-                        children.push(this.jsxParseExpressionContainer(node2, types$2.j_expr));
+                        children.push(this.jsxParseExpressionContainer(node2, types.j_expr));
                     }
                     
                     break;
@@ -23505,12 +23474,12 @@ var jsx = (superClass) => class JSXParserMixin extends superClass {
     getTokenFromCode(code2) {
         const context = this.curContext();
         
-        if (context === types$2.j_expr) {
+        if (context === types.j_expr) {
             this.jsxReadToken();
             return;
         }
         
-        if (context === types$2.j_oTag || context === types$2.j_cTag) {
+        if (context === types.j_oTag || context === types.j_cTag) {
             if (isIdentifierStart2(code2)) {
                 this.jsxReadWord();
                 return;
@@ -23522,7 +23491,7 @@ var jsx = (superClass) => class JSXParserMixin extends superClass {
                 return;
             }
             
-            if ((code2 === 34 || code2 === 39) && context === types$2.j_oTag) {
+            if ((code2 === 34 || code2 === 39) && context === types.j_oTag) {
                 this.jsxReadString(code2);
                 return;
             }
@@ -23541,18 +23510,18 @@ var jsx = (superClass) => class JSXParserMixin extends superClass {
         const {context, type} = this.state;
         
         if (type === 52 && prevType === 138) {
-            context.splice(-2, 2, types$2.j_cTag);
+            context.splice(-2, 2, types.j_cTag);
             this.state.canStartJSXElement = false;
         } else if (type === 138) {
-            context.push(types$2.j_oTag);
+            context.push(types.j_oTag);
         } else if (type === 139) {
             const out = context[context.length - 1];
             
-            if (out === types$2.j_oTag && prevType === 52 || out === types$2.j_cTag) {
+            if (out === types.j_oTag && prevType === 52 || out === types.j_cTag) {
                 context.pop();
-                this.state.canStartJSXElement = context[context.length - 1] === types$2.j_expr;
+                this.state.canStartJSXElement = context[context.length - 1] === types.j_expr;
             } else {
-                this.setContext(types$2.j_expr);
+                this.setContext(types.j_expr);
                 this.state.canStartJSXElement = true;
             }
         } else {
@@ -24134,7 +24103,7 @@ var State$2 = class _State {
     end = 0;
     lastTokEndLoc = null;
     lastTokStartLoc = null;
-    context = [types$2.brace];
+    context = [types.brace];
     get canStartJSXElement() {
         return (this.flags & 1024) > 0;
     }
@@ -28522,7 +28491,7 @@ var typescript$1 = (superClass) => class TypeScriptParserMixin extends superClas
     }
     
     tsInTopLevelContext(cb) {
-        if (this.curContext() !== types$2.brace) {
+        if (this.curContext() !== types.brace) {
             const oldContext = this.state.context;
             
             this.state.context = [oldContext[0]];
@@ -28908,7 +28877,7 @@ var typescript$1 = (superClass) => class TypeScriptParserMixin extends superClas
         
         if (node.params.length === 0) {
             this.raise(TSErrors.EmptyTypeArguments, node);
-        } else if (!this.state.inType && this.curContext() === types$2.brace) {
+        } else if (!this.state.inType && this.curContext() === types.brace) {
             this.reScan_lt_gt();
         }
         
@@ -29815,7 +29784,7 @@ var typescript$1 = (superClass) => class TypeScriptParserMixin extends superClas
             
             const currentContext = context[context.length - 1];
             
-            if (currentContext === types$2.j_oTag || currentContext === types$2.j_expr) {
+            if (currentContext === types.j_oTag || currentContext === types.j_expr) {
                 context.pop();
             }
         }
@@ -35432,16 +35401,6 @@ function parse$9(input, options) {
     }
 }
 
-function parseExpression$1(input, options) {
-    const parser = getParser$1(options, input);
-    
-    if (parser.options.strictMode) {
-        parser.state.strict = true;
-    }
-    
-    return parser.getExpression();
-}
-
 function generateExportedTokenTypes(internalTokenTypes) {
     const tokenTypes2 = {};
     
@@ -35452,7 +35411,7 @@ function generateExportedTokenTypes(internalTokenTypes) {
     return tokenTypes2;
 }
 
-var tokTypes = generateExportedTokenTypes(tt);
+generateExportedTokenTypes(tt);
 
 function getParser$1(options, input) {
     let cls = Parser;
@@ -44659,7 +44618,7 @@ function verify$1(visitor) {
             continue;
         
         if (!TYPES2.includes(nodeType)) {
-            throw new Error(`You gave us a visitor for the node type ${nodeType} but it's not a valid type in @babel/traverse ${'8.0.0-beta.3'}`);
+            throw new Error(`You gave us a visitor for the node type ${nodeType} but it's not a valid type in @babel/traverse ${'8.0.0-beta.4'}`);
         }
         
         const visitors2 = visitor[nodeType];
@@ -47585,7 +47544,7 @@ function replaceWithSourceString(replacement) {
     return this.replaceWith(expressionAST);
 }
 
-function replaceWith$3(replacementPath) {
+function replaceWith$1(replacementPath) {
     resync.call(this);
     
     if (this.removed) {
@@ -50214,7 +50173,7 @@ var methods = {
     isGenericType,
     replaceWithMultiple: replaceWithMultiple$1,
     replaceWithSourceString,
-    replaceWith: replaceWith$3,
+    replaceWith: replaceWith$1,
     replaceExpressionWithStatements,
     replaceInline,
     evaluateTruthy,
@@ -50271,7 +50230,7 @@ var methods = {
 };
 
 Object.assign(NodePath_Final.prototype, methods);
-for (const type of TYPES$4) {
+for (const type of TYPES$3) {
     const typeKey = `is${type}`;
     const fn = lib_exports[typeKey];
     
@@ -50290,8 +50249,8 @@ for (const type of Object.keys(virtualTypes)) {
     if (type.startsWith('_'))
         continue;
     
-    if (!TYPES$4.includes(type))
-        TYPES$4.push(type);
+    if (!TYPES$3.includes(type))
+        TYPES$3.push(type);
 }
 
 var {VISITOR_KEYS: VISITOR_KEYS$2} = lib_exports;
@@ -50963,19 +50922,7 @@ traverse3.hasType = function(tree, type, denylistTypes) {
 };
 traverse3.cache = cache;
 
-var bundle = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	codeFrameColumns: codeFrameColumns,
-	generate: generate$1,
-	parse: parse$9,
-	parseExpression: parseExpression$1,
-	template: index,
-	tokTypes: tokTypes,
-	traverse: traverse3,
-	types: lib_exports
-});
-
-const TYPES$3 = {
+const TYPES$2 = {
     TOKEN: 'Token',
     NEWLINE: 'Newline',
     SPLITTER: 'Splitter',
@@ -52675,7 +52622,7 @@ function maybePrintBrace(brace, path, printer, semantics) {
 
 const {isArrayExpression: isArrayExpression$8} = lib_exports;
 
-const TYPES$2 = [
+const TYPES$1 = [
     'NullLiteral',
     'NumericLiteral',
     'BigIntLiteral',
@@ -52692,7 +52639,7 @@ const isInsideTuple = (path) => {
     if (second !== path.node)
         return false;
     
-    return TYPES$2.includes(first.type);
+    return TYPES$1.includes(first.type);
 };
 
 const {
@@ -53836,7 +53783,7 @@ function usedInAssignment(path) {
     return false;
 }
 
-const {entries: entries$a} = Object;
+const {entries: entries$b} = Object;
 const isOneDeclaration = ({node}) => node.declarations.length === 1;
 
 const remove = (path) => {
@@ -53862,7 +53809,7 @@ const remove = (path) => {
     const elements = path.parentPath.get('elements');
     const n = elements.length - 1;
     
-    for (const [i, el] of entries$a(elements)) {
+    for (const [i, el] of entries$b(elements)) {
         if (el !== path)
             continue;
         
@@ -54092,7 +54039,7 @@ const getProperties = (path, names) => {
     return result;
 };
 
-const getProperty$2 = (path, name) => {
+const getProperty = (path, name) => {
     if (!isObjectExpression$4(path) && !isObjectPattern$1(path))
         throw Error(`☝️Looks like path is not 'ObjectExpression | ObjectPattern', but: '${path.type}' for path: ${path}`);
     
@@ -54238,7 +54185,7 @@ const parseNode$2 = (a) => {
     return a;
 };
 
-const replaceWith$2 = (path, node) => {
+const replaceWith = (path, node) => {
     node = parseNode$2(node);
     
     if (path?.parentPath?.isExpressionStatement() && !path.parentPath.isProgram()) {
@@ -54338,34 +54285,6 @@ const isESM = (path) => {
     
     return false;
 };
-
-var operate = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	compute: compute,
-	extract: extract,
-	findBinding: findBinding,
-	getBinding: getBinding,
-	getBindingPath: getBindingPath,
-	getExportDefault: getExportDefault,
-	getLiteralRaw: getLiteralRaw,
-	getPathAfterImports: getPathAfterImports,
-	getPathAfterRequires: getPathAfterRequires,
-	getProperties: getProperties,
-	getProperty: getProperty$2,
-	insertAfter: insertAfter,
-	insertBefore: insertBefore,
-	isESM: isESM,
-	isModuleExports: isModuleExports,
-	isSimple: isSimple,
-	remove: remove,
-	rename: rename,
-	renameProperty: renameProperty,
-	replaceWith: replaceWith$2,
-	replaceWithMultiple: replaceWithMultiple,
-	setLiteralValue: setLiteralValue,
-	toExpression: toExpression,
-	traverseProperties: traverseProperties
-});
 
 const {
     isObjectExpression: isObjectExpression$3,
@@ -55797,6 +55716,35 @@ const ExportNamedDeclaration = {
         markAfter(path);
     },
 };
+
+function getAugmentedNamespace(n) {
+  if (Object.prototype.hasOwnProperty.call(n, '__esModule')) return n;
+  var f = n.default;
+	if (typeof f == "function") {
+		var a = function a () {
+			var isInstance = false;
+      try {
+        isInstance = this instanceof a;
+      } catch {}
+			if (isInstance) {
+        return Reflect.construct(f, arguments, this.constructor);
+			}
+			return f.apply(this, arguments);
+		};
+		a.prototype = f.prototype;
+  } else a = {};
+  Object.defineProperty(a, '__esModule', {value: true});
+	Object.keys(n).forEach(function (k) {
+		var d = Object.getOwnPropertyDescriptor(n, k);
+		Object.defineProperty(a, k, d.get ? d : {
+			enumerable: true,
+			get: function () {
+				return n[k];
+			}
+		});
+	});
+	return a;
+}
 
 var parseImportSpecifiers_1 = (specifiers) => {
     const defaults = [];
@@ -58456,168 +58404,168 @@ const JSXClosingElement = (path, {print}) => {
 };
 
 var baseVisitors = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	ArrayExpression: ArrayExpression,
-	ArrayPattern: ArrayPattern,
-	ArrowFunctionExpression: ArrowFunctionExpression,
-	AssignmentExpression: AssignmentExpression,
-	AssignmentPattern: AssignmentPattern,
-	AwaitExpression: AwaitExpression,
-	BigIntLiteral: BigIntLiteral,
-	BinaryExpression: BinaryExpression,
-	BlockStatement: BlockStatement,
-	BooleanLiteral: BooleanLiteral,
-	BreakStatement: BreakStatement,
-	CallExpression: CallExpression,
-	CatchClause: CatchClause,
-	ClassAccessorProperty: ClassAccessorProperty,
-	ClassDeclaration: ClassDeclaration,
-	ClassExpression: ClassExpression,
-	ClassMethod: ClassMethod,
-	ClassPrivateMethod: ClassPrivateMethod,
-	ClassPrivateProperty: ClassPrivateProperty,
-	ClassProperty: ClassProperty,
-	ConditionalExpression: ConditionalExpression,
-	ContinueStatement: ContinueStatement,
-	DebuggerStatement: DebuggerStatement,
-	Decorator: Decorator,
-	Directive: Directive,
-	DirectiveLiteral: DirectiveLiteral,
-	DoWhileStatement: DoWhileStatement,
-	EmptyStatement: EmptyStatement,
-	ExportAllDeclaration: ExportAllDeclaration,
-	ExportDefaultDeclaration: ExportDefaultDeclaration,
-	ExportDefaultSpecifier: ExportDefaultSpecifier,
-	ExportNamedDeclaration: ExportNamedDeclaration,
-	ExportNamespaceSpecifier: ExportNamespaceSpecifier,
-	ExportSpecifier: ExportSpecifier,
-	ExpressionStatement: ExpressionStatement,
-	ForInStatement: ForInStatement,
-	ForOfStatement: ForOfStatement,
-	ForStatement: ForStatement,
-	FunctionDeclaration: FunctionDeclaration,
-	FunctionExpression: FunctionExpression,
-	Identifier: Identifier,
-	IfStatement: IfStatement,
-	ImportAttribute: ImportAttribute,
-	ImportDeclaration: ImportDeclaration,
-	ImportExpression: ImportExpression,
-	InterpreterDirective: InterpreterDirective,
-	JSXAttribute: JSXAttribute,
-	JSXClosingElement: JSXClosingElement,
-	JSXClosingFragment: JSXClosingFragment,
-	JSXElement: JSXElement,
-	JSXEmptyExpression: JSXEmptyExpression,
-	JSXExpressionContainer: JSXExpressionContainer,
-	JSXFragment: JSXFragment,
-	JSXIdentifier: JSXIdentifier,
-	JSXMemberExpression: JSXMemberExpression,
-	JSXOpeningElement: JSXOpeningElement,
-	JSXOpeningFragment: JSXOpeningFragment,
-	JSXSpreadAttribute: JSXSpreadAttribute,
-	JSXText: JSXText,
-	LabeledStatement: LabeledStatement,
-	LogicalExpression: LogicalExpression,
-	MemberExpression: MemberExpression,
-	MetaProperty: MetaProperty,
-	NewExpression: NewExpression,
-	NullLiteral: NullLiteral,
-	NumericLiteral: NumericLiteral,
-	ObjectExpression: ObjectExpression,
-	ObjectMethod: ObjectMethod,
-	ObjectPattern: ObjectPattern,
-	ObjectProperty: ObjectProperty,
-	OptionalCallExpression: OptionalCallExpression,
-	OptionalMemberExpression: OptionalMemberExpression,
-	ParenthesizedExpression: ParenthesizedExpression,
-	PrivateName: PrivateName,
-	Program: Program,
-	RegExpLiteral: RegExpLiteral,
-	RestElement: RestElement,
-	ReturnStatement: ReturnStatement,
-	SequenceExpression: SequenceExpression,
-	SpreadElement: SpreadElement,
-	StaticBlock: StaticBlock,
-	StringLiteral: StringLiteral,
-	Super: Super,
-	SwitchStatement: SwitchStatement,
-	TSAnyKeyword: TSAnyKeyword,
-	TSArrayType: TSArrayType,
-	TSAsExpression: TSAsExpression,
-	TSBigIntKeyword: TSBigIntKeyword,
-	TSBooleanKeyword: TSBooleanKeyword,
-	TSCallSignatureDeclaration: TSCallSignatureDeclaration,
-	TSClassImplements: TSClassImplements,
-	TSConditionalType: TSConditionalType,
-	TSConstructSignatureDeclaration: TSConstructSignatureDeclaration,
-	TSConstructorType: TSConstructorType,
-	TSDeclareFunction: TSDeclareFunction,
-	TSDeclareMethod: TSDeclareMethod,
-	TSEnumDeclaration: TSEnumDeclaration,
-	TSEnumMember: TSEnumMember,
-	TSExportAssignment: TSExportAssignment,
-	TSExternalModuleReference: TSExternalModuleReference,
-	TSFunctionType: TSFunctionType,
-	TSImportEqualsDeclaration: TSImportEqualsDeclaration,
-	TSImportType: TSImportType,
-	TSIndexSignature: TSIndexSignature,
-	TSIndexedAccessType: TSIndexedAccessType,
-	TSInferType: TSInferType,
-	TSInstantiationExpression: TSInstantiationExpression,
-	TSInterfaceBody: TSInterfaceBody,
-	TSInterfaceDeclaration: TSInterfaceDeclaration,
-	TSInterfaceHeritage: TSInterfaceHeritage,
-	TSIntersectionType: TSIntersectionType,
-	TSLiteralType: TSLiteralType,
-	TSMappedType: TSMappedType,
-	TSMethodSignature: TSMethodSignature,
-	TSModuleBlock: TSModuleBlock,
-	TSModuleDeclaration: TSModuleDeclaration,
-	TSNamedTupleMember: TSNamedTupleMember,
-	TSNeverKeyword: TSNeverKeyword,
-	TSNonNullExpression: TSNonNullExpression,
-	TSNullKeyword: TSNullKeyword,
-	TSNumberKeyword: TSNumberKeyword,
-	TSObjectKeyword: TSObjectKeyword,
-	TSOptionalType: TSOptionalType,
-	TSParameterProperty: TSParameterProperty,
-	TSParenthesizedType: TSParenthesizedType,
-	TSPropertySignature: TSPropertySignature,
-	TSQualifiedName: TSQualifiedName,
-	TSRestType: TSRestType,
-	TSSatisfiesExpression: TSSatisfiesExpression,
-	TSStringKeyword: TSStringKeyword,
-	TSSymbolKeyword: TSSymbolKeyword,
-	TSTemplateLiteralType: TSTemplateLiteralType,
-	TSThisType: TSThisType,
-	TSTupleType: TSTupleType,
-	TSTypeAliasDeclaration: TSTypeAliasDeclaration,
-	TSTypeAnnotation: TSTypeAnnotation,
-	TSTypeAssertion: TSTypeAssertion,
-	TSTypeLiteral: TSTypeLiteral,
-	TSTypeOperator: TSTypeOperator,
-	TSTypeParameter: TSTypeParameter,
-	TSTypeParameterDeclaration: TSTypeParameterDeclaration,
-	TSTypeParameterInstantiation: TSTypeParameterInstantiation,
-	TSTypePredicate: TSTypePredicate,
-	TSTypeQuery: TSTypeQuery,
-	TSTypeReference: TSTypeReference,
-	TSUndefinedKeyword: TSUndefinedKeyword,
-	TSUnionType: TSUnionType,
-	TSUnknownKeyword: TSUnknownKeyword,
-	TSVoidKeyword: TSVoidKeyword,
-	TaggedTemplateExpression: TaggedTemplateExpression,
-	TemplateLiteral: TemplateLiteral,
-	ThisExpression: ThisExpression,
-	ThrowStatement: ThrowStatement,
-	TryStatement: TryStatement,
-	UnaryExpression: UnaryExpression,
-	UpdateExpression: UpdateExpression,
-	VariableDeclaration: VariableDeclaration,
-	VoidPattern: VoidPattern,
-	WhileStatement: WhileStatement,
-	WithStatement: WithStatement,
-	YieldExpression: YieldExpression
+    __proto__: null,
+    ArrayExpression: ArrayExpression,
+    ArrayPattern: ArrayPattern,
+    ArrowFunctionExpression: ArrowFunctionExpression,
+    AssignmentExpression: AssignmentExpression,
+    AssignmentPattern: AssignmentPattern,
+    AwaitExpression: AwaitExpression,
+    BigIntLiteral: BigIntLiteral,
+    BinaryExpression: BinaryExpression,
+    BlockStatement: BlockStatement,
+    BooleanLiteral: BooleanLiteral,
+    BreakStatement: BreakStatement,
+    CallExpression: CallExpression,
+    CatchClause: CatchClause,
+    ClassAccessorProperty: ClassAccessorProperty,
+    ClassDeclaration: ClassDeclaration,
+    ClassExpression: ClassExpression,
+    ClassMethod: ClassMethod,
+    ClassPrivateMethod: ClassPrivateMethod,
+    ClassPrivateProperty: ClassPrivateProperty,
+    ClassProperty: ClassProperty,
+    ConditionalExpression: ConditionalExpression,
+    ContinueStatement: ContinueStatement,
+    DebuggerStatement: DebuggerStatement,
+    Decorator: Decorator,
+    Directive: Directive,
+    DirectiveLiteral: DirectiveLiteral,
+    DoWhileStatement: DoWhileStatement,
+    EmptyStatement: EmptyStatement,
+    ExportAllDeclaration: ExportAllDeclaration,
+    ExportDefaultDeclaration: ExportDefaultDeclaration,
+    ExportDefaultSpecifier: ExportDefaultSpecifier,
+    ExportNamedDeclaration: ExportNamedDeclaration,
+    ExportNamespaceSpecifier: ExportNamespaceSpecifier,
+    ExportSpecifier: ExportSpecifier,
+    ExpressionStatement: ExpressionStatement,
+    ForInStatement: ForInStatement,
+    ForOfStatement: ForOfStatement,
+    ForStatement: ForStatement,
+    FunctionDeclaration: FunctionDeclaration,
+    FunctionExpression: FunctionExpression,
+    Identifier: Identifier,
+    IfStatement: IfStatement,
+    ImportAttribute: ImportAttribute,
+    ImportDeclaration: ImportDeclaration,
+    ImportExpression: ImportExpression,
+    InterpreterDirective: InterpreterDirective,
+    JSXAttribute: JSXAttribute,
+    JSXClosingElement: JSXClosingElement,
+    JSXClosingFragment: JSXClosingFragment,
+    JSXElement: JSXElement,
+    JSXEmptyExpression: JSXEmptyExpression,
+    JSXExpressionContainer: JSXExpressionContainer,
+    JSXFragment: JSXFragment,
+    JSXIdentifier: JSXIdentifier,
+    JSXMemberExpression: JSXMemberExpression,
+    JSXOpeningElement: JSXOpeningElement,
+    JSXOpeningFragment: JSXOpeningFragment,
+    JSXSpreadAttribute: JSXSpreadAttribute,
+    JSXText: JSXText,
+    LabeledStatement: LabeledStatement,
+    LogicalExpression: LogicalExpression,
+    MemberExpression: MemberExpression,
+    MetaProperty: MetaProperty,
+    NewExpression: NewExpression,
+    NullLiteral: NullLiteral,
+    NumericLiteral: NumericLiteral,
+    ObjectExpression: ObjectExpression,
+    ObjectMethod: ObjectMethod,
+    ObjectPattern: ObjectPattern,
+    ObjectProperty: ObjectProperty,
+    OptionalCallExpression: OptionalCallExpression,
+    OptionalMemberExpression: OptionalMemberExpression,
+    ParenthesizedExpression: ParenthesizedExpression,
+    PrivateName: PrivateName,
+    Program: Program,
+    RegExpLiteral: RegExpLiteral,
+    RestElement: RestElement,
+    ReturnStatement: ReturnStatement,
+    SequenceExpression: SequenceExpression,
+    SpreadElement: SpreadElement,
+    StaticBlock: StaticBlock,
+    StringLiteral: StringLiteral,
+    Super: Super,
+    SwitchStatement: SwitchStatement,
+    TSAnyKeyword: TSAnyKeyword,
+    TSArrayType: TSArrayType,
+    TSAsExpression: TSAsExpression,
+    TSBigIntKeyword: TSBigIntKeyword,
+    TSBooleanKeyword: TSBooleanKeyword,
+    TSCallSignatureDeclaration: TSCallSignatureDeclaration,
+    TSClassImplements: TSClassImplements,
+    TSConditionalType: TSConditionalType,
+    TSConstructSignatureDeclaration: TSConstructSignatureDeclaration,
+    TSConstructorType: TSConstructorType,
+    TSDeclareFunction: TSDeclareFunction,
+    TSDeclareMethod: TSDeclareMethod,
+    TSEnumDeclaration: TSEnumDeclaration,
+    TSEnumMember: TSEnumMember,
+    TSExportAssignment: TSExportAssignment,
+    TSExternalModuleReference: TSExternalModuleReference,
+    TSFunctionType: TSFunctionType,
+    TSImportEqualsDeclaration: TSImportEqualsDeclaration,
+    TSImportType: TSImportType,
+    TSIndexSignature: TSIndexSignature,
+    TSIndexedAccessType: TSIndexedAccessType,
+    TSInferType: TSInferType,
+    TSInstantiationExpression: TSInstantiationExpression,
+    TSInterfaceBody: TSInterfaceBody,
+    TSInterfaceDeclaration: TSInterfaceDeclaration,
+    TSInterfaceHeritage: TSInterfaceHeritage,
+    TSIntersectionType: TSIntersectionType,
+    TSLiteralType: TSLiteralType,
+    TSMappedType: TSMappedType,
+    TSMethodSignature: TSMethodSignature,
+    TSModuleBlock: TSModuleBlock,
+    TSModuleDeclaration: TSModuleDeclaration,
+    TSNamedTupleMember: TSNamedTupleMember,
+    TSNeverKeyword: TSNeverKeyword,
+    TSNonNullExpression: TSNonNullExpression,
+    TSNullKeyword: TSNullKeyword,
+    TSNumberKeyword: TSNumberKeyword,
+    TSObjectKeyword: TSObjectKeyword,
+    TSOptionalType: TSOptionalType,
+    TSParameterProperty: TSParameterProperty,
+    TSParenthesizedType: TSParenthesizedType,
+    TSPropertySignature: TSPropertySignature,
+    TSQualifiedName: TSQualifiedName,
+    TSRestType: TSRestType,
+    TSSatisfiesExpression: TSSatisfiesExpression,
+    TSStringKeyword: TSStringKeyword,
+    TSSymbolKeyword: TSSymbolKeyword,
+    TSTemplateLiteralType: TSTemplateLiteralType,
+    TSThisType: TSThisType,
+    TSTupleType: TSTupleType,
+    TSTypeAliasDeclaration: TSTypeAliasDeclaration,
+    TSTypeAnnotation: TSTypeAnnotation,
+    TSTypeAssertion: TSTypeAssertion,
+    TSTypeLiteral: TSTypeLiteral,
+    TSTypeOperator: TSTypeOperator,
+    TSTypeParameter: TSTypeParameter,
+    TSTypeParameterDeclaration: TSTypeParameterDeclaration,
+    TSTypeParameterInstantiation: TSTypeParameterInstantiation,
+    TSTypePredicate: TSTypePredicate,
+    TSTypeQuery: TSTypeQuery,
+    TSTypeReference: TSTypeReference,
+    TSUndefinedKeyword: TSUndefinedKeyword,
+    TSUnionType: TSUnionType,
+    TSUnknownKeyword: TSUnknownKeyword,
+    TSVoidKeyword: TSVoidKeyword,
+    TaggedTemplateExpression: TaggedTemplateExpression,
+    TemplateLiteral: TemplateLiteral,
+    ThisExpression: ThisExpression,
+    ThrowStatement: ThrowStatement,
+    TryStatement: TryStatement,
+    UnaryExpression: UnaryExpression,
+    UpdateExpression: UpdateExpression,
+    VariableDeclaration: VariableDeclaration,
+    VoidPattern: VoidPattern,
+    WhileStatement: WhileStatement,
+    WithStatement: WithStatement,
+    YieldExpression: YieldExpression
 });
 
 const isString$c = (a) => typeof a === 'string';
@@ -58803,7 +58751,7 @@ const createDebug$3 = (tokens) => (a) => {
         return;
     
     tokens.push({
-        type: TYPES$3.DEBUG,
+        type: TYPES$2.DEBUG,
         value: `/*__${stringSnakeCase(a)}*/`,
     });
 };
@@ -58988,14 +58936,14 @@ const tokenize = (ast, overrides) => {
     
     const write = (value) => {
         addToken({
-            type: TYPES$3.TOKEN,
+            type: TYPES$2.TOKEN,
             value,
         });
     };
     
     const indent = () => {
         addToken({
-            type: TYPES$3.INDENT,
+            type: TYPES$2.INDENT,
             value: printIndent(i, format.indent),
         });
     };
@@ -59008,7 +58956,7 @@ const tokenize = (ast, overrides) => {
     
     const newline = () => {
         addToken({
-            type: TYPES$3.NEWLINE,
+            type: TYPES$2.NEWLINE,
             value: format.newline,
         });
     };
@@ -59032,7 +58980,7 @@ const tokenize = (ast, overrides) => {
     
     const space = () => {
         addToken({
-            type: TYPES$3.SPACE,
+            type: TYPES$2.SPACE,
             value: format.space,
         });
     };
@@ -59049,21 +58997,21 @@ const tokenize = (ast, overrides) => {
     
     const splitter = () => {
         addToken({
-            type: TYPES$3.SPLITTER,
+            type: TYPES$2.SPLITTER,
             value: format.splitter,
         });
     };
     
     const quote = () => {
         addToken({
-            type: TYPES$3.QUOTE,
+            type: TYPES$2.QUOTE,
             value: format.quote,
         });
     };
     
     const endOfFile = () => {
         addToken({
-            type: TYPES$3.END_OF_FILE,
+            type: TYPES$2.END_OF_FILE,
             value: format.endOfFile,
         });
     };
@@ -59106,7 +59054,7 @@ const tokenize = (ast, overrides) => {
         traverse,
         maybe,
         quote,
-        store: fullstore$2(),
+        store: fullstore(),
     });
     
     const currentTraversers = {
@@ -59264,20 +59212,59 @@ var lib = removeBlankLines;
 
 var removeBlankLines$1 = lib.default;
 
-const __json_name$1 = '__putout_processor_json';
-const __yaml_name$1 = '__putout_processor_yaml';
-const __filesystem_name$3 = '__putout_processor_filesystem';
-const __ignore_name$1 = '__putout_processor_ignore';
+const cut$1 = (a) => a.slice(0, a.indexOf('('));
+const createPrefix = (name) => {
+    if (name.includes('('))
+        return `${cut$1(name)}(`;
+    
+    return `${name}(`;
+};
 
-const TYPES$1 = [
-    __json_name$1,
-    __yaml_name$1,
-    __filesystem_name$3,
-    __ignore_name$1,
+const createSuffix = () => ');\n';
+const maybeNewline = (a) => a.at(-1) === '\n' ? a : `${a}\n`;
+
+const __json_name = '__putout_processor_json';
+const __yaml_name = '__putout_processor_yaml';
+const __toml_name = '__putout_processor_toml';
+const __filesystem_name = '__putout_processor_filesystem';
+const __ignore_name = '__putout_processor_ignore';
+
+const __json = `${__json_name}(__object)`;
+const __yaml = `${__yaml_name}(__object)`;
+const __toml = `${__toml_name}(__object)`;
+const __filesystem = `${__filesystem_name}(__object)`;
+const __ignore = `${__ignore_name}(__array)`;
+
+const TYPES = [
+    __json_name,
+    __yaml_name,
+    __filesystem_name,
+    __ignore_name,
 ];
 
-var isJSON$1 = (source) => {
-    for (const type of TYPES$1) {
+const toJS = (source, name = __json) => {
+    const prefix = createPrefix(name);
+    const suffix = createSuffix();
+    
+    return `${prefix}${source}${suffix}`;
+};
+
+const fromJS = (source, name = __json) => {
+    source = maybeNewline(source);
+    const shortName = cut$1(name);
+    
+    source = source.slice(source.indexOf(shortName));
+    
+    const prefix = createPrefix(name);
+    const suffix = createSuffix();
+    const length = source.length - suffix.length;
+    const sliced = source.slice(prefix.length, length);
+    
+    return maybeNewline(removeBlankLines$1(sliced));
+};
+
+const isJSON = (source) => {
+    for (const type of TYPES) {
         if (!source.indexOf(type))
             return true;
     }
@@ -59330,7 +59317,7 @@ function isASTJSON(ast) {
     if (!isIdentifier$5(callee))
         return false;
     
-    return isJSON$1(callee.name);
+    return isJSON(callee.name);
 }
 
 const print$2 = (ast, overrides = {}) => {
@@ -60026,11 +60013,11 @@ var onceExports = once$6.exports;
 const noop$3 = () => {};
 
 var empty = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	default: noop$3
+    __proto__: null,
+    default: noop$3
 });
 
-var require$$1$1 = /*@__PURE__*/getAugmentedNamespace(empty);
+var require$$1 = /*@__PURE__*/getAugmentedNamespace(empty);
 
 // eslint-disable-next-line node/no-unsupported-features/es-syntax
 
@@ -60058,11 +60045,11 @@ function privateMethods(Parser) {
 }
 
 var acornPrivateMethods = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	default: privateMethods
+    __proto__: null,
+    default: privateMethods
 });
 
-var require$$2$1 = /*@__PURE__*/getAugmentedNamespace(acornPrivateMethods);
+var require$$2 = /*@__PURE__*/getAugmentedNamespace(acornPrivateMethods);
 
 var acornStage3;
 var hasRequiredAcornStage3;
@@ -60073,9 +60060,9 @@ function requireAcornStage3 () {
 
 	acornStage3 = function(Parser) {
 	  return Parser.extend(
-	    require$$1$1,
-	    require$$1$1,
-	    require$$2$1
+	    require$$1,
+	    require$$1,
+	    require$$2
 	  )
 	};
 	return acornStage3;
@@ -60084,10 +60071,10 @@ function requireAcornStage3 () {
 const once$4 = onceExports;
 
 const initAcorn = once$4(() => {
-    const {Parser} = require$$1$1;
+    const {Parser} = require$$1;
     
     const stage3 = requireAcornStage3();
-    const typescript = require$$1$1.default;
+    const typescript = require$$1.default;
     
     return Parser.extend(typescript(), stage3);
 });
@@ -60140,10 +60127,10 @@ const allowUndeclaredExports = true;
 const allowImportExportEverywhere = true;
 
 var options = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	allowImportExportEverywhere: allowImportExportEverywhere,
-	allowReturnOutsideFunction: allowReturnOutsideFunction,
-	allowUndeclaredExports: allowUndeclaredExports
+    __proto__: null,
+    allowImportExportEverywhere: allowImportExportEverywhere,
+    allowReturnOutsideFunction: allowReturnOutsideFunction,
+    allowUndeclaredExports: allowUndeclaredExports
 });
 
 const {assign: assign$5} = Object;
@@ -60200,7 +60187,7 @@ function getBabelLangExts({isTS, isFlow, isJSX}) {
 
 const once$3 = onceExports;
 
-const initEspree = once$3(() => require$$1$1);
+const initEspree = once$3(() => require$$1);
 
 var parse$6 = (source) => {
     const {parse} = initEspree();
@@ -60220,7 +60207,7 @@ var parse$6 = (source) => {
 
 const once$2 = onceExports;
 
-const initEsprima = once$2(() => require$$1$1);
+const initEsprima = once$2(() => require$$1);
 
 var parse$5 = (source) => {
     const {parse} = initEsprima();
@@ -60236,7 +60223,7 @@ var parse$5 = (source) => {
 
 const once$1 = onceExports;
 
-const initTenko = once$1(() => require$$1$1);
+const initTenko = once$1(() => require$$1);
 
 var parse$4 = (source) => {
     const {Tenko} = initTenko();
@@ -60250,7 +60237,7 @@ var parse$4 = (source) => {
 };
 
 const once = onceExports;
-const initHermes = once(() => require$$1$1);
+const initHermes = once(() => require$$1);
 
 var parse$3 = (source) => {
     const parser = initHermes();
@@ -60807,7 +60794,7 @@ function relative(from, to) {
 var sep = '/';
 var delimiter = ':';
 
-function dirname$1(path) {
+function dirname(path) {
   var result = splitPath(path),
       root = result[0],
       dir = result[1];
@@ -60825,7 +60812,7 @@ function dirname$1(path) {
   return root + dir;
 }
 
-function basename$1(path, ext) {
+function basename(path, ext) {
   var f = splitPath(path)[2];
   // TODO: make this comparison case-insensitive on windows?
   if (ext && f.substr(-1 * ext.length) === ext) {
@@ -60840,8 +60827,8 @@ function extname(path) {
 }
 var path = {
   extname: extname,
-  basename: basename$1,
-  dirname: dirname$1,
+  basename: basename,
+  dirname: dirname,
   sep: sep,
   delimiter: delimiter,
   relative: relative,
@@ -60868,21 +60855,6 @@ var substr = 'ab'.substr(-1) === 'b' ?
     }
 ;
 
-var _polyfillNode_path = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	basename: basename$1,
-	default: path,
-	delimiter: delimiter,
-	dirname: dirname$1,
-	extname: extname,
-	isAbsolute: isAbsolute,
-	join: join$1,
-	normalize: normalize,
-	relative: relative,
-	resolve: resolve,
-	sep: sep
-});
-
 const isFn$5 = (a) => typeof a === 'function';
 
 const tryToCatch = async (fn, ...args) => {
@@ -60900,12 +60872,12 @@ function check$a(fn) {
         throw Error('fn should be a function!');
 }
 
-const returns$1 = (a) => () => a;
+const returns$2 = (a) => () => a;
 const noop$2 = () => {};
 
 const createRequire = (url, overrides = {}) => {
     const {module = _module} = overrides;
-    const {createRequire = returns$1(noop$2)} = module;
+    const {createRequire = returns$2(noop$2)} = module;
     
     return createRequire(url);
 };
@@ -61014,7 +60986,7 @@ function buildPluginsDirs(name) {
 
 const isStr$2 = (a) => typeof a === 'string';
 const {isArray: isArray$a} = Array;
-const {entries: entries$9} = Object;
+const {entries: entries$a} = Object;
 
 const parsePluginNames = (plugins) => {
     const result = [];
@@ -61031,7 +61003,7 @@ const parsePluginNames = (plugins) => {
             continue;
         }
         
-        result.push(...entries$9(plugin));
+        result.push(...entries$a(plugin));
     }
     
     return result;
@@ -61041,7 +61013,7 @@ const {isArray: isArray$9} = Array;
 const isBool$1 = (a) => typeof a === 'boolean';
 const isStr$1 = (a) => typeof a === 'string';
 const isObj = (a) => typeof a === 'object';
-const {entries: entries$8} = Object;
+const {entries: entries$9} = Object;
 const {stringify: stringify$6} = JSON;
 
 const notSupportedError = (a) => Error(`☝️ Rule format not supported ${a}: ${typeof a}`);
@@ -61068,7 +61040,7 @@ const parseRules = (rules) => {
     
     check$9(rules);
     
-    for (const [rule, value] of entries$8(rules)) {
+    for (const [rule, value] of entries$9(rules)) {
         if (isStr$1(value)) {
             result.push({
                 rule,
@@ -61152,21 +61124,6 @@ function validateState(rule, value) {
         value,
     });
 }
-
-const cut$1 = (a) => a.split('/')[0];
-
-const enableNestedRules = (rules) => {
-    const newRules = {};
-    
-    for (const [rule, value] of entries$8(rules)) {
-        if (rule.includes('/') && parseState(rule, value))
-            newRules[cut$1(rule)] = 'on';
-        
-        newRules[rule] = value;
-    }
-    
-    return newRules;
-};
 
 function check$9(rules) {
     if (isArray$9(rules))
@@ -61296,6 +61253,25 @@ const validateRulesRelations = (options) => {
         rules,
         items,
     });
+};
+
+const {entries: entries$8, fromEntries} = Object;
+const cut = (a) => a.split('/')[0];
+
+const enableNestedRules = (rules) => {
+    const newRules = new Map();
+    
+    for (const [rule, value] of entries$8(rules)) {
+        if (newRules.has(rule))
+            continue;
+        
+        if (rule.includes('/') && parseState(rule, value))
+            newRules.set(cut(rule), 'on');
+        
+        newRules.set(rule, value);
+    }
+    
+    return fromEntries(newRules);
 };
 
 const prepareRules = ({rules, pluginNames}) => {
@@ -61457,7 +61433,7 @@ function extendRules$1(rule, plugin) {
 
 function parseRuleName(rule) {
     if (rule.startsWith('import:')) {
-        const shortName = basename$1(rule.replace('import:', ''));
+        const shortName = basename(rule.replace('import:', ''));
         
         return shortName.replace('plugin-', '');
     }
@@ -62509,7 +62485,7 @@ function setValues({waysTo, values, path}) {
     for (const [name, ways] of entries$6(waysTo)) {
         for (let way of ways) {
             if (!way) {
-                replaceWith$2(path, values[name]);
+                replaceWith(path, values[name]);
                 continue;
             }
             
@@ -63882,7 +63858,7 @@ const parseExpression = (nodeFrom, {node}) => {
     return node;
 };
 
-const fix$4 = (from, to, path) => {
+const fix$7 = (from, to, path) => {
     const nodeFrom = template$1.ast(from);
     const mark = watermark(from, to, path);
     
@@ -63909,7 +63885,7 @@ const fix$4 = (from, to, path) => {
     checkExpressionStatement(nodeFrom, nodeTo, path);
     
     const waysTo = findVarsWays(nodeTo);
-    const newPath = replaceWith$2(path, nodeTo);
+    const newPath = replaceWith(path, nodeTo);
     
     if (!nodeTo.__putout_replace_cooked) {
         validateTemplateValues(waysTo, waysFrom);
@@ -63937,7 +63913,7 @@ const getFix = (items, match) => (path) => {
             const matchFn = match[from];
             
             if (!matchFn || runMatch(path, nodeFrom, matchFn))
-                fix$4(from, to, path);
+                fix$7(from, to, path);
         }
     }
 };
@@ -64080,13 +64056,13 @@ const TS_EXCLUDE = [
 ];
 
 const declare$1 = (declarations) => ({
-    report: report$3,
+    report: report$6,
     include,
-    fix: fix$3(declarations),
+    fix: fix$6(declarations),
     filter: filter(declarations),
 });
 
-const report$3 = (path) => {
+const report$6 = (path) => {
     const {name} = path.node;
     const peaceOfName = cutName(name);
     
@@ -64126,7 +64102,7 @@ const filter = (declarations) => (path, {options}) => {
     return parseCode(type, allDeclarations[name]);
 };
 
-const fix$3 = (declarations) => (path, {options}) => {
+const fix$6 = (declarations) => (path, {options}) => {
     const type = getModuleType(path);
     
     const allDeclarations = {
@@ -64245,111 +64221,17 @@ function validateDeclare(declare) {
         throw Error(`☝️ Looks like 'declare' property value is not a 'function', but '${typeof declare}' with value '${stringify(declare)}'.`);
 }
 
-function fullstore(value) {
-    const data = {
-        value,
-    };
-    
-    return (...args) => {
-        const [value] = args;
-        
-        if (!args.length)
-            return data.value;
-        
-        data.value = value;
-        
-        return value;
-    };
-}
-
-const cut = (a) => a.slice(0, a.indexOf('('));
-const createPrefix = (name) => {
-    if (name.includes('('))
-        return `${cut(name)}(`;
-    
-    return `${name}(`;
-};
-
-const createSuffix = () => ');\n';
-const maybeNewline = (a) => a.at(-1) === '\n' ? a : `${a}\n`;
-
-const __json_name = '__putout_processor_json';
-const __yaml_name = '__putout_processor_yaml';
-const __toml_name = '__putout_processor_toml';
-const __filesystem_name$2 = '__putout_processor_filesystem';
-const __ignore_name = '__putout_processor_ignore';
-
-const __json = `${__json_name}(__object)`;
-const __yaml = `${__yaml_name}(__object)`;
-const __toml = `${__toml_name}(__object)`;
-const __filesystem = `${__filesystem_name$2}(__object)`;
-const __ignore = `${__ignore_name}(__array)`;
-
-const TYPES = [
-    __json_name,
-    __yaml_name,
-    __filesystem_name$2,
-    __ignore_name,
-];
-
-const toJS = (source, name = __json) => {
-    const prefix = createPrefix(name);
-    const suffix = createSuffix();
-    
-    return `${prefix}${source}${suffix}`;
-};
-
-const fromJS = (source, name = __json) => {
-    source = maybeNewline(source);
-    const shortName = cut(name);
-    
-    source = source.slice(source.indexOf(shortName));
-    
-    const prefix = createPrefix(name);
-    const suffix = createSuffix();
-    const length = source.length - suffix.length;
-    const sliced = source.slice(prefix.length, length);
-    
-    return maybeNewline(removeBlankLines$1(sliced));
-};
-
-const isJSON = (source) => {
-    for (const type of TYPES) {
-        if (!source.indexOf(type))
-            return true;
-    }
-    
-    return false;
-};
-
-var json = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	__filesystem: __filesystem,
-	__filesystem_name: __filesystem_name$2,
-	__ignore: __ignore,
-	__ignore_name: __ignore_name,
-	__json: __json,
-	__json_name: __json_name,
-	__toml: __toml,
-	__toml_name: __toml_name,
-	__yaml: __yaml,
-	__yaml_name: __yaml_name,
-	fromJS: fromJS,
-	isJSON: isJSON,
-	toJS: toJS
-});
-
 const driverStore = fullstore();
 
 const {assign} = Object;
 const noop = () => {};
-const returns = (a) => () => a;
+const returns$1 = (a) => () => a;
 
 const defaultFS = {
     renameFile: noop,
     removeFile: noop,
     createDirectory: noop,
-    readFileContent: returns(''),
+    readFileContent: returns$1(''),
     writeFileContent: noop,
     copyFile: noop,
 };
@@ -64368,7 +64250,7 @@ const copyFile$1 = (from, to) => {
     maybeFS.copyFile(from, to);
 };
 
-const createDirectory$2 = (name) => {
+const createDirectory$1 = (name) => {
     maybeFS.createDirectory(name);
 };
 
@@ -64398,17 +64280,17 @@ function deinit$1() {
 }
 
 var maybeFS$1 = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	copyFile: copyFile$1,
-	createDirectory: createDirectory$2,
-	deinit: deinit$1,
-	init: init$1,
-	pause: pause$1,
-	readFileContent: readFileContent$1,
-	removeFile: removeFile$1,
-	renameFile: renameFile$1,
-	start: start$1,
-	writeFileContent: writeFileContent$1
+    __proto__: null,
+    copyFile: copyFile$1,
+    createDirectory: createDirectory$1,
+    deinit: deinit$1,
+    init: init$1,
+    pause: pause$1,
+    readFileContent: readFileContent$1,
+    removeFile: removeFile$1,
+    renameFile: renameFile$1,
+    start: start$1,
+    writeFileContent: writeFileContent$1
 });
 
 const {
@@ -64502,7 +64384,7 @@ function isExcluded({name, base, exclude}) {
     return false;
 }
 
-function findFile$2(node, name, exclude = []) {
+function findFile(node, name, exclude = []) {
     checkName(name);
     
     const filePaths = [];
@@ -64510,7 +64392,7 @@ function findFile$2(node, name, exclude = []) {
     
     for (const filenamePath of traverseProperties(node, 'filename')) {
         const {value} = filenamePath.node.value;
-        const base = basename$1(value);
+        const base = basename(value);
         
         for (const name of names) {
             if (value === name || getRegExp(name).test(base)) {
@@ -64538,22 +64420,22 @@ function checkName(name) {
 }
 
 function getFilenamePath(filePath) {
-    const filenamePath = getProperty$2(filePath, 'filename');
+    const filenamePath = getProperty(filePath, 'filename');
     return filenamePath.get('value');
 }
 
-function getFilename$2(filePath) {
+function getFilename(filePath) {
     const {value} = getFilenamePath(filePath).node;
     return value;
 }
 
-function getFileType$2(filePath) {
-    const typePath = getProperty$2(filePath, 'type');
+function getFileType(filePath) {
+    const typePath = getProperty(filePath, 'type');
     return typePath.node.value.value;
 }
 
 function getFileContent(filePath) {
-    const content = getProperty$2(filePath, 'content');
+    const content = getProperty(filePath, 'content');
     
     return [
         Boolean(content),
@@ -64562,7 +64444,7 @@ function getFileContent(filePath) {
 }
 
 const renameFile = (filePath, name) => {
-    const oldName = getFilename$2(filePath);
+    const oldName = getFilename(filePath);
     const valuePath = getFilenamePath(filePath);
     const baseName = oldName
         .split('/')
@@ -64579,7 +64461,7 @@ const renameFile = (filePath, name) => {
 };
 
 function removeFile(filePath) {
-    const filename = getFilename$2(filePath);
+    const filename = getFilename(filePath);
     
     if (!getParentDirectory(filePath))
         return;
@@ -64589,7 +64471,7 @@ function removeFile(filePath) {
 }
 
 const removeEmptyDirectory = (dirPath) => {
-    const type = getFileType$2(dirPath);
+    const type = getFileType(dirPath);
     
     if (type !== 'directory')
         return;
@@ -64597,7 +64479,7 @@ const removeEmptyDirectory = (dirPath) => {
     let nextParentDir = dirPath;
     
     while (!readDirectory(dirPath).length) {
-        const name = getFilename$2(dirPath);
+        const name = getFilename(dirPath);
         
         if (name === '/')
             break;
@@ -64616,10 +64498,10 @@ const moveFile = (filePath, dirPath) => {
     if (filePath === dirPath)
         return;
     
-    const dirname = getFilename$2(dirPath);
-    const filename = getFilename$2(filePath);
+    const dirname = getFilename(dirPath);
+    const filename = getFilename(filePath);
     const dirPathFiles = getFiles$1(dirPath);
-    const filenamePath = getProperty$2(filePath, 'filename');
+    const filenamePath = getProperty(filePath, 'filename');
     
     const basename = filename
         .split('/')
@@ -64637,8 +64519,8 @@ const moveFile = (filePath, dirPath) => {
 };
 
 const copyFile = (filePath, dirPath) => {
-    const dirname = getFilename$2(dirPath);
-    const filename = getFilename$2(filePath);
+    const dirname = getFilename(dirPath);
+    const filename = getFilename(filePath);
     
     const basename = filename
         .split('/')
@@ -64662,16 +64544,16 @@ const copyFile = (filePath, dirPath) => {
 };
 
 function maybeRemoveFile(dirPath, filename) {
-    const type = getFileType$2(dirPath);
+    const type = getFileType(dirPath);
     
     if (type !== 'directory') {
-        const filename = getFilename$2(dirPath);
+        const filename = getFilename(dirPath);
         throw Error(`☝️ Looks like '${filename}' is not a directory, but: '${type}'. Rename to '${filename}/'`);
     }
     
-    const dirPathFiles = getProperty$2(dirPath, 'files');
-    const name = join$1(getFilename$2(dirPath), basename$1(filename));
-    const [fileToOverwrite] = findFile$2(dirPathFiles, name);
+    const dirPathFiles = getProperty(dirPath, 'files');
+    const name = join$1(getFilename(dirPath), basename(filename));
+    const [fileToOverwrite] = findFile(dirPathFiles, name);
     
     if (!fileToOverwrite)
         return;
@@ -64683,7 +64565,7 @@ const createFile = (dirPath, name, content) => {
     maybeRemoveFile(dirPath, name);
     
     const dirPathFiles = getFiles$1(dirPath);
-    const parentFilename = getFilename$2(dirPath);
+    const parentFilename = getFilename(dirPath);
     const filename = join$1(parentFilename, name);
     
     const typeProperty = createTypeProperty('file');
@@ -64705,10 +64587,10 @@ const createFile = (dirPath, name, content) => {
     return filePath;
 };
 
-const getFiles$1 = (dirPath) => getProperty$2(dirPath, 'files');
+const getFiles$1 = (dirPath) => getProperty(dirPath, 'files');
 
 function readDirectory(dirPath) {
-    const fileType = getFileType$2(dirPath);
+    const fileType = getFileType(dirPath);
     
     if (fileType !== 'directory')
         return [];
@@ -64716,9 +64598,9 @@ function readDirectory(dirPath) {
     return getFiles$1(dirPath).get('value.elements');
 }
 
-function createDirectory$1(dirPath, name) {
+function createDirectory(dirPath, name) {
     const dirPathFiles = getFiles$1(dirPath);
-    const parentFilename = getFilename$2(dirPath);
+    const parentFilename = getFilename(dirPath);
     const filename = join$1(parentFilename, name);
     
     const typeProperty = createTypeProperty('directory');
@@ -64731,13 +64613,13 @@ function createDirectory$1(dirPath, name) {
         filesProperty,
     ]));
     
-    createDirectory$2(filename);
+    createDirectory$1(filename);
     
     return dirPathFiles.get('value.elements').at(-1);
 }
 
 const readFileContent = (filePath) => {
-    const fileType = getFileType$2(filePath);
+    const fileType = getFileType(filePath);
     
     if (fileType === 'directory')
         return '';
@@ -64747,7 +64629,7 @@ const readFileContent = (filePath) => {
     if (hasContent)
         return fromBase64(content);
     
-    const filename = getFilename$2(filePath);
+    const filename = getFilename(filePath);
     const fileContent = readFileContent$1(filename);
     
     const property = createContentProperty(toBase64(fileContent));
@@ -64758,16 +64640,16 @@ const readFileContent = (filePath) => {
 };
 
 function writeFileContent(filePath, content) {
-    const fileType = getFileType$2(filePath);
+    const fileType = getFileType(filePath);
     
     if (fileType === 'directory')
         return;
     
-    const filename = getFilename$2(filePath);
+    const filename = getFilename(filePath);
     
     writeFileContent$1(filename, content);
     
-    const contentPath = getProperty$2(filePath, 'content');
+    const contentPath = getProperty(filePath, 'content');
     
     if (contentPath) {
         setLiteralValue(contentPath.node.value, toBase64(content));
@@ -64780,21 +64662,21 @@ function writeFileContent(filePath, content) {
 
 const createNestedDirectory = (path, name) => {
     const rootPath = getRootDirectory(path);
-    const dir = dirname$1(name);
+    const dir = dirname(name);
     
-    if (dir === getFilename$2(path))
-        return createDirectory$1(path, basename$1(name));
+    if (dir === getFilename(path))
+        return createDirectory(path, basename(name));
     
     let currentDir = name;
     
-    const rootDir = getFilename$2(rootPath);
+    const rootDir = getFilename(rootPath);
     const directories = [];
     let prevDir = currentDir;
     
     while (currentDir !== rootDir) {
         directories.unshift(currentDir);
         prevDir = currentDir;
-        currentDir = dirname$1(currentDir);
+        currentDir = dirname(currentDir);
         
         if (currentDir === prevDir) {
             currentDir = rootDir;
@@ -64808,16 +64690,16 @@ const createNestedDirectory = (path, name) => {
         }
     }
     
-    let lastDirectoryPath = findFile$2(rootPath, directories).at(-1) || rootPath;
-    const lastDirectoryName = getFilename$2(lastDirectoryPath);
+    let lastDirectoryPath = findFile(rootPath, directories).at(-1) || rootPath;
+    const lastDirectoryName = getFilename(lastDirectoryPath);
     
     const n = directories.length;
     
     let i = directories.indexOf(lastDirectoryName) + 1;
     
     for (; i < n; i++) {
-        const name = basename$1(directories[i]);
-        lastDirectoryPath = createDirectory$1(lastDirectoryPath, name);
+        const name = basename(directories[i]);
+        lastDirectoryPath = createDirectory(lastDirectoryPath, name);
     }
     
     return lastDirectoryPath;
@@ -64845,55 +64727,6 @@ const {
     start,
 } = maybeFS$1;
 
-var filesystem = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	copyFile: copyFile,
-	createDirectory: createDirectory$1,
-	createFile: createFile,
-	createNestedDirectory: createNestedDirectory,
-	deinit: deinit,
-	findFile: findFile$2,
-	getFileContent: getFileContent,
-	getFileType: getFileType$2,
-	getFilename: getFilename$2,
-	getParentDirectory: getParentDirectory,
-	getRootDirectory: getRootDirectory,
-	init: init,
-	moveFile: moveFile,
-	pause: pause,
-	readDirectory: readDirectory,
-	readFileContent: readFileContent,
-	removeEmptyDirectory: removeEmptyDirectory,
-	removeFile: removeFile,
-	renameFile: renameFile,
-	start: start,
-	writeFileContent: writeFileContent
-});
-
-var convertSimpleFilesystemToFilesystem = {};
-
-var require$$0$1 = /*@__PURE__*/getAugmentedNamespace(_polyfillNode_path);
-
-var require$$0 = /*@__PURE__*/getAugmentedNamespace(bundle);
-
-var require$$3 = /*@__PURE__*/getAugmentedNamespace(filesystem);
-
-var require$$2 = /*@__PURE__*/getAugmentedNamespace(json);
-
-var require$$1 = /*@__PURE__*/getAugmentedNamespace(operate);
-
-const {basename, dirname} = require$$0$1;
-const {types: types$1} = require$$0;
-const {
-    createDirectory,
-    getFileType: getFileType$1,
-    getFilename: getFilename$1,
-    findFile: findFile$1,
-} = require$$3;
-
-const {__filesystem_name: __filesystem_name$1} = require$$2;
-const {replaceWith: replaceWith$1, getProperty: getProperty$1} = require$$1;
-
 const {
     objectExpression,
     arrayExpression: arrayExpression$1,
@@ -64902,9 +64735,9 @@ const {
     isStringLiteral,
     isTemplateLiteral,
     objectProperty: objectProperty$1,
-} = types$1;
+} = lib_exports;
 
-convertSimpleFilesystemToFilesystem.report = () => `Convert Simple Filesystem to Filesystem`;
+const report$5 = () => `Convert Simple Filesystem to Filesystem`;
 
 const isDirectory = (a) => a.endsWith('/');
 const getType = (a) => {
@@ -64938,14 +64771,19 @@ function parseContent(node, path) {
     throw Error(`☝️ Looks like wrong content type: '${node.type}' from file: '${path}'`);
 }
 
-convertSimpleFilesystemToFilesystem.fix = (path) => {
+const fix$5 = (path) => {
     const array = arrayExpression$1([]);
     
     for (const element of path.get('elements')) {
-        if (isArrayExpression(element)) {
+        if (isOneElementTuple(element)) {
+            const [node] = element.node.elements;
+            array.elements.push(createFileFromStringLiteral(node));
+            continue;
+        }
+        
+        if (isTwoElementsTuple(element)) {
             const [nodeValue, nodeContent] = element.node.elements;
             const {value} = nodeValue;
-            
             const content = parseContent(nodeContent, element);
             
             array.elements.push(objectExpression([
@@ -64957,13 +64795,8 @@ convertSimpleFilesystemToFilesystem.fix = (path) => {
         }
         
         if (isStringLiteral(element)) {
-            const {value} = element.node;
-            
-            array.elements.push(objectExpression([
-                getType(value),
-                createFilename(noTrailingSlash(value)),
-                getFiles(value),
-            ].filter(Boolean)));
+            const file = createFileFromStringLiteral(element);
+            array.elements.push(file);
             continue;
         }
         
@@ -64973,8 +64806,20 @@ convertSimpleFilesystemToFilesystem.fix = (path) => {
     buildTree(path, array);
 };
 
-convertSimpleFilesystemToFilesystem.traverse = ({push}) => ({
-    [`${__filesystem_name$1}(__array)`]: (path) => {
+const maybeNode = (a) => a.node || a;
+
+function createFileFromStringLiteral(element) {
+    const {value} = maybeNode(element);
+    
+    return objectExpression([
+        getType(value),
+        createFilename(noTrailingSlash(value)),
+        getFiles(value),
+    ].filter(Boolean));
+}
+
+const traverse$3 = ({push}) => ({
+    [`${__filesystem_name}(__array)`]: (path) => {
         const root = path.get('arguments.0');
         push(root);
     },
@@ -64988,19 +64833,19 @@ const noTrailingSlash = (a) => {
 };
 
 function buildTree(path, list) {
-    const [root, ...files] = findFile$1(list, '*');
+    const [root, ...files] = findFile(list, '*');
     
     for (const filePath of files) {
-        const filename = getFilename$1(filePath);
+        const filename = getFilename(filePath);
         
         check$3(filename);
         
-        const type = getFileType$1(filePath);
+        const type = getFileType(filePath);
         const dir = dirname(filename);
         const name = basename(filename);
-        const [dirPath] = findFile$1(root, dir);
+        const [dirPath] = findFile(root, dir);
         
-        if (!dirPath || getFileType$1(dirPath) !== 'directory')
+        if (!dirPath || getFileType(dirPath) !== 'directory')
             throw Error(`☝️ Looks like directory '${dir}/' is missing`);
         
         if (type === 'directory') {
@@ -65008,41 +64853,54 @@ function buildTree(path, list) {
             continue;
         }
         
-        const filesProperty = getProperty$1(dirPath, 'files');
+        const filesProperty = getProperty(dirPath, 'files');
         filesProperty.node.value.elements.push(filePath.node);
     }
     
-    replaceWith$1(path, root);
+    replaceWith(path, root);
 }
+
+const isTwoElementsTuple = (a) => {
+    if (!isArrayExpression(a))
+        return false;
+    
+    const {elements} = a.node;
+    
+    return elements.length === 2;
+};
+
+const isOneElementTuple = (a) => {
+    if (!isArrayExpression(a))
+        return false;
+    
+    const {elements} = a.node;
+    
+    return elements.length === 1;
+};
 
 function check$3(filename) {
     if (!filename.includes('/'))
         throw Error(`☝️ Looks like directory path is missing: '${filename}'`);
 }
 
-var convertFilesystemToSimpleFilesystem = {};
-
-const {types} = require$$0;
-const {replaceWith, getProperty} = require$$1;
-const {__filesystem_name} = require$$2;
-
-const {
-    findFile,
-    getFilename,
-    getFileType,
-} = require$$3;
+var fromSimple = /*#__PURE__*/Object.freeze({
+    __proto__: null,
+    fix: fix$5,
+    report: report$5,
+    traverse: traverse$3
+});
 
 const {
     stringLiteral: stringLiteral$2,
     arrayExpression,
-} = types;
+} = lib_exports;
 
 const {isArray} = Array;
 const maybeAddSlash = (a) => a === '/' ? a : `${a}/`;
 
-convertFilesystemToSimpleFilesystem.report = () => `Convert Filesystem to Simple Filesystem`;
+const report$4 = () => `Convert Filesystem to Simple Filesystem`;
 
-convertFilesystemToSimpleFilesystem.fix = (root, {files}) => {
+const fix$4 = (root, {files}) => {
     const names = [];
     
     for (const file of files) {
@@ -65081,7 +64939,7 @@ convertFilesystemToSimpleFilesystem.fix = (root, {files}) => {
     replaceWith(root, arrayExpression(list));
 };
 
-convertFilesystemToSimpleFilesystem.traverse = ({push}) => ({
+const traverse$2 = ({push}) => ({
     [`${__filesystem_name}(__object)`]: (path) => {
         const root = path.get('arguments.0');
         const files = findFile(root, '*');
@@ -65092,9 +64950,16 @@ convertFilesystemToSimpleFilesystem.traverse = ({push}) => ({
     },
 });
 
+var toSimple = /*#__PURE__*/Object.freeze({
+    __proto__: null,
+    fix: fix$4,
+    report: report$4,
+    traverse: traverse$2
+});
+
 const log = createDebug$1('putout:runner:scanner');
 
-const scan$1 = ({rule, plugin, msg, options}, {progress}) => {
+const scan = ({rule, plugin, msg, options}, {progress}) => {
     const {
         scan,
         report,
@@ -65139,7 +65004,7 @@ const createFileProgress = ({rule, progress}) => ({i, n}) => {
 };
 
 const createTrackFile = (fileProgress) => function*(...a) {
-    const files = findFile$2(...a);
+    const files = findFile(...a);
     const n = files.length;
     
     for (const [i, file] of files.entries()) {
@@ -65152,7 +65017,7 @@ const createTrackFile = (fileProgress) => function*(...a) {
 };
 
 const getTraverse = ({scan, rule, progress}) => ({push, options}) => ({
-    [`${__filesystem_name$2}(__)`](path) {
+    [`${__filesystem_name}(__)`](path) {
         log(rule);
         progress.start(rule);
         
@@ -65166,7 +65031,7 @@ const getTraverse = ({scan, rule, progress}) => ({push, options}) => ({
         
         const trackFile = createTrackFile(fileProgress);
         
-        runSimple(convertSimpleFilesystemToFilesystem, {
+        runSimple(fromSimple, {
             shouldConvert: true,
             path,
             isSimple,
@@ -65183,7 +65048,7 @@ const getTraverse = ({scan, rule, progress}) => ({push, options}) => ({
             options,
         });
         
-        runSimple(convertFilesystemToSimpleFilesystem, {
+        runSimple(toSimple, {
             shouldConvert: isSimple(),
             path,
             isSimple,
@@ -65223,18 +65088,18 @@ function runSimple(plugin, {path, isSimple, shouldConvert = true}) {
 }
 
 function parseVisitor(visitors) {
-    const to = visitors[`${__filesystem_name$2}(__object)`];
-    const from = visitors[`${__filesystem_name$2}(__array)`];
+    const to = visitors[`${__filesystem_name}(__object)`];
+    const from = visitors[`${__filesystem_name}(__array)`];
     
     if (to)
         return [
             to,
-            `${__filesystem_name$2}(__object)`,
+            `${__filesystem_name}(__object)`,
         ];
     
     return [
         from,
-        `${__filesystem_name$2}(__array)`,
+        `${__filesystem_name}(__array)`,
     ];
 }
 
@@ -65402,7 +65267,7 @@ function splitPlugins(plugins, {progress}) {
         }
         
         if (plugin.scan) {
-            pluginsTraverse.push(scan$1(item, {
+            pluginsTraverse.push(scan(item, {
                 progress,
             }));
             continue;
@@ -71756,15 +71621,15 @@ const isCall = (path) => {
     return isCallExpression(path.find(isCallOrStatement));
 };
 
-const report$2 = ({name}) => `Argument '${name}' is missing`;
+const report$3 = ({name}) => `Argument '${name}' is missing`;
 
 const addArgs = (args) => ({
-    report: report$2,
-    fix: fix$2,
+    report: report$3,
+    fix: fix$3,
     traverse: traverse(args),
 });
 
-const fix$2 = ({declaration, path, pattern, params, index}) => {
+const fix$3 = ({declaration, path, pattern, params, index}) => {
     const declarationNode = template$1.ast.fresh(declaration);
     
     if (isBlockStatement(declarationNode)) {
@@ -72002,7 +71867,7 @@ const {join} = path;
 
 const isObject = (a) => a && typeof a === 'object';
 const {entries} = Object;
-const report$1 = (path, {message}) => message;
+const report$2 = (path, {message}) => message;
 
 const matchFiles = (options) => {
     const {filename} = options;
@@ -72011,20 +71876,20 @@ const matchFiles = (options) => {
     
     check(files);
     
-    const scan = createScan({
+    const scan = createScan$2({
         defaultFilename: filename,
         files,
         exclude,
     });
     
     return {
-        fix: fix$1,
+        fix: fix$2,
         scan,
-        report: report$1,
+        report: report$2,
     };
 };
 
-function fix$1(inputFile, {dirPath, matchInputFilename, outputFilename, matchedJS, matchedAST, options}) {
+function fix$2(inputFile, {dirPath, matchInputFilename, outputFilename, matchedJS, matchedAST, options}) {
     transform(matchedAST, matchedJS, options);
     
     const matchedJSON = magicPrint(outputFilename, matchedAST);
@@ -72041,19 +71906,19 @@ function fix$1(inputFile, {dirPath, matchInputFilename, outputFilename, matchedJ
         removeFile(inputFile);
 }
 
-const createScan = ({files, exclude, defaultFilename}) => (mainPath, {push, progress, options}) => {
+const createScan$2 = ({files, exclude, defaultFilename}) => (mainPath, {push, progress, options}) => {
     const allFiles = [];
-    const cwd = getFilename$2(mainPath);
+    const cwd = getFilename(mainPath);
     
     options.filename = options.filename ?? defaultFilename;
     
     for (const [filename, rawOptions] of entries(files)) {
         const [matchInputFilenameMask] = parseMatcher(filename, options);
-        const inputFiles = findFile$2(mainPath, matchInputFilenameMask, exclude);
+        const inputFiles = findFile(mainPath, matchInputFilenameMask, exclude);
         
         for (const inputFile of inputFiles) {
             const dirPath = getParentDirectory(inputFile);
-            const inputFilename = getFilename$2(inputFile);
+            const inputFilename = getFilename(inputFile);
             
             const [matchInputFilename, outputFilename = matchInputFilename] = parseMatcher(filename, {
                 filename: inputFilename,
@@ -72155,8 +72020,8 @@ function getOutputFile({dirPath, matchInputFilename, outputFilename, inputFile})
     if (matchInputFilename === outputFilename)
         return inputFile;
     
-    const name = join(getFilename$2(dirPath), outputFilename);
-    const [outputFile] = findFile$2(dirPath, name);
+    const name = join(getFilename(dirPath), outputFilename);
+    const [outputFile] = findFile(dirPath, name);
     
     if (outputFile)
         return outputFile;
@@ -72195,28 +72060,18 @@ function parseOptions(inputFilename, rawOptions) {
 
 const {parse} = JSON;
 
-const renameFiles = ({type, mask, rename}) => ({
-    report,
-    fix,
-    scan: scan({
-        type,
-        mask,
-        rename,
-    }),
-});
+const report$1 = (file, {from, to}) => `Rename '${from}' to '${to}'`;
 
-const report = (file, {from, to}) => `Rename '${from}' to '${to}'`;
-
-const fix = (file, {to}) => {
+const fix$1 = (file, {to}) => {
     renameFile(file, to);
 };
 
-const scan = ({type, mask, rename}) => (path, {push, trackFile}) => {
+const createScan$1 = ({type, mask, rename} = {}) => (path, {push, trackFile}) => {
     for (const file of trackFile(path, mask)) {
         if (type && !checkType(type, file))
             continue;
         
-        const from = getFilename$2(file);
+        const from = getFilename(file);
         const to = rename(from);
         
         push(file, {
@@ -72251,12 +72106,117 @@ function findUpPackage(file) {
     let dirPath = getParentDirectory(file);
     
     do {
-        const dir = getFilename$2(dirPath);
-        [packageJSON] = findFile$2(dirPath, join$1(dir, 'package.json'));
+        const dir = getFilename(dirPath);
+        [packageJSON] = findFile(dirPath, join$1(dir, 'package.json'));
     } while (!packageJSON && (dirPath = getParentDirectory(dirPath)));
     
     return packageJSON;
 }
+
+var renameFileWithFn = /*#__PURE__*/Object.freeze({
+    __proto__: null,
+    createScan: createScan$1,
+    fix: fix$1,
+    report: report$1
+});
+
+const returns = (a) => () => a;
+
+const report = (path, {mask, from, to}) => {
+    if (!mask)
+        return `Rename '${from}' to '${to}'`;
+    
+    return `Rename '${mask}' to '${mask.replace(from, to)}'`;
+};
+
+const fix = (path, {from, to}) => {
+    const filename = getFilename(path);
+    const newFilename = filename.replace(from, to);
+    
+    renameFile(path, newFilename);
+};
+
+const createScan = (baseOptions) => (rootPath, {push, options, trackFile}) => {
+    const from = options.from || baseOptions.from;
+    const to = options.to || baseOptions.to;
+    const mask = options.mask || baseOptions.mask;
+    const near = options.near || baseOptions.near;
+    const checkNear = near ? createCheckNear(near) : returns(true);
+    
+    if (!from || !to)
+        return {};
+    
+    for (const file of trackFile(rootPath, mask || from).filter(checkNear)) {
+        push(file, {
+            from,
+            to,
+            mask,
+        });
+    }
+};
+
+const createCheckNear = (near) => (file) => {
+    const parentDirectory = getParentDirectory(file);
+    
+    for (const currentFile of readDirectory(parentDirectory)) {
+        const type = getFileType(currentFile);
+        
+        if (type !== 'file')
+            continue;
+        
+        const name = getFilename(currentFile);
+        const base = basename(name);
+        
+        if (base === near)
+            return true;
+    }
+    
+    return false;
+};
+
+var renameFileByMask = /*#__PURE__*/Object.freeze({
+    __proto__: null,
+    createScan: createScan,
+    fix: fix,
+    report: report
+});
+
+const renameFiles = ({type, mask, rename, from, to, near} = {}) => {
+    if (rename) {
+        const {
+            report,
+            fix,
+            createScan,
+        } = renameFileWithFn;
+        
+        return {
+            report,
+            fix,
+            scan: createScan({
+                type,
+                mask,
+                rename,
+            }),
+        };
+    }
+    
+    const {
+        report,
+        fix,
+        createScan,
+    } = renameFileByMask;
+    
+    return {
+        fix,
+        report,
+        scan: createScan({
+            mask,
+            from,
+            to,
+            near,
+        }),
+    };
+};
 
 const {stringLiteral} = lib_exports;
 const getValue = ({value}) => value;
@@ -72423,106 +72383,106 @@ function hasParens(path, printer = getPrinter(path)) {
 }
 
 var operator = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	__filesystem: __filesystem,
-	__filesystem_name: __filesystem_name$2,
-	__ignore: __ignore,
-	__ignore_name: __ignore_name,
-	__json: __json,
-	__json_name: __json_name,
-	__toml: __toml,
-	__toml_name: __toml_name,
-	__yaml: __yaml,
-	__yaml_name: __yaml_name,
-	addArgs: addArgs,
-	addAttribute: addAttribute,
-	addAttributeValue: addAttributeValue,
-	addClassName: addClassName,
-	addParens: addParens,
-	compare: compare,
-	compareAll: compareAll,
-	compareAny: compareAny,
-	compute: compute,
-	contains: contains,
-	containsClassName: containsClassName,
-	copyFile: copyFile,
-	createDirectory: createDirectory$1,
-	createFile: createFile,
-	createNestedDirectory: createNestedDirectory,
-	declare: declare$1,
-	deinit: deinit,
-	extract: extract,
-	findBinding: findBinding,
-	findFile: findFile$2,
-	findVarsWays: findVarsWays,
-	fromJS: fromJS,
-	getAttributeNode: getAttributeNode,
-	getAttributePath: getAttributePath,
-	getAttributeValue: getAttributeValue,
-	getBinding: getBinding,
-	getBindingPath: getBindingPath,
-	getClassName: getClassName,
-	getExportDefault: getExportDefault,
-	getFileContent: getFileContent,
-	getFileType: getFileType$2,
-	getFilename: getFilename$2,
-	getLiteralRaw: getLiteralRaw,
-	getParentDirectory: getParentDirectory,
-	getPathAfterImports: getPathAfterImports,
-	getPathAfterRequires: getPathAfterRequires,
-	getProperties: getProperties,
-	getProperty: getProperty$2,
-	getRootDirectory: getRootDirectory,
-	getTemplateValues: getTemplateValues,
-	getValues: getValues,
-	hasAttributeValue: hasAttributeValue,
-	hasDataName: hasDataName,
-	hasParens: hasParens,
-	hasTagName: hasTagName,
-	ignore: ignore,
-	init: init,
-	insertAfter: insertAfter,
-	insertBefore: insertBefore,
-	isConditionKeyword: isConditionKeyword,
-	isDeclarationKeyword: isDeclarationKeyword,
-	isESM: isESM,
-	isJSON: isJSON,
-	isKeyword: isKeyword,
-	isModuleDeclarationKeyword: isModuleDeclarationKeyword,
-	isModuleExports: isModuleExports,
-	isSimple: isSimple,
-	isSimpleRegExp: isSimpleRegExp,
-	isStatementKeyword: isStatementKeyword,
-	isTSKeyword: isTSKeyword,
-	isTemplate: isTemplate,
-	matchFiles: matchFiles,
-	moveFile: moveFile,
-	parseTemplate: parseTemplate,
-	pause: pause,
-	readDirectory: readDirectory,
-	readFileContent: readFileContent,
-	remove: remove,
-	removeAttributeValue: removeAttributeValue,
-	removeClassName: removeClassName,
-	removeEmptyDirectory: removeEmptyDirectory,
-	removeFile: removeFile,
-	removeParens: removeParens,
-	rename: rename,
-	renameFile: renameFile,
-	renameFiles: renameFiles,
-	renameProperty: renameProperty,
-	replaceWith: replaceWith$2,
-	replaceWithMultiple: replaceWithMultiple,
-	setAttributeValue: setAttributeValue,
-	setLiteralValue: setLiteralValue,
-	setValues: setValues,
-	start: start,
-	toExpression: toExpression,
-	toJS: toJS,
-	transformRegExp: transformRegExp,
-	traverse: traverse$1,
-	traverseProperties: traverseProperties,
-	writeFileContent: writeFileContent
+    __proto__: null,
+    __filesystem: __filesystem,
+    __filesystem_name: __filesystem_name,
+    __ignore: __ignore,
+    __ignore_name: __ignore_name,
+    __json: __json,
+    __json_name: __json_name,
+    __toml: __toml,
+    __toml_name: __toml_name,
+    __yaml: __yaml,
+    __yaml_name: __yaml_name,
+    addArgs: addArgs,
+    addAttribute: addAttribute,
+    addAttributeValue: addAttributeValue,
+    addClassName: addClassName,
+    addParens: addParens,
+    compare: compare,
+    compareAll: compareAll,
+    compareAny: compareAny,
+    compute: compute,
+    contains: contains,
+    containsClassName: containsClassName,
+    copyFile: copyFile,
+    createDirectory: createDirectory,
+    createFile: createFile,
+    createNestedDirectory: createNestedDirectory,
+    declare: declare$1,
+    deinit: deinit,
+    extract: extract,
+    findBinding: findBinding,
+    findFile: findFile,
+    findVarsWays: findVarsWays,
+    fromJS: fromJS,
+    getAttributeNode: getAttributeNode,
+    getAttributePath: getAttributePath,
+    getAttributeValue: getAttributeValue,
+    getBinding: getBinding,
+    getBindingPath: getBindingPath,
+    getClassName: getClassName,
+    getExportDefault: getExportDefault,
+    getFileContent: getFileContent,
+    getFileType: getFileType,
+    getFilename: getFilename,
+    getLiteralRaw: getLiteralRaw,
+    getParentDirectory: getParentDirectory,
+    getPathAfterImports: getPathAfterImports,
+    getPathAfterRequires: getPathAfterRequires,
+    getProperties: getProperties,
+    getProperty: getProperty,
+    getRootDirectory: getRootDirectory,
+    getTemplateValues: getTemplateValues,
+    getValues: getValues,
+    hasAttributeValue: hasAttributeValue,
+    hasDataName: hasDataName,
+    hasParens: hasParens,
+    hasTagName: hasTagName,
+    ignore: ignore,
+    init: init,
+    insertAfter: insertAfter,
+    insertBefore: insertBefore,
+    isConditionKeyword: isConditionKeyword,
+    isDeclarationKeyword: isDeclarationKeyword,
+    isESM: isESM,
+    isJSON: isJSON,
+    isKeyword: isKeyword,
+    isModuleDeclarationKeyword: isModuleDeclarationKeyword,
+    isModuleExports: isModuleExports,
+    isSimple: isSimple,
+    isSimpleRegExp: isSimpleRegExp,
+    isStatementKeyword: isStatementKeyword,
+    isTSKeyword: isTSKeyword,
+    isTemplate: isTemplate,
+    matchFiles: matchFiles,
+    moveFile: moveFile,
+    parseTemplate: parseTemplate,
+    pause: pause,
+    readDirectory: readDirectory,
+    readFileContent: readFileContent,
+    remove: remove,
+    removeAttributeValue: removeAttributeValue,
+    removeClassName: removeClassName,
+    removeEmptyDirectory: removeEmptyDirectory,
+    removeFile: removeFile,
+    removeParens: removeParens,
+    rename: rename,
+    renameFile: renameFile,
+    renameFiles: renameFiles,
+    renameProperty: renameProperty,
+    replaceWith: replaceWith,
+    replaceWithMultiple: replaceWithMultiple,
+    setAttributeValue: setAttributeValue,
+    setLiteralValue: setLiteralValue,
+    setValues: setValues,
+    start: start,
+    toExpression: toExpression,
+    toJS: toJS,
+    transformRegExp: transformRegExp,
+    traverse: traverse$1,
+    traverseProperties: traverseProperties,
+    writeFileContent: writeFileContent
 });
 
 const codeframe = ({source, error, highlightCode = true}) => {
@@ -72542,20 +72502,20 @@ const codeframe = ({source, error, highlightCode = true}) => {
 };
 
 var exports$1 = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	codeframe: codeframe,
-	findPlaces: findPlaces,
-	findPlacesAsync: findPlacesAsync,
-	generate: generate,
-	operator: operator,
-	parse: parse$2,
-	print: print,
-	putoutAsync: putoutAsync,
-	template: template$1,
-	transform: transform,
-	transformAsync: transformAsync,
-	traverse: traverse3,
-	types: lib_exports
+    __proto__: null,
+    codeframe: codeframe,
+    findPlaces: findPlaces,
+    findPlacesAsync: findPlacesAsync,
+    generate: generate,
+    operator: operator,
+    parse: parse$2,
+    print: print,
+    putoutAsync: putoutAsync,
+    template: template$1,
+    transform: transform,
+    transformAsync: transformAsync,
+    traverse: traverse3,
+    types: lib_exports
 });
 
 Object.assign(putout, exports$1);
