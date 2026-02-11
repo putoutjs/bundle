@@ -23,7 +23,7 @@ var lookup = [];
 var revLookup = [];
 var Arr = typeof Uint8Array !== 'undefined' ? Uint8Array : Array;
 var inited = false;
-function init$3 () {
+function init$1 () {
   inited = true;
   var code = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
   for (var i = 0, len = code.length; i < len; ++i) {
@@ -37,7 +37,7 @@ function init$3 () {
 
 function toByteArray (b64) {
   if (!inited) {
-    init$3();
+    init$1();
   }
   var i, j, l, tmp, placeHolders, arr;
   var len = b64.length;
@@ -96,7 +96,7 @@ function encodeChunk (uint8, start, end) {
 
 function fromByteArray (uint8) {
   if (!inited) {
-    init$3();
+    init$1();
   }
   var tmp;
   var len = uint8.length;
@@ -2701,7 +2701,7 @@ __export(lib_exports, {
     TSUnionType: () => TSUnionType$1,
     TSUnknownKeyword: () => TSUnknownKeyword$1,
     TSVoidKeyword: () => TSVoidKeyword$1,
-    TYPES: () => TYPES$3,
+    TYPES: () => TYPES$4,
     TYPESCRIPT_TYPES: () => TYPESCRIPT_TYPES,
     TaggedTemplateExpression: () => TaggedTemplateExpression$1,
     TemplateElement: () => TemplateElement,
@@ -3231,7 +3231,7 @@ __export(lib_exports, {
     isExportAllDeclaration: () => isExportAllDeclaration,
     isExportDeclaration: () => isExportDeclaration$5,
     isExportDefaultDeclaration: () => isExportDefaultDeclaration$1,
-    isExportDefaultSpecifier: () => isExportDefaultSpecifier$1,
+    isExportDefaultSpecifier: () => isExportDefaultSpecifier$2,
     isExportNamedDeclaration: () => isExportNamedDeclaration$3,
     isExportNamespaceSpecifier: () => isExportNamespaceSpecifier$1,
     isExportSpecifier: () => isExportSpecifier$1,
@@ -3315,7 +3315,7 @@ __export(lib_exports, {
     isNumberLiteralTypeAnnotation: () => isNumberLiteralTypeAnnotation,
     isNumberTypeAnnotation: () => isNumberTypeAnnotation,
     isNumericLiteral: () => isNumericLiteral$1,
-    isObjectExpression: () => isObjectExpression$c,
+    isObjectExpression: () => isObjectExpression$d,
     isObjectMember: () => isObjectMember,
     isObjectMethod: () => isObjectMethod$1,
     isObjectPattern: () => isObjectPattern$3,
@@ -3349,7 +3349,7 @@ __export(lib_exports, {
     isReturnStatement: () => isReturnStatement$4,
     isScopable: () => isScopable,
     isScope: () => isScope,
-    isSequenceExpression: () => isSequenceExpression$2,
+    isSequenceExpression: () => isSequenceExpression$3,
     isSpecifierDefault: () => isSpecifierDefault,
     isSpreadElement: () => isSpreadElement$4,
     isSpreadProperty: () => isSpreadProperty,
@@ -3437,7 +3437,7 @@ __export(lib_exports, {
     isTSVoidKeyword: () => isTSVoidKeyword,
     isTaggedTemplateExpression: () => isTaggedTemplateExpression,
     isTemplateElement: () => isTemplateElement$4,
-    isTemplateLiteral: () => isTemplateLiteral$4,
+    isTemplateLiteral: () => isTemplateLiteral$5,
     isTerminatorless: () => isTerminatorless,
     isThisExpression: () => isThisExpression,
     isThisTypeAnnotation: () => isThisTypeAnnotation,
@@ -5464,7 +5464,7 @@ function isProgram$5(node, opts) {
     return opts == null || shallowEqual(node, opts);
 }
 
-function isObjectExpression$c(node, opts) {
+function isObjectExpression$d(node, opts) {
     if (!node)
         return false;
     
@@ -5514,7 +5514,7 @@ function isReturnStatement$4(node, opts) {
     return opts == null || shallowEqual(node, opts);
 }
 
-function isSequenceExpression$2(node, opts) {
+function isSequenceExpression$3(node, opts) {
     if (!node)
         return false;
     
@@ -5874,7 +5874,7 @@ function isTemplateElement$4(node, opts) {
     return opts == null || shallowEqual(node, opts);
 }
 
-function isTemplateLiteral$4(node, opts) {
+function isTemplateLiteral$5(node, opts) {
     if (!node)
         return false;
     
@@ -6884,7 +6884,7 @@ function isDoExpression(node, opts) {
     return opts == null || shallowEqual(node, opts);
 }
 
-function isExportDefaultSpecifier$1(node, opts) {
+function isExportDefaultSpecifier$2(node, opts) {
     if (!node)
         return false;
     
@@ -13415,7 +13415,7 @@ for (const {types: types2, set} of allExpandedTypes) {
     }
 }
 
-var TYPES$3 = [].concat(Object.keys(VISITOR_KEYS), Object.keys(FLIPPED_ALIAS_KEYS), Object.keys(DEPRECATED_KEYS));
+var TYPES$4 = [].concat(Object.keys(VISITOR_KEYS), Object.keys(FLIPPED_ALIAS_KEYS), Object.keys(DEPRECATED_KEYS));
 
 function validate$1$1(node, key, val) {
     if (!node)
@@ -19351,7 +19351,7 @@ function getNameFromLiteralId(id) {
         return `/${id.pattern}/${id.flags}`;
     }
     
-    if (isTemplateLiteral$4(id)) {
+    if (isTemplateLiteral$5(id)) {
         return id.quasis
             .map((quasi) => quasi.value.raw)
             .join('');
@@ -38014,7 +38014,7 @@ var Buffer2 = class {
         this._last = char;
         
         if (char === -1) {
-            const indent = repeat > 64 ? this._indentChar.repeat(repeat) : spaceIndents[repeat / 2];
+            const indent = repeat >= 64 ? this._indentChar.repeat(repeat) : spaceIndents[repeat / 2];
             this._str += indent;
         } else {
             this._str += repeat > 1 ? String
@@ -49974,7 +49974,7 @@ var methods = {
 };
 
 Object.assign(NodePath_Final.prototype, methods);
-for (const type of TYPES$3) {
+for (const type of TYPES$4) {
     const typeKey = `is${type}`;
     const fn = lib_exports[typeKey];
     
@@ -49993,8 +49993,8 @@ for (const type of Object.keys(virtualTypes)) {
     if (type.startsWith('_'))
         continue;
     
-    if (!TYPES$3.includes(type))
-        TYPES$3.push(type);
+    if (!TYPES$4.includes(type))
+        TYPES$4.push(type);
 }
 
 function _call(fns) {
@@ -50311,7 +50311,7 @@ traverse3.hasType = function(tree, type, denylistTypes) {
 };
 traverse3.cache = cache;
 
-const TYPES$2 = {
+const TYPES$3 = {
     TOKEN: 'Token',
     NEWLINE: 'Newline',
     SPLITTER: 'Splitter',
@@ -50331,7 +50331,7 @@ const {
     isVariableDeclaration: isVariableDeclaration$4,
     isMemberExpression: isMemberExpression$8,
     isArrayExpression: isArrayExpression$9,
-    isObjectExpression: isObjectExpression$b,
+    isObjectExpression: isObjectExpression$c,
     isLabeledStatement: isLabeledStatement$1,
 } = lib_exports;
 
@@ -50395,10 +50395,10 @@ function isStringAndIdentifier([a, b]) {
 const checkObject = (elements) => {
     let a = elements.at(-1);
     
-    if (!isObjectExpression$b(a))
+    if (!isObjectExpression$c(a))
         a = elements.at(-2);
     
-    if (!isObjectExpression$b(a))
+    if (!isObjectExpression$c(a))
         return false;
     
     return a.node.properties.length;
@@ -51685,7 +51685,7 @@ function printUnary(name, {print}) {
 }
 
 const {
-    isObjectExpression: isObjectExpression$a,
+    isObjectExpression: isObjectExpression$b,
     isArrowFunctionExpression: isArrowFunctionExpression$1,
 } = lib_exports;
 
@@ -51740,7 +51740,7 @@ const OptionalMemberExpression = maybeParens((path, {print, maybe}) => {
 });
 
 const isObjectInsideArrow = ({node, parentPath}) => {
-    if (!isObjectExpression$a(node.object))
+    if (!isObjectExpression$b(node.object))
         return false;
     
     return isArrowFunctionExpression$1(parentPath);
@@ -52011,7 +52011,7 @@ function maybePrintBrace(brace, path, printer, semantics) {
 
 const {isArrayExpression: isArrayExpression$8} = lib_exports;
 
-const TYPES$1 = [
+const TYPES$2 = [
     'NullLiteral',
     'NumericLiteral',
     'BigIntLiteral',
@@ -52028,7 +52028,7 @@ const isInsideTuple = (path) => {
     if (second !== path.node)
         return false;
     
-    return TYPES$1.includes(first.type);
+    return TYPES$2.includes(first.type);
 };
 
 const {
@@ -52225,7 +52225,7 @@ function isParens$1(path) {
 
 const {
     isStringLiteral: isStringLiteral$8,
-    isTemplateLiteral: isTemplateLiteral$3,
+    isTemplateLiteral: isTemplateLiteral$4,
     isBinaryExpression,
 } = lib_exports;
 
@@ -52233,7 +52233,7 @@ const isStringLike = (a) => {
     if (isStringLiteral$8(a))
         return true;
     
-    return isTemplateLiteral$3(a);
+    return isTemplateLiteral$4(a);
 };
 
 const isConcatenation = (path) => {
@@ -52308,7 +52308,7 @@ const wrongShorthand = ({computed, isAssign, keyPath, valuePath}) => {
 
 const {
     isMemberExpression: isMemberExpression$5,
-    isSequenceExpression: isSequenceExpression$1,
+    isSequenceExpression: isSequenceExpression$2,
 } = lib_exports;
 
 const maybeTypeAnnotation = (visit) => (path, printer, semantics) => {
@@ -52323,7 +52323,7 @@ function maybePrintTypeAnnotation(path, printer) {
     const {typeAnnotation} = node;
     const {write, traverse} = printer;
     
-    if (isSequenceExpression$1(parentPath))
+    if (isSequenceExpression$2(parentPath))
         return;
     
     if (isMemberExpression$5(parentPath))
@@ -52339,7 +52339,7 @@ function maybePrintTypeAnnotation(path, printer) {
 const {
     isAssignmentPattern: isAssignmentPattern$4,
     isArrayExpression: isArrayExpression$5,
-    isObjectExpression: isObjectExpression$9,
+    isObjectExpression: isObjectExpression$a,
     isIdentifier: isIdentifier$d,
 } = lib_exports;
 
@@ -52370,7 +52370,7 @@ function isLongAssignPattern(path, semantics) {
 }
 
 function isComplexObject(node) {
-    if (!isObjectExpression$9(node))
+    if (!isObjectExpression$a(node))
         return false;
     
     return node.properties.length;
@@ -52452,7 +52452,7 @@ const {
     isAssignmentPattern: isAssignmentPattern$2,
     isObjectPattern: isObjectPattern$2,
     isVariableDeclaration: isVariableDeclaration$3,
-    isObjectExpression: isObjectExpression$8,
+    isObjectExpression: isObjectExpression$9,
 } = lib_exports;
 
 function hasObjectPattern(properties) {
@@ -52491,7 +52491,7 @@ function hasAssignObject(path, maxPropertiesLengthInOneLine) {
     for (const prop of properties) {
         const {value} = prop.node;
         
-        if (isAssignmentPattern$2(value) && isObjectExpression$8(value.right))
+        if (isAssignmentPattern$2(value) && isObjectExpression$9(value.right))
             return n > 1 || maxPropertiesLengthInOneLine <= value.left;
     }
     
@@ -52614,7 +52614,7 @@ function hasComputed(properties) {
 }
 
 const {
-    isObjectExpression: isObjectExpression$7,
+    isObjectExpression: isObjectExpression$8,
     isAssignmentPattern,
     isForOfStatement,
     isFunction: isFunction$6,
@@ -52667,7 +52667,7 @@ function isPrevAssignObject(path) {
     
     const {right} = prev.node.value;
     
-    return isObjectExpression$7(right);
+    return isObjectExpression$8(right);
 }
 
 function isNextAssignObject(path) {
@@ -52681,10 +52681,10 @@ function isNextAssignObject(path) {
     
     const {right} = next.node.value;
     
-    return isObjectExpression$7(right);
+    return isObjectExpression$8(right);
 }
 
-const {isObjectExpression: isObjectExpression$6} = lib_exports;
+const {isObjectExpression: isObjectExpression$7} = lib_exports;
 
 const ObjectPattern = {
     print: maybeTypeAnnotation((path, printer, semantics) => {
@@ -52764,7 +52764,7 @@ const ObjectPattern = {
                 
                 const {right} = valuePath.node;
                 
-                if (i && !isPrevAssign(property) && !isInsideForOf(path) && isObjectExpression$6(right)) {
+                if (i && !isPrevAssign(property) && !isInsideForOf(path) && isObjectExpression$7(right)) {
                     print(',');
                     print.newline();
                     continue;
@@ -52987,7 +52987,7 @@ const {
     isTemplateElement: isTemplateElement$3,
     isRegExpLiteral: isRegExpLiteral$1,
     isClassMethod,
-    isTemplateLiteral: isTemplateLiteral$2,
+    isTemplateLiteral: isTemplateLiteral$3,
     isJSXText: isJSXText$3,
     isJSXAttribute: isJSXAttribute$2,
     isJSXIdentifier: isJSXIdentifier$2,
@@ -53008,7 +53008,7 @@ function extract(node) {
     if (isRegExpLiteral$1(node))
         return node.pattern;
     
-    if (isTemplateLiteral$2(node))
+    if (isTemplateLiteral$3(node))
         return extract(node.quasis[0]);
     
     if (isLiteral$2(node))
@@ -53345,15 +53345,24 @@ const setLiteralValue = (path, newValue) => {
     const node = path.node || path;
     
     if (isNumericLiteral(node)) {
-        node.value = newValue;
-        node.raw = newValue;
-        
+        setNumericLiteral(node, newValue);
         return;
     }
     
     if (isStringLiteral$7(node))
         setStringLiteral(node, newValue);
 };
+
+function setNumericLiteral(node, newValue) {
+    const raw = String(newValue);
+    
+    node.value = newValue;
+    node.raw = raw;
+    node.extra.rawValue = newValue;
+    node.extra.raw = raw;
+    
+    return;
+}
 
 function setStringLiteral(node, newValue) {
     const {
@@ -53409,13 +53418,13 @@ function isRequire$1(path) {
 
 const {
     isCallExpression: isCallExpression$6,
-    isObjectExpression: isObjectExpression$5,
+    isObjectExpression: isObjectExpression$6,
 } = lib_exports;
 
 const nodeOrPath = (path) => path.node || path;
 
 function getNode$1(path) {
-    if (!isObjectExpression$5(path))
+    if (!isObjectExpression$6(path))
         return nodeOrPath(path);
     
     if (isCallExpression$6(path.parentPath))
@@ -53470,7 +53479,7 @@ const collect = ({name, collector}) => (path) => {
 };
 
 const {
-    isObjectExpression: isObjectExpression$4,
+    isObjectExpression: isObjectExpression$5,
     isObjectPattern: isObjectPattern$1,
 } = lib_exports;
 
@@ -53496,7 +53505,7 @@ const getProperties = (path, names) => {
 };
 
 const getProperty = (path, name) => {
-    if (!isObjectExpression$4(path) && !isObjectPattern$1(path))
+    if (!isObjectExpression$5(path) && !isObjectPattern$1(path))
         throw Error(`☝️Looks like path is not 'ObjectExpression | ObjectPattern', but: '${path.type}' for path: ${path}`);
     
     const propertyPaths = path.get(`properties`);
@@ -53583,7 +53592,7 @@ const toExpression = (el) => {
     return toStatement(el);
 };
 
-const {isSequenceExpression} = lib_exports;
+const {isSequenceExpression: isSequenceExpression$1} = lib_exports;
 
 const replaceWithMultiple = (path, nodes) => {
     const {node} = path;
@@ -53609,7 +53618,7 @@ const replaceWithMultiple = (path, nodes) => {
     if (!newPath.length)
         return newPath;
     
-    if (!leadingComments && !isSequenceExpression(path))
+    if (!leadingComments && !isSequenceExpression$1(path))
         delete newPath[0].node.leadingComments;
     
     newPath[0].node.comments = comments || parentComments;
@@ -53743,7 +53752,7 @@ const isESM = (path) => {
 };
 
 const {
-    isObjectExpression: isObjectExpression$3,
+    isObjectExpression: isObjectExpression$4,
     isArrayExpression: isArrayExpression$3,
     isObjectProperty: isObjectProperty$1,
     isCallExpression: isCallExpression$5,
@@ -53774,9 +53783,9 @@ const isSimpleAndCall = ([a, b]) => {
 };
 
 const isBooleanAndSimple = ([a, b]) => isBooleanLiteral$1(a) && isSimple(b);
-const isBooleanAndObject = ([a, b]) => isBooleanLiteral$1(a) && isObjectExpression$3(b);
+const isBooleanAndObject = ([a, b]) => isBooleanLiteral$1(a) && isObjectExpression$4(b);
 const isNullAndSimple = ([a, b]) => isNullLiteral(a) && isSimple(b);
-const isSimpleAndObject = ([a, b]) => isSimple(a) && isObjectExpression$3(b);
+const isSimpleAndObject = ([a, b]) => isSimple(a) && isObjectExpression$4(b);
 const ONE_LINE = false;
 const MULTI_LINE = true;
 
@@ -53810,7 +53819,7 @@ const isMultiLine = (path, {elements, maxElementsInOneLine, maxElementLengthInOn
     if (elements.length > maxElementsInOneLine && isStringLiteral$6(first))
         return MULTI_LINE;
     
-    if (elements.length > 3 && !isObjectExpression$3(first))
+    if (elements.length > 3 && !isObjectExpression$4(first))
         return MULTI_LINE;
     
     if (isSimpleAndNotEmptyObject(elements))
@@ -54031,7 +54040,7 @@ const isStringAndObject = (elements) => {
     const first = elements.at(0);
     const last = elements.at(-1);
     
-    return isStringLiteral$6(first) && isObjectExpression$3(last);
+    return isStringLiteral$6(first) && isObjectExpression$4(last);
 };
 
 const isCurrentNewLine = (path) => {
@@ -54044,9 +54053,24 @@ const isCurrentNewLine = (path) => {
 const {
     isStringLiteral: isStringLiteral$5,
     isArrayExpression: isArrayExpression$2,
+    isObjectExpression: isObjectExpression$3,
+    isTemplateLiteral: isTemplateLiteral$2,
 } = lib_exports;
 
 const isInsideArray = (path) => path.parentPath.isArrayExpression();
+
+const isObjectAfterString = ([first, second]) => {
+    if (!first || !second)
+        return false;
+    
+    if (!isObjectExpression$3(second))
+        return false;
+    
+    if (isStringLiteral$5(first))
+        return true;
+    
+    return isTemplateLiteral$2(first);
+};
 
 const isArrayIndented = (path) => {
     const elements = path.get('elements');
@@ -54055,6 +54079,9 @@ const isArrayIndented = (path) => {
         return false;
     
     const [first] = elements;
+    
+    if (isObjectAfterString(elements))
+        return false;
     
     return !isTwoLongStrings(elements) || !isInsideArray(path) && isIndented(first);
 };
@@ -54999,8 +55026,42 @@ const WhileStatement = {
     },
 };
 
-const ExportAllDeclaration = (path, {print}) => {
+const ImportAttribute = (path, {print}) => {
+    print('__key');
+    print(':');
+    print.space();
+    print('__value');
+    print(',');
+};
+
+const printAttributes = (path, {write, traverse, indent}) => {
+    const attributes = path.get('attributes');
+    
+    if (!attributes.length)
+        return;
+    
+    write.space();
+    write('with');
+    write.space();
+    
+    write('{');
+    write.breakline();
+    indent.inc();
+    
+    for (const attr of attributes) {
+        indent();
+        traverse(attr);
+        write.newline();
+    }
+    
+    indent.dec();
+    write('}');
+};
+
+const ExportAllDeclaration = (path, printer) => {
+    const {print} = printer;
     const {exportKind} = path.node;
+    
     print('export ');
     
     if (exportKind === 'type')
@@ -55008,6 +55069,7 @@ const ExportAllDeclaration = (path, {print}) => {
     
     print('* from ');
     print('__source');
+    printAttributes(path, printer);
     print(';');
     print.newline();
 };
@@ -55016,7 +55078,7 @@ const {
     isExportNamespaceSpecifier,
     isVariableDeclaration: isVariableDeclaration$1,
     isExportNamedDeclaration: isExportNamedDeclaration$1,
-    isExportDefaultSpecifier,
+    isExportDefaultSpecifier: isExportDefaultSpecifier$1,
 } = lib_exports;
 
 const isDeclarationNewline = (path) => isMarkedAfter(path.get('declaration'));
@@ -55060,7 +55122,14 @@ const ExportNamedDeclaration = {
     before(path, {print}) {
         print.linebreak();
     },
-    print(path, {print, traverse, indent, maybe}, semantics) {
+    print(path, printer, semantics) {
+        const {
+            print,
+            traverse,
+            indent,
+            maybe,
+        } = printer;
+        
         const {trailingComma} = semantics;
         const {exportKind} = path.node;
         const specifiers = path.get('specifiers');
@@ -55078,6 +55147,7 @@ const ExportNamedDeclaration = {
             print(specifiers[0]);
             print(' from ');
             print('__source');
+            printAttributes(path, printer);
             print(';');
             maybe.print.newline(!isLast$2(path));
             
@@ -55094,10 +55164,10 @@ const ExportNamedDeclaration = {
             
             if (!specifiers.length) {
                 print('{}');
-            } else if (isExportDefaultSpecifier(first) && !rest.length) {
+            } else if (isExportDefaultSpecifier$1(first) && !rest.length) {
                 traverse(first);
             } else {
-                if (isExportDefaultSpecifier(first)) {
+                if (isExportDefaultSpecifier$1(first)) {
                     traverse(first);
                     print(',');
                     print.space();
@@ -55138,6 +55208,7 @@ const ExportNamedDeclaration = {
             if (exists(source)) {
                 print(' from ');
                 traverse(source);
+                printAttributes(path, printer);
             }
             
             print(';');
@@ -55229,37 +55300,6 @@ var parseImportSpecifiers_1 = (specifiers) => {
         namespaces,
         imports,
     };
-};
-
-const ImportAttribute = (path, {print}) => {
-    print('__key');
-    print(':');
-    print.space();
-    print('__value');
-    print(',');
-};
-
-const printAttributes = (path, keyword, {write, traverse, indent}) => {
-    const attributes = path.get('attributes');
-    
-    if (!attributes.length)
-        return;
-    
-    write(` ${keyword}`);
-    write.space();
-    
-    write('{');
-    write.breakline();
-    indent.inc();
-    
-    for (const attr of attributes) {
-        indent();
-        traverse(attr);
-        write.newline();
-    }
-    
-    indent.dec();
-    write('}');
 };
 
 const {isExportDeclaration: isExportDeclaration$3} = lib_exports;
@@ -55364,7 +55404,7 @@ const ImportDeclaration = {
         print.space();
         
         print('__source');
-        printAttributes(path, 'with', printer);
+        printAttributes(path, printer);
         
         print(';');
         
@@ -56550,20 +56590,20 @@ const maybeEscape = (value, {escapeDoubleQuote, escapeSingleQuote}) => {
 };
 
 const escape$1 = (list, {slash, quote}) => {
-    const res = [];
+    const result = [];
     
     for (const [index, char] of list.entries()) {
         const prev = list[index - 1];
         
         if (char === quote && prev !== slash) {
-            res.push(`${slash}${char}`);
+            result.push(`${slash}${char}`);
             continue;
         }
         
-        res.push(char);
+        result.push(char);
     }
     
-    return res.join('');
+    return result.join('');
 };
 
 const DirectiveLiteral = (path, {write}) => {
@@ -58211,7 +58251,7 @@ const createDebug$3 = (tokens) => (a) => {
         return;
     
     tokens.push({
-        type: TYPES$2.DEBUG,
+        type: TYPES$3.DEBUG,
         value: `/*__${stringSnakeCase(a)}*/`,
     });
 };
@@ -58396,14 +58436,14 @@ const tokenize = (ast, overrides) => {
     
     const write = (value) => {
         addToken({
-            type: TYPES$2.TOKEN,
+            type: TYPES$3.TOKEN,
             value,
         });
     };
     
     const indent = () => {
         addToken({
-            type: TYPES$2.INDENT,
+            type: TYPES$3.INDENT,
             value: printIndent(i, format.indent),
         });
     };
@@ -58416,7 +58456,7 @@ const tokenize = (ast, overrides) => {
     
     const newline = () => {
         addToken({
-            type: TYPES$2.NEWLINE,
+            type: TYPES$3.NEWLINE,
             value: format.newline,
         });
     };
@@ -58440,7 +58480,7 @@ const tokenize = (ast, overrides) => {
     
     const space = () => {
         addToken({
-            type: TYPES$2.SPACE,
+            type: TYPES$3.SPACE,
             value: format.space,
         });
     };
@@ -58457,21 +58497,21 @@ const tokenize = (ast, overrides) => {
     
     const splitter = () => {
         addToken({
-            type: TYPES$2.SPLITTER,
+            type: TYPES$3.SPLITTER,
             value: format.splitter,
         });
     };
     
     const quote = () => {
         addToken({
-            type: TYPES$2.QUOTE,
+            type: TYPES$3.QUOTE,
             value: format.quote,
         });
     };
     
     const endOfFile = () => {
         addToken({
-            type: TYPES$2.END_OF_FILE,
+            type: TYPES$3.END_OF_FILE,
             value: format.endOfFile,
         });
     };
@@ -58695,7 +58735,7 @@ const __toml = `${__toml_name}(__object)`;
 const __filesystem = `${__filesystem_name}(__object)`;
 const __ignore = `${__ignore_name}(__array)`;
 
-const TYPES = [
+const TYPES$1 = [
     __json_name,
     __toml_name,
     __yaml_name,
@@ -58727,7 +58767,7 @@ const fromJS = (source, name = __json) => {
 const isJSON = (source) => !source.indexOf(__json_name);
 const isTOML = (source) => !source.indexOf(__toml_name);
 const isJSONGroup = (source) => {
-    for (const type of TYPES) {
+    for (const type of TYPES$1) {
         if (!source.indexOf(type))
             return true;
     }
@@ -58799,7 +58839,7 @@ function check$d(ast) {
 
 const isString$a = (a) => typeof a === 'string';
 
-var alignSpaces = (str) => {
+const alignSpaces = (str) => {
     check$c(str);
     
     const array = str.split('\n');
@@ -58849,14 +58889,12 @@ function check$c(str) {
         throw Error('str should be a string!');
 }
 
-var align = alignSpaces.default;
-
 const defaultOptions$4 = {
     alignSpaces: true,
 };
 
 const print$1 = (ast, options) => {
-    const {source, alignSpaces} = {
+    const {source, alignSpaces: alignSpaces$1} = {
         ...defaultOptions$4,
         ...options,
     };
@@ -58875,10 +58913,10 @@ const print$1 = (ast, options) => {
     
     code += '\n';
     
-    if (!alignSpaces)
+    if (!alignSpaces$1)
         return code;
     
-    return align(code);
+    return alignSpaces(code);
 };
 
 const {isArray: isArray$b} = Array;
@@ -61101,14 +61139,14 @@ const getPosition = (path, shebang) => {
     if (!loc)
         return {
             line: 0,
-            column: 0,
+            column: 1,
         };
     
     const {line, column} = node.loc.start;
     
     return {
         line: shebang ? line + 1 : line,
-        column,
+        column: column + 1,
     };
 };
 
@@ -61500,6 +61538,7 @@ const {
     isFunction: isFunction$1,
     isImportDefaultSpecifier,
     isExportSpecifier,
+    isExportDefaultSpecifier,
     isRegExpLiteral,
     isJSXText: isJSXText$2,
     isJSXIdentifier: isJSXIdentifier$1,
@@ -61740,12 +61779,17 @@ const isImports = (a) => {
 const isExports = (a) => {
     const b = !isArray$5(a) ? a : a[0];
     
-    if (!isExportSpecifier(b))
-        return false;
+    if (isExportSpecifier(b))
+        return isIdentifier$4(b.local, {
+            name: EXPORTS,
+        });
     
-    return isIdentifier$4(b.local, {
-        name: EXPORTS,
-    });
+    if (isExportDefaultSpecifier(b))
+        return isIdentifier$4(b.exported, {
+            name: EXPORTS,
+        });
+    
+    return false;
 };
 
 const __OBJECT_TYPE = 'ObjectPattern|ObjectExpression';
@@ -61877,6 +61921,21 @@ const getTemplateValues = (node, str) => {
     });
 };
 
+const TYPES = [
+    'Identifier',
+    'JSXIdentifier',
+    'BooleanLiteral',
+    'StringLiteral',
+    'TemplateElement',
+    'RegExpLiteral',
+    'JSXText',
+    'JSXAttribute',
+    'TSTypeReference',
+    'TSTypeParameter',
+];
+
+const JOINED_TYPES = TYPES.join('|');
+
 function findVarsWays(node) {
     if (isIdentifier$3(node) && is(node.name))
         return {
@@ -61887,7 +61946,7 @@ function findVarsWays(node) {
     
     traverse3(node, {
         noScope: true,
-        'Identifier|JSXIdentifier|BooleanLiteral|StringLiteral|TemplateElement|RegExpLiteral|JSXText|JSXAttribute|TSTypeReference|TSTypeParameter'(path) {
+        [JOINED_TYPES](path) {
             if (isInsideTypeReference(path))
                 return;
             
@@ -61927,8 +61986,10 @@ function getValues({waysFrom, node}) {
     
     for (const [name, ways] of entries$6(waysFrom)) {
         for (let way of ways) {
-            if (isImportsStr(name) || isExportsStr(name))
+            if (isImportsStr(name))
                 way = way.replace(/\.0.local$/, '');
+            else if (isExportsStr(name))
+                way = way.replace(/\.0.(local|exported)$/, '');
             else if (isArgsStr(name) || isJSXChildrenStr(name) || isJSXAttributesStr(name) || isTypeParamsStr(name))
                 way = way.replace(/\.0$/, '');
             
@@ -61957,8 +62018,10 @@ function setValues({waysTo, values, path}) {
                 continue;
             }
             
-            if (isImportsStr(name) || isExportsStr(name))
+            if (isImportsStr(name))
                 way = way.replace(/\.0.local$/, '');
+            else if (isExportsStr(name))
+                way = way.replace(/\.0.(local|exported)$/, '');
             
             if (isArgsStr(name) || isJSXChildrenStr(name) || isJSXAttributesStr(name))
                 way = way.replace(/\.0$/, '');
@@ -63196,7 +63259,7 @@ const watermark = (from, to, path) => {
     };
     
     return {
-        init: wraptile$1(init$2, options),
+        init: wraptile$1(init, options),
         has: wraptile$1(has, options),
         add: wraptile$1(add, options),
     };
@@ -63214,7 +63277,7 @@ function create(from, to, path) {
     };
 }
 
-function init$2({path, program}) {
+function init({path, program}) {
     if (path.node)
         path.node[name] = path.node[name] || new Set();
     
@@ -63222,7 +63285,7 @@ function init$2({path, program}) {
 }
 
 function add({path, program, watermark, highWatermark}) {
-    init$2({
+    init({
         path,
         program,
     });
@@ -63730,36 +63793,22 @@ const writeFileContent$1 = (name, content) => {
     maybeFS.writeFileContent(name, content);
 };
 
-function init$1(fsDriver) {
+const inject = (fsDriver) => {
     assign(maybeFS, fsDriver);
-}
+};
 
-const pause$1 = () => {
+const pause = () => {
     driverStore(maybeFS);
-    deinit$1();
+    eject();
 };
 
-const start$1 = () => {
-    init$1(driverStore());
+const start = () => {
+    inject(driverStore());
 };
 
-function deinit$1() {
+function eject() {
     assign(maybeFS, defaultFS);
 }
-
-var maybeFS$1 = /*#__PURE__*/Object.freeze({
-    __proto__: null,
-    copyFile: copyFile$1,
-    createDirectory: createDirectory$1,
-    deinit: deinit$1,
-    init: init$1,
-    pause: pause$1,
-    readFileContent: readFileContent$1,
-    removeFile: removeFile$1,
-    renameFile: renameFile$1,
-    start: start$1,
-    writeFileContent: writeFileContent$1
-});
 
 const {isFile, isProgram: isProgram$1} = lib_exports;
 const {merge} = traverse3.visitors;
@@ -63971,7 +64020,10 @@ function parseFindFileOptions(options) {
 }
 
 function findFile(node, name, options) {
-    const {exclude = [], crawled = crawlDirectory(node)} = parseFindFileOptions(options);
+    const {
+        exclude = [],
+        crawled = crawlDirectory(node),
+    } = parseFindFileOptions(options);
     
     checkName(name);
     
@@ -64360,13 +64412,6 @@ function getFile(directoryPath, name, {type} = {}) {
 }
 
 const {
-    init,
-    deinit,
-    pause,
-    start,
-} = maybeFS$1;
-
-const {
     objectExpression,
     arrayExpression: arrayExpression$1,
     stringLiteral: stringLiteral$3,
@@ -64683,6 +64728,7 @@ const createTraverse = ({scan, rule, progress}) => ({push, options}) => ({
             fileProgress,
             crawled,
         });
+        
         const crawlFile = createCrawlFile(crawled);
         
         scan(rootPath, {
@@ -71174,6 +71220,7 @@ const {
     isLabeledStatement,
     isObjectPattern,
     isCallExpression,
+    isSequenceExpression,
     objectPattern,
     objectProperty,
 } = lib_exports;
@@ -71197,6 +71244,15 @@ const addArgs = (args) => ({
 
 const fix$3 = ({declaration, path, pattern, params, index}) => {
     const declarationNode = template$1.ast.fresh(declaration);
+    
+    if (isSequenceExpression(declarationNode)) {
+        const {expressions} = declarationNode;
+        const {block} = path.scope;
+        const {params} = block;
+        
+        block.params.push(...expressions.slice(params.length));
+        return;
+    }
     
     if (isBlockStatement(declarationNode)) {
         const prop = createProperty(declarationNode.body[0]);
@@ -71334,6 +71390,7 @@ const expressions = [
     'yield',
     'typeof',
     'function',
+    'instanceof',
 ];
 
 const statements = [
@@ -71555,7 +71612,7 @@ function magicParse(name, content) {
         return [js, ast];
     }
     
-    if (/\.(c|m)?ts(x)?$/.test(name)) {
+    if (/\.[cm]?ts(x)?$/.test(name)) {
         const ast = parse$2(content, {
             isTS: true,
         });
@@ -71994,7 +72051,6 @@ var operator = /*#__PURE__*/Object.freeze({
     createFile: createFile,
     createNestedDirectory: createNestedDirectory,
     declare: declare$1,
-    deinit: deinit,
     extract: extract,
     findBinding: findBinding,
     findFile: findFile,
@@ -72026,7 +72082,6 @@ var operator = /*#__PURE__*/Object.freeze({
     hasParens: hasParens,
     hasTagName: hasTagName,
     ignore: ignore,
-    init: init,
     insertAfter: insertAfter,
     insertBefore: insertBefore,
     isConditionKeyword: isConditionKeyword,
@@ -72046,7 +72101,6 @@ var operator = /*#__PURE__*/Object.freeze({
     matchFiles: matchFiles,
     moveFile: moveFile,
     parseTemplate: parseTemplate,
-    pause: pause,
     readDirectory: readDirectory,
     readFileContent: readFileContent,
     remove: remove,
@@ -72064,7 +72118,6 @@ var operator = /*#__PURE__*/Object.freeze({
     setAttributeValue: setAttributeValue,
     setLiteralValue: setLiteralValue,
     setValues: setValues,
-    start: start,
     toExpression: toExpression,
     toJS: toJS,
     transformRegExp: transformRegExp,
