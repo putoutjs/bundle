@@ -1,3 +1,10 @@
+2026.02.19, v5.4.0
+
+feature:
+- 5b2bae5 @putout/bundle: eslint-plugin-putout v31.0.0
+- 50a0874 @putout/bundle: madrun v13.0.0
+- 50fcb51 @putout/bundle: putout v42.0.8
+
 2026.02.15, v5.3.1
 
 feature:
