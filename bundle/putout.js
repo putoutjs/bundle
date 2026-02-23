@@ -1,20 +1,3 @@
-function fullstore(value) {
-    const data = {
-        value,
-    };
-    
-    return (...args) => {
-        const [value] = args;
-        
-        if (!args.length)
-            return data.value;
-        
-        data.value = value;
-        
-        return value;
-    };
-}
-
 var global$1 = (typeof global !== "undefined" ? global :
   typeof self !== "undefined" ? self :
   typeof window !== "undefined" ? window : {});
@@ -216,7 +199,7 @@ function write (buffer, value, offset, isLE, mLen, nBytes) {
 
 var toString = {}.toString;
 
-var isArray$e = Array.isArray || function (arr) {
+var isArray$g = Array.isArray || function (arr) {
   return toString.call(arr) == '[object Array]';
 };
 
@@ -500,7 +483,7 @@ function fromObject (that, obj) {
       return fromArrayLike(that, obj)
     }
 
-    if (obj.type === 'Buffer' && isArray$e(obj.data)) {
+    if (obj.type === 'Buffer' && isArray$g(obj.data)) {
       return fromArrayLike(that, obj.data)
     }
   }
@@ -565,7 +548,7 @@ Buffer.isEncoding = function isEncoding (encoding) {
 };
 
 Buffer.concat = function concat (list, length) {
-  if (!isArray$e(list)) {
+  if (!isArray$g(list)) {
     throw new TypeError('"list" argument must be an Array of Buffers')
   }
 
@@ -2219,7 +2202,7 @@ var browser$1 = {
 };
 
 var util = /*#__PURE__*/Object.freeze({
-    __proto__: null
+  __proto__: null
 });
 
 var __create = Object.create;
@@ -2264,9 +2247,9 @@ __defProp(target, 'default', {
     enumerable: true,
 }) , mod));
 
-// node_modules/jsesc/jsesc.js
+// ../babel-babel/node_modules/jsesc/jsesc.js
 var require_jsesc = __commonJS({
-    'node_modules/jsesc/jsesc.js'(exports$1, module) {
+    '../babel-babel/node_modules/jsesc/jsesc.js'(exports$1, module) {
         
         var object = {};
         var hasOwnProperty = object.hasOwnProperty;
@@ -2328,10 +2311,6 @@ var require_jsesc = __commonJS({
         
         var isNumber2 = (value) => {
             return typeof value == 'number' || toString.call(value) == '[object Number]';
-        };
-        
-        var isBigInt = (value) => {
-            return typeof value == 'bigint';
         };
         
         var isFunction5 = (value) => {
@@ -2482,41 +2461,32 @@ var require_jsesc = __commonJS({
                     }
                     
                     return '[' + newLine + result.join(',' + newLine) + newLine + (compact ? '' : oldIndent) + ']';
-                } else if (isNumber2(argument) || isBigInt(argument)) {
+                } else if (isNumber2(argument)) {
                     if (json) {
-                        return JSON.stringify(Number(argument));
+                        return JSON.stringify(argument);
                     }
                     
-                    let result2;
-                    
                     if (useDecNumbers) {
-                        result2 = String(argument);
-                    } else if (useHexNumbers) {
+                        return String(argument);
+                    }
+                    
+                    if (useHexNumbers) {
                         let hexadecimal2 = argument.toString(16);
                         
                         if (!lowercaseHex) {
                             hexadecimal2 = hexadecimal2.toUpperCase();
                         }
                         
-                        result2 = '0x' + hexadecimal2;
-                    } else if (useBinNumbers) {
-                        result2 = '0b' + argument.toString(2);
-                    } else if (useOctNumbers) {
-                        result2 = '0o' + argument.toString(8);
-                    }
-
-                    
-                    if (isBigInt(argument)) {
-                        return result2 + 'n';
+                        return '0x' + hexadecimal2;
                     }
                     
-                    return result2;
-                } else if (isBigInt(argument)) {
-                    if (json) {
-                        return JSON.stringify(Number(argument));
+                    if (useBinNumbers) {
+                        return '0b' + argument.toString(2);
                     }
                     
-                    return argument + 'n';
+                    if (useOctNumbers) {
+                        return '0o' + argument.toString(8);
+                    }
                 } else if (!isObject(argument)) {
                     if (json) {
                         return JSON.stringify(argument) || 'null';
@@ -2538,7 +2508,6 @@ var require_jsesc = __commonJS({
                     
                     return '{' + newLine + result.join(',' + newLine) + newLine + (compact ? '' : oldIndent) + '}';
                 }
-
 
             }
             
@@ -2626,7 +2595,7 @@ var require_jsesc = __commonJS({
     },
 });
 
-// node_modules/@babel/types/lib/index.js
+// ../babel-babel/packages/babel-types/lib/index.js
 var lib_exports = {};
 
 __export(lib_exports, {
@@ -3382,7 +3351,7 @@ __export(lib_exports, {
     isAccessor: () => isAccessor,
     isAnyTypeAnnotation: () => isAnyTypeAnnotation,
     isArgumentPlaceholder: () => isArgumentPlaceholder,
-    isArrayExpression: () => isArrayExpression$a,
+    isArrayExpression: () => isArrayExpression$b,
     isArrayPattern: () => isArrayPattern,
     isArrayTypeAnnotation: () => isArrayTypeAnnotation,
     isArrowFunctionExpression: () => isArrowFunctionExpression$3,
@@ -3875,14 +3844,11 @@ __export(lib_exports, {
     yieldExpression: () => yieldExpression,
 });
 
-// node_modules/@babel/helper-validator-identifier/lib/index.js
+// ../babel-babel/packages/babel-helper-validator-identifier/lib/index.js
 var nonASCIIidentifierStartChars = '\xAA\xB5\xBA\xC0-\xD6\xD8-\xF6\xF8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377\u037A-\u037D\u037F\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5\u03F7-\u0481\u048A-\u052F\u0531-\u0556\u0559\u0560-\u0588\u05D0-\u05EA\u05EF-\u05F2\u0620-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06E5\u06E6\u06EE\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA\u07F4\u07F5\u07FA\u0800-\u0815\u081A\u0824\u0828\u0840-\u0858\u0860-\u086A\u0870-\u0887\u0889-\u088F\u08A0-\u08C9\u0904-\u0939\u093D\u0950\u0958-\u0961\u0971-\u0980\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u09FC\u0A05-\u0A0A\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0AF9\u0B05-\u0B0C\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C39\u0C3D\u0C58-\u0C5A\u0C5C\u0C5D\u0C60\u0C61\u0C80\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3\u0CB5-\u0CB9\u0CBD\u0CDC-\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D04-\u0D0C\u0D0E-\u0D10\u0D12-\u0D3A\u0D3D\u0D4E\u0D54-\u0D56\u0D5F-\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E46\u0E81\u0E82\u0E84\u0E86-\u0E8A\u0E8C-\u0EA3\u0EA5\u0EA7-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EC6\u0EDC-\u0EDF\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081\u108E\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F5\u13F8-\u13FD\u1401-\u166C\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u16EE-\u16F8\u1700-\u1711\u171F-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17D7\u17DC\u1820-\u1878\u1880-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191E\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19B0-\u19C9\u1A00-\u1A16\u1A20-\u1A54\u1AA7\u1B05-\u1B33\u1B45-\u1B4C\u1B83-\u1BA0\u1BAE\u1BAF\u1BBA-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C7D\u1C80-\u1C8A\u1C90-\u1CBA\u1CBD-\u1CBF\u1CE9-\u1CEC\u1CEE-\u1CF3\u1CF5\u1CF6\u1CFA\u1D00-\u1DBF\u1E00-\u1F15\u1F18-\u1F1D\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u2071\u207F\u2090-\u209C\u2102\u2107\u210A-\u2113\u2115\u2118-\u211D\u2124\u2126\u2128\u212A-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2160-\u2188\u2C00-\u2CE4\u2CEB-\u2CEE\u2CF2\u2CF3\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D80-\u2D96\u2DA0-\u2DA6\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE\u2DD0-\u2DD6\u2DD8-\u2DDE\u3005-\u3007\u3021-\u3029\u3031-\u3035\u3038-\u303C\u3041-\u3096\u309B-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312F\u3131-\u318E\u31A0-\u31BF\u31F0-\u31FF\u3400-\u4DBF\u4E00-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA61F\uA62A\uA62B\uA640-\uA66E\uA67F-\uA69D\uA6A0-\uA6EF\uA717-\uA71F\uA722-\uA788\uA78B-\uA7DC\uA7F1-\uA801\uA803-\uA805\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB\uA8FD\uA8FE\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uA9CF\uA9E0-\uA9E4\uA9E6-\uA9EF\uA9FA-\uA9FE\uAA00-\uAA28\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA76\uAA7A\uAA7E-\uAAAF\uAAB1\uAAB5\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB-\uAADD\uAAE0-\uAAEA\uAAF2-\uAAF4\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E\uAB30-\uAB5A\uAB5C-\uAB69\uAB70-\uABE2\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF\uFFD2-\uFFD7\uFFDA-\uFFDC';
 var nonASCIIidentifierChars = '\xB7\u0300-\u036F\u0387\u0483-\u0487\u0591-\u05BD\u05BF\u05C1\u05C2\u05C4\u05C5\u05C7\u0610-\u061A\u064B-\u0669\u0670\u06D6-\u06DC\u06DF-\u06E4\u06E7\u06E8\u06EA-\u06ED\u06F0-\u06F9\u0711\u0730-\u074A\u07A6-\u07B0\u07C0-\u07C9\u07EB-\u07F3\u07FD\u0816-\u0819\u081B-\u0823\u0825-\u0827\u0829-\u082D\u0859-\u085B\u0897-\u089F\u08CA-\u08E1\u08E3-\u0903\u093A-\u093C\u093E-\u094F\u0951-\u0957\u0962\u0963\u0966-\u096F\u0981-\u0983\u09BC\u09BE-\u09C4\u09C7\u09C8\u09CB-\u09CD\u09D7\u09E2\u09E3\u09E6-\u09EF\u09FE\u0A01-\u0A03\u0A3C\u0A3E-\u0A42\u0A47\u0A48\u0A4B-\u0A4D\u0A51\u0A66-\u0A71\u0A75\u0A81-\u0A83\u0ABC\u0ABE-\u0AC5\u0AC7-\u0AC9\u0ACB-\u0ACD\u0AE2\u0AE3\u0AE6-\u0AEF\u0AFA-\u0AFF\u0B01-\u0B03\u0B3C\u0B3E-\u0B44\u0B47\u0B48\u0B4B-\u0B4D\u0B55-\u0B57\u0B62\u0B63\u0B66-\u0B6F\u0B82\u0BBE-\u0BC2\u0BC6-\u0BC8\u0BCA-\u0BCD\u0BD7\u0BE6-\u0BEF\u0C00-\u0C04\u0C3C\u0C3E-\u0C44\u0C46-\u0C48\u0C4A-\u0C4D\u0C55\u0C56\u0C62\u0C63\u0C66-\u0C6F\u0C81-\u0C83\u0CBC\u0CBE-\u0CC4\u0CC6-\u0CC8\u0CCA-\u0CCD\u0CD5\u0CD6\u0CE2\u0CE3\u0CE6-\u0CEF\u0CF3\u0D00-\u0D03\u0D3B\u0D3C\u0D3E-\u0D44\u0D46-\u0D48\u0D4A-\u0D4D\u0D57\u0D62\u0D63\u0D66-\u0D6F\u0D81-\u0D83\u0DCA\u0DCF-\u0DD4\u0DD6\u0DD8-\u0DDF\u0DE6-\u0DEF\u0DF2\u0DF3\u0E31\u0E34-\u0E3A\u0E47-\u0E4E\u0E50-\u0E59\u0EB1\u0EB4-\u0EBC\u0EC8-\u0ECE\u0ED0-\u0ED9\u0F18\u0F19\u0F20-\u0F29\u0F35\u0F37\u0F39\u0F3E\u0F3F\u0F71-\u0F84\u0F86\u0F87\u0F8D-\u0F97\u0F99-\u0FBC\u0FC6\u102B-\u103E\u1040-\u1049\u1056-\u1059\u105E-\u1060\u1062-\u1064\u1067-\u106D\u1071-\u1074\u1082-\u108D\u108F-\u109D\u135D-\u135F\u1369-\u1371\u1712-\u1715\u1732-\u1734\u1752\u1753\u1772\u1773\u17B4-\u17D3\u17DD\u17E0-\u17E9\u180B-\u180D\u180F-\u1819\u18A9\u1920-\u192B\u1930-\u193B\u1946-\u194F\u19D0-\u19DA\u1A17-\u1A1B\u1A55-\u1A5E\u1A60-\u1A7C\u1A7F-\u1A89\u1A90-\u1A99\u1AB0-\u1ABD\u1ABF-\u1ADD\u1AE0-\u1AEB\u1B00-\u1B04\u1B34-\u1B44\u1B50-\u1B59\u1B6B-\u1B73\u1B80-\u1B82\u1BA1-\u1BAD\u1BB0-\u1BB9\u1BE6-\u1BF3\u1C24-\u1C37\u1C40-\u1C49\u1C50-\u1C59\u1CD0-\u1CD2\u1CD4-\u1CE8\u1CED\u1CF4\u1CF7-\u1CF9\u1DC0-\u1DFF\u200C\u200D\u203F\u2040\u2054\u20D0-\u20DC\u20E1\u20E5-\u20F0\u2CEF-\u2CF1\u2D7F\u2DE0-\u2DFF\u302A-\u302F\u3099\u309A\u30FB\uA620-\uA629\uA66F\uA674-\uA67D\uA69E\uA69F\uA6F0\uA6F1\uA802\uA806\uA80B\uA823-\uA827\uA82C\uA880\uA881\uA8B4-\uA8C5\uA8D0-\uA8D9\uA8E0-\uA8F1\uA8FF-\uA909\uA926-\uA92D\uA947-\uA953\uA980-\uA983\uA9B3-\uA9C0\uA9D0-\uA9D9\uA9E5\uA9F0-\uA9F9\uAA29-\uAA36\uAA43\uAA4C\uAA4D\uAA50-\uAA59\uAA7B-\uAA7D\uAAB0\uAAB2-\uAAB4\uAAB7\uAAB8\uAABE\uAABF\uAAC1\uAAEB-\uAAEF\uAAF5\uAAF6\uABE3-\uABEA\uABEC\uABED\uABF0-\uABF9\uFB1E\uFE00-\uFE0F\uFE20-\uFE2F\uFE33\uFE34\uFE4D-\uFE4F\uFF10-\uFF19\uFF3F\uFF65';
 var nonASCIIidentifierStart = new RegExp('[' + nonASCIIidentifierStartChars + ']');
 var nonASCIIidentifier = new RegExp('[' + nonASCIIidentifierStartChars + nonASCIIidentifierChars + ']');
-
-nonASCIIidentifierStartChars =
-nonASCIIidentifierChars = null;
 var astralIdentifierStartCodes = [
     0,
     11,
@@ -4993,7 +4959,7 @@ function isKeyword$1(word) {
     return keywords$1.has(word);
 }
 
-// node_modules/@babel/helper-string-parser/lib/index.js
+// ../babel-babel/packages/babel-helper-string-parser/lib/index.js
 var _isDigit = function isDigit(code2) {
     return code2 >= 48 && code2 <= 57;
 };
@@ -5294,7 +5260,7 @@ function readCodePoint(input, pos, lineStart, curLine, throwOnInvalid, errors) {
     };
 }
 
-// node_modules/@babel/types/lib/index.js
+// ../babel-babel/packages/babel-types/lib/index.js
 function shallowEqual(actual, expected) {
     const keys2 = Object.keys(expected);
     
@@ -5356,7 +5322,7 @@ function captureShortStackTrace(skip2, length) {
     };
 }
 
-function isArrayExpression$a(node, opts) {
+function isArrayExpression$b(node, opts) {
     if (!node)
         return false;
     
@@ -18630,15 +18596,13 @@ function removeTypeDuplicates$1(nodesIn) {
             const name = getQualifiedName$1(node.id);
             
             if (generics.has(name)) {
-                let existing = generics.get(name);
+                const existingTypeParameters = generics.get(name).typeParameters;
                 
-                if (existing.typeParameters) {
+                if (existingTypeParameters) {
                     if (node.typeParameters) {
-                        existing.typeParameters.params.push(...node.typeParameters.params);
-                        existing.typeParameters.params = removeTypeDuplicates$1(existing.typeParameters.params);
+                        existingTypeParameters.params.push(...node.typeParameters.params);
+                        existingTypeParameters.params = removeTypeDuplicates$1(existingTypeParameters.params);
                     }
-                } else {
-                    existing = node.typeParameters;
                 }
             } else {
                 generics.set(name, node);
@@ -18717,14 +18681,11 @@ function removeTypeDuplicates(nodesIn) {
             const name = getQualifiedName(node.typeName);
             
             if (generics.has(name)) {
-                let existing = generics.get(name);
-                const existingTypeArguments = existing[typeArgumentsKey];
+                const existingTypeArguments = generics.get(name)[typeArgumentsKey];
                 
                 if (existingTypeArguments) {
                     existingTypeArguments.params.push(...typeArguments.params);
                     existingTypeArguments.params = removeTypeDuplicates(existingTypeArguments.params);
-                } else {
-                    existing = typeArguments;
                 }
             } else {
                 generics.set(name, node);
@@ -18784,6 +18745,9 @@ function cloneIfNodeOrArray(obj, deep, withoutLoc, commentsCache) {
 }
 
 function cloneNode(node, deep = true, withoutLoc = false) {
+    if (!node)
+        return node;
+    
     return cloneNodeInternal(node, deep, withoutLoc,     /* @__PURE__ */new Map());
 }
 
@@ -19019,7 +18983,7 @@ function toBlock(node, parent) {
         return node;
     }
     
-    let blockNodes = [];
+    let blockNodes;
     
     if (isEmptyStatement(node)) {
         blockNodes = [];
@@ -19104,8 +19068,8 @@ function toExpression$1(node) {
     return node;
 }
 
-var _skip = /* @__PURE__ */Symbol();
-var _stop = /* @__PURE__ */Symbol();
+var _skip = Symbol();
+var _stop = Symbol();
 
 function traverseFast(node, enter, opts) {
     if (!node)
@@ -19979,7 +19943,7 @@ var react = {
     buildChildren,
 };
 
-// node_modules/@babel/parser/lib/index.js
+// ../babel-babel/packages/babel-parser/lib/index.js
 var Position = class {
     line;
     column;
@@ -21419,9 +21383,6 @@ var nonASCIIidentifierStartChars2 = '\xAA\xB5\xBA\xC0-\xD6\xD8-\xF6\xF8-\u02C1\u
 var nonASCIIidentifierChars2 = '\xB7\u0300-\u036F\u0387\u0483-\u0487\u0591-\u05BD\u05BF\u05C1\u05C2\u05C4\u05C5\u05C7\u0610-\u061A\u064B-\u0669\u0670\u06D6-\u06DC\u06DF-\u06E4\u06E7\u06E8\u06EA-\u06ED\u06F0-\u06F9\u0711\u0730-\u074A\u07A6-\u07B0\u07C0-\u07C9\u07EB-\u07F3\u07FD\u0816-\u0819\u081B-\u0823\u0825-\u0827\u0829-\u082D\u0859-\u085B\u0897-\u089F\u08CA-\u08E1\u08E3-\u0903\u093A-\u093C\u093E-\u094F\u0951-\u0957\u0962\u0963\u0966-\u096F\u0981-\u0983\u09BC\u09BE-\u09C4\u09C7\u09C8\u09CB-\u09CD\u09D7\u09E2\u09E3\u09E6-\u09EF\u09FE\u0A01-\u0A03\u0A3C\u0A3E-\u0A42\u0A47\u0A48\u0A4B-\u0A4D\u0A51\u0A66-\u0A71\u0A75\u0A81-\u0A83\u0ABC\u0ABE-\u0AC5\u0AC7-\u0AC9\u0ACB-\u0ACD\u0AE2\u0AE3\u0AE6-\u0AEF\u0AFA-\u0AFF\u0B01-\u0B03\u0B3C\u0B3E-\u0B44\u0B47\u0B48\u0B4B-\u0B4D\u0B55-\u0B57\u0B62\u0B63\u0B66-\u0B6F\u0B82\u0BBE-\u0BC2\u0BC6-\u0BC8\u0BCA-\u0BCD\u0BD7\u0BE6-\u0BEF\u0C00-\u0C04\u0C3C\u0C3E-\u0C44\u0C46-\u0C48\u0C4A-\u0C4D\u0C55\u0C56\u0C62\u0C63\u0C66-\u0C6F\u0C81-\u0C83\u0CBC\u0CBE-\u0CC4\u0CC6-\u0CC8\u0CCA-\u0CCD\u0CD5\u0CD6\u0CE2\u0CE3\u0CE6-\u0CEF\u0CF3\u0D00-\u0D03\u0D3B\u0D3C\u0D3E-\u0D44\u0D46-\u0D48\u0D4A-\u0D4D\u0D57\u0D62\u0D63\u0D66-\u0D6F\u0D81-\u0D83\u0DCA\u0DCF-\u0DD4\u0DD6\u0DD8-\u0DDF\u0DE6-\u0DEF\u0DF2\u0DF3\u0E31\u0E34-\u0E3A\u0E47-\u0E4E\u0E50-\u0E59\u0EB1\u0EB4-\u0EBC\u0EC8-\u0ECE\u0ED0-\u0ED9\u0F18\u0F19\u0F20-\u0F29\u0F35\u0F37\u0F39\u0F3E\u0F3F\u0F71-\u0F84\u0F86\u0F87\u0F8D-\u0F97\u0F99-\u0FBC\u0FC6\u102B-\u103E\u1040-\u1049\u1056-\u1059\u105E-\u1060\u1062-\u1064\u1067-\u106D\u1071-\u1074\u1082-\u108D\u108F-\u109D\u135D-\u135F\u1369-\u1371\u1712-\u1715\u1732-\u1734\u1752\u1753\u1772\u1773\u17B4-\u17D3\u17DD\u17E0-\u17E9\u180B-\u180D\u180F-\u1819\u18A9\u1920-\u192B\u1930-\u193B\u1946-\u194F\u19D0-\u19DA\u1A17-\u1A1B\u1A55-\u1A5E\u1A60-\u1A7C\u1A7F-\u1A89\u1A90-\u1A99\u1AB0-\u1ABD\u1ABF-\u1ADD\u1AE0-\u1AEB\u1B00-\u1B04\u1B34-\u1B44\u1B50-\u1B59\u1B6B-\u1B73\u1B80-\u1B82\u1BA1-\u1BAD\u1BB0-\u1BB9\u1BE6-\u1BF3\u1C24-\u1C37\u1C40-\u1C49\u1C50-\u1C59\u1CD0-\u1CD2\u1CD4-\u1CE8\u1CED\u1CF4\u1CF7-\u1CF9\u1DC0-\u1DFF\u200C\u200D\u203F\u2040\u2054\u20D0-\u20DC\u20E1\u20E5-\u20F0\u2CEF-\u2CF1\u2D7F\u2DE0-\u2DFF\u302A-\u302F\u3099\u309A\u30FB\uA620-\uA629\uA66F\uA674-\uA67D\uA69E\uA69F\uA6F0\uA6F1\uA802\uA806\uA80B\uA823-\uA827\uA82C\uA880\uA881\uA8B4-\uA8C5\uA8D0-\uA8D9\uA8E0-\uA8F1\uA8FF-\uA909\uA926-\uA92D\uA947-\uA953\uA980-\uA983\uA9B3-\uA9C0\uA9D0-\uA9D9\uA9E5\uA9F0-\uA9F9\uAA29-\uAA36\uAA43\uAA4C\uAA4D\uAA50-\uAA59\uAA7B-\uAA7D\uAAB0\uAAB2-\uAAB4\uAAB7\uAAB8\uAABE\uAABF\uAAC1\uAAEB-\uAAEF\uAAF5\uAAF6\uABE3-\uABEA\uABEC\uABED\uABF0-\uABF9\uFB1E\uFE00-\uFE0F\uFE20-\uFE2F\uFE33\uFE34\uFE4D-\uFE4F\uFF10-\uFF19\uFF3F\uFF65';
 var nonASCIIidentifierStart2 = new RegExp('[' + nonASCIIidentifierStartChars2 + ']');
 var nonASCIIidentifier2 = new RegExp('[' + nonASCIIidentifierStartChars2 + nonASCIIidentifierChars2 + ']');
-
-nonASCIIidentifierStartChars2 =
-nonASCIIidentifierChars2 = null;
 var astralIdentifierStartCodes2 = [
     0,
     11,
@@ -24025,7 +23986,7 @@ var CommentsParser = class extends BaseParser {
 };
 
 var State$2 = class _State {
-    flags = 512;
+    flags = 4096;
     get strict() {
         return (this.flags & 1) > 0;
     }
@@ -24121,30 +24082,59 @@ var State$2 = class _State {
             this.flags &= -65;
     }
     
-    topicContext = {
-        maxNumOfResolvableTopics: 0,
-        maxTopicIndex: null,
-    };
-    get soloAwait() {
+    get inConditionalConsequent() {
         return (this.flags & 128) > 0;
     }
     
-    set soloAwait(v) {
+    set inConditionalConsequent(v) {
         if (v)
             this.flags |= 128;
         else
             this.flags &= -129;
     }
     
-    get inFSharpPipelineDirectBody() {
+    get inHackPipelineBody() {
         return (this.flags & 256) > 0;
     }
     
-    set inFSharpPipelineDirectBody(v) {
+    set inHackPipelineBody(v) {
         if (v)
             this.flags |= 256;
         else
             this.flags &= -257;
+    }
+    
+    get seenTopicReference() {
+        return (this.flags & 512) > 0;
+    }
+    
+    set seenTopicReference(v) {
+        if (v)
+            this.flags |= 512;
+        else
+            this.flags &= -513;
+    }
+    
+    get soloAwait() {
+        return (this.flags & 1024) > 0;
+    }
+    
+    set soloAwait(v) {
+        if (v)
+            this.flags |= 1024;
+        else
+            this.flags &= -1025;
+    }
+    
+    get inFSharpPipelineDirectBody() {
+        return (this.flags & 2048) > 0;
+    }
+    
+    set inFSharpPipelineDirectBody(v) {
+        if (v)
+            this.flags |= 2048;
+        else
+            this.flags &= -2049;
     }
     
     labels = [];
@@ -24159,37 +24149,37 @@ var State$2 = class _State {
     lastTokStartLoc = null;
     context = [types.brace];
     get canStartJSXElement() {
-        return (this.flags & 512) > 0;
+        return (this.flags & 4096) > 0;
     }
     
     set canStartJSXElement(v) {
         if (v)
-            this.flags |= 512;
+            this.flags |= 4096;
         else
-            this.flags &= -513;
+            this.flags &= -4097;
     }
     
     get containsEsc() {
-        return (this.flags & 1024) > 0;
+        return (this.flags & 8192) > 0;
     }
     
     set containsEsc(v) {
         if (v)
-            this.flags |= 1024;
+            this.flags |= 8192;
         else
-            this.flags &= -1025;
+            this.flags &= -8193;
     }
     
     firstInvalidTemplateEscapePos = null;
     get hasTopLevelAwait() {
-        return (this.flags & 2048) > 0;
+        return (this.flags & 16384) > 0;
     }
     
     set hasTopLevelAwait(v) {
         if (v)
-            this.flags |= 2048;
+            this.flags |= 16384;
         else
-            this.flags &= -2049;
+            this.flags &= -16385;
     }
     
     strictErrors =     /* @__PURE__ */new Map();
@@ -24211,7 +24201,6 @@ var State$2 = class _State {
         state.potentialArrowAt = this.potentialArrowAt;
         state.noArrowAt = this.noArrowAt.slice();
         state.noArrowParamsConversionAt = this.noArrowParamsConversionAt.slice();
-        state.topicContext = this.topicContext;
         state.labels = this.labels.slice();
         state.commentsLen = this.commentsLen;
         state.commentStack = this.commentStack.slice();
@@ -29592,7 +29581,18 @@ var typescript$1 = (superClass) => class TypeScriptParserMixin extends superClas
             }
         }
         
-        return super.parseConditional(expr, startLoc, refExpressionErrors);
+        this.next();
+        const node = this.startNodeAt(startLoc);
+        
+        node.test = expr;
+        const oldInConditionalConsequent = this.state.inConditionalConsequent;
+        
+        this.state.inConditionalConsequent = true;
+        node.consequent = this.parseMaybeAssignAllowIn();
+        this.state.inConditionalConsequent = oldInConditionalConsequent;
+        this.expect(10);
+        node.alternate = this.parseMaybeAssign();
+        return this.finishNode(node, 'ConditionalExpression');
     }
     
     parseParenItem(node, startLoc) {
@@ -30177,7 +30177,24 @@ var typescript$1 = (superClass) => class TypeScriptParserMixin extends superClas
     }
     
     shouldParseAsyncArrow() {
-        return this.match(10) || super.shouldParseAsyncArrow();
+        if (this.match(10)) {
+            if (this.state.inConditionalConsequent)
+                return false;
+            
+            return true;
+        }
+        
+        return super.shouldParseAsyncArrow();
+    }
+    
+    parseParenAndDistinguishExpression(canBeArrow) {
+        const oldInConditionalConsequent = this.state.inConditionalConsequent;
+        
+        this.state.inConditionalConsequent = false;
+        const result = super.parseParenAndDistinguishExpression(canBeArrow);
+        
+        this.state.inConditionalConsequent = oldInConditionalConsequent;
+        return result;
     }
     
     canHaveLeadingDecorator() {
@@ -32397,7 +32414,7 @@ var ExpressionParser = class extends LValParser {
     }
     
     parsePropertyDefinition(refExpressionErrors) {
-        let decorators = [];
+        const decorators = [];
         
         if (this.match(22)) {
             if (this.hasPlugin('decorators')) {
@@ -32423,7 +32440,6 @@ var ExpressionParser = class extends LValParser {
         
         if (decorators.length) {
             prop.decorators = decorators;
-            decorators = [];
         }
         
         prop.method = false;
@@ -32989,16 +33005,17 @@ var ExpressionParser = class extends LValParser {
     }
     
     withTopicBindingContext(callback) {
-        const outerContextTopicState = this.state.topicContext;
+        const oldInHackPipelineBody = this.state.inHackPipelineBody;
         
-        this.state.topicContext = {
-            maxNumOfResolvableTopics: 1,
-            maxTopicIndex: null,
-        };
+        this.state.inHackPipelineBody = true;
+        const oldSeenTopicReference = this.state.seenTopicReference;
+        
+        this.state.seenTopicReference = false;
         try {
             return callback();
         } finally {
-            this.state.topicContext = outerContextTopicState;
+            this.state.inHackPipelineBody = oldInHackPipelineBody;
+            this.state.seenTopicReference = oldSeenTopicReference;
         }
     }
     
@@ -33046,15 +33063,15 @@ var ExpressionParser = class extends LValParser {
     }
     
     registerTopicReference() {
-        this.state.topicContext.maxTopicIndex = 0;
+        this.state.seenTopicReference = true;
     }
     
     topicReferenceIsAllowedInCurrentContext() {
-        return this.state.topicContext.maxNumOfResolvableTopics >= 1;
+        return this.state.inHackPipelineBody;
     }
     
     topicReferenceWasUsedInCurrentContext() {
-        return this.state.topicContext.maxTopicIndex != null && this.state.topicContext.maxTopicIndex >= 0;
+        return this.state.seenTopicReference;
     }
     
     parseFSharpPipelineBody(prec) {
@@ -35483,7 +35500,7 @@ function getParserClass(pluginsMap) {
     return cls;
 }
 
-// node_modules/@babel/code-frame/lib/common-BO7XIBW3.js
+// ../babel-babel/packages/babel-code-frame/lib/common-BO7XIBW3.js
 var NEWLINE$1 = /\r\n|[\n\r\u2028\u2029]/;
 
 function getMarkerLines(loc, source, opts, startLineBaseZero) {
@@ -35641,7 +35658,7 @@ ${frame}`;
     return defs2.reset(frame);
 }
 
-const {styleText = (a, b) => b} = util;// node_modules/js-tokens/index.js
+const {styleText = (a, b) => b} = util;// ../babel-babel/node_modules/js-tokens/index.js
 var HashbangComment;
 var Identifier2;
 var JSXIdentifier2;
@@ -36151,7 +36168,7 @@ jsTokens = function*(input, {jsx: jsx2 = false} = {}) {
 };
 var js_tokens_default = jsTokens;
 
-// node_modules/@babel/code-frame/lib/index.js
+// ../babel-babel/packages/babel-code-frame/lib/index.js
 function isColorSupported() {
     return styleText('red', '-') !== '-';
 }
@@ -36330,7 +36347,7 @@ function codeFrameColumns(rawLines, loc, opts = {}) {
     } : void 0);
 }
 
-// node_modules/@babel/template/lib/index.js
+// ../babel-babel/packages/babel-template/lib/index.js
 var {assertExpressionStatement: assertExpressionStatement2} = lib_exports;
 
 function makeStatementFormatter(fn) {
@@ -36969,7 +36986,7 @@ var index = Object.assign(smart.bind(void 0), {
     ast: smart.ast,
 });
 
-// node_modules/@jridgewell/sourcemap-codec/dist/sourcemap-codec.mjs
+// ../babel-babel/node_modules/@jridgewell/sourcemap-codec/dist/sourcemap-codec.mjs
 var comma = ','.charCodeAt(0);
 var semicolon = ';'.charCodeAt(0);
 var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
@@ -37218,7 +37235,7 @@ function encode(decoded) {
     return writer.flush();
 }
 
-// node_modules/@jridgewell/resolve-uri/dist/resolve-uri.mjs
+// ../babel-babel/node_modules/@jridgewell/resolve-uri/dist/resolve-uri.mjs
 var schemeRegex = /^[\w+.-]+:\/\//;
 var urlRegex = /^([\w+.-]+:)\/\/([^@/#?]*@)?([^:/#?]*)(:\d+)?(\/[^#?]*)?(\?[^#]*)?(#.*)?/;
 var fileRegex = /^file:(?:\/\/((?![a-z]:)[^/#?]*)?)?(\/?[^#?]*)(\?[^#]*)?(#.*)?/i;
@@ -37438,7 +37455,7 @@ case 2:
     }
 }
 
-// node_modules/@jridgewell/trace-mapping/dist/trace-mapping.mjs
+// ../babel-babel/node_modules/@jridgewell/trace-mapping/dist/trace-mapping.mjs
 function stripFilename(path) {
     if (!path)
         return '';
@@ -37710,7 +37727,7 @@ function traceSegmentInternal(segments, memo, line, column, bias) {
     return index3;
 }
 
-// node_modules/@jridgewell/gen-mapping/dist/gen-mapping.mjs
+// ../babel-babel/node_modules/@jridgewell/gen-mapping/dist/gen-mapping.mjs
 var SetArray = class {
     constructor() {
         this._indexes = {
@@ -37979,7 +37996,7 @@ function addMappingInternal(skipable, map, mapping) {
     return addSegmentInternal(skipable, map, generated.line - 1, generated.column, source, original.line - 1, original.column, name, content);
 }
 
-// node_modules/@babel/generator/lib/index.js
+// ../babel-babel/packages/babel-generator/lib/index.js
 var import_jsesc = __toESM(require_jsesc());
 
 var SourceMap = class {
@@ -43824,7 +43841,7 @@ function generate$1(ast, opts = {}, code2) {
     return printer.generate(ast);
 }
 
-// node_modules/obug/dist/core.js
+// ../babel-babel/node_modules/obug/dist/core.js
 function selectColor$1(colors2, namespace) {
     let hash = 0;
     
@@ -43871,7 +43888,7 @@ function enable$1(namespaces$1) {
             names$1.push(ns);
 }
 
-// node_modules/obug/dist/node.js
+// ../babel-babel/node_modules/obug/dist/node.js
 var colors$1 = [];
 
 var inspectOpts = {};
@@ -43918,7 +43935,7 @@ function createDebug2(namespace, options) {
 }
 
 enable$1(browser$1.env.DEBUG || '');
-// node_modules/@babel/helper-globals/data/builtin-lower.json
+// ../babel-babel/packages/babel-helper-globals/data/builtin-lower.json
 
 var builtin_lower_default = [
     'decodeURI',
@@ -43936,7 +43953,7 @@ var builtin_lower_default = [
     'unescape',
 ];
 
-// node_modules/@babel/helper-globals/data/builtin-upper.json
+// ../babel-babel/packages/babel-helper-globals/data/builtin-upper.json
 var builtin_upper_default = [
     'AggregateError',
     'Array',
@@ -43989,7 +44006,7 @@ var builtin_upper_default = [
     'WeakSet',
 ];
 
-// node_modules/@babel/traverse/lib/index.js
+// ../babel-babel/packages/babel-traverse/lib/index.js
 var ReferencedIdentifier = [
     'Identifier',
     'JSXIdentifier',
@@ -49106,7 +49123,7 @@ function isExecutionUncertainInList(paths, maxIndex) {
     return false;
 }
 
-var SYMBOL_CHECKING = /* @__PURE__ */Symbol();
+var SYMBOL_CHECKING = Symbol();
 
 function _guessExecutionStatusRelativeTo(target) {
     return _guessExecutionStatusRelativeToCached(this, target,     /* @__PURE__ */new Map());
@@ -50471,16 +50488,44 @@ traverse3.hasType = function(tree, type, denylistTypes) {
 };
 traverse3.cache = cache;
 
-const TYPES$3 = {
-    TOKEN: 'Token',
-    NEWLINE: 'Newline',
-    SPLITTER: 'Splitter',
-    INDENT: 'Indent',
-    DEBUG: 'Debug',
-    SPACE: 'Space',
-    QUOTE: 'Quote',
-    END_OF_FILE: 'EndOfFile',
+const isString$f = (a) => typeof a === 'string';
+const constant = (a) => () => a;
+const {keys: keys$3} = Object;
+
+const rendy = (template, values, modifiers) => {
+    check$e(template, values);
+    
+    let result = template;
+    const names = keys$3(values) ;
+    
+    for (const key of names) {
+        const [parsedKey, value] = parseValue$1(key, values);
+        const str = constant(value);
+        
+        while (result.includes(parsedKey))
+            result = result.replace(parsedKey, str);
+    }
+    
+    if (result.includes('{{'))
+        result = result.replace(/{{.*?}}/g, '');
+    
+    return result;
 };
+
+function check$e(template, values) {
+    if (!isString$f(template))
+        throw Error('template should be a string!');
+    
+    if (typeof values !== 'object')
+        throw Error('values should be an object!');
+}
+
+function parseValue$1(key, values, modifiers) {
+    return [
+            `{{ ${key} }}`,
+            values[key],
+        ];
+}
 
 const {
     isStringLiteral: isStringLiteral$a,
@@ -50490,7 +50535,7 @@ const {
     isForOfStatement: isForOfStatement$1,
     isVariableDeclaration: isVariableDeclaration$4,
     isMemberExpression: isMemberExpression$8,
-    isArrayExpression: isArrayExpression$9,
+    isArrayExpression: isArrayExpression$a,
     isObjectExpression: isObjectExpression$c,
     isLabeledStatement: isLabeledStatement$1,
     isTryStatement,
@@ -50598,7 +50643,7 @@ const isStringAndArray = ([a, b]) => {
     if (!isStringLiteral$a(a))
         return false;
     
-    if (!isArrayExpression$9(b))
+    if (!isArrayExpression$a(b))
         return false;
     
     return !isStringAndIdentifier(b.node.elements);
@@ -50660,12 +50705,242 @@ const hasLeadingComment = (path) => path.node?.leadingComments?.length;
 const noTrailingComment = (path) => !path.node.trailingComments?.length;
 const noLeadingComment = (path) => !path.node.leadingComments?.length;
 
+var maybeSatisfy = (plugin) => {
+    if (!plugin.afterSatisfy && !plugin.beforeSatisfy && !plugin.satisfy)
+        return plugin;
+    
+    const {
+        satisfy,
+        afterSatisfy = satisfy,
+        beforeSatisfy = satisfy,
+    } = plugin;
+    
+    return {
+        afterIf: createIf(afterSatisfy),
+        beforeIf: createIf(beforeSatisfy),
+        ...plugin,
+    };
+};
+
+const createIf = (getConditions) => {
+    const conditions = getConditions?.() || [];
+    return satisfy(conditions);
+};
+
+const {
+    isProgram: isProgram$4,
+    isFile: isFile$1,
+    isStatement: isStatement$5,
+    expressionStatement: expressionStatement$3,
+    program,
+    file,
+} = lib_exports;
+
 const isFn$7 = (a) => typeof a === 'function';
+
+const maybeThrow = (a, path, b) => {
+    if (!a)
+        return;
+    
+    throw Error(rendy(b, {
+        path,
+        type: path.type,
+    }));
+};
+
+const maybeStatement = (ast) => isStatement$5(ast) ? ast : expressionStatement$3(ast);
+
+const maybeProgram = (ast) => isProgram$4(ast) ? ast : program([
+    maybeStatement(ast),
+]);
+
+const maybeFile = (ast) => isFile$1(ast) ? ast : file(maybeProgram(ast));
+
+const maybeVisitor = (plugin, path, printer, options) => {
+    if (isFn$7(plugin))
+        return plugin(path, printer, options);
+    
+    return objectPlugin(plugin, path, printer, options);
+};
+
+function objectPlugin(plugin, path, printer, semantics) {
+    const {
+        print,
+        split,
+        condition,
+        before = split,
+        beforeIf = condition,
+        after = split,
+        afterIf = condition,
+    } = maybeSatisfy(plugin);
+    
+    if (beforeIf?.(path, printer, semantics))
+        before(path, printer, semantics);
+    
+    print(path, printer, semantics);
+    
+    if (afterIf?.(path, printer, semantics))
+        after(path, printer, semantics);
+}
+
+function fullstore(value) {
+    const data = {
+        value,
+    };
+    
+    return (...args) => {
+        const [value] = args;
+        
+        if (!args.length)
+            return data.value;
+        
+        data.value = value;
+        
+        return value;
+    };
+}
+
+const TYPES$3 = {
+    TOKEN: 'Token',
+    NEWLINE: 'Newline',
+    SPLITTER: 'Splitter',
+    INDENT: 'Indent',
+    DEBUG: 'Debug',
+    SPACE: 'Space',
+    QUOTE: 'Quote',
+    END_OF_FILE: 'EndOfFile',
+};
+
+var stringSnakeCase = snakeCase;
+
+/*
+  snakeCase('the quick brown fox'); // 'the_quick_brown_fox'
+  snakeCase('the-quick-brown-fox'); // 'the_quick_brown_fox'
+  snakeCase('the_quick_brown_fox'); // 'the_quick_brown_fox'
+  snakeCase('theQuickBrownFox'); // 'the_quick_brown_fox'
+  snakeCase('theQuickBrown Fox'); // 'the_quick_brown_Fox'
+  snakeCase('thequickbrownfox'); // 'thequickbrownfox'
+  snakeCase('the - quick * brown# fox'); // 'the_quick_brown_fox'
+  snakeCase('theQUICKBrownFox'); // 'the_q_u_i_c_k_brown_fox'
+*/
+
+// any combination of spaces and punctuation characters
+// thanks to http://stackoverflow.com/a/25575009
+var wordSeparators = /[\s\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,\-.\/:;<=>?@\[\]^_`{|}~]+/;
+var capitals = /[A-Z\u00C0-\u00D6\u00D9-\u00DD]/g;
+
+function snakeCase(str) {
+  //replace capitals with space + lower case equivalent for later parsing
+  str = str.replace(capitals, function(match) {
+    return ' ' + (match.toLowerCase() || match);
+  });
+  return str
+    .trim()
+    .split(wordSeparators)
+    .join('_');
+}
+
+const {stringify: stringify$7} = JSON;
+const {
+    LOG,
+    LOG_ALL,
+    LOG_TOKENS,
+    LOG_TERM,
+    LOG_DEBUG,
+} = {};
+
+const createDebug$4 = (tokens) => (a) => {
+    if (!LOG_DEBUG)
+        return;
+    
+    tokens.push({
+        type: TYPES$3.DEBUG,
+        value: `/*__${stringSnakeCase(a)}*/`,
+    });
+};
+
+const createLog = ({newline = '\n', store = createStore$1()} = {}) => ({type, value}) => {
+    if (LOG_TOKENS) {
+        console.log(codeFrameColumns(stringify$7({
+            type,
+            value,
+        }), {}, {
+            highlightCode: true,
+        }));
+        
+        return;
+    }
+    
+    if (LOG_ALL) {
+        console.log(codeFrameColumns(value, {}, {
+            highlightCode: true,
+        }));
+        
+        return;
+    }
+    
+    if (LOG) {
+        if (value === newline) {
+            console.log(codeFrameColumns(store(), {}, {
+                highlightCode: true,
+            }));
+            
+            return;
+        }
+        
+        store(value);
+    }
+    
+    if (LOG_TERM)
+        browser$1.stdout.write(value);
+};
+
+function createStore$1() {
+    let chunks = [];
+    
+    return (...args) => {
+        const [chunk] = args;
+        
+        if (args.length) {
+            chunks.push(chunk);
+            return;
+        }
+        
+        const result = chunks.join('');
+        
+        chunks = [];
+        
+        return result;
+    };
+}
+
+const WATER_MARK_BEFORE = '__putout_newline_before';
+const WATER_MARK_AFTER = '__putout_newline_after';
+
+const maybeMarkAfter = (a, path) => a && markAfter(path);
+
+function markBefore(path) {
+    path[WATER_MARK_BEFORE] = true;
+}
+
+function markAfter(path) {
+    path[WATER_MARK_AFTER] = true;
+}
+
+function isMarkedAfter(path) {
+    return path[WATER_MARK_AFTER];
+}
+
+const hasPrevNewline = (path) => {
+    return isMarkedAfter(path.getPrevSibling());
+};
+
+const isFn$6 = (a) => typeof a === 'function';
 
 const isParens$2 = (path) => path.node.extra?.parenthesized;
 
 const maybeParens = (print) => {
-    if (isFn$7(print))
+    if (isFn$6(print))
         return maybeParensPrint(print);
     
     return maybeParensCondition(print);
@@ -50693,27 +50968,6 @@ const maybeParensCondition = ({print, condition, checkParens = true}) => ({
         return is || isParens$2(path);
     },
 });
-
-const WATER_MARK_BEFORE = '__putout_newline_before';
-const WATER_MARK_AFTER = '__putout_newline_after';
-
-const maybeMarkAfter = (a, path) => a && markAfter(path);
-
-function markBefore(path) {
-    path[WATER_MARK_BEFORE] = true;
-}
-
-function markAfter(path) {
-    path[WATER_MARK_AFTER] = true;
-}
-
-function isMarkedAfter(path) {
-    return path[WATER_MARK_AFTER];
-}
-
-const hasPrevNewline = (path) => {
-    return isMarkedAfter(path.getPrevSibling());
-};
 
 const maybeInsideFn = (insideFn, {print, indent}) => {
     if (!insideFn)
@@ -50989,7 +51243,7 @@ const parseLeadingComments = (path, printer, semantics, {currentTraverse = {}} =
     }
 };
 
-const {assign: assign$b} = Object;
+const {assign: assign$c} = Object;
 
 const chain$1 = (path) => {
     const all = [
@@ -51059,7 +51313,7 @@ function build(path) {
     };
     
     if (path.isCallExpression())
-        assign$b(prop, {
+        assign$c(prop, {
             args: path.node.arguments.length,
             name: path.node.callee.property?.name || '',
         });
@@ -51314,6 +51568,8 @@ function isPrevCall(path) {
     return !isCallExpression$8(expression.arguments[0]);
 }
 
+const isEmptyBody$1 = ({node}) => !node.body.length;
+
 const parseComments = (path, {write, maybe}, semantics) => {
     if (!semantics.comments)
         return;
@@ -51332,7 +51588,7 @@ const parseComments = (path, {write, maybe}, semantics) => {
             write('//');
             write(value);
             
-            if (program) {
+            if (program && isEmptyBody$1(path)) {
                 maybe.write.newline(i < n);
                 continue;
             }
@@ -52028,12 +52284,12 @@ const ClassDeclaration = {
     },
 };
 
-const {isArray: isArray$d} = Array;
+const {isArray: isArray$f} = Array;
 
 const parseArgs = (path) => {
     const argsPath = path.get('arguments');
     
-    if (!isArray$d(argsPath))
+    if (!isArray$f(argsPath))
         return [];
     
     return argsPath;
@@ -52176,7 +52432,7 @@ function maybePrintBrace(brace, path, printer, semantics) {
     maybe.print(roundBraces.new, brace);
 }
 
-const {isArrayExpression: isArrayExpression$8} = lib_exports;
+const {isArrayExpression: isArrayExpression$9} = lib_exports;
 
 const TYPES$2 = [
     'NullLiteral',
@@ -52187,7 +52443,7 @@ const TYPES$2 = [
 const isInsideTuple = (path) => {
     const {parentPath} = path;
     
-    if (!isArrayExpression$8(parentPath))
+    if (!isArrayExpression$9(parentPath))
         return false;
     
     const [first, second] = parentPath.node.elements;
@@ -52199,13 +52455,13 @@ const isInsideTuple = (path) => {
 };
 
 const {
-    isArrayExpression: isArrayExpression$7,
+    isArrayExpression: isArrayExpression$8,
     isCallExpression: isCallExpression$7,
     isIdentifier: isIdentifier$e,
 } = lib_exports;
 
 const isThirdObjectInsideArray = ({parentPath}) => {
-    if (!isArrayExpression$7(parentPath))
+    if (!isArrayExpression$8(parentPath))
         return false;
     
     const [, second] = parentPath.node.elements;
@@ -52215,7 +52471,7 @@ const isThirdObjectInsideArray = ({parentPath}) => {
 
 const {
     isStringLiteral: isStringLiteral$9,
-    isArrayExpression: isArrayExpression$6,
+    isArrayExpression: isArrayExpression$7,
     isSpreadElement: isSpreadElement$2,
 } = lib_exports;
 
@@ -52239,10 +52495,10 @@ const isMemberExpressionCallee = ({parentPath}) => {
 const isInsideCall = ({parentPath}) => parentPath.isCallExpression();
 
 function isInsideNestedArrayCall({parentPath}) {
-    if (!isArrayExpression$6(parentPath))
+    if (!isArrayExpression$7(parentPath))
         return false;
     
-    if (!isArrayExpression$6(parentPath.parentPath))
+    if (!isArrayExpression$7(parentPath.parentPath))
         return false;
     
     return isInsideCall(parentPath.parentPath);
@@ -52505,7 +52761,7 @@ function maybePrintTypeAnnotation(path, printer) {
 
 const {
     isAssignmentPattern: isAssignmentPattern$4,
-    isArrayExpression: isArrayExpression$5,
+    isArrayExpression: isArrayExpression$6,
     isObjectExpression: isObjectExpression$a,
     isIdentifier: isIdentifier$d,
 } = lib_exports;
@@ -52514,7 +52770,7 @@ const calculateAssigns = (property, semantics) => {
     const currentAssign = isLongAssignPattern(property, semantics);
     
     const {right} = property.node.value;
-    const isArrayOrObjectRight = isArrayExpression$5(right) || isComplexObject(right);
+    const isArrayOrObjectRight = isArrayExpression$6(right) || isComplexObject(right);
     const complexAssign = currentAssign && isArrayOrObjectRight;
     
     return {
@@ -53147,7 +53403,7 @@ const isSimple = (a) => {
 };
 
 const {
-    isArrayExpression: isArrayExpression$4,
+    isArrayExpression: isArrayExpression$5,
     isLiteral: isLiteral$2,
     isIdentifier: isIdentifier$8,
     isMemberExpression: isMemberExpression$2,
@@ -53187,7 +53443,7 @@ function extract(node) {
     if (isMemberExpression$2(node))
         return `${extract(node.object)}.${extract(node.property)}`;
     
-    if (isArrayExpression$4(node))
+    if (isArrayExpression$5(node))
         return extractArrayExpression(node);
     
     if (isJSXText$3(node))
@@ -53228,7 +53484,7 @@ function extract(node) {
 
 function extractArrayExpression(node, collector = []) {
     for (const el of node.elements) {
-        if (isArrayExpression$4(el)) {
+        if (isArrayExpression$5(el)) {
             extractArrayExpression(el, collector);
             continue;
         }
@@ -53714,22 +53970,22 @@ function maybeEncode(a) {
 }
 
 const {
-    isStatement: isStatement$5,
+    isStatement: isStatement$4,
     isBlockStatement: isBlockStatement$5,
     blockStatement,
-    expressionStatement: expressionStatement$3,
+    expressionStatement: expressionStatement$2,
 } = lib_exports;
 
 const maybeBody = (path, node) => {
     const {parentPath} = path;
     
-    if (node && !isStatement$5(node) || isBlockStatement$5(node) || !parentPath?.isArrowFunctionExpression?.())
+    if (node && !isStatement$4(node) || isBlockStatement$5(node) || !parentPath?.isArrowFunctionExpression?.())
         return {
             currentPath: path,
         };
     
     parentPath.node.body = blockStatement([
-        expressionStatement$3(path.node),
+        expressionStatement$2(path.node),
     ]);
     
     return {
@@ -53740,7 +53996,7 @@ const maybeBody = (path, node) => {
 const {
     isExpression: isExpression$1,
     toStatement,
-    expressionStatement: expressionStatement$2,
+    expressionStatement: expressionStatement$1,
 } = lib_exports;
 
 const toExpression = (el) => {
@@ -53754,7 +54010,7 @@ const toExpression = (el) => {
         return el;
     
     if (isExpression$1(el))
-        return expressionStatement$2(el);
+        return expressionStatement$1(el);
     
     return toStatement(el);
 };
@@ -53806,7 +54062,7 @@ function removeDuplicateLeadingComments(nodes) {
     }
 }
 
-const {assign: assign$a} = Object;
+const {assign: assign$b} = Object;
 
 const parseNode$2 = (a) => {
     a = extractMark(a);
@@ -53830,7 +54086,7 @@ const replaceWith = (path, node) => {
     
     currentPath.replaceWith(node);
     
-    assign$a(currentPath.node, {
+    assign$b(currentPath.node, {
         comments,
         loc,
     });
@@ -53853,8 +54109,8 @@ const {
     matchesPattern,
     isImportDeclaration: isImportDeclaration$1,
     isExportDeclaration: isExportDeclaration$4,
-    isStatement: isStatement$4,
-    expressionStatement: expressionStatement$1,
+    isStatement: isStatement$3,
+    expressionStatement,
 } = lib_exports;
 
 const insertBefore = (path, node) => {
@@ -53870,8 +54126,8 @@ const insertAfter = (path, node) => {
     if (node.trailingComments)
         delete node.trailingComments;
     
-    if (isStatement$4(path) && !isStatement$4(node))
-        path.insertAfter(expressionStatement$1(node));
+    if (isStatement$3(path) && !isStatement$3(node))
+        path.insertAfter(expressionStatement(node));
     else
         path.insertAfter(node);
     
@@ -53920,7 +54176,7 @@ const isESM = (path) => {
 
 const {
     isObjectExpression: isObjectExpression$4,
-    isArrayExpression: isArrayExpression$3,
+    isArrayExpression: isArrayExpression$4,
     isObjectProperty: isObjectProperty$1,
     isCallExpression: isCallExpression$5,
     isAwaitExpression,
@@ -53931,7 +54187,7 @@ const {
     isIdentifier: isIdentifier$7,
 } = lib_exports;
 
-const {round: round$1} = Math;
+const {round} = Math;
 
 const isOneSpread = (elements) => {
     if (elements.length > 1)
@@ -54043,7 +54299,7 @@ const isMultiLine = (path, {elements, maxElementsInOneLine, maxElementLengthInOn
     if (isSimpleAndObject(elements))
         return ONE_LINE;
     
-    if (isStringAndString(elements) && path.parentPath.isArrayExpression() && isArrayExpression$3(path.parentPath.node.elements[0]))
+    if (isStringAndString(elements) && path.parentPath.isArrayExpression() && isArrayExpression$4(path.parentPath.node.elements[0]))
         return ONE_LINE;
     
     if (isSiblingIsArray(path))
@@ -54129,7 +54385,7 @@ function isTwoStringsDifferentLength(strings) {
     const aLength = a.node.value.length;
     const bLength = b.node.value.length;
     
-    return round$1(bLength / aLength) > 2;
+    return round(bLength / aLength) > 2;
 }
 
 function isInsideLoop(path) {
@@ -54219,7 +54475,7 @@ const isCurrentNewLine = (path) => {
 
 const {
     isStringLiteral: isStringLiteral$5,
-    isArrayExpression: isArrayExpression$2,
+    isArrayExpression: isArrayExpression$3,
     isObjectExpression: isObjectExpression$3,
     isTemplateLiteral: isTemplateLiteral$2,
 } = lib_exports;
@@ -54258,8 +54514,8 @@ function isArrayInsideArray(path) {
         return false;
     
     const parentElements = path.parentPath.node.elements;
-    const parentHasArrays = parentElements.filter(isArrayExpression$2).length;
-    const lastNotArray = !isArrayExpression$2(parentElements.at(-1));
+    const parentHasArrays = parentElements.filter(isArrayExpression$3).length;
+    const lastNotArray = !isArrayExpression$3(parentElements.at(-1));
     
     if (parentHasArrays && lastNotArray)
         return false;
@@ -55855,7 +56111,7 @@ const {
     isExportDeclaration: isExportDeclaration$2,
     isDoWhileStatement,
     isBlockStatement: isBlockStatement$4,
-    isArrayExpression: isArrayExpression$1,
+    isArrayExpression: isArrayExpression$2,
 } = lib_exports;
 
 const isFirstStatement = (path) => path.node.body[0];
@@ -55865,7 +56121,7 @@ const isMethodOrArrow = (path) => isArrowFunctionExpression(path) || isObjectMet
 const isInsideArrayTupleOfThree = (path) => {
     const {parentPath} = path.parentPath;
     
-    if (!isArrayExpression$1(parentPath))
+    if (!isArrayExpression$2(parentPath))
         return false;
     
     const {length} = parentPath.node.elements;
@@ -56085,7 +56341,7 @@ const ForOfStatement = {
 const {
     isBlockStatement: isBlockStatement$3,
     isFunctionDeclaration,
-    isStatement: isStatement$3,
+    isStatement: isStatement$2,
     isExpressionStatement: isExpressionStatement$4,
     isReturnStatement,
     isContinueStatement,
@@ -56197,7 +56453,7 @@ const IfStatement = {
         
         const nextPath = path.parentPath.getNextSibling();
         
-        if (path === partOfAlternate && !isTopLevel(path) && !isStatement$3(nextPath))
+        if (path === partOfAlternate && !isTopLevel(path) && !isStatement$2(nextPath))
             print.newline();
         
         if (isLastEmptyInsideBody(path))
@@ -56455,7 +56711,7 @@ const isInsideAssignNextAssignFunction = (path) => {
 
 const {
     isBlockStatement: isBlockStatement$2,
-    isProgram: isProgram$4,
+    isProgram: isProgram$3,
     isIfStatement,
 } = lib_exports;
 
@@ -56484,7 +56740,7 @@ const printLeadingCommentBlock$1 = (path, printer, semantics, {printComment}) =>
     if (hasTrailingComment(prev))
         return;
     
-    if (isBlockStatement$2(path.parentPath) && !isProgram$4(path.parentPath.parentPath))
+    if (isBlockStatement$2(path.parentPath) && !isProgram$3(path.parentPath.parentPath))
         indent();
     
     printComment();
@@ -58087,389 +58343,169 @@ const JSXClosingElement = (path, {print}) => {
 };
 
 var baseVisitors = /*#__PURE__*/Object.freeze({
-    __proto__: null,
-    ArrayExpression: ArrayExpression,
-    ArrayPattern: ArrayPattern,
-    ArrowFunctionExpression: ArrowFunctionExpression,
-    AssignmentExpression: AssignmentExpression,
-    AssignmentPattern: AssignmentPattern,
-    AwaitExpression: AwaitExpression,
-    BigIntLiteral: BigIntLiteral,
-    BinaryExpression: BinaryExpression,
-    BlockStatement: BlockStatement,
-    BooleanLiteral: BooleanLiteral,
-    BreakStatement: BreakStatement,
-    CallExpression: CallExpression,
-    CatchClause: CatchClause,
-    ClassAccessorProperty: ClassAccessorProperty,
-    ClassDeclaration: ClassDeclaration,
-    ClassExpression: ClassExpression,
-    ClassMethod: ClassMethod,
-    ClassPrivateMethod: ClassPrivateMethod,
-    ClassPrivateProperty: ClassPrivateProperty,
-    ClassProperty: ClassProperty,
-    ConditionalExpression: ConditionalExpression,
-    ContinueStatement: ContinueStatement,
-    DebuggerStatement: DebuggerStatement,
-    Decorator: Decorator,
-    Directive: Directive,
-    DirectiveLiteral: DirectiveLiteral,
-    DoWhileStatement: DoWhileStatement,
-    EmptyStatement: EmptyStatement,
-    ExportAllDeclaration: ExportAllDeclaration,
-    ExportDefaultDeclaration: ExportDefaultDeclaration,
-    ExportDefaultSpecifier: ExportDefaultSpecifier,
-    ExportNamedDeclaration: ExportNamedDeclaration,
-    ExportNamespaceSpecifier: ExportNamespaceSpecifier,
-    ExportSpecifier: ExportSpecifier,
-    ExpressionStatement: ExpressionStatement,
-    ForInStatement: ForInStatement,
-    ForOfStatement: ForOfStatement,
-    ForStatement: ForStatement,
-    FunctionDeclaration: FunctionDeclaration,
-    FunctionExpression: FunctionExpression,
-    Identifier: Identifier,
-    IfStatement: IfStatement,
-    ImportAttribute: ImportAttribute,
-    ImportDeclaration: ImportDeclaration,
-    ImportExpression: ImportExpression,
-    InterpreterDirective: InterpreterDirective,
-    JSXAttribute: JSXAttribute,
-    JSXClosingElement: JSXClosingElement,
-    JSXClosingFragment: JSXClosingFragment,
-    JSXElement: JSXElement,
-    JSXEmptyExpression: JSXEmptyExpression,
-    JSXExpressionContainer: JSXExpressionContainer,
-    JSXFragment: JSXFragment,
-    JSXIdentifier: JSXIdentifier,
-    JSXMemberExpression: JSXMemberExpression,
-    JSXOpeningElement: JSXOpeningElement,
-    JSXOpeningFragment: JSXOpeningFragment,
-    JSXSpreadAttribute: JSXSpreadAttribute,
-    JSXText: JSXText,
-    LabeledStatement: LabeledStatement,
-    LogicalExpression: LogicalExpression,
-    MemberExpression: MemberExpression,
-    MetaProperty: MetaProperty,
-    NewExpression: NewExpression,
-    NullLiteral: NullLiteral,
-    NumericLiteral: NumericLiteral,
-    ObjectExpression: ObjectExpression,
-    ObjectMethod: ObjectMethod,
-    ObjectPattern: ObjectPattern,
-    ObjectProperty: ObjectProperty,
-    OptionalCallExpression: OptionalCallExpression,
-    OptionalMemberExpression: OptionalMemberExpression,
-    ParenthesizedExpression: ParenthesizedExpression,
-    PrivateName: PrivateName,
-    Program: Program,
-    RegExpLiteral: RegExpLiteral,
-    RestElement: RestElement,
-    ReturnStatement: ReturnStatement,
-    SequenceExpression: SequenceExpression,
-    SpreadElement: SpreadElement,
-    StaticBlock: StaticBlock,
-    StringLiteral: StringLiteral,
-    Super: Super,
-    SwitchStatement: SwitchStatement,
-    TSAnyKeyword: TSAnyKeyword,
-    TSArrayType: TSArrayType,
-    TSAsExpression: TSAsExpression,
-    TSBigIntKeyword: TSBigIntKeyword,
-    TSBooleanKeyword: TSBooleanKeyword,
-    TSCallSignatureDeclaration: TSCallSignatureDeclaration,
-    TSClassImplements: TSClassImplements,
-    TSConditionalType: TSConditionalType,
-    TSConstructSignatureDeclaration: TSConstructSignatureDeclaration,
-    TSConstructorType: TSConstructorType,
-    TSDeclareFunction: TSDeclareFunction,
-    TSDeclareMethod: TSDeclareMethod,
-    TSEnumDeclaration: TSEnumDeclaration,
-    TSEnumMember: TSEnumMember,
-    TSExportAssignment: TSExportAssignment,
-    TSExternalModuleReference: TSExternalModuleReference,
-    TSFunctionType: TSFunctionType,
-    TSImportEqualsDeclaration: TSImportEqualsDeclaration,
-    TSImportType: TSImportType,
-    TSIndexSignature: TSIndexSignature,
-    TSIndexedAccessType: TSIndexedAccessType,
-    TSInferType: TSInferType,
-    TSInstantiationExpression: TSInstantiationExpression,
-    TSInterfaceBody: TSInterfaceBody,
-    TSInterfaceDeclaration: TSInterfaceDeclaration,
-    TSInterfaceHeritage: TSInterfaceHeritage,
-    TSIntersectionType: TSIntersectionType,
-    TSLiteralType: TSLiteralType,
-    TSMappedType: TSMappedType,
-    TSMethodSignature: TSMethodSignature,
-    TSModuleBlock: TSModuleBlock,
-    TSModuleDeclaration: TSModuleDeclaration,
-    TSNamedTupleMember: TSNamedTupleMember,
-    TSNeverKeyword: TSNeverKeyword,
-    TSNonNullExpression: TSNonNullExpression,
-    TSNullKeyword: TSNullKeyword,
-    TSNumberKeyword: TSNumberKeyword,
-    TSObjectKeyword: TSObjectKeyword,
-    TSOptionalType: TSOptionalType,
-    TSParameterProperty: TSParameterProperty,
-    TSParenthesizedType: TSParenthesizedType,
-    TSPropertySignature: TSPropertySignature,
-    TSQualifiedName: TSQualifiedName,
-    TSRestType: TSRestType,
-    TSSatisfiesExpression: TSSatisfiesExpression,
-    TSStringKeyword: TSStringKeyword,
-    TSSymbolKeyword: TSSymbolKeyword,
-    TSTemplateLiteralType: TSTemplateLiteralType,
-    TSThisType: TSThisType,
-    TSTupleType: TSTupleType,
-    TSTypeAliasDeclaration: TSTypeAliasDeclaration,
-    TSTypeAnnotation: TSTypeAnnotation,
-    TSTypeAssertion: TSTypeAssertion,
-    TSTypeLiteral: TSTypeLiteral,
-    TSTypeOperator: TSTypeOperator,
-    TSTypeParameter: TSTypeParameter,
-    TSTypeParameterDeclaration: TSTypeParameterDeclaration,
-    TSTypeParameterInstantiation: TSTypeParameterInstantiation,
-    TSTypePredicate: TSTypePredicate,
-    TSTypeQuery: TSTypeQuery,
-    TSTypeReference: TSTypeReference,
-    TSUndefinedKeyword: TSUndefinedKeyword,
-    TSUnionType: TSUnionType,
-    TSUnknownKeyword: TSUnknownKeyword,
-    TSVoidKeyword: TSVoidKeyword,
-    TaggedTemplateExpression: TaggedTemplateExpression,
-    TemplateLiteral: TemplateLiteral,
-    ThisExpression: ThisExpression,
-    ThrowStatement: ThrowStatement,
-    TryStatement: TryStatement,
-    UnaryExpression: UnaryExpression,
-    UpdateExpression: UpdateExpression,
-    VariableDeclaration: VariableDeclaration,
-    VoidPattern: VoidPattern,
-    WhileStatement: WhileStatement,
-    WithStatement: WithStatement,
-    YieldExpression: YieldExpression
+  __proto__: null,
+  ArrayExpression: ArrayExpression,
+  ArrayPattern: ArrayPattern,
+  ArrowFunctionExpression: ArrowFunctionExpression,
+  AssignmentExpression: AssignmentExpression,
+  AssignmentPattern: AssignmentPattern,
+  AwaitExpression: AwaitExpression,
+  BigIntLiteral: BigIntLiteral,
+  BinaryExpression: BinaryExpression,
+  BlockStatement: BlockStatement,
+  BooleanLiteral: BooleanLiteral,
+  BreakStatement: BreakStatement,
+  CallExpression: CallExpression,
+  CatchClause: CatchClause,
+  ClassAccessorProperty: ClassAccessorProperty,
+  ClassDeclaration: ClassDeclaration,
+  ClassExpression: ClassExpression,
+  ClassMethod: ClassMethod,
+  ClassPrivateMethod: ClassPrivateMethod,
+  ClassPrivateProperty: ClassPrivateProperty,
+  ClassProperty: ClassProperty,
+  ConditionalExpression: ConditionalExpression,
+  ContinueStatement: ContinueStatement,
+  DebuggerStatement: DebuggerStatement,
+  Decorator: Decorator,
+  Directive: Directive,
+  DirectiveLiteral: DirectiveLiteral,
+  DoWhileStatement: DoWhileStatement,
+  EmptyStatement: EmptyStatement,
+  ExportAllDeclaration: ExportAllDeclaration,
+  ExportDefaultDeclaration: ExportDefaultDeclaration,
+  ExportDefaultSpecifier: ExportDefaultSpecifier,
+  ExportNamedDeclaration: ExportNamedDeclaration,
+  ExportNamespaceSpecifier: ExportNamespaceSpecifier,
+  ExportSpecifier: ExportSpecifier,
+  ExpressionStatement: ExpressionStatement,
+  ForInStatement: ForInStatement,
+  ForOfStatement: ForOfStatement,
+  ForStatement: ForStatement,
+  FunctionDeclaration: FunctionDeclaration,
+  FunctionExpression: FunctionExpression,
+  Identifier: Identifier,
+  IfStatement: IfStatement,
+  ImportAttribute: ImportAttribute,
+  ImportDeclaration: ImportDeclaration,
+  ImportExpression: ImportExpression,
+  InterpreterDirective: InterpreterDirective,
+  JSXAttribute: JSXAttribute,
+  JSXClosingElement: JSXClosingElement,
+  JSXClosingFragment: JSXClosingFragment,
+  JSXElement: JSXElement,
+  JSXEmptyExpression: JSXEmptyExpression,
+  JSXExpressionContainer: JSXExpressionContainer,
+  JSXFragment: JSXFragment,
+  JSXIdentifier: JSXIdentifier,
+  JSXMemberExpression: JSXMemberExpression,
+  JSXOpeningElement: JSXOpeningElement,
+  JSXOpeningFragment: JSXOpeningFragment,
+  JSXSpreadAttribute: JSXSpreadAttribute,
+  JSXText: JSXText,
+  LabeledStatement: LabeledStatement,
+  LogicalExpression: LogicalExpression,
+  MemberExpression: MemberExpression,
+  MetaProperty: MetaProperty,
+  NewExpression: NewExpression,
+  NullLiteral: NullLiteral,
+  NumericLiteral: NumericLiteral,
+  ObjectExpression: ObjectExpression,
+  ObjectMethod: ObjectMethod,
+  ObjectPattern: ObjectPattern,
+  ObjectProperty: ObjectProperty,
+  OptionalCallExpression: OptionalCallExpression,
+  OptionalMemberExpression: OptionalMemberExpression,
+  ParenthesizedExpression: ParenthesizedExpression,
+  PrivateName: PrivateName,
+  Program: Program,
+  RegExpLiteral: RegExpLiteral,
+  RestElement: RestElement,
+  ReturnStatement: ReturnStatement,
+  SequenceExpression: SequenceExpression,
+  SpreadElement: SpreadElement,
+  StaticBlock: StaticBlock,
+  StringLiteral: StringLiteral,
+  Super: Super,
+  SwitchStatement: SwitchStatement,
+  TSAnyKeyword: TSAnyKeyword,
+  TSArrayType: TSArrayType,
+  TSAsExpression: TSAsExpression,
+  TSBigIntKeyword: TSBigIntKeyword,
+  TSBooleanKeyword: TSBooleanKeyword,
+  TSCallSignatureDeclaration: TSCallSignatureDeclaration,
+  TSClassImplements: TSClassImplements,
+  TSConditionalType: TSConditionalType,
+  TSConstructSignatureDeclaration: TSConstructSignatureDeclaration,
+  TSConstructorType: TSConstructorType,
+  TSDeclareFunction: TSDeclareFunction,
+  TSDeclareMethod: TSDeclareMethod,
+  TSEnumDeclaration: TSEnumDeclaration,
+  TSEnumMember: TSEnumMember,
+  TSExportAssignment: TSExportAssignment,
+  TSExternalModuleReference: TSExternalModuleReference,
+  TSFunctionType: TSFunctionType,
+  TSImportEqualsDeclaration: TSImportEqualsDeclaration,
+  TSImportType: TSImportType,
+  TSIndexSignature: TSIndexSignature,
+  TSIndexedAccessType: TSIndexedAccessType,
+  TSInferType: TSInferType,
+  TSInstantiationExpression: TSInstantiationExpression,
+  TSInterfaceBody: TSInterfaceBody,
+  TSInterfaceDeclaration: TSInterfaceDeclaration,
+  TSInterfaceHeritage: TSInterfaceHeritage,
+  TSIntersectionType: TSIntersectionType,
+  TSLiteralType: TSLiteralType,
+  TSMappedType: TSMappedType,
+  TSMethodSignature: TSMethodSignature,
+  TSModuleBlock: TSModuleBlock,
+  TSModuleDeclaration: TSModuleDeclaration,
+  TSNamedTupleMember: TSNamedTupleMember,
+  TSNeverKeyword: TSNeverKeyword,
+  TSNonNullExpression: TSNonNullExpression,
+  TSNullKeyword: TSNullKeyword,
+  TSNumberKeyword: TSNumberKeyword,
+  TSObjectKeyword: TSObjectKeyword,
+  TSOptionalType: TSOptionalType,
+  TSParameterProperty: TSParameterProperty,
+  TSParenthesizedType: TSParenthesizedType,
+  TSPropertySignature: TSPropertySignature,
+  TSQualifiedName: TSQualifiedName,
+  TSRestType: TSRestType,
+  TSSatisfiesExpression: TSSatisfiesExpression,
+  TSStringKeyword: TSStringKeyword,
+  TSSymbolKeyword: TSSymbolKeyword,
+  TSTemplateLiteralType: TSTemplateLiteralType,
+  TSThisType: TSThisType,
+  TSTupleType: TSTupleType,
+  TSTypeAliasDeclaration: TSTypeAliasDeclaration,
+  TSTypeAnnotation: TSTypeAnnotation,
+  TSTypeAssertion: TSTypeAssertion,
+  TSTypeLiteral: TSTypeLiteral,
+  TSTypeOperator: TSTypeOperator,
+  TSTypeParameter: TSTypeParameter,
+  TSTypeParameterDeclaration: TSTypeParameterDeclaration,
+  TSTypeParameterInstantiation: TSTypeParameterInstantiation,
+  TSTypePredicate: TSTypePredicate,
+  TSTypeQuery: TSTypeQuery,
+  TSTypeReference: TSTypeReference,
+  TSUndefinedKeyword: TSUndefinedKeyword,
+  TSUnionType: TSUnionType,
+  TSUnknownKeyword: TSUnknownKeyword,
+  TSVoidKeyword: TSVoidKeyword,
+  TaggedTemplateExpression: TaggedTemplateExpression,
+  TemplateLiteral: TemplateLiteral,
+  ThisExpression: ThisExpression,
+  ThrowStatement: ThrowStatement,
+  TryStatement: TryStatement,
+  UnaryExpression: UnaryExpression,
+  UpdateExpression: UpdateExpression,
+  VariableDeclaration: VariableDeclaration,
+  VoidPattern: VoidPattern,
+  WhileStatement: WhileStatement,
+  WithStatement: WithStatement,
+  YieldExpression: YieldExpression
 });
-
-const isString$c = (a) => typeof a === 'string';
-const constant = (a) => () => a;
-const {keys: keys$3} = Object;
-
-const rendy = (template, values, modifiers) => {
-    check$e(template, values);
-    
-    let result = template;
-    const names = keys$3(values) ;
-    
-    for (const key of names) {
-        const [parsedKey, value] = parseValue$1(key, values);
-        const str = constant(value);
-        
-        while (result.includes(parsedKey))
-            result = result.replace(parsedKey, str);
-    }
-    
-    if (result.includes('{{'))
-        result = result.replace(/{{.*?}}/g, '');
-    
-    return result;
-};
-
-function check$e(template, values) {
-    if (!isString$c(template))
-        throw Error('template should be a string!');
-    
-    if (typeof values !== 'object')
-        throw Error('values should be an object!');
-}
-
-function parseValue$1(key, values, modifiers) {
-    return [
-            `{{ ${key} }}`,
-            values[key],
-        ];
-}
-
-var maybeSatisfy = (plugin) => {
-    if (!plugin.afterSatisfy && !plugin.beforeSatisfy && !plugin.satisfy)
-        return plugin;
-    
-    const {
-        satisfy,
-        afterSatisfy = satisfy,
-        beforeSatisfy = satisfy,
-    } = plugin;
-    
-    return {
-        afterIf: createIf(afterSatisfy),
-        beforeIf: createIf(beforeSatisfy),
-        ...plugin,
-    };
-};
-
-const createIf = (getConditions) => {
-    const conditions = getConditions?.() || [];
-    return satisfy(conditions);
-};
-
-const {
-    isProgram: isProgram$3,
-    isFile: isFile$1,
-    isStatement: isStatement$2,
-    expressionStatement,
-    program,
-    file,
-} = lib_exports;
-
-const isFn$6 = (a) => typeof a === 'function';
-
-const maybeThrow = (a, path, b) => {
-    if (!a)
-        return;
-    
-    throw Error(rendy(b, {
-        path,
-        type: path.type,
-    }));
-};
-
-const maybeStatement = (ast) => isStatement$2(ast) ? ast : expressionStatement(ast);
-
-const maybeProgram = (ast) => isProgram$3(ast) ? ast : program([
-    maybeStatement(ast),
-]);
-
-const maybeFile = (ast) => isFile$1(ast) ? ast : file(maybeProgram(ast));
-
-const maybeVisitor = (plugin, path, printer, options) => {
-    if (isFn$6(plugin))
-        return plugin(path, printer, options);
-    
-    return objectPlugin(plugin, path, printer, options);
-};
-
-function objectPlugin(plugin, path, printer, semantics) {
-    const {
-        print,
-        split,
-        condition,
-        before = split,
-        beforeIf = condition,
-        after = split,
-        afterIf = condition,
-    } = maybeSatisfy(plugin);
-    
-    if (beforeIf?.(path, printer, semantics))
-        before(path, printer, semantics);
-    
-    print(path, printer, semantics);
-    
-    if (afterIf?.(path, printer, semantics))
-        after(path, printer, semantics);
-}
-
-var stringSnakeCase = snakeCase;
-
-/*
-  snakeCase('the quick brown fox'); // 'the_quick_brown_fox'
-  snakeCase('the-quick-brown-fox'); // 'the_quick_brown_fox'
-  snakeCase('the_quick_brown_fox'); // 'the_quick_brown_fox'
-  snakeCase('theQuickBrownFox'); // 'the_quick_brown_fox'
-  snakeCase('theQuickBrown Fox'); // 'the_quick_brown_Fox'
-  snakeCase('thequickbrownfox'); // 'thequickbrownfox'
-  snakeCase('the - quick * brown# fox'); // 'the_quick_brown_fox'
-  snakeCase('theQUICKBrownFox'); // 'the_q_u_i_c_k_brown_fox'
-*/
-
-// any combination of spaces and punctuation characters
-// thanks to http://stackoverflow.com/a/25575009
-var wordSeparators = /[\s\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,\-.\/:;<=>?@\[\]^_`{|}~]+/;
-var capitals = /[A-Z\u00C0-\u00D6\u00D9-\u00DD]/g;
-
-function snakeCase(str) {
-  //replace capitals with space + lower case equivalent for later parsing
-  str = str.replace(capitals, function(match) {
-    return ' ' + (match.toLowerCase() || match);
-  });
-  return str
-    .trim()
-    .split(wordSeparators)
-    .join('_');
-}
-
-const {stringify: stringify$7} = JSON;
-const {
-    LOG,
-    LOG_ALL,
-    LOG_TOKENS,
-    LOG_TERM,
-    LOG_DEBUG,
-} = {};
-
-const createDebug$4 = (tokens) => (a) => {
-    if (!LOG_DEBUG)
-        return;
-    
-    tokens.push({
-        type: TYPES$3.DEBUG,
-        value: `/*__${stringSnakeCase(a)}*/`,
-    });
-};
-
-const createLog = ({newline = '\n', store = createStore$1()} = {}) => ({type, value}) => {
-    if (LOG_TOKENS) {
-        console.log(codeFrameColumns(stringify$7({
-            type,
-            value,
-        }), {}, {
-            highlightCode: true,
-        }));
-        
-        return;
-    }
-    
-    if (LOG_ALL) {
-        console.log(codeFrameColumns(value, {}, {
-            highlightCode: true,
-        }));
-        
-        return;
-    }
-    
-    if (LOG) {
-        if (value === newline) {
-            console.log(codeFrameColumns(store(), {}, {
-                highlightCode: true,
-            }));
-            
-            return;
-        }
-        
-        store(value);
-    }
-    
-    if (LOG_TERM)
-        browser$1.stdout.write(value);
-};
-
-function createStore$1() {
-    let chunks = [];
-    
-    return (...args) => {
-        const [chunk] = args;
-        
-        if (args.length) {
-            chunks.push(chunk);
-            return;
-        }
-        
-        const result = chunks.join('');
-        
-        chunks = [];
-        
-        return result;
-    };
-}
 
 const isObject$7 = (a) => a && typeof a === 'object';
 const isBool$3 = (a) => typeof a === 'boolean';
@@ -58566,40 +58602,13 @@ const initSemantics = (format, semantics = {}) => ({
     roundBraces: parseRoundBraces(semantics),
 });
 
-const isObject$6 = (a) => a && typeof a === 'object';
-const {round} = Math;
-const isString$b = (a) => typeof a === 'string';
-const {assign: assign$9, freeze} = Object;
+const {assign: assign$a} = Object;
 
-const GET = '__';
-const get = (path, command) => path.get(command.replace(GET, ''));
-
-const createAddToken = (tokens) => {
-    const log = createLog();
+const createIndent = ({format, addToken}) => {
+    let i = 0;
     
-    return (token) => {
-        log(token);
-        tokens.push(token);
-    };
-};
-
-const tokenize = (ast, overrides) => {
-    const {
-        visitors,
-        format,
-        semantics,
-    } = parseOverrides(overrides);
-    
-    const tokens = [];
-    const addToken = createAddToken(tokens);
-    const debug = createDebug$4(tokens);
-    
-    const write = (value) => {
-        addToken({
-            type: TYPES$3.TOKEN,
-            value,
-        });
-    };
+    const incIndent = () => ++i;
+    const decIndent = () => --i;
     
     const indent = () => {
         addToken({
@@ -58608,183 +58617,15 @@ const tokenize = (ast, overrides) => {
         });
     };
     
-    const maybeIndent = (a) => a && indent();
-    
-    const maybeIndentInc = (a) => a && indent.inc();
-    
-    const maybeIndentDec = (a) => a && indent.dec();
-    
-    const newline = () => {
-        addToken({
-            type: TYPES$3.NEWLINE,
-            value: format.newline,
-        });
-    };
-    
-    const maybeNewline = (a) => a && newline();
-    
-    const breakline = () => {
-        newline();
-        indent();
-    };
-    
-    const maybeBreakline = (a) => a && breakline();
-    
-    const linebreak = () => {
-        indent();
-        newline();
-    };
-    
-    const maybeLinebreak = (a) => a && linebreak();
-    const maybeWrite = (a, b) => a && write(b);
-    
-    const space = () => {
-        addToken({
-            type: TYPES$3.SPACE,
-            value: format.space,
-        });
-    };
-    
-    const maybeSpace = (a) => a && space();
-    let i = 0;
-    const incIndent = () => ++i;
-    const decIndent = () => --i;
-    
-    assign$9(indent, {
+    assign$a(indent, {
         inc: incIndent,
         dec: decIndent,
+        getLevel() {
+            return i;
+        },
     });
     
-    const splitter = () => {
-        addToken({
-            type: TYPES$3.SPLITTER,
-            value: format.splitter,
-        });
-    };
-    
-    const quote = () => {
-        addToken({
-            type: TYPES$3.QUOTE,
-            value: format.quote,
-        });
-    };
-    
-    const endOfFile = () => {
-        addToken({
-            type: TYPES$3.END_OF_FILE,
-            value: format.endOfFile,
-        });
-    };
-    
-    assign$9(write, {
-        indent,
-        newline,
-        linebreak,
-        breakline,
-        space,
-        splitter,
-        quote,
-        endOfFile,
-    });
-    
-    assign$9(maybeWrite, {
-        newline: maybeNewline,
-        breakline: maybeBreakline,
-        linebreak: maybeLinebreak,
-        space: maybeSpace,
-    });
-    
-    const maybe = {
-        indent: maybeIndent,
-        markAfter: maybeMarkAfter,
-        write: maybeWrite,
-        space: maybeSpace,
-    };
-    
-    assign$9(maybe.indent, {
-        inc: maybeIndentInc,
-        dec: maybeIndentDec,
-    });
-    
-    // should never change to avoid unexpected errors related to printing path, since it hard to debug
-    const mainPrinter = freeze({
-        indent,
-        write,
-        debug,
-        traverse,
-        maybe,
-        quote,
-        store: fullstore(),
-    });
-    
-    const currentTraversers = {
-        ...baseVisitors,
-        ...visitors,
-    };
-    
-    if (ast.parentPath)
-        pathTraverse(ast, traverse);
-    else
-        traverse3(maybeFile(ast), {
-            Program(path) {
-                traverse(path);
-                path.stop();
-            },
-        });
-    
-    function traverse(path) {
-        const {type} = path;
-        const currentTraverse = currentTraversers[type];
-        
-        if (!path.node)
-            return;
-        
-        const print = createPrint(path, {
-            write,
-            traverse,
-        });
-        
-        assign$9(print, write, {
-            space,
-            round,
-        });
-        
-        const printer = {
-            ...mainPrinter,
-            print,
-        };
-        
-        const maybePrint = (a, b) => a && print(b);
-        
-        assign$9(maybePrint, {
-            newline: maybeNewline,
-            breakline: maybeBreakline,
-            linebreak: maybeLinebreak,
-            space: maybeSpace,
-        });
-        
-        assign$9(printer.maybe, {
-            print: maybePrint,
-        });
-        
-        maybeThrow(!currentTraverse, path, `☝️ Node type '{{ type }}' is not supported yet by @putout/printer: '{{ path }}'`);
-        
-        const currentIndent = i;
-        parseLeadingComments(path, printer, semantics, {
-            currentTraverse,
-        });
-        
-        // this is main thing
-        maybeVisitor(currentTraverse, path, printer, semantics);
-        parseTrailingComments(path, printer, semantics, {
-            currentTraverse,
-        });
-        maybeThrow(i !== currentIndent, path, `☝️Looks like indent level changed after token visitor: '{{ type }}', for code: '{{ path }}'`);
-        
-        debug(path.type);
-    }
-    
-    return tokens;
+    return indent;
 };
 
 function printIndent(i, indent) {
@@ -58798,26 +58639,321 @@ function printIndent(i, indent) {
     return result;
 }
 
-const createPrint = (path, {traverse, write}) => (maybeLine) => {
-    if (maybeLine === path)
-        return null;
+const isObject$6 = (a) => a && typeof a === 'object';
+const isString$c = (a) => typeof a === 'string';
+
+const GET = '__';
+const get = (path, command) => path.get(command.replace(GET, ''));
+
+const {freeze, assign: assign$9} = Object;
+
+const createPrinter = (overrides) => {
+    const tokens = [];
+    const {
+        format,
+        semantics,
+        visitors,
+    } = parseOverrides(overrides);
     
-    const computed = computePath(path, maybeLine);
+    const addToken = createAddToken(tokens);
+    const debug = createDebug$4(tokens);
+    const write = createWrite(addToken);
     
-    if (isObject$6(computed))
-        return traverse(computed);
+    const indent = createIndent({
+        format,
+        addToken,
+    });
     
-    return write(computed);
+    const newline = createNewline({
+        format,
+        addToken,
+    });
+    
+    const breakline = createBreakline({
+        newline,
+        indent,
+    });
+    
+    const linebreak = createLinebreak({
+        indent,
+        newline,
+    });
+    
+    const space = createSpace({
+        format,
+        addToken,
+    });
+    
+    const splitter = createSplitter({
+        format,
+        addToken,
+    });
+    
+    const endOfFile = createEndOfFile({
+        format,
+        addToken,
+    });
+    
+    const quote = createQuote({
+        addToken,
+        format,
+    });
+    
+    assign$9(write, {
+        indent,
+        newline,
+        linebreak,
+        breakline,
+        space,
+        splitter,
+        quote,
+        endOfFile,
+    });
+    
+    const maybeBreakline = createMaybe(breakline);
+    const maybeNewline = createMaybe(newline);
+    const maybeLinebreak = createMaybe(linebreak);
+    const maybeSpace = createMaybe(space);
+    
+    const maybeWrite = createMaybeWrite({
+        write,
+    });
+    
+    assign$9(maybeWrite, {
+        newline: maybeNewline,
+        breakline: maybeBreakline,
+        linebreak: maybeLinebreak,
+        space: maybeSpace,
+    });
+    
+    const maybeIndent = createMaybe(indent);
+    
+    const maybe = {
+        indent: maybeIndent,
+        markAfter: maybeMarkAfter,
+        write: maybeWrite,
+        space: maybeSpace,
+    };
+    
+    const maybeIndentInc = createMaybe(indent.inc);
+    const maybeIndentDec = createMaybe(indent.dec);
+    
+    assign$9(maybe.indent, {
+        inc: maybeIndentInc,
+        dec: maybeIndentDec,
+    });
+    
+    const getMainPrinter = () => mainPrinter;
+    
+    const traverse = createTraverse$6({
+        maybeNewline,
+        maybeLinebreak,
+        maybeSpace,
+        maybeBreakline,
+        indent,
+        write,
+        debug,
+        semantics,
+        visitors,
+        getMainPrinter,
+    });
+    
+    // should never change to avoid unexpected errors related to printing path, since it hard to debug
+    const mainPrinter = freeze({
+        indent,
+        write,
+        debug,
+        maybe,
+        quote,
+        store: fullstore(),
+        traverse,
+    });
+    
+    const getTokens = () => tokens;
+    
+    return {
+        getTokens,
+        traverse,
+    };
+};
+
+const createTraverse$6 = (overrides) => function traverse(path) {
+    const {
+        write,
+        debug,
+        maybeLinebreak,
+        maybeSpace,
+        maybeBreakline,
+        maybeNewline,
+        indent,
+        semantics,
+        visitors,
+        getMainPrinter,
+    } = overrides;
+    
+    const mainPrinter = getMainPrinter();
+    
+    const currentTraversers = {
+        ...baseVisitors,
+        ...visitors,
+    };
+    
+    const {type} = path;
+    const currentTraverse = currentTraversers[type];
+    
+    if (!path.node)
+        return;
+    
+    const print = createPrint(path, {
+        write,
+        traverse,
+    });
+    
+    const printer = {
+        ...mainPrinter,
+        traverse,
+        print,
+    };
+    
+    const maybePrint = (a, b) => a && print(b);
+    
+    assign$9(maybePrint, {
+        newline: maybeNewline,
+        breakline: maybeBreakline,
+        linebreak: maybeLinebreak,
+        space: maybeSpace,
+    });
+    
+    assign$9(printer.maybe, {
+        print: maybePrint,
+    });
+    
+    maybeThrow(!currentTraverse, path, `☝️ Node type '{{ type }}' is not supported yet by @putout/printer: '{{ path }}'`);
+    
+    const currentIndent = indent.getLevel();
+    
+    parseLeadingComments(path, printer, semantics, {
+        currentTraverse,
+    });
+    
+    // this is main thing
+    maybeVisitor(currentTraverse, path, printer, semantics);
+    parseTrailingComments(path, printer, semantics, {
+        currentTraverse,
+    });
+    
+    maybeThrow(indent.getLevel() !== currentIndent, path, `☝️Looks like indent level changed after token visitor: '{{ type }}', for code: '{{ path }}'`);
+    
+    debug(path.type);
+};
+
+const createPrint = (path, {traverse, write}) => {
+    const print = (maybeLine) => {
+        if (maybeLine === path)
+            return null;
+        
+        const computed = computePath(path, maybeLine);
+        
+        if (isObject$6(computed))
+            return traverse(computed);
+        
+        return write(computed);
+    };
+    
+    assign$9(print, write);
+    
+    return print;
 };
 
 const computePath = (path, maybeLine) => {
-    if (isString$b(maybeLine) && maybeLine.startsWith(GET))
+    if (isString$c(maybeLine) && maybeLine.startsWith(GET))
         return get(path, maybeLine);
     
     if (isObject$6(maybeLine))
         return maybeLine;
     
     return maybeLine;
+};
+
+const createWrite = (addToken) => (value) => {
+    addToken({
+        type: TYPES$3.TOKEN,
+        value,
+    });
+};
+
+const createNewline = ({format, addToken}) => () => {
+    addToken({
+        type: TYPES$3.NEWLINE,
+        value: format.newline,
+    });
+};
+
+const createMaybe = (fn) => (a) => a && fn();
+
+const createBreakline = ({newline, indent}) => () => {
+    newline();
+    indent();
+};
+
+const createLinebreak = ({indent, newline}) => () => {
+    indent();
+    newline();
+};
+
+const createMaybeWrite = ({write}) => (a, b) => a && write(b);
+
+const createSpace = ({format, addToken}) => () => {
+    addToken({
+        type: TYPES$3.SPACE,
+        value: format.space,
+    });
+};
+
+const createSplitter = ({format, addToken}) => () => {
+    addToken({
+        type: TYPES$3.SPLITTER,
+        value: format.splitter,
+    });
+};
+
+const createQuote = ({addToken, format}) => () => {
+    addToken({
+        type: TYPES$3.QUOTE,
+        value: format.quote,
+    });
+};
+
+const createEndOfFile = ({format, addToken}) => () => {
+    addToken({
+        type: TYPES$3.END_OF_FILE,
+        value: format.endOfFile,
+    });
+};
+
+const createAddToken = (tokens) => {
+    const log = createLog();
+    
+    return (token) => {
+        log(token);
+        tokens.push(token);
+    };
+};
+
+const tokenize = (ast, overrides) => {
+    const {getTokens, traverse} = createPrinter(overrides);
+    
+    if (ast.parentPath)
+        pathTraverse(ast, traverse);
+    else
+        traverse3(maybeFile(ast), {
+            Program(path) {
+                traverse(path);
+                path.stop();
+            },
+        });
+    
+    return getTokens();
 };
 
 function pathTraverse(ast, traverse) {
@@ -58997,7 +59133,7 @@ function check$d(ast) {
         throw Error('☝️Looks like ast not an object');
 }
 
-const isString$a = (a) => typeof a === 'string';
+const isString$b = (a) => typeof a === 'string';
 
 const alignSpaces = (str) => {
     check$c(str);
@@ -59045,7 +59181,7 @@ function getSpaces(s) {
 }
 
 function check$c(str) {
-    if (!isString$a(str))
+    if (!isString$b(str))
         throw Error('str should be a string!');
 }
 
@@ -59079,9 +59215,9 @@ const print$1 = (ast, options) => {
     return alignSpaces(code);
 };
 
-const {isArray: isArray$c} = Array;
+const {isArray: isArray$e} = Array;
 
-const maybeArray$5 = (a) => isArray$c(a) ? a : [a, {}];
+const maybeArray$5 = (a) => isArray$e(a) ? a : [a, {}];
 
 const print = (ast, options = {}) => {
     const [printer = 'putout', printerOptions] = maybeArray$5(options.printer);
@@ -59349,7 +59485,7 @@ function getCommentGroup({trailing, leading}) {
     return 'innerComments'; // Dangling comments, such as `[/* a */]`.
 }
 
-const isString$9 = (a) => typeof a === 'string';
+const isString$a = (a) => typeof a === 'string';
 const isNumber$2 = (a) => typeof a === 'number';
 const isNull = (a) => a === null;
 const isBool$2 = (a) => typeof a === 'boolean';
@@ -59365,7 +59501,7 @@ var setLiteral = (node) => {
         return;
     }
     
-    if (isString$9(value)) {
+    if (isString$a(value)) {
         node.type = 'StringLiteral';
         return;
     }
@@ -59674,8 +59810,8 @@ var onceExports = once$6.exports;
 const noop$3 = () => {};
 
 var empty = /*#__PURE__*/Object.freeze({
-    __proto__: null,
-    default: noop$3
+  __proto__: null,
+  default: noop$3
 });
 
 var require$$1 = /*@__PURE__*/getAugmentedNamespace(empty);
@@ -59706,8 +59842,8 @@ function privateMethods(Parser) {
 }
 
 var acornPrivateMethods = /*#__PURE__*/Object.freeze({
-    __proto__: null,
-    default: privateMethods
+  __proto__: null,
+  default: privateMethods
 });
 
 var require$$2 = /*@__PURE__*/getAugmentedNamespace(acornPrivateMethods);
@@ -59788,10 +59924,10 @@ const allowUndeclaredExports = true;
 const allowImportExportEverywhere = true;
 
 var options = /*#__PURE__*/Object.freeze({
-    __proto__: null,
-    allowImportExportEverywhere: allowImportExportEverywhere,
-    allowReturnOutsideFunction: allowReturnOutsideFunction,
-    allowUndeclaredExports: allowUndeclaredExports
+  __proto__: null,
+  allowImportExportEverywhere: allowImportExportEverywhere,
+  allowReturnOutsideFunction: allowReturnOutsideFunction,
+  allowUndeclaredExports: allowUndeclaredExports
 });
 
 const {assign: assign$5} = Object;
@@ -60028,7 +60164,7 @@ const tryThrowWithReason$1 = (fn, ...args) => {
 };
 
 const {assign: assign$4} = Object;
-const isString$8 = (a) => typeof a === 'string';
+const isString$9 = (a) => typeof a === 'string';
 
 const parse$4 = (source, options) => {
     check$b(source);
@@ -60070,7 +60206,7 @@ const getParser = ({parser = 'babel', isTS, isJSX, printer}) => ({
 });
 
 function check$b(source) {
-    if (!isString$8(source))
+    if (!isString$9(source))
         throw Error(`☝️ Looks like type of 'source' is not 'string', but '${typeof source}'`);
 }
 
@@ -60180,6 +60316,126 @@ function $cf838c15c8b009ba$export$22f15dd4e5be7e52(fn, o) {
     return f;
 }
 
+const wrap = (fn) => (...a) => (...b) => fn(...a, ...b);
+
+var wraptile = (fn, ...a) => {
+    check$a(fn);
+    
+    if (a.length)
+        return wrap(fn)(...a);
+    
+    return wrap(fn);
+};
+
+function check$a(fn) {
+    if (typeof fn !== 'function')
+        throw Error('fn should be a function!');
+}
+
+var wraptile$1 = wraptile;
+
+const {entries: entries$a} = Object;
+const {isArray: isArray$d} = Array;
+
+var findPath = (parentPath) => {
+    let current = {
+        parentPath,
+    };
+    
+    const path = [];
+    
+    while (current = current.parentPath) {
+        path.unshift(findKey(current, current.parent));
+    }
+    
+    return path.join('.');
+};
+
+function findKey(path, parent) {
+    const {node} = path;
+    let key;
+    let value;
+    
+    for ([key, value] of entries$a(parent)) {
+        if (isArray$d(value)) {
+            const index = value.indexOf(node);
+            
+            if (index >= 0)
+                return `${key}.${index}`;
+            
+            continue;
+        }
+        
+        if (value === node)
+            break;
+    }
+    
+    return key;
+}
+
+const {isProgram: isProgram$2} = lib_exports;
+const hasWatermark = (watermark) => (path) => path.node?.[__watermark]?.has(watermark);
+
+const __watermark = '__putout_runner_replace';
+
+const watermark = (from, to, path) => {
+    const {watermark, highWatermark} = create(from, to, path);
+    const program = path.findParent(isProgram$2);
+    const options = {
+        watermark,
+        highWatermark,
+        program,
+        path,
+    };
+    
+    return {
+        init: wraptile$1(init, options),
+        has: wraptile$1(has, options),
+        add: wraptile$1(add, options),
+    };
+};
+
+function create(from, to, path) {
+    const watermark = `${from} -> ${to}`;
+    const highWatermark = `${findPath(path)}: ${watermark}`;
+    
+    return {
+        watermark,
+        highWatermark,
+    };
+}
+
+function init({path, program}) {
+    if (path.node)
+        path.node[__watermark] = path.node[__watermark] || new Set();
+    
+    program.node[__watermark] = program.node[__watermark] || new Set();
+}
+
+function add({path, program, watermark, highWatermark}) {
+    init({
+        path,
+        program,
+    });
+    
+    path?.node[__watermark].add(watermark);
+    program.node[__watermark].add(highWatermark);
+}
+
+const clearWatermark = (node) => {
+    delete node?.[__watermark];
+};
+
+function has({path, program, watermark, highWatermark}) {
+    const {node} = path;
+    const {loc} = node;
+    
+    if (node?.[__watermark].has(watermark) || path.findParent(hasWatermark(watermark)) && !loc)
+        return true;
+    
+    return program.node[__watermark].has(highWatermark);
+}
+
 const {
     nanomemoize = $cf838c15c8b009ba$export$22f15dd4e5be7e52,
 } = $cf838c15c8b009ba$export$22f15dd4e5be7e52;
@@ -60222,7 +60478,7 @@ const template$1 = nanomemoize((value, options) => {
 
 template$1.extractExpression = extractExpression$2;
 
-template$1.ast = nanomemoize((value, options) => {
+const templateAst = nanomemoize((value, options) => {
     const result = index.ast(value, {
         ...defaults,
         ...options,
@@ -60230,6 +60486,14 @@ template$1.ast = nanomemoize((value, options) => {
     
     return extractExpression$2(result);
 });
+
+template$1.ast = (...a) => {
+    const node = templateAst(...a);
+    
+    clearWatermark(node);
+    
+    return templateAst(...a);
+};
 
 template$1.program = nanomemoize((value, options) => {
     const result = index.program(value, {
@@ -60256,31 +60520,6 @@ template$1.ast.fresh = (value, options) => {
     });
     
     return extractExpression$2(result);
-};
-
-const mergeShebang = (shebang, source) => {
-    if (!shebang)
-        return source;
-    
-    return `${shebang}\n${source}`;
-};
-
-const cutShebang = (source) => {
-    if (source.indexOf('#'))
-        return [source, ''];
-    
-    const lines = source.split('\n');
-    
-    const result = lines
-        .slice(1)
-        .join('\n');
-    
-    const [shebang] = lines;
-    
-    return [
-        result,
-        `${shebang}\n`,
-    ];
 };
 
 // Copyright Joyent, Inc. and other Node contributors.
@@ -60519,7 +60758,7 @@ var substr = 'ab'.substr(-1) === 'b' ?
 const isFn$5 = (a) => typeof a === 'function';
 
 const tryToCatch = async (fn, ...args) => {
-    check$a(fn);
+    check$9(fn);
     
     try {
         return [null, await fn(...args)];
@@ -60528,7 +60767,7 @@ const tryToCatch = async (fn, ...args) => {
     }
 };
 
-function check$a(fn) {
+function check$9(fn) {
     if (!isFn$5(fn))
         throw Error('fn should be a function!');
 }
@@ -60646,8 +60885,8 @@ function buildPluginsDirs(name) {
 }
 
 const isStr$2 = (a) => typeof a === 'string';
-const {isArray: isArray$b} = Array;
-const {entries: entries$a} = Object;
+const {isArray: isArray$c} = Array;
+const {entries: entries$9} = Object;
 
 const parsePluginNames = (plugins) => {
     const result = [];
@@ -60658,23 +60897,23 @@ const parsePluginNames = (plugins) => {
             continue;
         }
         
-        if (isArray$b(plugin)) {
+        if (isArray$c(plugin)) {
             const [pluginName, fn] = plugin;
             result.push([pluginName, fn]);
             continue;
         }
         
-        result.push(...entries$a(plugin));
+        result.push(...entries$9(plugin));
     }
     
     return result;
 };
 
-const {isArray: isArray$a} = Array;
+const {isArray: isArray$b} = Array;
 const isBool$1 = (a) => typeof a === 'boolean';
 const isStr$1 = (a) => typeof a === 'string';
 const isObj = (a) => typeof a === 'object';
-const {entries: entries$9} = Object;
+const {entries: entries$8} = Object;
 const {stringify: stringify$6} = JSON;
 
 const notSupportedError = (a) => Error(`☝️ Rule format not supported ${a}: ${typeof a}`);
@@ -60699,9 +60938,9 @@ const parseRules = (rules) => {
     const plugin = null;
     const msg = '';
     
-    check$9(rules);
+    check$8(rules);
     
-    for (const [rule, value] of entries$9(rules)) {
+    for (const [rule, value] of entries$8(rules)) {
         if (isStr$1(value)) {
             result.push({
                 rule,
@@ -60724,7 +60963,7 @@ const parseRules = (rules) => {
             continue;
         }
         
-        const looksLikeArray = isArray$a(value);
+        const looksLikeArray = isArray$b(value);
         const looksLikeNormalArray = looksLikeArray && value.length;
         
         if (looksLikeNormalArray) {
@@ -60786,8 +61025,8 @@ function validateState(rule, value) {
     });
 }
 
-function check$9(rules) {
-    if (isArray$a(rules))
+function check$8(rules) {
+    if (isArray$b(rules))
         throw Error(`☝️Looks like type of 'rules' passed to @putout/engine-loader is 'array', expected: 'object'.`);
 }
 
@@ -60892,22 +61131,26 @@ const getLoadedRules = (rules) => {
     return loadedRules;
 };
 
-const isString$7 = (a) => typeof a === 'string';
+const isString$8 = (a) => typeof a === 'string';
 
-const check$8 = (options) => {
+const check$7 = (options) => {
     if (!options || typeof options !== 'object')
         throw Error('options should be an object!');
 };
 
 const checkRule = (rule) => {
-    if (!isString$7(rule))
+    if (!isString$8(rule))
         throw Error(`☝️ Looks like plugin name type is not 'string', but: '${typeof rule}'`);
 };
 
 const validateRulesRelations = (options) => {
-    check$8(options);
+    check$7(options);
     
-    const {pluginNames = [], rules = {}} = options;
+    const {
+        pluginNames = [],
+        rules = {},
+    } = options;
+    
     const items = parsePluginNames(pluginNames);
     
     validateRules({
@@ -60916,13 +61159,13 @@ const validateRulesRelations = (options) => {
     });
 };
 
-const {entries: entries$8, fromEntries} = Object;
+const {entries: entries$7, fromEntries} = Object;
 const cut = (a) => a.split('/')[0];
 
 const enableNestedRules = (rules) => {
     const newRules = new Map();
     
-    for (const [rule, value] of entries$8(rules)) {
+    for (const [rule, value] of entries$7(rules)) {
         if (newRules.has(rule))
             continue;
         
@@ -60971,8 +61214,8 @@ var validatePlugin = ({plugin, rule}) => {
     throw Error(`☝️ Cannot determine type of plugin '${rule}'. Here is list of supported plugins: https://git.io/JqcMn`);
 };
 
-const {isArray: isArray$9} = Array;
-const maybeTuple = (a) => isArray$9(a) ? a : ['on', a];
+const {isArray: isArray$a} = Array;
+const maybeTuple = (a) => isArray$a(a) ? a : ['on', a];
 
 // Would be great to have ability to filter
 // disabled plugins and prevent them from loading
@@ -61015,9 +61258,13 @@ function isExactRuleEnabled(name, status, rules) {
 const loadPluginAsync = createAsyncLoader('plugin');
 
 const loadPluginsAsync = async (options) => {
-    check$8(options);
+    check$7(options);
     
-    const {pluginNames = [], rules = {}} = options;
+    const {
+        pluginNames = [],
+        rules = {},
+    } = options;
+    
     const {
         items,
         loadedRules,
@@ -61107,12 +61354,16 @@ function parseRuleName(rule) {
     return rule;
 }
 
-const {isArray: isArray$8} = Array;
+const {isArray: isArray$9} = Array;
 
 const loadPlugins = (options) => {
-    check$8(options);
+    check$7(options);
     
-    const {pluginNames = [], rules = {}} = options;
+    const {
+        pluginNames = [],
+        rules = {},
+    } = options;
+    
     const {
         items,
         loadedRules,
@@ -61139,16 +61390,17 @@ const parseRule = (rule) => rule
     .replace('import:@putout/plugin-', '')
     .replace('@putout/plugin-', '');
 
-const maybeFromTuple = (a) => isArray$8(a) ? a[1] : a;
+const maybeFromTuple = (a) => isArray$9(a) ? a[1] : a;
 
 function loadAllPlugins({items, loadedRules}) {
     const plugins = [];
     
     for (const [rule, itemPlugin] of items) {
+        checkRule(rule);
+        
         if (!isEnabled(rule, loadedRules))
             continue;
         
-        checkRule(rule);
         const parsedRule = parseRule(rule);
         
         const [name, namespace] = splitRule(rule);
@@ -61464,21 +61716,12 @@ const isFn$4 = (a) => typeof a === 'function';
 const getPath$1 = (path) => path.path || path;
 const debug$4 = createDebug$1('putout:runner:fix');
 
-const chooseFixArgs = ({path, pathOptions, options}) => {
-    if (pathOptions)
-        return [
-            path,
-            pathOptions, {
-                options,
-            },
-        ];
-    
-    return [
-        path, {
-            options,
-        },
-    ];
-};
+const chooseFixArgs = ({path, pathOptions, options}) => [
+    path, {
+        options,
+        ...pathOptions,
+    },
+];
 
 const tryToFix = (fix, {path, pathOptions, position, options}) => {
     const [e] = tryCatch(fix, ...chooseFixArgs({
@@ -61527,7 +61770,7 @@ function validate$1(name, fn) {
 
 const getPath = (item) => item.path || item[0] || item;
 
-const getPosition = (path, shebang) => {
+const getPosition = (path) => {
     const parsedPath = getPath(path);
     
     validatePath(parsedPath);
@@ -61537,14 +61780,14 @@ const getPosition = (path, shebang) => {
     
     if (!loc)
         return {
-            line: 0,
+            line: 1,
             column: 1,
         };
     
     const {line, column} = node.loc.start;
     
     return {
-        line: shebang ? line + 1 : line,
+        line,
         column: column + 1,
     };
 };
@@ -61554,8 +61797,8 @@ function validatePath(path) {
         throw Error(`☝️ Looks like 'push' called without a 'path' argument.`);
 }
 
-const {isArray: isArray$7} = Array;
-const maybeArray$3 = (a) => isArray$7(a) ? a : [a];
+const {isArray: isArray$8} = Array;
+const maybeArray$3 = (a) => isArray$8(a) ? a : [a];
 
 var maybeArray$4 = (a) => {
     if (!a)
@@ -61566,15 +61809,23 @@ var maybeArray$4 = (a) => {
 
 const isFn$3 = (a) => typeof a === 'function';
 const {stringify: stringify$4} = JSON;
+const {isArray: isArray$7} = Array;
 
 const validate = (name, fn) => {
+    if (name === 'include-items') {
+        if (!isArray$7(fn))
+            throw Error(`☝️ Looks like 'include' does not return an 'array'. More on using Includer: https://git.io/JqcMn`);
+        
+        return;
+    }
+    
     if (!isFn$3(fn))
         throw Error(`☝️ Looks like '${name}' is not a 'function' but '${typeof fn}' with value: '${stringify$4(fn)}'. More on using Includer: https://git.io/JqcMn`);
 };
 
 const {
     values,
-    entries: entries$7,
+    entries: entries$6,
     assign: assign$2,
 } = Object;
 
@@ -61633,7 +61884,7 @@ function createStore({set, get}) {
             map = {};
         };
         
-        fn.entries = () => entries$7(map);
+        fn.entries = () => entries$6(map);
         
         return fn;
     };
@@ -61678,7 +61929,7 @@ const parse$3 = (name, plugin, options) => {
     return list;
 };
 
-var mergeVisitors = (pluginsToMerge, {fix, shebang, template}) => {
+var mergeVisitors = (pluginsToMerge, {fix, template}) => {
     const mergeItems = [];
     const pushed = {};
     
@@ -61694,7 +61945,6 @@ var mergeVisitors = (pluginsToMerge, {fix, shebang, template}) => {
         } = getStore(plugin, {
             fix,
             rule,
-            shebang,
             msg,
             options,
         });
@@ -61737,7 +61987,7 @@ var mergeVisitors = (pluginsToMerge, {fix, shebang, template}) => {
     };
 };
 
-function getStore(plugin, {fix, rule, shebang, msg, options}) {
+function getStore(plugin, {fix, rule, msg, options}) {
     const store = mapStore();
     const list = listStore();
     const upstore = upStore();
@@ -61746,8 +61996,11 @@ function getStore(plugin, {fix, rule, shebang, msg, options}) {
     const paths = pathStore();
     
     const push = (path, pathOptions) => {
-        const position = getPosition(path, shebang);
-        const message = msg || plugin.report(path, pathOptions);
+        const position = getPosition(path);
+        const message = msg || plugin.report(path, {
+            options,
+            ...pathOptions,
+        });
         
         placesStore({
             message,
@@ -61794,7 +62047,7 @@ function superFind({rule, find, ast, options, template, traverse = traverse3}) {
     };
     
     const returnItems = find(ast, {
-        traverse: createTraverse$4({
+        traverse: createTraverse$5({
             rule,
             options,
             template,
@@ -61812,7 +62065,7 @@ function superFind({rule, find, ast, options, template, traverse = traverse3}) {
     ];
 }
 
-const createTraverse$4 = ({rule, options, template, traverse}) => (ast, visitor) => {
+const createTraverse$5 = ({rule, options, template, traverse}) => (ast, visitor) => {
     const templateVisitors = merge$1(template({
         rule,
         visitor,
@@ -61822,7 +62075,7 @@ const createTraverse$4 = ({rule, options, template, traverse}) => (ast, visitor)
     return traverse(ast, templateVisitors);
 };
 
-const isString$6 = (a) => typeof a === 'string';
+const isString$7 = (a) => typeof a === 'string';
 const isUndefined = (a) => typeof a === 'undefined';
 const isEmpty = (obj) => !Object.keys(obj).length;
 
@@ -61832,7 +62085,7 @@ function jessy(selector, divider, value) {
         divider = '.';
     }
     
-    check$7(selector, value);
+    check$6(selector, value);
     
     if (!selector)
         return value;
@@ -61865,8 +62118,8 @@ function jessy(selector, divider, value) {
     return value;
 }
 
-function check$7(selector, obj) {
-    if (!isString$6(selector))
+function check$6(selector, obj) {
+    if (!isString$7(selector))
         throw Error('selector should be string!');
     
     if (typeof obj !== 'object')
@@ -61875,7 +62128,7 @@ function check$7(selector, obj) {
 
 const isNumber$1 = (a) => !Number.isNaN(a) && typeof a === 'number';
 const isNumberLike = (a, b = Number(a)) => isNumber$1(b);
-const isString$5 = (a) => typeof a === 'string';
+const isString$6 = (a) => typeof a === 'string';
 const notSecure = (a) => /__proto__|prototype/.test(a);
 
 function nessy(selector, value, divider, obj) {
@@ -61886,7 +62139,7 @@ function nessy(selector, value, divider, obj) {
     
     const result = obj;
     
-    check$6(selector);
+    check$5(selector);
     
     const array = selector
         .split(divider)
@@ -61911,8 +62164,8 @@ function nessy(selector, value, divider, obj) {
     
     return result;
 }
-function check$6(selector) {
-    if (!isString$5(selector))
+function check$5(selector) {
+    if (!isString$6(selector))
         throw Error('selector should be string!');
 }
 
@@ -61990,14 +62243,14 @@ const isTemplate = (a) => /[(;={.\s]/.test(a) || !/^[A-Z]/.test(a);
 
 const is = (str, array = ALL) => {
     for (const item of array) {
-        if (check$5(str, item))
+        if (check$4(str, item))
             return true;
     }
     
     return false;
 };
 
-function check$5(str, item) {
+function check$4(str, item) {
     if (isStr(item))
         return str === item;
     
@@ -62298,15 +62551,15 @@ const {
 
 const {extractExpression: extractExpression$1} = template$1;
 
-const {entries: entries$6} = Object;
+const {entries: entries$5} = Object;
 const isNumber = (a) => typeof a === 'number';
-const isString$4 = (a) => typeof a === 'string';
+const isString$5 = (a) => typeof a === 'string';
 
 const parseNode$1 = (a) => a.node || a;
 const {stringify: stringify$3} = JSON;
 
 const getTemplateValues = (node, str) => {
-    if (!isString$4(str))
+    if (!isString$5(str))
         throw Error(`☝️ Looks like argument 'template' of 'getTemplateValues(node, template)': is not a string, but '${stringify$3(str)}'`);
     
     node = parseNode$1(node);
@@ -62383,7 +62636,7 @@ function findVarsWays(node) {
 function getValues({waysFrom, node}) {
     const result = {};
     
-    for (const [name, ways] of entries$6(waysFrom)) {
+    for (const [name, ways] of entries$5(waysFrom)) {
         for (let way of ways) {
             if (isImportsStr(name))
                 way = way.replace(/\.0.local$/, '');
@@ -62410,7 +62663,7 @@ const makeRaw = (a) => a.replace('`', '\\`');
 function setValues({waysTo, values, path}) {
     const node = extractExpression$1(path.node);
     
-    for (const [name, ways] of entries$6(waysTo)) {
+    for (const [name, ways] of entries$5(waysTo)) {
         for (let way of ways) {
             if (!way) {
                 replaceWith(path, values[name]);
@@ -62903,7 +63156,7 @@ function superCompareIterate(node, template) {
 
 const debug$2 = createDebug$1('putout:runner:template');
 
-const {entries: entries$5} = Object;
+const {entries: entries$4} = Object;
 const isFn$2 = (a) => typeof a === 'function';
 
 const log$3 = (rule, path) => {
@@ -62935,7 +63188,7 @@ var template = ({rule, visitor, options}) => {
     const nodesExclude = maybeArray$4(options.exclude);
     const nodesInclude = maybeArray$4(options.include);
     
-    for (const [tmpl, fn] of entries$5(visitor)) {
+    for (const [tmpl, fn] of entries$4(visitor)) {
         if (!tmpl)
             continue;
         
@@ -63542,6 +63795,10 @@ const include$1 = ({rule, plugin, msg, options}) => {
     validate('include', include);
     validate('report', report);
     
+    const includeItems = include();
+    
+    validate('include-items', includeItems);
+    
     const traverse = getTraverse(include(), filter, rule);
     
     return {
@@ -63586,123 +63843,6 @@ const getTraverse = (include, filter, rule) => ({push, options}) => {
     return result;
 };
 
-const wrap = (fn) => (...a) => (...b) => fn(...a, ...b);
-
-var wraptile = (fn, ...a) => {
-    check$4(fn);
-    
-    if (a.length)
-        return wrap(fn)(...a);
-    
-    return wrap(fn);
-};
-
-function check$4(fn) {
-    if (typeof fn !== 'function')
-        throw Error('fn should be a function!');
-}
-
-var wraptile$1 = wraptile;
-
-const {entries: entries$4} = Object;
-const {isArray: isArray$3} = Array;
-
-var findPath = (parentPath) => {
-    let current = {
-        parentPath,
-    };
-    
-    const path = [];
-    
-    while (current = current.parentPath) {
-        path.unshift(findKey(current, current.parent));
-    }
-    
-    return path.join('.');
-};
-
-function findKey(path, parent) {
-    const {node} = path;
-    let key;
-    let value;
-    
-    for ([key, value] of entries$4(parent)) {
-        if (isArray$3(value)) {
-            const index = value.indexOf(node);
-            
-            if (index >= 0)
-                return `${key}.${index}`;
-            
-            continue;
-        }
-        
-        if (value === node)
-            break;
-    }
-    
-    return key;
-}
-
-const {isProgram: isProgram$2} = lib_exports;
-const name = '__putout_runner_replace';
-const hasWatermark = (watermark) => (path) => path.node?.[name]?.has(watermark);
-
-const watermark = (from, to, path) => {
-    const {watermark, highWatermark} = create(from, to, path);
-    const program = path.findParent(isProgram$2);
-    const options = {
-        watermark,
-        highWatermark,
-        program,
-        path,
-    };
-    
-    return {
-        init: wraptile$1(init, options),
-        has: wraptile$1(has, options),
-        add: wraptile$1(add, options),
-    };
-};
-
-const REPLACE_WATERMARK = name;
-
-function create(from, to, path) {
-    const watermark = `${from} -> ${to}`;
-    const highWatermark = `${findPath(path)}: ${watermark}`;
-    
-    return {
-        watermark,
-        highWatermark,
-    };
-}
-
-function init({path, program}) {
-    if (path.node)
-        path.node[name] = path.node[name] || new Set();
-    
-    program.node[name] = program.node[name] || new Set();
-}
-
-function add({path, program, watermark, highWatermark}) {
-    init({
-        path,
-        program,
-    });
-    
-    path?.node[name].add(watermark);
-    program.node[name].add(highWatermark);
-}
-
-function has({path, program, watermark, highWatermark}) {
-    const {node} = path;
-    const {loc} = node;
-    
-    if (node?.[name].has(watermark) || path.findParent(hasWatermark(watermark)) && !loc)
-        return true;
-    
-    return program.node[name].has(highWatermark);
-}
-
 const debug$1 = createDebug$1('putout:runner:replace');
 
 const log$1 = (from, path) => {
@@ -63726,7 +63866,7 @@ const PRINT_OPTIONS = {
     }],
 };
 
-const isString$3 = (a) => typeof a === 'string';
+const isString$4 = (a) => typeof a === 'string';
 
 const {keys: keys$1, entries: entries$3} = Object;
 const {stringify: stringify$1} = JSON;
@@ -63775,10 +63915,6 @@ const replace = ({rule, plugin, msg, options}) => {
     };
 };
 
-const clearWatermark = (ast) => {
-    delete ast.program[REPLACE_WATERMARK];
-};
-
 const isFn$1 = (a) => typeof a === 'function';
 
 const parseExpression = (nodeFrom, {node}) => {
@@ -63788,7 +63924,7 @@ const parseExpression = (nodeFrom, {node}) => {
     return node;
 };
 
-const fix$a = (from, to, path) => {
+const fix$b = (from, to, path) => {
     const nodeFrom = template$1.ast(from);
     const mark = watermark(from, to, path);
     
@@ -63843,7 +63979,7 @@ const getFix = (items, match) => (path) => {
             const matchFn = match[from];
             
             if (!matchFn || runMatch(path, nodeFrom, matchFn))
-                fix$a(from, to, path);
+                fix$b(from, to, path);
         }
     }
 };
@@ -63888,7 +64024,7 @@ function parseTo(to, values, path) {
         return toStr;
     }
     
-    if (!isString$3(toStr))
+    if (!isString$4(toStr))
         throw Error(`☝️ Looks like you passed 'replace' value with a wrong type. Allowed: 'string', 'node' and 'path'. Received: '${typeof toStr}' with value '${toStr}'.`);
     
     return template$1.ast.fresh(toStr);
@@ -63960,7 +64096,7 @@ const {
 } = lib_exports;
 
 const {keys} = Object;
-const isString$2 = (a) => typeof a === 'string';
+const isString$3 = (a) => typeof a === 'string';
 
 const getLastVarPath = (bodyPath) => bodyPath
     .filter(isVariableDeclaration)
@@ -63986,13 +64122,13 @@ const TS_EXCLUDE = [
 ];
 
 const declare$1 = (declarations) => ({
-    report: report$5,
+    report: report$6,
     include,
-    fix: fix$9(declarations),
+    fix: fix$a(declarations),
     filter: filter(declarations),
 });
 
-const report$5 = (path) => {
+const report$6 = (path) => {
     const {name} = path.node;
     const peaceOfName = cutName(name);
     
@@ -64032,7 +64168,7 @@ const filter = (declarations) => (path, {options}) => {
     return parseCode(type, allDeclarations[name]);
 };
 
-const fix$9 = (declarations) => (path, {options}) => {
+const fix$a = (declarations) => (path, {options}) => {
     const type = getModuleType(path);
     
     const allDeclarations = {
@@ -64054,7 +64190,7 @@ const fix$9 = (declarations) => (path, {options}) => {
 };
 
 const parseCode = (type, current) => {
-    if (isString$2(current))
+    if (isString$3(current))
         return current;
     
     return current[type];
@@ -64215,7 +64351,7 @@ const {entries: entries$2} = Object;
 
 const isPath = (path) => Boolean(path.node);
 
-const createTraverse$3 = (path) => {
+const createTraverse$4 = (path) => {
     if (isPath(path))
         return path.traverse.bind(path);
     
@@ -64232,7 +64368,7 @@ const createTraverse$3 = (path) => {
 const getTemplate = ([a]) => a;
 
 function traverse$3(basePath, visitor) {
-    const traverse = createTraverse$3(basePath);
+    const traverse = createTraverse$4(basePath);
     const items = [];
     const parsedVisitors = entries$2(visitor);
     
@@ -64340,11 +64476,11 @@ const {
     objectExpression: objectExpression$1,
 } = lib_exports;
 
-const isString$1 = (a) => typeof a === 'string';
+const isString$2 = (a) => typeof a === 'string';
 const isSet = (a) => a instanceof Set;
-const {isArray: isArray$2} = Array;
+const {isArray: isArray$3} = Array;
 
-const maybeArray$1 = (a) => isArray$2(a) ? a : [a];
+const maybeArray$1 = (a) => isArray$3(a) ? a : [a];
 const maybeArrayFrom = (a) => isSet(a) ? Array.from(a) : maybeArray$1(a);
 
 const escape = (a) => encodeURIComponent(a).replaceAll('%', '+');
@@ -64413,7 +64549,7 @@ function parseFindFileOptions(options) {
             excluded: [],
         };
     
-    if (isArray$2(options))
+    if (isArray$3(options))
         return {
             exclude: options,
         };
@@ -64457,7 +64593,7 @@ function findFile(node, name, options) {
 }
 
 function checkName(name) {
-    if (!isString$1(name) && !isArray$2(name) && !isSet(name))
+    if (!isString$2(name) && !isArray$3(name) && !isSet(name))
         throw Error(`☝️ Looks like you forget to pass the 'name' of a file to 'findFile(filePath: Path|FilePath, name: string | string[] | Set<string>): FilePath'`);
 }
 
@@ -64486,7 +64622,7 @@ function getFileContent(filePath) {
 }
 
 function checkRenameFileName(name) {
-    if (!isString$1(name))
+    if (!isString$2(name))
         throw Error(`☝️ Looks like you forget to pass the 'name' of a file to 'renameFile(filePath: FilePath, name: string)'`);
 }
 
@@ -64631,7 +64767,7 @@ const createFile = (dirPath, name, content) => {
     
     const filePath = dirPathFiles.get('value.elements').at(-1);
     
-    if (isString$1(content))
+    if (isString$2(content))
         writeFileContent(filePath, content);
     
     return filePath;
@@ -64817,7 +64953,7 @@ const {
     objectExpression,
     arrayExpression: arrayExpression$1,
     stringLiteral: stringLiteral$4,
-    isArrayExpression,
+    isArrayExpression: isArrayExpression$1,
     isStringLiteral,
     isTemplateLiteral,
     objectProperty: objectProperty$1,
@@ -64855,7 +64991,7 @@ function parseContent(node, path) {
     throw Error(`☝️ Looks like wrong content type: '${node.type}' from file: '${path}'`);
 }
 
-const fix$8 = (path) => {
+const fix$9 = (path) => {
     const array = arrayExpression$1([]);
     
     for (const element of path.get('elements')) {
@@ -64945,7 +65081,7 @@ function buildTree(path, list) {
 }
 
 const isTwoElementsTuple = (a) => {
-    if (!isArrayExpression(a))
+    if (!isArrayExpression$1(a))
         return false;
     
     const {elements} = a.node;
@@ -64954,7 +65090,7 @@ const isTwoElementsTuple = (a) => {
 };
 
 const isOneElementTuple = (a) => {
-    if (!isArrayExpression(a))
+    if (!isArrayExpression$1(a))
         return false;
     
     const {elements} = a.node;
@@ -64968,9 +65104,9 @@ function check$3(filename) {
 }
 
 var fromSimple = /*#__PURE__*/Object.freeze({
-    __proto__: null,
-    fix: fix$8,
-    traverse: traverse$2
+  __proto__: null,
+  fix: fix$9,
+  traverse: traverse$2
 });
 
 const {
@@ -64978,10 +65114,10 @@ const {
     arrayExpression,
 } = lib_exports;
 
-const {isArray: isArray$1} = Array;
+const {isArray: isArray$2} = Array;
 const maybeAddSlash = (a) => a === '/' ? a : `${a}/`;
 
-const fix$7 = (root, {files}) => {
+const fix$8 = (root, {files}) => {
     const names = [];
     
     for (const file of files) {
@@ -65006,7 +65142,7 @@ const fix$7 = (root, {files}) => {
     const list = [];
     
     for (const name of names) {
-        if (isArray$1(name)) {
+        if (isArray$2(name)) {
             list.push(arrayExpression([
                 stringLiteral$3(name[0]),
                 stringLiteral$3(name[1]),
@@ -65032,9 +65168,9 @@ const traverse$1 = ({push}) => ({
 });
 
 var toSimple = /*#__PURE__*/Object.freeze({
-    __proto__: null,
-    fix: fix$7,
-    traverse: traverse$1
+  __proto__: null,
+  fix: fix$8,
+  traverse: traverse$1
 });
 
 const log = createDebug$1('putout:runner:scanner');
@@ -65048,7 +65184,7 @@ const scan$2 = ({rule, plugin, msg, options}, {progress}) => {
     
     progress.inc();
     
-    const traverse = createTraverse$2({
+    const traverse = createTraverse$3({
         scan,
         rule,
         progress,
@@ -65105,7 +65241,7 @@ const createTrackFile = ({fileProgress, crawled}) => function*(...a) {
     }
 };
 
-const createTraverse$2 = ({scan, rule, progress}) => ({push, options}) => ({
+const createTraverse$3 = ({scan, rule, progress}) => ({push, options}) => ({
     [`${__filesystem_name}(__)`](path) {
         log(rule);
         progress.start(rule);
@@ -65203,7 +65339,7 @@ function parseVisitor(visitors) {
 const debug = createDebug$1('putout:runner:find');
 const isRemoved = (a) => a?.removed;
 
-const runPlugins = ({ast, shebang, fix, fixCount = 2, plugins, progress = createProgress(), traverse = traverse3}) => {
+const runPlugins = ({ast, fix, fixCount = 2, plugins, progress = createProgress(), traverse = traverse3}) => {
     let places = [];
     
     const merge = onceExports(mergeVisitors);
@@ -65218,7 +65354,6 @@ const runPlugins = ({ast, shebang, fix, fixCount = 2, plugins, progress = create
         places = run({
             ast,
             fix,
-            shebang,
             pluginsFind,
             pluginsTraverse,
             merge,
@@ -65231,17 +65366,18 @@ const runPlugins = ({ast, shebang, fix, fixCount = 2, plugins, progress = create
         if (!fix || !places.length)
             return places;
         
-        clearWatermark(ast);
+        const {program} = ast;
+        
+        clearWatermark(program);
     }
     
     return places;
 };
 
-const run = ({ast, fix, shebang, pluginsFind, pluginsTraverse, template, merge, traverse}) => [
+const run = ({ast, fix, pluginsFind, pluginsTraverse, template, merge, traverse}) => [
     ...runWithoutMerge({
         ast,
         fix,
-        shebang,
         template,
         pluginsFind,
         traverse,
@@ -65249,7 +65385,6 @@ const run = ({ast, fix, shebang, pluginsFind, pluginsTraverse, template, merge, 
     ...runWithMerge({
         ast,
         fix,
-        shebang,
         template,
         pluginsTraverse,
         merge,
@@ -65257,10 +65392,9 @@ const run = ({ast, fix, shebang, pluginsFind, pluginsTraverse, template, merge, 
     }),
 ];
 
-function runWithMerge({ast, fix, shebang, template, pluginsTraverse, merge, traverse}) {
+function runWithMerge({ast, fix, template, pluginsTraverse, merge, traverse}) {
     const {entries, visitor} = merge(pluginsTraverse, {
         fix,
-        shebang,
         template,
     });
     
@@ -65283,7 +65417,7 @@ function runWithMerge({ast, fix, shebang, template, pluginsTraverse, merge, trav
     return places;
 }
 
-function runWithoutMerge({ast, fix, shebang, template, pluginsFind, traverse}) {
+function runWithoutMerge({ast, fix, template, pluginsFind, traverse}) {
     const places = [];
     
     for (const {rule, plugin, msg, options} of pluginsFind) {
@@ -65297,7 +65431,6 @@ function runWithoutMerge({ast, fix, shebang, template, pluginsFind, traverse}) {
             ast,
             options,
             fix,
-            shebang,
             template,
             traverse,
         });
@@ -65308,7 +65441,7 @@ function runWithoutMerge({ast, fix, shebang, template, pluginsFind, traverse}) {
         for (const item of items) {
             const message = msg || report(item);
             const {parentPath} = getPath(item);
-            const position = getPosition(item, shebang);
+            const position = getPosition(item);
             
             places.push({
                 rule,
@@ -65425,16 +65558,7 @@ const cutBrackets = (a) => a.replace(/\s\(\d:\d+\)/, '');
 
 const maybeParseError = (a) => !a ? [] : parseError$1(a, 'loader');
 
-// why we pass 'source' to 'transform()'?
-// because we need to calculate position in a right way
-// and determine is shebang is existing
-//
-// 25     return {¬
-// 26         line: shebang ? line + 1 : line,¬
-// 27         column,¬
-// 28     };¬
-//
-const transform = (ast, source, opts) => {
+const transform = (ast, opts) => {
     opts = defaultOptions(opts);
     
     const {
@@ -65446,8 +65570,6 @@ const transform = (ast, source, opts) => {
         runPlugins,
         progress,
     } = opts;
-    
-    const [, shebang] = cutShebang(source);
     
     const [validationError] = tryCatch(validateRulesRelations, {
         rules,
@@ -65461,7 +65583,6 @@ const transform = (ast, source, opts) => {
     
     const places = runPlugins({
         ast,
-        shebang,
         fix,
         fixCount,
         plugins,
@@ -65474,7 +65595,7 @@ const transform = (ast, source, opts) => {
     ];
 };
 
-const transformAsync = async (ast, source, opts) => {
+const transformAsync = async (ast, opts) => {
     opts = defaultOptions(opts);
     
     const {
@@ -65486,8 +65607,6 @@ const transformAsync = async (ast, source, opts) => {
         runPlugins,
         progress,
     } = opts;
-    
-    const [, shebang] = cutShebang(source);
     
     const [validationError] = tryCatch(validateRulesRelations, {
         rules,
@@ -65501,7 +65620,6 @@ const transformAsync = async (ast, source, opts) => {
     
     const places = runPlugins({
         ast,
-        shebang,
         fix,
         fixCount,
         plugins,
@@ -65525,16 +65643,14 @@ const putout = (source, opts) => {
         printer,
     } = opts;
     
-    const [clearSource, shebang] = cutShebang(source);
-    
-    const ast = parse$4(clearSource, {
+    const ast = parse$4(source, {
         parser,
         isTS,
         isJSX,
         printer,
     });
     
-    const places = transform(ast, source, opts);
+    const places = transform(ast, opts);
     
     if (!opts.fix)
         return {
@@ -65542,12 +65658,10 @@ const putout = (source, opts) => {
             places,
         };
     
-    const printed = print(ast, {
+    const code = print(ast, {
         printer,
         source,
     });
-    
-    const code = mergeShebang(shebang, printed);
     
     return {
         code,
@@ -65566,16 +65680,14 @@ const putoutAsync = async (source, opts) => {
         printer,
     } = opts;
     
-    const [clearSource, shebang] = cutShebang(source);
-    
-    const ast = parse$4(clearSource, {
+    const ast = parse$4(source, {
         parser,
         isTS,
         isJSX,
         printer,
     });
     
-    const places = await transformAsync(ast, source, opts);
+    const places = await transformAsync(ast, opts);
     
     if (!opts.fix)
         return {
@@ -65583,11 +65695,9 @@ const putoutAsync = async (source, opts) => {
             places,
         };
     
-    const printed = print(ast, {
+    const code = print(ast, {
         printer,
     });
-    
-    const code = mergeShebang(shebang, printed);
     
     return {
         code,
@@ -65595,10 +65705,10 @@ const putoutAsync = async (source, opts) => {
     };
 };
 
-const isString = (a) => typeof a === 'string';
+const isString$1 = (a) => typeof a === 'string';
 
 function check$2(source) {
-    if (!isString(source))
+    if (!isString$1(source))
         throw Error(`☝️ Looks like 'source' has type '${typeof source}', expected: 'string'`);
 }
 
@@ -71616,6 +71726,9 @@ function check$1(regExpTransformer) {
         throw Error('☝️ Looks like RegExpTransformer is missing');
 }
 
+const isString = (a) => typeof a === 'string';
+const {isArray: isArray$1} = Array;
+
 const {
     isBlockStatement,
     isFunction,
@@ -71636,15 +71749,15 @@ const isCall = (path) => {
     return isCallExpression(path.find(isCallOrStatement));
 };
 
-const report$4 = ({name}) => `Argument '${name}' is missing`;
+const report$5 = ({name}) => `Argument '${name}' is missing`;
 
 const addArgs = (args) => ({
-    report: report$4,
-    fix: fix$6,
+    report: report$5,
+    fix: fix$7,
     traverse: traverse(args),
 });
 
-const fix$6 = ({declaration, path, pattern, params, index}) => {
+const fix$7 = ({declaration, path, pattern, params, index}) => {
     const declarationNode = template$1.ast.fresh(declaration);
     
     if (isSequenceExpression(declarationNode)) {
@@ -71679,7 +71792,9 @@ const traverse = (args) => ({push, options}) => {
     
     return {
         ReferencedIdentifier(path) {
-            for (const [name, [declaration, pattern, exclude]] of entries$1(allArgs)) {
+            for (const [name, config] of entries$1(allArgs)) {
+                const [declaration, include, exclude] = parseConfig(config);
+                
                 if (path.node.name !== name)
                     continue;
                 
@@ -71696,7 +71811,7 @@ const traverse = (args) => ({push, options}) => {
                 
                 const {block} = fnPath.scope;
                 
-                if (!compareAny(path.scope.path, pattern))
+                if (!compareAny(path.scope.path, include))
                     continue;
                 
                 if (compareAny(path.scope.path, exclude))
@@ -71753,6 +71868,25 @@ function getObjectPattern(params) {
     return [
         -1,
         null,
+    ];
+}
+
+function parseConfig(config) {
+    const [declaration, patternsInclude, patternsExclude] = config;
+    
+    if (isArray$1(patternsInclude) || isString(patternsInclude))
+        return [
+            declaration,
+            patternsInclude,
+            patternsExclude,
+        ];
+    
+    const {include, exclude} = patternsInclude;
+    
+    return [
+        declaration,
+        include,
+        exclude,
     ];
 }
 
@@ -71853,15 +71987,15 @@ const isLegacyKeyword = (name) => {
     return legacyKeywords.includes(name);
 };
 
-const findPlaces = (ast, source, opts) => {
-    return transform(ast, source, {
+const findPlaces = (ast, opts) => {
+    return transform(ast, {
         ...opts,
         fix: false,
     });
 };
 
-const findPlacesAsync = async (ast, source, opts) => {
-    return await transformAsync(ast, source, {
+const findPlacesAsync = async (ast, opts) => {
+    return await transformAsync(ast, {
         ...opts,
         fix: false,
     });
@@ -71897,7 +72031,7 @@ const {join} = path;
 
 const isObject$1 = (a) => a && typeof a === 'object';
 const {entries} = Object;
-const report$3 = (path, {message}) => message;
+const report$4 = (path, {message}) => message;
 
 const matchFiles = (options) => {
     const {filename} = options;
@@ -71913,14 +72047,14 @@ const matchFiles = (options) => {
     });
     
     return {
-        fix: fix$5,
+        fix: fix$6,
         scan,
-        report: report$3,
+        report: report$4,
     };
 };
 
-function fix$5(inputFile, {dirPath, matchInputFilename, outputFilename, matchedJS, matchedAST, options, rawOptions}) {
-    transform(matchedAST, matchedJS, options);
+function fix$6(inputFile, {dirPath, matchInputFilename, outputFilename, matchedAST, options, rawOptions}) {
+    transform(matchedAST, options);
     
     const matchedJSON = magicPrint(outputFilename, matchedAST, rawOptions);
     const outputFile = getOutputFile({
@@ -71989,7 +72123,7 @@ const createScan$3 = ({files, exclude, defaultFilename}) => (mainPath, {push, pr
         const [matchedJS, matchedAST] = magicParse(inputFilename, fileContent);
         
         const options = parseOptions(inputFilename, rawOptions);
-        const places = findPlaces(matchedAST, matchedJS, options);
+        const places = findPlaces(matchedAST, options);
         
         if (!places.length)
             continue;
@@ -72091,9 +72225,9 @@ function parseOptions(inputFilename, rawOptions) {
 
 const {parse: parse$2} = JSON;
 
-const report$2 = (file, {from, to}) => `Rename '${from}' to '${to}'`;
+const report$3 = (file, {from, to}) => `Rename '${from}' to '${to}'`;
 
-const fix$4 = (file, {to}) => {
+const fix$5 = (file, {to}) => {
     renameFile(file, to);
 };
 
@@ -72145,22 +72279,22 @@ function findUpPackage(file) {
 }
 
 var renameFileWithFn = /*#__PURE__*/Object.freeze({
-    __proto__: null,
-    createScan: createScan$2,
-    fix: fix$4,
-    report: report$2
+  __proto__: null,
+  createScan: createScan$2,
+  fix: fix$5,
+  report: report$3
 });
 
 const returns = (a) => () => a;
 
-const report$1 = (path, {mask, from, to}) => {
+const report$2 = (path, {mask, from, to}) => {
     if (!mask)
         return `Rename '${from}' to '${to}'`;
     
     return `Rename '${mask}' to '${mask.replace(from, to)}'`;
 };
 
-const fix$3 = (path, {from, to}) => {
+const fix$4 = (path, {from, to}) => {
     const filename = getFilename(path);
     const newFilename = filename.replace(from, to);
     
@@ -72206,10 +72340,10 @@ const createCheckNear = (near) => (file) => {
 };
 
 var renameFileByMask = /*#__PURE__*/Object.freeze({
-    __proto__: null,
-    createScan: createScan$1,
-    fix: fix$3,
-    report: report$1
+  __proto__: null,
+  createScan: createScan$1,
+  fix: fix$4,
+  report: report$2
 });
 
 const renameFiles = ({type, mask, rename, from, to, near} = {}) => {
@@ -74350,8 +74484,8 @@ const difference$1 = (a, b) => new Set(a).difference(new Set(b));
 
 const ignore = ({name, property, list, type = __ignore}) => ({
     report: createReport$1(name),
-    fix: fix$2,
-    traverse: createTraverse$1({
+    fix: fix$3,
+    traverse: createTraverse$2({
         type,
         property,
         list,
@@ -74375,12 +74509,12 @@ const createReport$1 = (filename) => ({name, matchedElements}) => {
     return `Add '${name}'${insteadOf} to '${filename}'`;
 };
 
-const fix$2 = ({path, name, matchedElements}) => {
+const fix$3 = ({path, name, matchedElements}) => {
     path.node.elements.push(stringLiteral$1(name));
     matchedElements.map(remove);
 };
 
-const createTraverse$1 = ({type, property, list}) => ({push, options}) => {
+const createTraverse$2 = ({type, property, list}) => ({push, options}) => {
     const {dismiss = []} = options;
     const newNames = filterNames(list, dismiss);
     
@@ -74531,15 +74665,18 @@ const findFileUp = (file, name) => {
     return findFileUp(parentDirectory, name);
 };
 
-const {stringLiteral} = lib_exports;
+const {
+    stringLiteral,
+    isArrayExpression,
+} = lib_exports;
 
 const sortIgnore = ({name, property, type = __ignore}) => ({
     report: createReport({
         name,
         property,
     }),
-    fix: fix$1,
-    traverse: createTraverse({
+    fix: fix$2,
+    traverse: createTraverse$1({
         type,
         property,
     }),
@@ -74552,11 +74689,11 @@ const createReport = ({name, property}) => () => {
     return `Sort '${name}'`;
 };
 
-const fix$1 = ({path, sortedElements}) => {
+const fix$2 = ({path, sortedElements}) => {
     path.node.elements = sortedElements;
 };
 
-const createTraverse = ({type, property}) => ({push}) => ({
+const createTraverse$1 = ({type, property}) => ({push}) => ({
     [type]: (path) => {
         const parentOfElements = parseElements(path, {
             property,
@@ -74600,7 +74737,12 @@ function parseElements(path, {property}) {
     if (!prop)
         return null;
     
-    return prop.get('value');
+    const arrayPath = prop.get('value');
+    
+    if (!isArrayExpression(arrayPath))
+        return null;
+    
+    return arrayPath;
 }
 
 function cleverSort(elements, {separate}) {
@@ -74715,15 +74857,15 @@ const difference = (a, b) => new Set(a).difference(new Set(b));
 const {isArray} = Array;
 const maybeArray = (a) => isArray(a) ? a : [a];
 
-const report = (file) => `Remove files: '${getFilename(file)}'`;
+const report$1 = (file) => `Remove files: '${getFilename(file)}'`;
 
-const fix = (file) => {
+const fix$1 = (file) => {
     removeFile(file);
 };
 
 const removeFiles = (defaultNames) => ({
-    report,
-    fix,
+    report: report$1,
+    fix: fix$1,
     scan: createScan(defaultNames),
 });
 
@@ -74748,112 +74890,144 @@ const createScan = (defaultNames = []) => (path, {push, trackFile, options}) => 
     }
 };
 
+const renameProperties = (tuples) => ({
+    report,
+    fix,
+    traverse: createTraverse(tuples),
+});
+
+const report = ({from, to}) => `Rename property: '${from}' -> '${to}'`;
+
+const fix = ({path, to}) => {
+    if (!to) {
+        remove(path);
+        return;
+    }
+    
+    setLiteralValue(path.node.key, to);
+};
+
+const createTraverse = (tuples) => ({push}) => ({
+    [__json](mainPath) {
+        for (const [from, to] of tuples) {
+            for (const path of traverseProperties(mainPath, from)) {
+                push({
+                    path,
+                    from,
+                    to,
+                });
+            }
+        }
+    },
+});
+
 var operator = /*#__PURE__*/Object.freeze({
-    __proto__: null,
-    __filesystem: __filesystem,
-    __filesystem_name: __filesystem_name,
-    __ignore: __ignore,
-    __ignore_name: __ignore_name,
-    __json: __json,
-    __json_name: __json_name,
-    __toml: __toml,
-    __toml_name: __toml_name,
-    __yaml: __yaml,
-    __yaml_name: __yaml_name,
-    addArgs: addArgs,
-    addAttribute: addAttribute,
-    addAttributeValue: addAttributeValue,
-    addClassName: addClassName,
-    addParens: addParens,
-    compare: compare,
-    compareAll: compareAll,
-    compareAny: compareAny,
-    compute: compute,
-    contains: contains,
-    containsClassName: containsClassName,
-    copyFile: copyFile,
-    crawlDirectory: crawlDirectory,
-    createDirectory: createDirectory,
-    createFile: createFile,
-    createNestedDirectory: createNestedDirectory,
-    declare: declare$1,
-    extract: extract,
-    findBinding: findBinding,
-    findFile: findFile,
-    findFileUp: findFileUp,
-    findVarsWays: findVarsWays,
-    fix: fix$2,
-    fromJS: fromJS,
-    getAttributeNode: getAttributeNode,
-    getAttributePath: getAttributePath,
-    getAttributeValue: getAttributeValue,
-    getBinding: getBinding,
-    getBindingPath: getBindingPath,
-    getClassName: getClassName,
-    getExportDefault: getExportDefault,
-    getFile: getFile,
-    getFileContent: getFileContent,
-    getFileType: getFileType,
-    getFilename: getFilename,
-    getLiteralRaw: getLiteralRaw,
-    getParentDirectory: getParentDirectory,
-    getPathAfterImports: getPathAfterImports,
-    getPathAfterRequires: getPathAfterRequires,
-    getProperties: getProperties,
-    getProperty: getProperty,
-    getRootDirectory: getRootDirectory,
-    getTemplateValues: getTemplateValues,
-    getValues: getValues,
-    hasAttributeValue: hasAttributeValue,
-    hasDataName: hasDataName,
-    hasParens: hasParens,
-    hasTagName: hasTagName,
-    ignore: ignore,
-    insertAfter: insertAfter,
-    insertBefore: insertBefore,
-    isConditionKeyword: isConditionKeyword,
-    isDeclarationKeyword: isDeclarationKeyword,
-    isESM: isESM,
-    isJSON: isJSON,
-    isJSONGroup: isJSONGroup,
-    isKeyword: isKeyword,
-    isLegacyKeyword: isLegacyKeyword,
-    isModuleDeclarationKeyword: isModuleDeclarationKeyword,
-    isModuleExports: isModuleExports,
-    isSimple: isSimple,
-    isSimpleRegExp: isSimpleRegExp,
-    isStatementKeyword: isStatementKeyword,
-    isTOML: isTOML,
-    isTSKeyword: isTSKeyword,
-    isTemplate: isTemplate,
-    matchFiles: matchFiles,
-    moveFile: moveFile,
-    parseTemplate: parseTemplate,
-    readDirectory: readDirectory,
-    readFileContent: readFileContent,
-    remove: remove,
-    removeAttributeValue: removeAttributeValue,
-    removeClassName: removeClassName,
-    removeEmptyDirectory: removeEmptyDirectory,
-    removeFile: removeFile,
-    removeFiles: removeFiles,
-    removeParens: removeParens,
-    rename: rename,
-    renameFile: renameFile,
-    renameFiles: renameFiles,
-    renameProperty: renameProperty,
-    replaceWith: replaceWith,
-    replaceWithMultiple: replaceWithMultiple,
-    setAttributeValue: setAttributeValue,
-    setLiteralValue: setLiteralValue,
-    setValues: setValues,
-    sortIgnore: sortIgnore,
-    toExpression: toExpression,
-    toJS: toJS,
-    transformRegExp: transformRegExp,
-    traverse: traverse$3,
-    traverseProperties: traverseProperties,
-    writeFileContent: writeFileContent
+  __proto__: null,
+  __filesystem: __filesystem,
+  __filesystem_name: __filesystem_name,
+  __ignore: __ignore,
+  __ignore_name: __ignore_name,
+  __json: __json,
+  __json_name: __json_name,
+  __toml: __toml,
+  __toml_name: __toml_name,
+  __yaml: __yaml,
+  __yaml_name: __yaml_name,
+  addArgs: addArgs,
+  addAttribute: addAttribute,
+  addAttributeValue: addAttributeValue,
+  addClassName: addClassName,
+  addParens: addParens,
+  compare: compare,
+  compareAll: compareAll,
+  compareAny: compareAny,
+  compute: compute,
+  contains: contains,
+  containsClassName: containsClassName,
+  copyFile: copyFile,
+  crawlDirectory: crawlDirectory,
+  createDirectory: createDirectory,
+  createFile: createFile,
+  createNestedDirectory: createNestedDirectory,
+  declare: declare$1,
+  extract: extract,
+  findBinding: findBinding,
+  findFile: findFile,
+  findFileUp: findFileUp,
+  findVarsWays: findVarsWays,
+  fix: fix$3,
+  fromJS: fromJS,
+  getAttributeNode: getAttributeNode,
+  getAttributePath: getAttributePath,
+  getAttributeValue: getAttributeValue,
+  getBinding: getBinding,
+  getBindingPath: getBindingPath,
+  getClassName: getClassName,
+  getExportDefault: getExportDefault,
+  getFile: getFile,
+  getFileContent: getFileContent,
+  getFileType: getFileType,
+  getFilename: getFilename,
+  getLiteralRaw: getLiteralRaw,
+  getParentDirectory: getParentDirectory,
+  getPathAfterImports: getPathAfterImports,
+  getPathAfterRequires: getPathAfterRequires,
+  getProperties: getProperties,
+  getProperty: getProperty,
+  getRootDirectory: getRootDirectory,
+  getTemplateValues: getTemplateValues,
+  getValues: getValues,
+  hasAttributeValue: hasAttributeValue,
+  hasDataName: hasDataName,
+  hasParens: hasParens,
+  hasTagName: hasTagName,
+  ignore: ignore,
+  insertAfter: insertAfter,
+  insertBefore: insertBefore,
+  isConditionKeyword: isConditionKeyword,
+  isDeclarationKeyword: isDeclarationKeyword,
+  isESM: isESM,
+  isJSON: isJSON,
+  isJSONGroup: isJSONGroup,
+  isKeyword: isKeyword,
+  isLegacyKeyword: isLegacyKeyword,
+  isModuleDeclarationKeyword: isModuleDeclarationKeyword,
+  isModuleExports: isModuleExports,
+  isSimple: isSimple,
+  isSimpleRegExp: isSimpleRegExp,
+  isStatementKeyword: isStatementKeyword,
+  isTOML: isTOML,
+  isTSKeyword: isTSKeyword,
+  isTemplate: isTemplate,
+  matchFiles: matchFiles,
+  moveFile: moveFile,
+  parseTemplate: parseTemplate,
+  readDirectory: readDirectory,
+  readFileContent: readFileContent,
+  remove: remove,
+  removeAttributeValue: removeAttributeValue,
+  removeClassName: removeClassName,
+  removeEmptyDirectory: removeEmptyDirectory,
+  removeFile: removeFile,
+  removeFiles: removeFiles,
+  removeParens: removeParens,
+  rename: rename,
+  renameFile: renameFile,
+  renameFiles: renameFiles,
+  renameProperties: renameProperties,
+  renameProperty: renameProperty,
+  replaceWith: replaceWith,
+  replaceWithMultiple: replaceWithMultiple,
+  setAttributeValue: setAttributeValue,
+  setLiteralValue: setLiteralValue,
+  setValues: setValues,
+  sortIgnore: sortIgnore,
+  toExpression: toExpression,
+  toJS: toJS,
+  transformRegExp: transformRegExp,
+  traverse: traverse$3,
+  traverseProperties: traverseProperties,
+  writeFileContent: writeFileContent
 });
 
 const codeframe = ({source, error, highlightCode = true}) => {
@@ -74873,20 +75047,20 @@ const codeframe = ({source, error, highlightCode = true}) => {
 };
 
 var exports$1 = /*#__PURE__*/Object.freeze({
-    __proto__: null,
-    codeframe: codeframe,
-    findPlaces: findPlaces,
-    findPlacesAsync: findPlacesAsync,
-    generate: generate,
-    operator: operator,
-    parse: parse$4,
-    print: print,
-    putoutAsync: putoutAsync,
-    template: template$1,
-    transform: transform,
-    transformAsync: transformAsync,
-    traverse: traverse3,
-    types: lib_exports
+  __proto__: null,
+  codeframe: codeframe,
+  findPlaces: findPlaces,
+  findPlacesAsync: findPlacesAsync,
+  generate: generate,
+  operator: operator,
+  parse: parse$4,
+  print: print,
+  putoutAsync: putoutAsync,
+  template: template$1,
+  transform: transform,
+  transformAsync: transformAsync,
+  traverse: traverse3,
+  types: lib_exports
 });
 
 Object.assign(putout, exports$1);

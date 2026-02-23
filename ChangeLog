@@ -1,3 +1,12 @@
+2026.02.23, v5.4.1
+
+fix:
+- af71572 @putout/bundle: engines
+
+feature:
+- 3ac5357 @putout/bundle: putout v42.0.15
+- bb006c8 @putout/bundle: rollup-plugin-visualizer v7.0.0
+
 2026.02.19, v5.4.0
 
 feature:
