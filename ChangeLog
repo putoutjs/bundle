@@ -1,3 +1,12 @@
+2026.05.24, v5.5.0
+
+feature:
+- 4658b3b @putout/bundle: putout v42.5.0
+- ff31dde @putout/bundle: hermes-parser v0.36.1
+- 02ba9e9 @putout/bundle: @rollup/plugin-terser v1.0.0
+- d92a0e0 @putout/bundle: rollup-plugin-node-externals v9.0.1
+- 2b971dd @putout/bundle: superc8 v12.7.0
+
 2026.02.23, v5.4.1
 
 fix:
