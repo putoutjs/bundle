@@ -64,7 +64,7 @@
     "nodemon": "^3.0.1",
     "putout": "^42.0.15",
     "rollup": "^4.24.2",
-    "rollup-plugin-node-externals": "^8.0.0",
+    "rollup-plugin-node-externals": "^9.0.1",
     "rollup-plugin-polyfill-node": "^0.13.0",
     "rollup-plugin-visualizer": "^7.0.0",
     "superc8": "^12.7.0",
