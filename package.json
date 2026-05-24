@@ -55,7 +55,7 @@
     "@rollup/plugin-json": "^6.0.0",
     "@rollup/plugin-node-resolve": "^16.0.0",
     "@rollup/plugin-replace": "^6.0.1",
-    "@rollup/plugin-terser": "^0.4.0",
+    "@rollup/plugin-terser": "^1.0.0",
     "acorn-stage3": "^4.0.0",
     "eslint": "^10.0.0",
     "eslint-plugin-putout": "^31.0.0",
