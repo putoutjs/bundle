@@ -2039,9 +2039,9 @@ __defProp(target, 'default', {
     enumerable: true,
 }) , mod));
 
-// node_modules/jsesc/jsesc.js
+// ../babel-babel/node_modules/jsesc/jsesc.js
 var require_jsesc = __commonJS({
-    'node_modules/jsesc/jsesc.js'(exports, module) {
+    '../babel-babel/node_modules/jsesc/jsesc.js'(exports, module) {
         
         var object = {};
         var hasOwnProperty = object.hasOwnProperty;
@@ -2403,7 +2403,7 @@ var require_jsesc = __commonJS({
     },
 });
 
-// node_modules/@babel/types/lib/index.js
+// ../babel-babel/packages/babel-types/lib/index.js
 var lib_exports = {};
 
 __export(lib_exports, {
@@ -3188,7 +3188,7 @@ __export(lib_exports, {
     isClass: () => isClass,
     isClassAccessorProperty: () => isClassAccessorProperty,
     isClassBody: () => isClassBody$2,
-    isClassDeclaration: () => isClassDeclaration,
+    isClassDeclaration: () => isClassDeclaration$1,
     isClassExpression: () => isClassExpression,
     isClassImplements: () => isClassImplements,
     isClassMethod: () => isClassMethod$2,
@@ -3300,7 +3300,7 @@ __export(lib_exports, {
     isLiteral: () => isLiteral$4,
     isLogicalExpression: () => isLogicalExpression$1,
     isLoop: () => isLoop,
-    isMemberExpression: () => isMemberExpression$a,
+    isMemberExpression: () => isMemberExpression$9,
     isMetaProperty: () => isMetaProperty,
     isMethod: () => isMethod,
     isMiscellaneous: () => isMiscellaneous,
@@ -3656,7 +3656,7 @@ __export(lib_exports, {
     yieldExpression: () => yieldExpression,
 });
 
-// node_modules/@babel/helper-validator-identifier/lib/index.js
+// ../babel-babel/packages/babel-helper-validator-identifier/lib/index.js
 var nonASCIIidentifierStartChars = '\xAA\xB5\xBA\xC0-\xD6\xD8-\xF6\xF8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377\u037A-\u037D\u037F\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5\u03F7-\u0481\u048A-\u052F\u0531-\u0556\u0559\u0560-\u0588\u05D0-\u05EA\u05EF-\u05F2\u0620-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06E5\u06E6\u06EE\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA\u07F4\u07F5\u07FA\u0800-\u0815\u081A\u0824\u0828\u0840-\u0858\u0860-\u086A\u0870-\u0887\u0889-\u088F\u08A0-\u08C9\u0904-\u0939\u093D\u0950\u0958-\u0961\u0971-\u0980\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u09FC\u0A05-\u0A0A\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0AF9\u0B05-\u0B0C\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C39\u0C3D\u0C58-\u0C5A\u0C5C\u0C5D\u0C60\u0C61\u0C80\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3\u0CB5-\u0CB9\u0CBD\u0CDC-\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D04-\u0D0C\u0D0E-\u0D10\u0D12-\u0D3A\u0D3D\u0D4E\u0D54-\u0D56\u0D5F-\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E46\u0E81\u0E82\u0E84\u0E86-\u0E8A\u0E8C-\u0EA3\u0EA5\u0EA7-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EC6\u0EDC-\u0EDF\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081\u108E\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F5\u13F8-\u13FD\u1401-\u166C\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u16EE-\u16F8\u1700-\u1711\u171F-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17D7\u17DC\u1820-\u1878\u1880-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191E\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19B0-\u19C9\u1A00-\u1A16\u1A20-\u1A54\u1AA7\u1B05-\u1B33\u1B45-\u1B4C\u1B83-\u1BA0\u1BAE\u1BAF\u1BBA-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C7D\u1C80-\u1C8A\u1C90-\u1CBA\u1CBD-\u1CBF\u1CE9-\u1CEC\u1CEE-\u1CF3\u1CF5\u1CF6\u1CFA\u1D00-\u1DBF\u1E00-\u1F15\u1F18-\u1F1D\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u2071\u207F\u2090-\u209C\u2102\u2107\u210A-\u2113\u2115\u2118-\u211D\u2124\u2126\u2128\u212A-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2160-\u2188\u2C00-\u2CE4\u2CEB-\u2CEE\u2CF2\u2CF3\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D80-\u2D96\u2DA0-\u2DA6\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE\u2DD0-\u2DD6\u2DD8-\u2DDE\u3005-\u3007\u3021-\u3029\u3031-\u3035\u3038-\u303C\u3041-\u3096\u309B-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312F\u3131-\u318E\u31A0-\u31BF\u31F0-\u31FF\u3400-\u4DBF\u4E00-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA61F\uA62A\uA62B\uA640-\uA66E\uA67F-\uA69D\uA6A0-\uA6EF\uA717-\uA71F\uA722-\uA788\uA78B-\uA7DC\uA7F1-\uA801\uA803-\uA805\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB\uA8FD\uA8FE\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uA9CF\uA9E0-\uA9E4\uA9E6-\uA9EF\uA9FA-\uA9FE\uAA00-\uAA28\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA76\uAA7A\uAA7E-\uAAAF\uAAB1\uAAB5\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB-\uAADD\uAAE0-\uAAEA\uAAF2-\uAAF4\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E\uAB30-\uAB5A\uAB5C-\uAB69\uAB70-\uABE2\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF\uFFD2-\uFFD7\uFFDA-\uFFDC';
 var nonASCIIidentifierChars = '\xB7\u0300-\u036F\u0387\u0483-\u0487\u0591-\u05BD\u05BF\u05C1\u05C2\u05C4\u05C5\u05C7\u0610-\u061A\u064B-\u0669\u0670\u06D6-\u06DC\u06DF-\u06E4\u06E7\u06E8\u06EA-\u06ED\u06F0-\u06F9\u0711\u0730-\u074A\u07A6-\u07B0\u07C0-\u07C9\u07EB-\u07F3\u07FD\u0816-\u0819\u081B-\u0823\u0825-\u0827\u0829-\u082D\u0859-\u085B\u0897-\u089F\u08CA-\u08E1\u08E3-\u0903\u093A-\u093C\u093E-\u094F\u0951-\u0957\u0962\u0963\u0966-\u096F\u0981-\u0983\u09BC\u09BE-\u09C4\u09C7\u09C8\u09CB-\u09CD\u09D7\u09E2\u09E3\u09E6-\u09EF\u09FE\u0A01-\u0A03\u0A3C\u0A3E-\u0A42\u0A47\u0A48\u0A4B-\u0A4D\u0A51\u0A66-\u0A71\u0A75\u0A81-\u0A83\u0ABC\u0ABE-\u0AC5\u0AC7-\u0AC9\u0ACB-\u0ACD\u0AE2\u0AE3\u0AE6-\u0AEF\u0AFA-\u0AFF\u0B01-\u0B03\u0B3C\u0B3E-\u0B44\u0B47\u0B48\u0B4B-\u0B4D\u0B55-\u0B57\u0B62\u0B63\u0B66-\u0B6F\u0B82\u0BBE-\u0BC2\u0BC6-\u0BC8\u0BCA-\u0BCD\u0BD7\u0BE6-\u0BEF\u0C00-\u0C04\u0C3C\u0C3E-\u0C44\u0C46-\u0C48\u0C4A-\u0C4D\u0C55\u0C56\u0C62\u0C63\u0C66-\u0C6F\u0C81-\u0C83\u0CBC\u0CBE-\u0CC4\u0CC6-\u0CC8\u0CCA-\u0CCD\u0CD5\u0CD6\u0CE2\u0CE3\u0CE6-\u0CEF\u0CF3\u0D00-\u0D03\u0D3B\u0D3C\u0D3E-\u0D44\u0D46-\u0D48\u0D4A-\u0D4D\u0D57\u0D62\u0D63\u0D66-\u0D6F\u0D81-\u0D83\u0DCA\u0DCF-\u0DD4\u0DD6\u0DD8-\u0DDF\u0DE6-\u0DEF\u0DF2\u0DF3\u0E31\u0E34-\u0E3A\u0E47-\u0E4E\u0E50-\u0E59\u0EB1\u0EB4-\u0EBC\u0EC8-\u0ECE\u0ED0-\u0ED9\u0F18\u0F19\u0F20-\u0F29\u0F35\u0F37\u0F39\u0F3E\u0F3F\u0F71-\u0F84\u0F86\u0F87\u0F8D-\u0F97\u0F99-\u0FBC\u0FC6\u102B-\u103E\u1040-\u1049\u1056-\u1059\u105E-\u1060\u1062-\u1064\u1067-\u106D\u1071-\u1074\u1082-\u108D\u108F-\u109D\u135D-\u135F\u1369-\u1371\u1712-\u1715\u1732-\u1734\u1752\u1753\u1772\u1773\u17B4-\u17D3\u17DD\u17E0-\u17E9\u180B-\u180D\u180F-\u1819\u18A9\u1920-\u192B\u1930-\u193B\u1946-\u194F\u19D0-\u19DA\u1A17-\u1A1B\u1A55-\u1A5E\u1A60-\u1A7C\u1A7F-\u1A89\u1A90-\u1A99\u1AB0-\u1ABD\u1ABF-\u1ADD\u1AE0-\u1AEB\u1B00-\u1B04\u1B34-\u1B44\u1B50-\u1B59\u1B6B-\u1B73\u1B80-\u1B82\u1BA1-\u1BAD\u1BB0-\u1BB9\u1BE6-\u1BF3\u1C24-\u1C37\u1C40-\u1C49\u1C50-\u1C59\u1CD0-\u1CD2\u1CD4-\u1CE8\u1CED\u1CF4\u1CF7-\u1CF9\u1DC0-\u1DFF\u200C\u200D\u203F\u2040\u2054\u20D0-\u20DC\u20E1\u20E5-\u20F0\u2CEF-\u2CF1\u2D7F\u2DE0-\u2DFF\u302A-\u302F\u3099\u309A\u30FB\uA620-\uA629\uA66F\uA674-\uA67D\uA69E\uA69F\uA6F0\uA6F1\uA802\uA806\uA80B\uA823-\uA827\uA82C\uA880\uA881\uA8B4-\uA8C5\uA8D0-\uA8D9\uA8E0-\uA8F1\uA8FF-\uA909\uA926-\uA92D\uA947-\uA953\uA980-\uA983\uA9B3-\uA9C0\uA9D0-\uA9D9\uA9E5\uA9F0-\uA9F9\uAA29-\uAA36\uAA43\uAA4C\uAA4D\uAA50-\uAA59\uAA7B-\uAA7D\uAAB0\uAAB2-\uAAB4\uAAB7\uAAB8\uAABE\uAABF\uAAC1\uAAEB-\uAAEF\uAAF5\uAAF6\uABE3-\uABEA\uABEC\uABED\uABF0-\uABF9\uFB1E\uFE00-\uFE0F\uFE20-\uFE2F\uFE33\uFE34\uFE4D-\uFE4F\uFF10-\uFF19\uFF3F\uFF65';
 var nonASCIIidentifierStart = new RegExp('[' + nonASCIIidentifierStartChars + ']');
@@ -4771,7 +4771,7 @@ function isKeyword$1(word) {
     return keywords$1.has(word);
 }
 
-// node_modules/@babel/helper-string-parser/lib/index.js
+// ../babel-babel/packages/babel-helper-string-parser/lib/index.js
 var _isDigit = function isDigit(code2) {
     return code2 >= 48 && code2 <= 57;
 };
@@ -5072,7 +5072,7 @@ function readCodePoint(input, pos, lineStart, curLine, throwOnInvalid, errors) {
     };
 }
 
-// node_modules/@babel/types/lib/index.js
+// ../babel-babel/packages/babel-types/lib/index.js
 function shallowEqual(actual, expected) {
     const keys2 = Object.keys(expected);
     
@@ -5434,7 +5434,7 @@ function isLogicalExpression$1(node, opts) {
     return opts == null || shallowEqual(node, opts);
 }
 
-function isMemberExpression$a(node, opts) {
+function isMemberExpression$9(node, opts) {
     if (!node)
         return false;
     
@@ -5694,7 +5694,7 @@ function isClassExpression(node, opts) {
     return opts == null || shallowEqual(node, opts);
 }
 
-function isClassDeclaration(node, opts) {
+function isClassDeclaration$1(node, opts) {
     if (!node)
         return false;
     
@@ -8962,7 +8962,7 @@ function isModuleDeclaration(node, opts) {
 }
 
 function isMemberExpressionLike(node) {
-    return isMemberExpression$a(node) || isMetaProperty(node);
+    return isMemberExpression$9(node) || isMetaProperty(node);
 }
 
 function matchesPattern$1(member, match, allowPartial) {
@@ -19484,7 +19484,7 @@ function isLet(node) {
 }
 
 function isBlockScoped(node) {
-    return isFunctionDeclaration$3(node) || isClassDeclaration(node) || isLet(node);
+    return isFunctionDeclaration$3(node) || isClassDeclaration$1(node) || isLet(node);
 }
 
 function isImmutable(node) {
@@ -19745,7 +19745,7 @@ var react = {
     buildChildren,
 };
 
-// node_modules/@babel/parser/lib/index.js
+// ../babel-babel/packages/babel-parser/lib/index.js
 var Position = class {
     constructor(line, col, index3) {
         this.line = void 0;
@@ -24380,13 +24380,6 @@ var Token = class {
 
 var locDataCache;
 
-function resetLocData() {
-    const data = locDataCache;
-    
-    locDataCache = void 0;
-    return data;
-}
-
 var Tokenizer = class extends CommentsParser {
     isLookahead;
     tokens = [];
@@ -24399,7 +24392,7 @@ var Tokenizer = class extends CommentsParser {
         this.comments = [];
         this.isLookahead = false;
         
-        if (!locDataCache || locDataCache.length < (this.length + 1) * 2 || options.locations === 'packed') {
+        if (!locDataCache || locDataCache.length < (this.length + 1) * 2) {
             locDataCache = new Uint32Array((this.length + 1) * 2);
         }
         
@@ -26942,10 +26935,6 @@ var ExpressionParser = class extends LValParser {
         
         if (this.optionFlags & 512) {
             expr.tokens = createExportedTokens(this.tokens);
-        }
-        
-        if (this.options.locations === 'packed') {
-            expr.locData = resetLocData();
         }
         
         return expr;
@@ -35410,11 +35399,6 @@ var Parser = class extends StatementParser {
         
         result.errors = this.state.errors;
         result.comments.length = this.state.commentsLen;
-        
-        if (this.options.locations === 'packed') {
-            result.locData = resetLocData();
-        }
-        
         return result;
     }
 };
@@ -35520,7 +35504,7 @@ function getParserClass(pluginsMap) {
     return cls;
 }
 
-// node_modules/@babel/code-frame/lib/common-shared.js
+// ../babel-babel/packages/babel-code-frame/lib/common-shared.js
 var NEWLINE = /\r\n|[\n\r\u2028\u2029]/;
 
 function getMarkerLines(loc, source, opts, startLineBaseZero) {
@@ -35675,7 +35659,7 @@ ${frame}`;
     return defs2.reset(frame);
 }
 
-const {styleText = (a, b) => b} = util;// node_modules/js-tokens/index.js
+const {styleText = (a, b) => b} = util;// ../babel-babel/node_modules/js-tokens/index.js
 var HashbangComment;
 var Identifier2;
 var JSXIdentifier2;
@@ -36185,7 +36169,7 @@ jsTokens = function*(input, {jsx: jsx2 = false} = {}) {
 };
 var js_tokens_default = jsTokens;
 
-// node_modules/@babel/code-frame/lib/index.js
+// ../babel-babel/packages/babel-code-frame/lib/index.js
 function isColorSupported() {
     return styleText('red', '-') !== '-';
 }
@@ -36365,7 +36349,7 @@ function codeFrameColumns(rawLines, loc, opts = {}) {
     } : void 0);
 }
 
-// node_modules/@babel/template/lib/index.js
+// ../babel-babel/packages/babel-template/lib/index.js
 var {assertExpressionStatement: assertExpressionStatement2} = lib_exports;
 
 function makeStatementFormatter(fn) {
@@ -37012,7 +36996,7 @@ var index = Object.assign(smart.bind(void 0), {
     ast: smart.ast,
 });
 
-// node_modules/@jridgewell/sourcemap-codec/dist/sourcemap-codec.mjs
+// ../babel-babel/node_modules/@jridgewell/sourcemap-codec/dist/sourcemap-codec.mjs
 var comma = ','.charCodeAt(0);
 var semicolon = ';'.charCodeAt(0);
 var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
@@ -37261,7 +37245,7 @@ function encode(decoded) {
     return writer.flush();
 }
 
-// node_modules/@jridgewell/resolve-uri/dist/resolve-uri.mjs
+// ../babel-babel/node_modules/@jridgewell/resolve-uri/dist/resolve-uri.mjs
 var schemeRegex = /^[\w+.-]+:\/\//;
 var urlRegex = /^([\w+.-]+:)\/\/([^@/#?]*@)?([^:/#?]*)(:\d+)?(\/[^#?]*)?(\?[^#]*)?(#.*)?/;
 var fileRegex = /^file:(?:\/\/((?![a-z]:)[^/#?]*)?)?(\/?[^#?]*)(\?[^#]*)?(#.*)?/i;
@@ -37481,7 +37465,7 @@ case 2:
     }
 }
 
-// node_modules/@jridgewell/trace-mapping/dist/trace-mapping.mjs
+// ../babel-babel/node_modules/@jridgewell/trace-mapping/dist/trace-mapping.mjs
 function stripFilename(path) {
     if (!path)
         return '';
@@ -37753,7 +37737,7 @@ function traceSegmentInternal(segments, memo, line, column, bias) {
     return index3;
 }
 
-// node_modules/@jridgewell/gen-mapping/dist/gen-mapping.mjs
+// ../babel-babel/node_modules/@jridgewell/gen-mapping/dist/gen-mapping.mjs
 var SetArray = class {
     constructor() {
         this._indexes = {
@@ -38022,7 +38006,7 @@ function addMappingInternal(skipable, map, mapping) {
     return addSegmentInternal(skipable, map, generated.line - 1, generated.column, source, original.line - 1, original.column, name, content);
 }
 
-// node_modules/@babel/generator/lib/index.js
+// ../babel-babel/packages/babel-generator/lib/index.js
 var import_jsesc = __toESM(require_jsesc());
 
 var SourceMap = class {
@@ -38073,7 +38057,7 @@ var SourceMap = class {
         return this._rawMappings ||= allMappings(this._map);
     }
     
-    mark(generated, line, column, identifierName, identifierNamePos, filename) {
+    mark(generated, generatedIdentifierName, line, column, identifierName, identifierNamePos, filename) {
         this._rawMappings = void 0;
         let originalMapping;
         
@@ -38084,7 +38068,9 @@ var SourceMap = class {
                     column,
                 });
                 
-                if (!originalMapping.name && identifierNamePos) {
+                if (originalMapping.name && (identifierNamePos || identifierName != null && originalMapping.column === column)) {
+                    identifierName = originalMapping.name;
+                } else if (identifierNamePos) {
                     const originalIdentifierMapping = originalPositionFor(this._inputMap, identifierNamePos);
                     
                     if (originalIdentifierMapping.name) {
@@ -38099,6 +38085,10 @@ var SourceMap = class {
                     column,
                 };
             }
+        }
+        
+        if (identifierName != null && identifierName === generatedIdentifierName) {
+            identifierName = null;
         }
         
         maybeAddMapping(this._map, {
@@ -38191,9 +38181,9 @@ var Buffer2 = class {
         return result;
     }
     
-    append(str, maybeNewline) {
+    append(str, maybeNewline, ignoreMapping = false) {
         this._flush();
-        this._append(str, maybeNewline);
+        this._append(str, maybeNewline, ignoreMapping);
     }
     
     appendChar(char) {
@@ -38235,14 +38225,14 @@ var Buffer2 = class {
                 const sourcePos = this._sourcePosition;
                 
                 if (useSourcePos && sourcePos) {
-                    this._map.mark(position, sourcePos.line, sourcePos.column, isSpace ? void 0 : sourcePos.identifierName, isSpace ? void 0 : sourcePos.identifierNamePos, sourcePos.filename);
+                    this._map.mark(position, null, sourcePos.line, sourcePos.column, isSpace ? void 0 : sourcePos.identifierName, isSpace ? void 0 : sourcePos.identifierNamePos, sourcePos.filename);
                     
                     if (!isSpace && this._canMarkIdName) {
                         sourcePos.identifierName = void 0;
                         sourcePos.identifierNamePos = void 0;
                     }
                 } else {
-                    this._map.mark(position);
+                    this._map.mark(position, null);
                 }
             }
             
@@ -38253,7 +38243,7 @@ var Buffer2 = class {
         }
     }
     
-    _append(str, maybeNewline) {
+    _append(str, maybeNewline, ignoreMapping) {
         const len = str.length;
         const position = this._position;
         const sourcePos = this._sourcePosition;
@@ -38269,7 +38259,7 @@ var Buffer2 = class {
             this._str += str;
         }
         
-        const hasMap = this._map !== null;
+        const hasMap = !ignoreMapping && this._map !== null;
         
         if (!maybeNewline && !hasMap) {
             position.column += len;
@@ -38294,7 +38284,7 @@ var Buffer2 = class {
         let last2 = 0;
         
         if (hasMap && i !== 0) {
-            this._map.mark(position, line, column, identifierName, identifierNamePos, filename);
+            this._map.mark(position, str, line, column, identifierName, identifierNamePos, filename);
         }
         
         while (i !== -1) {
@@ -38306,7 +38296,7 @@ var Buffer2 = class {
                 line++;
                 
                 if (hasMap) {
-                    this._map.mark(position, line, 0, void 0, void 0, filename);
+                    this._map.mark(position, str, line, 0, void 0, void 0, filename);
                 }
             }
             
@@ -38383,13 +38373,18 @@ var Buffer2 = class {
     _normalizePosition(prop, loc, columnOffset) {
         this._flush();
         const pos = loc[prop];
-        const target = this._sourcePosition;
         
         if (pos) {
-            target.line = pos.line;
-            target.column = Math.max(pos.column + columnOffset, 0);
-            target.filename = loc.filename;
+            this.setSourcePosition(pos.line, Math.max(pos.column + columnOffset, 0));
+            this._sourcePosition.filename = loc.filename;
         }
+    }
+    
+    setSourcePosition(line, column) {
+        const target = this._sourcePosition;
+        
+        target.line = line;
+        target.column = column;
     }
     
     getCurrentColumn() {
@@ -39686,6 +39681,10 @@ function _shouldPrintArrowParamsParens(node) {
     return false;
 }
 
+function isRenamedIdentifier(id) {
+    return !!id.loc?.identifierName && id.loc.identifierName !== id.name;
+}
+
 function _getFuncIdName(idNode, parent) {
     let id = idNode;
     
@@ -39707,24 +39706,30 @@ function _getFuncIdName(idNode, parent) {
 
     }
     
-    if (!id)
+    if (!id?.loc)
         return;
     
     let nameInfo;
     
     if (id.type === 'Identifier') {
+        if (!isRenamedIdentifier(id))
+            return;
+        
         nameInfo = {
-            pos: id.loc?.start,
-            name: id.loc?.identifierName || id.name,
+            pos: id.loc.start,
+            name: id.loc.identifierName,
         };
     } else if (id.type === 'PrivateName') {
+        if (!isRenamedIdentifier(id.id))
+            return;
+        
         nameInfo = {
-            pos: id.loc?.start,
-            name: '#' + id.id.name,
+            pos: id.loc.start,
+            name: '#' + id.id.loc.identifierName,
         };
     } else if (id.type === 'StringLiteral') {
         nameInfo = {
-            pos: id.loc?.start,
+            pos: id.loc.start,
             name: id.value,
         };
     }
@@ -40803,8 +40808,8 @@ function _getRawIdentifier(node) {
 }
 
 function Identifier3(node) {
-    if (this._buf._map) {
-        this.sourceIdentifierName(node.loc?.identifierName || node.name);
+    if (this._buf._map && node.loc?.identifierName && node.loc.identifierName !== node.name) {
+        this.sourceIdentifierName(node.loc.identifierName);
     }
     
     this.word(this.tokenMap ? lastRawIdentResult : node.name);
@@ -42396,25 +42401,40 @@ for (const type of Object.keys(parens)) {
     }
 }
 
-function isOrHasLeadingCallExpression(node) {
-    switch(node.type) {
-    case 'CallExpression':    
-    case 'ImportExpression':
-        return true;
+function newCalleeNeedsParens(node) {
+    let current = node;
     
-    case 'MemberExpression':
-        return isOrHasLeadingCallExpression(node.object);
+    while (true) {
+        switch(current.type) {
+        case 'CallExpression':        
+        case 'ImportExpression':        
+        case 'OptionalCallExpression':        
+        case 'OptionalMemberExpression':
+            return true;
+        
+        case 'MemberExpression':
+            current = current.object;
+            break;
+        
+        case 'TaggedTemplateExpression':
+            current = current.tag;
+            break;
+        
+        case 'TSNonNullExpression':
+            current = current.expression;
+            break;
+        
+        default:
+            return false;
+        }
     }
-    
-    return false;
 }
 
 function parentNeedsParens(node, parent, parentId) {
     switch(parentId) {
     case 113:
         if (parent.callee === node) {
-            if (isOrHasLeadingCallExpression(node) || node.type === 'OptionalCallExpression' || node.type === 'OptionalMemberExpression')
-                return true;
+            return newCalleeNeedsParens(node);
         }
         
         break;
@@ -43152,7 +43172,8 @@ var Printer = class {
                 ._originalCode
                 .slice(index3 - spacesCount, index3)
                 .replace(/[^\t\v\f\uFEFF\p{Space_Separator}]/gu, ' ') : ' '.repeat(spacesCount);
-            this._append(spaces, false);
+            this._buf.append(spaces, false, true);
+            this._buf.setSourcePosition(line, column);
             this.setLastChar(32);
         }
     }
@@ -43875,7 +43896,7 @@ function generate$1(ast, opts = {}, code2) {
     return printer.generate(ast);
 }
 
-// node_modules/obug/dist/core.js
+// ../babel-babel/node_modules/obug/dist/core.js
 function selectColor(colors2, namespace) {
     let hash = 0;
     
@@ -43922,7 +43943,7 @@ function enable(namespaces$1) {
             names.push(ns);
 }
 
-// node_modules/obug/dist/node.js
+// ../babel-babel/node_modules/obug/dist/node.js
 var colors = [];
 
 var inspectOpts = {};
@@ -43969,7 +43990,7 @@ function createDebug2(namespace, options) {
 }
 
 enable(browser$1.env.DEBUG || '');
-// node_modules/@babel/helper-globals/data/builtin-lower.json
+// ../babel-babel/packages/babel-helper-globals/data/builtin-lower.json
 var builtin_lower_default = [
     'decodeURI',
     'decodeURIComponent',
@@ -43986,7 +44007,7 @@ var builtin_lower_default = [
     'unescape',
 ];
 
-// node_modules/@babel/helper-globals/data/builtin-upper.json
+// ../babel-babel/packages/babel-helper-globals/data/builtin-upper.json
 var builtin_upper_default = [
     'AggregateError',
     'Array',
@@ -44039,7 +44060,7 @@ var builtin_upper_default = [
     'WeakSet',
 ];
 
-// node_modules/@babel/traverse/lib/index.js
+// ../babel-babel/packages/babel-traverse/lib/index.js
 var ReferencedIdentifier = ['Identifier', 'JSXIdentifier'];
 var ReferencedMemberExpression = ['MemberExpression'];
 var BindingIdentifier = ['Identifier'];
@@ -44478,6 +44499,8 @@ function explode$1(visitor) {
     delete visitor.__esModule;
     ensureEntranceObjects(visitor);
     ensureCallbackArrays(visitor);
+    const visitorBase = visitor;
+    
     for (const nodeType of Object.keys(visitor)) {
         if (shouldIgnoreKey(nodeType))
             continue;
@@ -44485,19 +44508,19 @@ function explode$1(visitor) {
         if (!isVirtualType(nodeType))
             continue;
         
-        const fns = visitor[nodeType];
+        const fns = visitorBase[nodeType];
         
         for (const type of Object.keys(fns)) {
             fns[type] = wrapCheck(nodeType, fns[type]);
         }
         
-        delete visitor[nodeType];
+        delete visitorBase[nodeType];
         const types2 = virtualTypes[nodeType];
         
         if (types2 !== null) {
             for (const type of types2) {
-                visitor[type] ??= {};
-                mergePair(visitor[type], fns);
+                visitorBase[type] ??= {};
+                mergePair(visitorBase[type], fns);
             }
         } else {
             mergePair(visitor, fns);
@@ -44526,12 +44549,12 @@ function explode$1(visitor) {
         const fns = visitor[nodeType];
         delete visitor[nodeType];
         for (const alias2 of aliases) {
-            const existing = visitor[alias2];
+            const existing = visitorBase[alias2];
             
             if (existing) {
                 mergePair(existing, fns);
             } else {
-                visitor[alias2] = {
+                visitorBase[alias2] = {
                     ...fns,
                 };
             }
@@ -44565,7 +44588,7 @@ function verify$1(visitor) {
             continue;
         
         if (!TYPES2.includes(nodeType)) {
-            throw new Error(`You gave us a visitor for the node type ${nodeType} but it's not a valid type in @babel/traverse ${'8.0.0-rc.5'}`);
+            throw new Error(`You gave us a visitor for the node type ${nodeType} but it's not a valid type in @babel/traverse ${'8.0.0-rc.6'}`);
         }
         
         const visitors2 = visitor[nodeType];
@@ -44766,7 +44789,9 @@ var visitors = /* @__PURE__ */Object.defineProperty({
 
 var {getAssignmentIdentifiers: getAssignmentIdentifiers$1} = lib_exports;
 
-var renameVisitor = {
+var renameVisitor;
+
+var getRenameVisitor = () => renameVisitor ??= explode$1({
     ReferencedIdentifier({node}, state) {
         if (node.name === state.oldName) {
             node.name = state.newName;
@@ -44803,7 +44828,7 @@ var renameVisitor = {
                 ids[name].name = state.newName;
         }
     },
-};
+});
 
 var Renamer = class {
     constructor(binding, oldName, newName) {
@@ -44877,7 +44902,7 @@ var Renamer = class {
             }
         }
         
-        traverseNode(blockToTraverse, explode$1(renameVisitor), scope2, this, scope2.path, skipKeys);
+        traverseNode(blockToTraverse, getRenameVisitor(), scope2, this, scope2.path, skipKeys);
         scope2.removeOwnBinding(oldName);
         scope2.bindings[newName] = binding;
         this.binding.identifier.name = newName;
@@ -47127,6 +47152,9 @@ function remove$1() {
 }
 
 function _removeFromScope() {
+    if (!this.node)
+        return;
+    
     const bindings = getBindingIdentifiers(this.node, false, false, true);
     Object
         .keys(bindings)
@@ -48824,7 +48852,7 @@ function splitExportDeclaration() {
     return this;
 }
 
-var refersOuterBindingVisitor = {
+var getRefersOuterBindingVisitor = () => explode$1({
     'ReferencedIdentifier|BindingIdentifier'(path, state) {
         if (path.node.name !== state.name)
             return;
@@ -48837,7 +48865,7 @@ var refersOuterBindingVisitor = {
             path.skip();
         }
     },
-};
+});
 
 function ensureFunctionName(supportUnicodeId) {
     if (this.node.id)
@@ -48875,7 +48903,7 @@ function ensureFunctionName(supportUnicodeId) {
             state.needsRename = true;
         }
     } else if (scope2.parent.hasBinding(name) || scope2.hasGlobal(name)) {
-        this.traverse(refersOuterBindingVisitor, state);
+        this.traverse(getRefersOuterBindingVisitor(), state);
     }
     
     if (!state.needsRename) {
@@ -49863,8 +49891,8 @@ function shareCommentsWithSiblings() {
     
     const prev = this.getSibling(this.key - 1);
     const next = this.getSibling(this.key + 1);
-    const hasPrev = Boolean(prev.node);
-    const hasNext = Boolean(next.node);
+    const hasPrev = !!prev.node;
+    const hasNext = !!next.node;
     
     if (hasPrev) {
         if (leading) {
@@ -50357,7 +50385,7 @@ function setup(parentPath, container, listKey, key) {
 function setKey(key) {
     this.key = key;
     this.node = this.container[this.key];
-    this.type = this.node?.type;
+    this.type = this.node?.type ?? null;
 }
 
 function requeue(pathToQueue = this) {
@@ -50827,7 +50855,7 @@ const {
     isStatement: isStatement$6,
     isForOfStatement: isForOfStatement$1,
     isVariableDeclaration: isVariableDeclaration$4,
-    isMemberExpression: isMemberExpression$9,
+    isMemberExpression: isMemberExpression$8,
     isArrayExpression: isArrayExpression$6,
     isObjectExpression: isObjectExpression$9,
     isLabeledStatement: isLabeledStatement$1,
@@ -50943,7 +50971,7 @@ const isStringAndMember = (path) => {
     const {elements} = path.node;
     const [a, b] = elements;
     
-    return isStringLiteral$8(a) && isMemberExpression$9(b);
+    return isStringLiteral$8(a) && isMemberExpression$8(b);
 };
 const isIdentifierAndString = (path) => {
     const {elements} = path.node;
@@ -51447,7 +51475,7 @@ const parseLeadingComments = (path, printer, semantics, {currentTraverse = {}} =
 
 const {
     isCallExpression: isCallExpression$8,
-    isMemberExpression: isMemberExpression$8,
+    isMemberExpression: isMemberExpression$7,
 } = lib_exports;
 
 const {assign: assign$c} = Object;
@@ -51503,7 +51531,7 @@ function up$1(current) {
             current = current.parentPath;
         }
         
-        if (!isMemberExpression$8(current))
+        if (!isMemberExpression$7(current))
             break;
     }
     
@@ -51612,7 +51640,7 @@ const isIfUp = (path) => {
 
 const {
     isDecorator,
-    isMemberExpression: isMemberExpression$7,
+    isMemberExpression: isMemberExpression$6,
     isExpressionStatement: isExpressionStatement$8,
     isCallExpression: isCallExpression$6,
 } = lib_exports;
@@ -51647,7 +51675,7 @@ const isNewlineAfter = (path) => {
         return !isSameLine$1(path, loc);
     }
     
-    if (isMemberExpression$7(parentPath))
+    if (isMemberExpression$6(parentPath))
         return false;
     
     return !isLast$2(path);
@@ -52444,8 +52472,7 @@ const isObjectInsideArrow = createTypeChecker$1([
 ]);
 
 const MemberExpression = maybeParens({
-    checkParens: false,
-    condition: (path) => isObjectInsideArrow(path),
+    condition: isObjectInsideArrow,
     print: (path, printer) => {
         const {
             print,
@@ -52680,43 +52707,20 @@ function tooLong$1(args) {
     return false;
 }
 
-const {isMemberExpression: isMemberExpression$6} = lib_exports;
+const {
+    isMemberExpression: isMemberExpression$5,
+    isClassDeclaration,
+} = lib_exports;
 
-const notFirst = ({parentPath}) => exists$1(parentPath.getPrevSibling());
-const isInsideMember = ({parentPath}) => isMemberExpression$6(parentPath);
+const isInsideMember = ({parentPath}) => isMemberExpression$5(parentPath);
 
-const getPrev = ({parentPath}) => {
-    const prev = parentPath.getPrevSibling();
-    
-    return [
-        prev.node,
-        prev,
-    ];
-};
-
-const NewExpression = {
-    beforeIf(path) {
-        if (!isInsideExpression(path))
-            return false;
-        
-        const [exists, prev] = getPrev(path);
-        
-        if (!exists)
-            return false;
-        
-        if (isMarkedAfter(prev))
-            return false;
-        
-        if (prev.isExpressionStatement())
-            return false;
-        
-        return notFirst(path);
-    },
-    before(path, {print}) {
-        print.breakline();
-    },
+const NewExpression = maybeParens({
     print(path, printer, semantics) {
         const {print, maybe} = printer;
+        const prev = path.parentPath.getPrevSibling();
+        
+        maybe.print.breakline(isClassDeclaration(prev));
+        
         print('new ');
         print('__callee');
         print('__typeArguments');
@@ -52733,7 +52737,7 @@ const NewExpression = {
         
         maybePrintCloseBrace(path, printer, semantics);
     },
-};
+});
 
 function maybePrintOpenBrace(path, printer, semantics) {
     maybePrintBrace('(', path, printer, semantics);
@@ -52839,7 +52843,7 @@ const notLastArgInsideCall = (path) => {
 const hasNoProperties = (path) => !path.node.properties.length;
 const hasValue = (path) => path.node.properties[0].value;
 
-const {isMemberExpression: isMemberExpression$5} = lib_exports;
+const {isMemberExpression: isMemberExpression$4} = lib_exports;
 
 const isParens$1 = createTypeChecker$1([isInsideBody, isInsideExpression]);
 
@@ -52847,7 +52851,7 @@ const callWithCallee = (fn) => (a) => fn(a.get('callee'));
 
 const isMemberExpressionCallee = createTypeChecker$1([
     ['-: parentPath -> !CallExpression'],
-    ['-: parentPath -> !', callWithCallee(isMemberExpression$5)],
+    ['-: parentPath -> !', callWithCallee(isMemberExpression$4)],
     ['+: parentPath', callWithCallee(isLooksLikeChain)],
 ]);
 
@@ -53004,7 +53008,7 @@ const wrongShorthand = ({computed, isAssign, keyPath, valuePath}) => {
 };
 
 const {
-    isMemberExpression: isMemberExpression$4,
+    isMemberExpression: isMemberExpression$3,
     isSequenceExpression: isSequenceExpression$2,
 } = lib_exports;
 
@@ -53023,7 +53027,7 @@ function maybePrintTypeAnnotation(path, printer) {
     if (isSequenceExpression$2(parentPath))
         return;
     
-    if (isMemberExpression$4(parentPath))
+    if (isMemberExpression$3(parentPath))
         return;
     
     if (typeAnnotation) {
@@ -53556,7 +53560,7 @@ AssignmentExpression.printLeadingCommentBlock = printLeadingCommentBlock$3;
 
 const {
     isIdentifier: isIdentifier$9,
-    isMemberExpression: isMemberExpression$3,
+    isMemberExpression: isMemberExpression$2,
 } = lib_exports;
 
 const isString$e = (a) => typeof a === 'string';
@@ -53579,7 +53583,7 @@ const parseName$1 = (node) => {
     if (isIdentifier$9(node))
         return node.name;
     
-    if (isMemberExpression$3(node))
+    if (isMemberExpression$2(node))
         return parseName$1(node.object);
     
     return '';
@@ -53592,7 +53596,7 @@ function check$e(path) {
 
 const {
     isOptionalMemberExpression,
-    isMemberExpression: isMemberExpression$2,
+    isMemberExpression: isMemberExpression$1,
     isIdentifier: isIdentifier$8,
     isLiteral: isLiteral$3,
 } = lib_exports;
@@ -53604,7 +53608,7 @@ const isSimple$1 = (a) => {
     if (isIdentifier$8(a))
         return true;
     
-    if (isMemberExpression$2(a))
+    if (isMemberExpression$1(a))
         return true;
     
     return isOptionalMemberExpression(a);
@@ -53614,7 +53618,7 @@ const {
     isArrayExpression: isArrayExpression$4,
     isLiteral: isLiteral$2,
     isIdentifier: isIdentifier$7,
-    isMemberExpression: isMemberExpression$1,
+    isMemberExpression,
     isTemplateElement: isTemplateElement$3,
     isRegExpLiteral: isRegExpLiteral$1,
     isClassMethod,
@@ -53648,7 +53652,7 @@ function extract(node) {
     if (isTemplateElement$3(node))
         return node.value.raw;
     
-    if (isMemberExpression$1(node))
+    if (isMemberExpression(node))
         return `${extract(node.object)}.${extract(node.property)}`;
     
     if (isArrayExpression$4(node))
@@ -54945,6 +54949,7 @@ const ArrayExpression = {
         } = semantics;
         
         const needIndent = isNeedIndent$1(path);
+        
         const multiline = isMultiLine(path, {
             maxElementsInOneLine,
             maxElementLengthInOneLine,
@@ -55169,10 +55174,14 @@ const SequenceExpression = maybeParens({
 SequenceExpression.printLeadingCommentLine = printLeadingCommentLine$2;
 SequenceExpression.printLeadingCommentBlock = printLeadingCommentBlock$2;
 
-const TaggedTemplateExpression = (path, {print}) => {
-    print('__tag');
-    print('__quasi');
-};
+const TaggedTemplateExpression = maybeParens({
+    print: (path, printer) => {
+        const {print} = printer;
+        
+        print('__tag');
+        print('__quasi');
+    },
+});
 
 const {isBinaryExpression} = lib_exports;
 const isInsideBinary = ({parentPath}) => isBinaryExpression(parentPath);
@@ -55358,21 +55367,21 @@ const StaticBlock = (path, {print, traverse}) => {
     print.newline();
 };
 
-const ImportExpression = createImportExpression;
-
-function createImportExpression(path, printer) {
-    const {print, maybe} = printer;
-    const {options} = path.node;
-    
-    print('import(');
-    print('__source');
-    
-    maybe.print(options, ',');
-    maybe.print.space(options);
-    
-    print('__options');
-    print(')');
-}
+const ImportExpression = maybeParens({
+    print: (path, printer) => {
+        const {print, maybe} = printer;
+        const {options} = path.node;
+        
+        print('import(');
+        print('__source');
+        
+        maybe.print(options, ',');
+        maybe.print.space(options);
+        
+        print('__options');
+        print(')');
+    },
+});
 
 const {isJSXElement: isJSXElement$3} = lib_exports;
 
@@ -56044,7 +56053,7 @@ function getAugmentedNamespace(n) {
 			var isInstance = false;
       try {
         isInstance = this instanceof a;
-      } catch {}
+      } catch (e) {}
 			if (isInstance) {
         return Reflect.construct(f, arguments, this.constructor);
 			}
@@ -57270,17 +57279,9 @@ const Identifier = maybeParens(maybeTypeAnnotation((path, printer) => {
     maybe.write(optional, '?');
 }));
 
-const {isMemberExpression} = lib_exports;
-
-const Decorator = (path, {print, maybe}) => {
-    const {expression} = path.node;
-    const isMember = isMemberExpression(expression);
-    
+const Decorator = (path, {print}) => {
     print('@');
-    
-    maybe.print(isMember, '(');
     print('__expression');
-    maybe.print(isMember, ')');
 };
 
 Decorator.printLeadingCommentLine = (path, printer, semantics, {printComment}) => {
@@ -58101,9 +58102,7 @@ function printInCoupleLines(types, {traverse, write, indent}) {
     indent.dec();
 }
 
-const TSImportType = (path, printer) => {
-    createImportExpression(path, printer);
-};
+const TSImportType = ImportExpression;
 
 const TSExportAssignment = {
     print: (path, {print}) => {
