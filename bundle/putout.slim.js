@@ -3318,7 +3318,7 @@ __export(lib_exports, {
     isNumberLiteralTypeAnnotation: () => isNumberLiteralTypeAnnotation,
     isNumberTypeAnnotation: () => isNumberTypeAnnotation,
     isNumericLiteral: () => isNumericLiteral$2,
-    isObjectExpression: () => isObjectExpression$a,
+    isObjectExpression: () => isObjectExpression$9,
     isObjectMember: () => isObjectMember,
     isObjectMethod: () => isObjectMethod,
     isObjectPattern: () => isObjectPattern$3,
@@ -3467,7 +3467,7 @@ __export(lib_exports, {
     isValidIdentifier: () => isValidIdentifier,
     isVar: () => isVar,
     isVariableDeclaration: () => isVariableDeclaration$5,
-    isVariableDeclarator: () => isVariableDeclarator$3,
+    isVariableDeclarator: () => isVariableDeclarator$2,
     isVariance: () => isVariance,
     isVoidPattern: () => isVoidPattern,
     isVoidTypeAnnotation: () => isVoidTypeAnnotation,
@@ -5467,7 +5467,7 @@ function isProgram$6(node, opts) {
     return opts == null || shallowEqual(node, opts);
 }
 
-function isObjectExpression$a(node, opts) {
+function isObjectExpression$9(node, opts) {
     if (!node)
         return false;
     
@@ -5617,7 +5617,7 @@ function isVariableDeclaration$5(node, opts) {
     return opts == null || shallowEqual(node, opts);
 }
 
-function isVariableDeclarator$3(node, opts) {
+function isVariableDeclarator$2(node, opts) {
     if (!node)
         return false;
     
@@ -19383,7 +19383,7 @@ function getFunctionName(node, parent) {
             prefix2 = 'get ';
         else if (node.kind === 'set')
             prefix2 = 'set ';
-    } else if (isVariableDeclarator$3(parent) && parent.init === node) {
+    } else if (isVariableDeclarator$2(parent) && parent.init === node) {
         id = parent.id;
     } else if (isAssignmentExpression$3(parent, {operator: '=', right: node})) {
         id = parent.left;
@@ -50906,7 +50906,7 @@ const {
     isVariableDeclaration: isVariableDeclaration$4,
     isMemberExpression: isMemberExpression$8,
     isArrayExpression: isArrayExpression$6,
-    isObjectExpression: isObjectExpression$9,
+    isObjectExpression: isObjectExpression$8,
     isLabeledStatement: isLabeledStatement$1,
     isTryStatement: isTryStatement$1,
     isProgram: isProgram$5,
@@ -50978,10 +50978,10 @@ function isStringAndIdentifier(path) {
 const checkObject = (elements) => {
     let a = elements.at(-1);
     
-    if (!isObjectExpression$9(a))
+    if (!isObjectExpression$8(a))
         a = elements.at(-2);
     
-    if (!isObjectExpression$9(a))
+    if (!isObjectExpression$8(a))
         return false;
     
     return a.node.properties.length;
@@ -51350,7 +51350,7 @@ const printTrailingComments = (path, printer, semantics, {currentTraverse}) => {
 const {
     isArrowFunctionExpression: isArrowFunctionExpression$2,
     isObjectProperty: isObjectProperty$3,
-    isVariableDeclarator: isVariableDeclarator$2,
+    isVariableDeclarator: isVariableDeclarator$1,
     isClassProperty,
     isTSPropertySignature,
     isSpreadElement: isSpreadElement$2,
@@ -51362,7 +51362,7 @@ const {
 
 const isProperty = satisfy([
     isObjectProperty$3,
-    isVariableDeclarator$2,
+    isVariableDeclarator$1,
     isClassProperty,
     isTSPropertySignature,
     isSpreadElement$2,
@@ -51371,13 +51371,13 @@ const isProperty = satisfy([
 const isInsideVar = (path) => {
     const {parentPath} = path;
     
-    if (isVariableDeclarator$2(parentPath) && path === parentPath.get('init'))
+    if (isVariableDeclarator$1(parentPath) && path === parentPath.get('init'))
         return true;
     
     if (!isArrowFunctionExpression$2(parentPath))
         return false;
     
-    return isVariableDeclarator$2(parentPath.parentPath);
+    return isVariableDeclarator$1(parentPath.parentPath);
 };
 
 const hasDecoratorsWithComments = (path) => path?.parentPath.node?.decorators;
@@ -51986,7 +51986,7 @@ function createStore$1() {
 
 const isFn$6 = (a) => typeof a === 'function';
 
-const isParens$2 = (path) => path.node.extra?.parenthesized;
+const isParens$1 = (path) => path.node.extra?.parenthesized;
 
 const maybeParens = (print) => {
     if (isFn$6(print))
@@ -51996,7 +51996,7 @@ const maybeParens = (print) => {
 };
 
 const maybeParensPrint = (print) => ({
-    condition: isParens$2,
+    condition: isParens$1,
     before(path, {write}) {
         write('(');
     },
@@ -52014,7 +52014,7 @@ const maybeParensCondition = ({print, condition, checkParens = true}) => ({
         if (!checkParens)
             return is;
         
-        return is || isParens$2(path);
+        return is || isParens$1(path);
     },
 });
 
@@ -52831,7 +52831,7 @@ const isInsideTuple = (path) => {
 
 const {
     isStringLiteral: isStringLiteral$7,
-    isObjectExpression: isObjectExpression$8,
+    isObjectExpression: isObjectExpression$7,
 } = lib_exports;
 
 const isMultilineOption = (a, {multiline}) => multiline;
@@ -52844,7 +52844,7 @@ const isNeedsIndentBeforeElementOption = (a, {needsIndentBeforeElement}) => need
 const isStringsAndObject = (path) => {
     const elements = path.get('elements');
     
-    if (!isObjectExpression$8(elements.at(-1)))
+    if (!isObjectExpression$7(elements.at(-1)))
         return false;
     
     const strings = elements.filter(isStringLiteral$7);
@@ -52894,7 +52894,7 @@ const hasValue = (path) => path.node.properties[0].value;
 
 const {isMemberExpression: isMemberExpression$4} = lib_exports;
 
-const isParens$1 = createTypeChecker$1([isInsideBody, isInsideExpression]);
+const isParens = createTypeChecker$1([isInsideBody, isInsideExpression]);
 
 const callWithCallee = (fn) => (a) => fn(a.get('callee'));
 
@@ -52932,68 +52932,68 @@ const isIndentBeforeProperty$1 = createTypeChecker$1([
     ['+: -> !', hasLeadingComment],
 ]);
 
-const ObjectExpression = (path, printer, semantics) => {
-    const {trailingComma} = semantics;
-    const {
-        print,
-        maybe,
-        indent,
-    } = printer;
-    
-    const insideNestedArrayCall = isInsideNestedArrayCall(path);
-    
-    maybe.indent.inc(!insideNestedArrayCall);
-    
-    const properties = path.get('properties');
-    
-    const parens = isParens$1(path);
-    const multiline = isMultiline$1(path);
-    
-    maybe.print(parens, '(');
-    print('{');
-    parseComments(path, printer, semantics);
-    maybe.print.newline(multiline);
-    
-    const memberCallee = isMemberExpressionCallee(path);
-    maybe.indent.inc(memberCallee);
-    
-    for (const property of properties) {
-        if (isIndentBeforeProperty$1(property, {multiline}))
+const ObjectExpression = maybeParens({
+    condition: isParens,
+    print: (path, printer, semantics) => {
+        const {trailingComma} = semantics;
+        const {
+            print,
+            maybe,
+            indent,
+        } = printer;
+        
+        const insideNestedArrayCall = isInsideNestedArrayCall(path);
+        
+        maybe.indent.inc(!insideNestedArrayCall);
+        
+        const properties = path.get('properties');
+        
+        const multiline = isMultiline$1(path);
+        
+        print('{');
+        parseComments(path, printer, semantics);
+        maybe.print.newline(multiline);
+        
+        const memberCallee = isMemberExpressionCallee(path);
+        maybe.indent.inc(memberCallee);
+        
+        for (const property of properties) {
+            if (isIndentBeforeProperty$1(property, {multiline}))
+                indent();
+            
+            print(property);
+            
+            if (property.isObjectMethod())
+                continue;
+            
+            if (hasTrailingComment(property))
+                continue;
+            
+            maybe.print(isCommaAfterSpread(property, {
+                multiline,
+                trailingComma,
+            }), ',');
+            
+            if (isNewlineAfterProperty(property, {multiline}))
+                print.newline();
+            
+            if (isLinebreakAfterProperty(property))
+                print.linebreak();
+        }
+        
+        indent.dec();
+        
+        if (isIndentBeforeClosingCurlyBrace(path, {multiline}))
             indent();
         
-        print(property);
+        if (insideNestedArrayCall)
+            indent.inc();
         
-        if (property.isObjectMethod())
-            continue;
+        print('}');
         
-        if (hasTrailingComment(property))
-            continue;
-        
-        maybe.print(isCommaAfterSpread(property, {
-            multiline,
-            trailingComma,
-        }), ',');
-        
-        if (isNewlineAfterProperty(property, {multiline}))
-            print.newline();
-        
-        if (isLinebreakAfterProperty(property))
-            print.linebreak();
-    }
-    
-    indent.dec();
-    
-    if (isIndentBeforeClosingCurlyBrace(path, {multiline}))
-        indent();
-    
-    if (insideNestedArrayCall)
-        indent.inc();
-    
-    print('}');
-    maybe.print(parens, ')');
-    
-    maybe.indent.dec(memberCallee);
-};
+        maybe.indent.dec(memberCallee);
+    },
+});
 
 const isIndentBeforeClosingCurlyBrace = createTypeChecker$1([
     ['+', isInsideTupleLike],
@@ -53123,7 +53123,7 @@ function hasAssignObject(path) {
 
 const {
     isFunction: isFunction$6,
-    isVariableDeclarator: isVariableDeclarator$1,
+    isVariableDeclarator,
     isObjectProperty: isObjectProperty$2,
 } = lib_exports;
 
@@ -53149,7 +53149,7 @@ const isCoupleProperties = ({path, valuePath, property}) => {
     
     const {parentPath} = path;
     
-    if (isVariableDeclarator$1(parentPath) && !hasAssign(path))
+    if (isVariableDeclarator(parentPath) && !hasAssign(path))
         return false;
     
     return !isObjectProperty$2(parentPath);
@@ -53497,7 +53497,7 @@ const condition$5 = (path, printer, semantics) => {
     if (!roundBraces.assign && !hasLeadingComment(path))
         return false;
     
-    return isParens$2(path);
+    return isParens$1(path);
 };
 
 const {
@@ -54100,13 +54100,13 @@ function isRequire$1(path) {
 
 const {
     isCallExpression: isCallExpression$6,
-    isObjectExpression: isObjectExpression$7,
+    isObjectExpression: isObjectExpression$6,
 } = lib_exports;
 
 const nodeOrPath = (path) => path.node || path;
 
 function getNode$1(path) {
-    if (!isObjectExpression$7(path))
+    if (!isObjectExpression$6(path))
         return nodeOrPath(path);
     
     if (isCallExpression$6(path.parentPath))
@@ -54161,7 +54161,7 @@ const collect = ({name, collector}) => (path) => {
 };
 
 const {
-    isObjectExpression: isObjectExpression$6,
+    isObjectExpression: isObjectExpression$5,
     isObjectPattern: isObjectPattern$1,
 } = lib_exports;
 
@@ -54187,7 +54187,7 @@ const getProperties = (path, names) => {
 };
 
 const getProperty = (path, name) => {
-    if (!isObjectExpression$6(path) && !isObjectPattern$1(path))
+    if (!isObjectExpression$5(path) && !isObjectPattern$1(path))
         throw Error(`☝️Looks like path is not 'ObjectExpression | ObjectPattern', but: '${path.type}' for path: ${path}`);
     
     const propertyPaths = path.get(`properties`);
@@ -54445,7 +54445,7 @@ const isESM = (path) => {
 const {
     isStringLiteral: isStringLiteral$5,
     isArrayExpression: isArrayExpression$3,
-    isObjectExpression: isObjectExpression$5,
+    isObjectExpression: isObjectExpression$4,
     isTemplateLiteral: isTemplateLiteral$2,
     isBooleanLiteral: isBooleanLiteral$2,
 } = lib_exports;
@@ -54483,12 +54483,12 @@ const isStringAndObject = (path) => {
     const first = elements.at(0);
     const last = elements.at(-1);
     
-    return isStringLiteral$5(first) && isObjectExpression$5(last);
+    return isStringLiteral$5(first) && isObjectExpression$4(last);
 };
 
 const isBooleanAndObject = (path) => {
     const [a, b] = path.node.elements;
-    return isBooleanLiteral$2(a) && isObjectExpression$5(b);
+    return isBooleanLiteral$2(a) && isObjectExpression$4(b);
 };
 
 const isObjectAfterString = (path) => {
@@ -54497,7 +54497,7 @@ const isObjectAfterString = (path) => {
     if (!first || !second)
         return false;
     
-    if (!isObjectExpression$5(second))
+    if (!isObjectExpression$4(second))
         return false;
     
     if (isStringLiteral$5(first))
@@ -54550,7 +54550,7 @@ const isHideIndent = createTypeChecker$1([
     ['+: parentPath.node.elements.length', '=', 2],
 ]);
 
-const isLastElementObjectExpression = ({node}) => isObjectExpression$5(node.elements.at(-1));
+const isLastElementObjectExpression = ({node}) => isObjectExpression$4(node.elements.at(-1));
 
 const isSecondIndent = createTypeChecker$1([
     ['-: -> !', isMultilineOption],
@@ -54576,7 +54576,7 @@ function maybeAdditionalIndent(path, printer, semantics, options) {
 }
 
 const {
-    isObjectExpression: isObjectExpression$4,
+    isObjectExpression: isObjectExpression$3,
     isObjectProperty,
     isCallExpression: isCallExpression$5,
     isAwaitExpression,
@@ -54685,7 +54685,7 @@ const isSimpleAndObject = (path) => {
     const {elements} = path.node;
     const [a, b] = elements;
     
-    return isSimple$1(a) && isObjectExpression$4(b);
+    return isSimple$1(a) && isObjectExpression$3(b);
 };
 
 const isSiblingIsArray = (path) => {
@@ -54731,7 +54731,7 @@ const isMoreThenMaxIdentifierLength = (path, {maxElementLengthInOneLine}) => {
 
 const hasObjects = (path) => {
     const {elements} = path.node;
-    const literals = elements.filter(isObjectExpression$4);
+    const literals = elements.filter(isObjectExpression$3);
     
     return literals.length;
 };
@@ -54948,7 +54948,7 @@ const isBreaklineBeforeClosingSquareBrace = createTypeChecker$1([
     ['+: node.elements -> !', callWithLastElement(isCallExpression$4)],
 ]);
 
-const {isObjectExpression: isObjectExpression$3} = lib_exports;
+const {isObjectExpression: isObjectExpression$2} = lib_exports;
 
 const isCommaAfterElementByOption = createTypeChecker$1([
     ['+: -> !', isLastOption],
@@ -54963,12 +54963,12 @@ const isCommaAfterElement = createTypeChecker$1([
 
 const isNewlineAfterComma = createTypeChecker$1([
     ['-: -> !', isMultilineOption],
-    ['-', callWithNext(isObjectExpression$3)],
+    ['-', callWithNext(isObjectExpression$2)],
     ['+: -> !ObjectExpression'],
 ]);
 
 const isSimpleBetweenObjects = createTypeChecker$1([
-    ['+', callWithNext(isObjectExpression$3)],
+    ['+', callWithNext(isObjectExpression$2)],
     ['-: SpreadElement'],
     ['-: Identifier'],
     ['+: -> !CallExpression'],
@@ -54980,7 +54980,7 @@ const isSpaceAfterComa = createTypeChecker$1([
     ['+: -> !ObjectExpression'],
 ]);
 
-const {isObjectExpression: isObjectExpression$2} = lib_exports;
+const {isObjectExpression: isObjectExpression$1} = lib_exports;
 
 const ArrayExpression = {
     beforeIf: beforeIf$4,
@@ -55070,8 +55070,8 @@ const isSimple = createTypeChecker$1([
 
 const isNewlineBeforeElement = createTypeChecker$1([
     ['-', isSimple],
-    ['-', callWithNext(isObjectExpression$2)],
-    ['+', callWithPrev(isObjectExpression$2)],
+    ['-', callWithNext(isObjectExpression$1)],
+    ['+', callWithPrev(isObjectExpression$1)],
 ]);
 
 const isForOf = ({parentPath}) => parentPath.parentPath.parentPath?.isForOfStatement();
@@ -57656,7 +57656,7 @@ const TSConditionalType = maybeParens((path, {print, indent}) => {
     
     indent.dec();
     
-    if (isParens$2(path))
+    if (isParens$1(path))
         print.breakline();
 });
 
@@ -57861,30 +57861,11 @@ const TSImportEqualsDeclaration = (path, {print, maybe}) => {
         print.newline();
 };
 
-const {
-    isVariableDeclarator,
-    isObjectExpression: isObjectExpression$1,
-} = lib_exports;
-
-const TSAsExpression = maybeParens((path, {print, maybe}) => {
-    const is = isParens(path);
-    
-    maybe.print(is, '(');
+const TSAsExpression = maybeParens((path, {print}) => {
     print('__expression');
-    maybe.print(is, ')');
-    
     print(' as ');
     print('__typeAnnotation');
 });
-
-function isParens(path) {
-    const {expression} = path.node;
-    
-    if (isVariableDeclarator(path.parentPath))
-        return false;
-    
-    return isObjectExpression$1(expression);
-}
 
 const TSInterfaceBody = (path, printer, semantics) => {
     const body = path.get('body');
